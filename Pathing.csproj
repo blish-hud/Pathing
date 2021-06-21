@@ -1,0 +1,408 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B5DE694A-0648-4A39-8349-8C0BB0DD538C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>BhModule.Community.Pathing</RootNamespace>
+    <AssemblyName>Pathing</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+    <DocumentationFile>
+    </DocumentationFile>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Behavior\AchievementStatus.cs" />
+    <Compile Include="Behavior\Behavior.cs" />
+    <Compile Include="Behavior\Filter\AchievementFilter.cs" />
+    <Compile Include="Behavior\ICanFilter.cs" />
+    <Compile Include="Behavior\Modifier\BounceModifier.cs" />
+    <Compile Include="Behavior\Modifier\CopyModifier.cs" />
+    <Compile Include="Behavior\Modifier\InfoModifier.cs" />
+    <Compile Include="Behavior\Modifier\ShowHideModifier.cs" />
+    <Compile Include="Behavior\Modifier\ToggleModifier.cs" />
+    <Compile Include="Behavior\StandardPathableBehavior.cs" />
+    <Compile Include="Content\WebReader.cs" />
+    <Compile Include="Entity\EntityRenderTarget.cs" />
+    <Compile Include="Entity\SpritebatchEntity.cs" />
+    <Compile Include="Entity\StandardMarker.World.cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[canfade].cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[canfade].cs" />
+    <Compile Include="State\UiStates.cs" />
+    <Compile Include="State\UserResources\Converters\ColorConverter.cs" />
+    <Compile Include="Entity\StandardMarker.MiniMap.cs" />
+    <Compile Include="State\UserResources\IgnoreDefaults.cs" />
+    <Compile Include="State\UserResources\Population\MarkerPopulationDefaults.cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[minimapvisibility,mapvisibility,ingamevisibility].cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[minimapvisibility,mapvisibility,ingamevisibility].cs" />
+    <Compile Include="PackLoader.cs" />
+    <Compile Include="State\MapStates.cs" />
+    <Compile Include="State\UserResourceStates.cs" />
+    <Compile Include="Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\BlueButton.cs" />
+    <Compile Include="UI\Controls\FlatMap.cs" />
+    <Compile Include="SharedPackCollection.cs" />
+    <Compile Include="State\CategoryStates.cs" />
+    <Compile Include="Entity\CullDirection.cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[cull].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[iconsize].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[minsize,maxsize].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[type].cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[cull].cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[trailscale].cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[type].cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\StandardTrail_Behaviors.cs" />
+    <Compile Include="State\IRootPackState.cs" />
+    <Compile Include="State\ManagedState.cs" />
+    <Compile Include="State\OverridingPackState.cs" />
+    <Compile Include="UI\Controls\CategoryContextMenuStrip.cs" />
+    <Compile Include="UI\Controls\CategoryContextMenuStripItem.cs" />
+    <Compile Include="UI\Controls\InfoWindow.cs" />
+    <Compile Include="UI\Controls\MarkerPackHero.cs" />
+    <Compile Include="UI\Controls\TabbedSettingWindow.cs" />
+    <Compile Include="State\UserResources\Converters\ValueOnlyAttribute.cs" />
+    <Compile Include="State\UserResources\PopulationDefaults.cs" />
+    <Compile Include="State\UserResources\Population\TrailPopulationDefaults.cs" />
+    <Compile Include="UI\Effects\AlphaMaskEffect.cs" />
+    <Compile Include="UI\Presenters\PackRepoPresenter.cs" />
+    <Compile Include="UI\Views\PackRepoView.cs" />
+    <Compile Include="Utility\2mgfx\BinaryWriterEx.cs" />
+    <Compile Include="Utility\2mgfx\ConstantBufferData.cs" />
+    <Compile Include="Utility\2mgfx\ConstantBufferData.sharpdx.cs" />
+    <Compile Include="Utility\2mgfx\ConstantBufferData.writer.cs" />
+    <Compile Include="Utility\2mgfx\EffectObject.cs" />
+    <Compile Include="Utility\2mgfx\EffectObject.hlsl.cs" />
+    <Compile Include="Utility\2mgfx\EffectObject.writer.cs" />
+    <Compile Include="Utility\2mgfx\IEffectCompilerOutput.cs" />
+    <Compile Include="Utility\2mgfx\LoggerEffectCompilerOutput.cs" />
+    <Compile Include="Utility\2mgfx\MarshalHelper.cs" />
+    <Compile Include="Utility\2mgfx\MojoShader.cs" />
+    <Compile Include="Utility\2mgfx\Options.cs" />
+    <Compile Include="Utility\2mgfx\Preprocessor.cs" />
+    <Compile Include="Utility\2mgfx\ShaderCompilerException.cs" />
+    <Compile Include="Utility\2mgfx\ShaderCompilerUtil.cs" />
+    <Compile Include="Utility\2mgfx\ShaderData.cs" />
+    <Compile Include="Utility\2mgfx\ShaderData.sharpdx.cs" />
+    <Compile Include="Utility\2mgfx\ShaderData.writer.cs" />
+    <Compile Include="Utility\2mgfx\ShaderProfile.cs" />
+    <Compile Include="Utility\2mgfx\ShaderProfile.DirectX.cs" />
+    <Compile Include="Utility\2mgfx\ShaderResult.cs" />
+    <Compile Include="Utility\2mgfx\TextureFilterType.cs" />
+    <Compile Include="Utility\2mgfx\TPGParser\Parser.cs" />
+    <Compile Include="Utility\2mgfx\TPGParser\ParseTree.cs" />
+    <Compile Include="Utility\2mgfx\TPGParser\ParseTreeTools.cs" />
+    <Compile Include="Utility\2mgfx\TPGParser\PassInfo.cs" />
+    <Compile Include="Utility\2mgfx\TPGParser\SamplerStateInfo.cs" />
+    <Compile Include="Utility\2mgfx\TPGParser\Scanner.cs" />
+    <Compile Include="Utility\2mgfx\TPGParser\ShaderInfo.cs" />
+    <Compile Include="Utility\2mgfx\TPGParser\TechniqueInfo.cs" />
+    <Compile Include="Utility\DataDirUtil.cs" />
+    <Compile Include="Utility\GuidExtension.cs" />
+    <Compile Include="Utility\Gw2SharpModelExtensions.cs" />
+    <Compile Include="Utility\MapNavUtil.cs" />
+    <Compile Include="Utility\Texture2dExtensions.cs" />
+    <Compile Include="Utility\UpdateCadenceUtil.cs" />
+    <Compile Include="Utility\VectorExtensions.cs" />
+    <None Include="App.config" />
+    <Compile Include="State\BehaviorStates.cs" />
+    <Compile Include="Behavior\Filter\SpecializationFilter.cs" />
+    <Compile Include="Behavior\Filter\RaceFilter.cs" />
+    <Compile Include="Behavior\Filter\StandardBehaviorFilter.cs" />
+    <Compile Include="Behavior\ICanFocus.cs" />
+    <Compile Include="Behavior\ICanInteract.cs" />
+    <Compile Include="Entity\Effects\MarkerEffect.cs" />
+    <Compile Include="Entity\Effects\TrailEffect.cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[guid].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\StandardMarker_Behaviors.cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\StandardMarker_Focus.cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\StandardMarker_TacOMisc.cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\StandardTrail_OnFocus.cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\StandardTrail_TacOMisc.cs" />
+    <Compile Include="State\IPackState.cs" />
+    <Compile Include="ModuleSettings.cs" />
+    <Compile Include="State\SharedPackState.cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[fadenear,fadefar].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[heightoffset].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[alpha].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[rotate-x,rotate-y,rotate-z].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[color,tint].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[text,title,title-color].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[iconfile].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[xpos,ypos,zpos].cs" />
+    <None Include="manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Behavior\Filter\FestivalFilter.cs" />
+    <Compile Include="Behavior\Filter\MountFilter.cs" />
+    <Compile Include="Behavior\Filter\ProfessionFilter.cs" />
+    <Compile Include="Behavior\IBehavior.cs" />
+    <Compile Include="Entity\IPathingEntity.cs" />
+    <Compile Include="Entity\PathingEntity.cs" />
+    <Compile Include="Entity\StandardMarker.cs" />
+    <Compile Include="Entity\StandardRoute.cs" />
+    <Compile Include="Entity\StandardTrail.cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[color,tint].cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[fadenear,fadefar].cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[texture].cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[alpha].cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[animspeed].cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\PostProcessing\StandardTrail_DouglasPeucker.cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\PostProcessing\StandardTrail_HermiteCurve.cs" />
+    <Compile Include="Entity\_StandardTrailLoaders\PostProcessing\StandardTrail_SetTrailResolution.cs" />
+    <Compile Include="PathingModule.cs" />
+    <Compile Include="PackInitiator.cs" />
+    <Compile Include="Utility\AttributeCollectionExtensions.cs" />
+    <Compile Include="Utility\AttributeParsingUtil.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="AsyncClipboardService, Version=1.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\AsyncClipboardService.1.7.1\lib\net45\AsyncClipboardService.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Blish HUD, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\BlishHUD.0.7.0\lib\net472\Blish HUD.exe</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="CppNet">
+      <HintPath>.\CppNet.dll</HintPath>
+    </Reference>
+    <Reference Include="CSCore, Version=1.2.1.2, Culture=neutral, PublicKeyToken=5a08f2b6f4415dea, processorArchitecture=MSIL">
+      <HintPath>packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Flurl, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Flurl.3.0.1\lib\net461\Flurl.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Flurl.Http, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Flurl.Http.3.0.1\lib\net461\Flurl.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Gw2Sharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gw2Sharp.1.0.0\lib\netstandard2.0\Gw2Sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Extended, Version=3.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MonoGame.Extended.3.7.0\lib\netstandard2.0\MonoGame.Extended.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MonoGame.Framework, Version=3.7.1.189, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MonoGame.Framework.WindowsDX.3.7.1.189\lib\net45\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.D3DCompiler, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.D3DCompiler.4.2.0\lib\net45\SharpDX.D3DCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct2D1, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.Direct2D1.4.0.1\lib\net45\SharpDX.Direct2D1.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.Direct3D11.4.0.1\lib\net45\SharpDX.Direct3D11.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.Direct3D9.4.0.1\lib\net45\SharpDX.Direct3D9.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.DXGI, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.DXGI.4.0.1\lib\net45\SharpDX.DXGI.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.Mathematics.4.0.1\lib\net45\SharpDX.Mathematics.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.MediaFoundation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.MediaFoundation.4.0.1\lib\net45\SharpDX.MediaFoundation.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.XAudio2, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.XAudio2.4.0.1\lib\net45\SharpDX.XAudio2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.XInput, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.XInput.4.0.1\lib\net45\SharpDX.XInput.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Primitives, Version=4.8.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.ServiceModel.Primitives.4.8.1\lib\net461\System.ServiceModel.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Encodings.Web.5.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Json.5.0.0\lib\net461\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="YamlDotNet, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+      <HintPath>packages\YamlDotNet.11.1.1\lib\net45\YamlDotNet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ref\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TmfLib\TmfLib.csproj">
+      <Project>{d66aacb7-a2b7-4f13-9667-b1d7f1cf8848}</Project>
+      <Name>TmfLib</Name>
+    </ProjectReference>
+    <!-- Note that this is not a "normal" ProjectReference.
+         It needs the additional 'OutputItemType' and 'ReferenceOutputAssmbly' attributes. -->
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="License-2mgfx.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\BlishHUD.0.7.0\build\BlishHUD.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\BlishHUD.0.7.0\build\BlishHUD.targets'))" />
+    <Error Condition="!Exists('packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets'))" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties manifest_1json__JsonSchema="" />
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="packages\BlishHUD.0.7.0\build\BlishHUD.targets" Condition="Exists('packages\BlishHUD.0.7.0\build\BlishHUD.targets')" />
+  <Import Project="packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets')" />
+</Project>

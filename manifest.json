@@ -1,0 +1,31 @@
+{
+  "name": "Pathing",
+  "version": "0.2.0",
+  "namespace": "bh.community.pathing",
+  "package": "Pathing.dll",
+  "manifest_version": 1,
+
+  "description": "Display markers and trails in-game.  Supports both .zip and .taco format markers.",
+  "dependencies": {
+    "bh.blishhud": ">=0.8.0"
+  },
+  "url": "https://github.com/dade/Pathing",
+  "contributors": [
+    {
+      "name": "Freesnöw",
+      "username": "LandersXanders.1235",
+      "url": "https://github.com/dlamkins"
+    }
+  ],
+  "api_permissions": {
+    "account": {
+      "optional": true,
+      "details": "Necessary to keep track of achievement based markers states."
+    },
+    "progression": {
+      "optional": true,
+      "details": "Necessary to keep track of achievement based markers states."
+    }
+  },
+  "directories": [ "markers" ]
+}
