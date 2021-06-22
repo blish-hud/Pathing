@@ -27,7 +27,7 @@ namespace BhModule.Community.Pathing.Entity {
                     if (this.Tint != _packState.UserResourceStates.Population.TrailPopulationDefaults.Tint) {
                         this.TrailSampleColor = this.Tint;
                     } else if (this.Texture != null) {
-                        this.TrailSampleColor = this.Texture.Sample3();
+                        this.TrailSampleColor = this.Texture.Sample24();
                     }
                 } else {
                     this.Texture = ContentService.Textures.Error;

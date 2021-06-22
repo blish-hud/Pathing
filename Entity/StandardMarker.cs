@@ -1,7 +1,6 @@
 ﻿using BhModule.Community.Pathing.State;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using TmfLib;
 using TmfLib.Pathable;
 using TmfLib.Prototype;
@@ -13,15 +12,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         private readonly IPackState _packState;
 
-        private VertexPositionTexture[] _verts;
-        private DynamicVertexBuffer     _vertexBuffer;
-
-        private Vector2 _size { get; set; } = Vector2.Zero;
-
-        public Vector2 Size {
-            get => new(MathHelper.Clamp(_size.X, this.MinSize, this.MaxSize), MathHelper.Clamp(_size.Y, this.MinSize, this.MaxSize));
-            set => _size = value;
-        }
+        private Vector2 Size { get; set; } = Vector2.Zero;
 
         public override float DrawOrder => Vector3.DistanceSquared(this.Position, GameService.Gw2Mumble.PlayerCamera.Position);
 
@@ -39,7 +30,7 @@ namespace BhModule.Community.Pathing.Entity {
             Populate_Type(collection, resourceManager);
             Populate_Position(collection, resourceManager);
             Populate_Triggers(collection, resourceManager);
-            //Populate_MinMaxSize(collection, resourceManager);
+            Populate_MinMaxSize(collection, resourceManager);
             Populate_IconSize(collection, resourceManager);
             Populate_IconFile(collection, resourceManager);
             // Populate_Title(collection, resourceManager);
@@ -58,12 +49,6 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         private void Initialize() {
-            //this.Size = new Vector2(MathHelper.Clamp(this.Size.X, this.MinSize, this.MaxSize),
-            //                        MathHelper.Clamp(this.Size.Y, this.MinSize, this.MaxSize));
-
-            InitializeMiniMap();
-            InitializeWorld();
-
             if (true) {
                 this.FadeIn();
             }

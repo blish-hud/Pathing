@@ -11,11 +11,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         private static readonly Texture2D _aboveTexture = PathingModule.Instance.ContentsManager.GetTexture(@"png\1130638.png");
         private static readonly Texture2D _belowTexture = PathingModule.Instance.ContentsManager.GetTexture(@"png\1130639.png");
-
-        private void InitializeMiniMap() {
-            /* NOOP */
-        }
-
+        
         public override void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
             if (this.IsFiltered(EntityRenderTarget.Map, _packState) || this.Texture == null) return;
 

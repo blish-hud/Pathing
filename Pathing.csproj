@@ -75,6 +75,9 @@
     <Compile Include="Entity\EntityRenderTarget.cs" />
     <Compile Include="Entity\SpritebatchEntity.cs" />
     <Compile Include="Entity\StandardMarker.World.cs" />
+    <Compile Include="Entity\StandardRoute.World.cs" />
+    <Compile Include="Entity\StandardTrail.MiniMap.cs" />
+    <Compile Include="Entity\StandardTrail.World.cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[canfade].cs" />
     <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[canfade].cs" />
     <Compile Include="State\UiStates.cs" />
@@ -182,6 +185,7 @@
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[text,title,title-color].cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[iconfile].cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[xpos,ypos,zpos].cs" />
+    <Compile Include="Entity\StandardRoute.MiniMap.cs" />
     <None Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

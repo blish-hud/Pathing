@@ -7,21 +7,24 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
+        
+        private static DynamicVertexBuffer _sharedVertexBuffer;
 
-        private void InitializeWorld() {
-            _verts        = new VertexPositionTexture[4];
-            _vertexBuffer = new DynamicVertexBuffer(GameService.Graphics.GraphicsDevice, typeof(VertexPositionTexture), 4, BufferUsage.WriteOnly);
-
-            RecalculateSize(this.Size, this.Scale);
+        static StandardMarker() {
+            CreateSharedVertexBuffer();
         }
 
-        private void RecalculateSize(Vector2 size, float scale) {
-            _verts[0] = new VertexPositionTexture(new Vector3(0,              0,              0),                 new Vector2(1, 1));
-            _verts[1] = new VertexPositionTexture(new Vector3(size.X * scale, 0,              0),                 new Vector2(0, 1));
-            _verts[2] = new VertexPositionTexture(new Vector3(0,              size.Y * scale, 0),                 new Vector2(1, 0));
-            _verts[3] = new VertexPositionTexture(new Vector3(size.X                 * scale, size.Y * scale, 0), new Vector2(0, 0));
+        private static void CreateSharedVertexBuffer() {
+            _sharedVertexBuffer = new DynamicVertexBuffer(GameService.Graphics.GraphicsDevice, typeof(VertexPositionTexture), 4, BufferUsage.WriteOnly);
 
-            _vertexBuffer.SetData(_verts);
+            var verts = new VertexPositionTexture[4];
+
+            verts[0] = new VertexPositionTexture(new Vector3(-0.5f, -0.5f, 0), new Vector2(1, 1));
+            verts[1] = new VertexPositionTexture(new Vector3(0.5f,  -0.5f, 0), new Vector2(0, 1));
+            verts[2] = new VertexPositionTexture(new Vector3(-0.5f, 0.5f,  0), new Vector2(1, 0));
+            verts[3] = new VertexPositionTexture(new Vector3(0.5f,  0.5f,  0), new Vector2(0, 0));
+
+            _sharedVertexBuffer.SetData(verts);
         }
 
         private float GetOpacity() {
@@ -44,7 +47,7 @@ namespace BhModule.Community.Pathing.Entity {
 
             graphicsDevice.RasterizerState = this.CullDirection;
 
-            var modelMatrix = Matrix.CreateTranslation(this.Size.X * this.Scale / -2, this.Size.Y * this.Scale / -2, 0);
+            var modelMatrix = Matrix.CreateScale(Math.Max(this.Size.X, this.Size.Y) / 2f) * Matrix.CreateScale(this.Scale);
 
             if (this.RotationXyz == Vector3.Zero) {
                 modelMatrix *= Matrix.CreateBillboard(this.Position + new Vector3(0, 0, this.HeightOffset),
@@ -70,7 +73,7 @@ namespace BhModule.Community.Pathing.Entity {
                                                          this.CanFade && _packState.UserConfiguration.PackFadeMarkersBetweenCharacterAndCamera.Value,
                                                          Tint);
 
-            graphicsDevice.SetVertexBuffer(_vertexBuffer);
+            graphicsDevice.SetVertexBuffer(_sharedVertexBuffer);
 
             foreach (var pass in _packState.SharedMarkerEffect.CurrentTechnique.Passes) {
                 pass.Apply();

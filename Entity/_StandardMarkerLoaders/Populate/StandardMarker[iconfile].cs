@@ -32,11 +32,6 @@ namespace BhModule.Community.Pathing.Entity {
                                               ? BillboardVerticalConstraint.CameraPosition
                                               : BillboardVerticalConstraint.PlayerPosition;
 
-                if (_vertexBuffer != null) {
-                    // Only called if texture is set after InitializeWorld().
-                    RecalculateSize(this.Size, this.Scale);
-                }
-
                 this.FadeIn();
             }
         }
