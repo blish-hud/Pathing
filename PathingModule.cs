@@ -11,6 +11,7 @@ using BhModule.Community.Pathing.UI.Controls;
 using BhModule.Community.Pathing.UI.Views;
 using Blish_HUD.Controls;
 using Blish_HUD.Settings.UI.Views;
+using Microsoft.Xna.Framework.Input;
 
 namespace BhModule.Community.Pathing {
     [Export(typeof(Module))]
@@ -65,7 +66,11 @@ namespace BhModule.Community.Pathing {
             _pathingIcon.Menu = _pathingContextMenuStrip;
 
             _pathingIcon.Click += delegate {
-                newWindow.ToggleWindow();
+                if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {
+                    _moduleSettings.GlobalPathablesEnabled.Value = !_moduleSettings.GlobalPathablesEnabled.Value;
+                } else {
+                    newWindow.ToggleWindow();
+                }
             };
         }
 

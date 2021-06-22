@@ -64,6 +64,7 @@
     <Compile Include="Behavior\AchievementStatus.cs" />
     <Compile Include="Behavior\Behavior.cs" />
     <Compile Include="Behavior\Filter\AchievementFilter.cs" />
+    <Compile Include="Behavior\Filter\MapTypeFilter.cs" />
     <Compile Include="Behavior\ICanFilter.cs" />
     <Compile Include="Behavior\Modifier\BounceModifier.cs" />
     <Compile Include="Behavior\Modifier\CopyModifier.cs" />
