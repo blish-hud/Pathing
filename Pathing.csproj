@@ -181,7 +181,7 @@
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[fadenear,fadefar].cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[heightoffset].cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[alpha].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[rotate-x,rotate-y,rotate-z].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[rotate,rotate-x,rotate-y,rotate-z].cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[color,tint].cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[text,title,title-color].cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[iconfile].cs" />

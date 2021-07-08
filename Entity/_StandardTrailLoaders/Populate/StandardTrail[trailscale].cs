@@ -10,6 +10,9 @@ namespace BhModule.Community.Pathing.Entity {
 
         public float TrailScale { get; set; }
 
+        /// <summary>
+        /// trailscale
+        /// </summary>
         private void Populate_TrailScale(AttributeCollection collection, IPackResourceManager resourceManager) {
             this.TrailScale = _packState.UserResourceStates.Population.TrailPopulationDefaults.TrailScale;
 
