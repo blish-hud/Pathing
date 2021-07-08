@@ -221,8 +221,9 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Blish HUD, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Blish HUD, Version=0.8.0.0, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>packages\BlishHUD.0.7.0\lib\net472\Blish HUD.exe</HintPath>
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="CppNet">
