@@ -17,7 +17,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         public abstract float TriggerRange { get; set; }
 
-        public float DistanceToPlayer { get; set; }
+        public float DistanceToPlayer { get; set; } = -1;
 
         public abstract float DrawOrder { get; }
         

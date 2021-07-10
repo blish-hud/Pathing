@@ -14,7 +14,7 @@ namespace BhModule.Community.Pathing.Entity {
         private bool _focused;
         public bool Focused {
             get => _focused;
-            set {
+            private set {
                 if (_focused == value) return;
 
                 _focused = value;

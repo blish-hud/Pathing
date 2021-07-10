@@ -51,9 +51,9 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         public override void Update(GameTime gameTime) {
-            base.Update(gameTime);
-
             this.DistanceToPlayer = Vector3.Distance(GameService.Gw2Mumble.PlayerCharacter.Position, this.Position);
+
+            base.Update(gameTime);
         }
 
     }

@@ -51,46 +51,15 @@ namespace BhModule.Community.Pathing {
 
         private async Task InitStates() {
             _managedStates = new[] {
-                await (this.CategoryStates = new CategoryStates(this)).Start(),
-                await (this.BehaviorStates = new BehaviorStates(this)).Start(),
-                await (this.MapStates      = new MapStates(this)).Start(), 
+                await (this.CategoryStates     = new CategoryStates(this)).Start(),
+                await (this.BehaviorStates     = new BehaviorStates(this)).Start(),
+                await (this.MapStates          = new MapStates(this)).Start(), 
                 await (this.UserResourceStates = new UserResourceStates(this)).Start(),
-                await (this.UiStates = new UiStates(this)).Start()
+                await (this.UiStates           = new UiStates(this)).Start()
             };
-
-            //await InitCategoryStateManagement();
-            //await InitBehaviorStateManagement();
-            //await InitMapStateManagement();
-            //await InitUserResourceStateManagement();
-            //await InitUiStateManagement();
 
             _initialized = true;
         }
-
-        //private async Task InitBehaviorStateManagement() {
-        //    this.BehaviorStates = new BehaviorStates(this);
-        //    await this.BehaviorStates.Start();
-        //}
-
-        //private async Task InitCategoryStateManagement() {
-        //    this.CategoryStates = new CategoryStates(this);
-        //    await this.CategoryStates.Start();
-        //}
-
-        //private async Task InitMapStateManagement() {
-        //    this.MapStates = new MapStates(this);
-        //    await this.MapStates.Start();
-        //}
-
-        //private async Task InitUserResourceStateManagement() {
-        //    this.UserResourceStates = new UserResourceStates(this);
-        //    await this.UserResourceStates.Start();
-        //}
-
-        //private async Task InitUiStateManagement() {
-        //    this.UiStates = new UiStates(this);
-        //    await this.UiStates.Start();
-        //}
 
         public void UnloadPacks() {
             lock (_entities.SyncRoot) {
@@ -157,10 +126,11 @@ namespace BhModule.Community.Pathing {
         }
 
         private void OnInteractPressed(object sender, EventArgs e) {
+            // TODO: OnInteractPressed needs a better place.
             lock (_entities.SyncRoot) {
                 foreach (var entity in _entities) {
-                    if (entity.DistanceToPlayer <= entity.TriggerRange) {
-                        entity.Interact(false);
+                    if (entity is StandardMarker {Focused: true} marker) {
+                        marker.Interact(false);
                     }
                 }
             }
@@ -172,18 +142,6 @@ namespace BhModule.Community.Pathing {
                 state.Update(gameTime);
             }
             GameService.Debug.StopTimeFunc("Pathing States");
-
-
-            // TODO: Should probably move into behavior state
-            lock (_entities.SyncRoot) {
-                foreach (var entity in this._entities) {
-                    if (entity.DistanceToPlayer <= entity.TriggerRange) {
-                        entity.Focus();
-                    } else {
-                        entity.Unfocus();
-                    }
-                }
-            }
         }
 
     }
