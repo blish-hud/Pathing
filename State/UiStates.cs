@@ -18,7 +18,7 @@ namespace BhModule.Community.Pathing.State {
         private Label        _infoLabel;
         private List<string> _infoList;
 
-        public UiStates(IRootPackState rootPackState) : base(rootPackState, int.MaxValue) { }
+        public UiStates(IRootPackState rootPackState) : base(rootPackState) { /* NOOP */ }
 
         public override async Task Reload() {
             Unload();
@@ -76,6 +76,7 @@ namespace BhModule.Community.Pathing.State {
                 currentInfo = _infoList.LastOrDefault() ?? string.Empty;
             }
 
+            // Add spacing to make font a little more readable.
             _infoLabel.Text = currentInfo.Replace(" ", "  ");
 
             if (string.IsNullOrEmpty(currentInfo)) {
@@ -114,9 +115,7 @@ namespace BhModule.Community.Pathing.State {
             GameService.Gw2Mumble.UI.IsMapOpenChanged   -= MapOpenedChanged;
         }
 
-        protected override void Update(GameTime gameTime) {
-            
-        }
+        public override void Update(GameTime gameTime) { /* NOOP */ }
 
     }
 }

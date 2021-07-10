@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Behavior;
 using BhModule.Community.Pathing.State;
 using Blish_HUD.Entities;
@@ -37,6 +38,12 @@ namespace BhModule.Community.Pathing.Entity {
             lock (pathingEntity.Behaviors.SyncRoot) {
                 for (int i = 0; i < pathingEntity.Behaviors.Count; i++) {
                     pathingEntity.Behaviors[i].Update(gameTime);
+                }
+
+                if (pathingEntity.DistanceToPlayer <= pathingEntity.TriggerRange) {
+                    pathingEntity.Focus();
+                } else {
+                    pathingEntity.Unfocus();
                 }
             }
         }

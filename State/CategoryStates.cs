@@ -30,18 +30,17 @@ namespace BhModule.Community.Pathing.State {
         private bool _stateDirty       = false;
         private bool _calculationDirty = false;
 
-        public CategoryStates(IRootPackState packState) : base(packState, 100) { /* NOOP */ }
+        public CategoryStates(IRootPackState packState) : base(packState) { /* NOOP */ }
 
         private async Task LoadState() {
             string categoryStatesPath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), STATE_FILE);
 
             if (!File.Exists(categoryStatesPath)) return;
 
-            string recordedCategories = "";
+            string[] recordedCategories = Array.Empty<string>();
 
             try {
-                using var categoryReader = File.OpenText(categoryStatesPath);
-                recordedCategories = await categoryReader.ReadToEndAsync();
+                recordedCategories = await FileUtil.ReadLinesAsync(categoryStatesPath);
             } catch (Exception e) {
                 Logger.Error(e, $"Failed to read {STATE_FILE} ({categoryStatesPath}).");
             }
@@ -49,9 +48,9 @@ namespace BhModule.Community.Pathing.State {
             lock (_rawInactiveCategories) {
                 _rawInactiveCategories.Clear();
 
-                foreach (string categoryNamespace in recordedCategories.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)) {
+                foreach (string categoryNamespace in recordedCategories) {
                     // TODO: Consider the case where a category no longer exists - this will create it.
-                    // It should not display, though because it will not have a displayname.
+                    // Luckily, it shouldn't display anyways because it will not have a displayname.
                     _rawInactiveCategories.Add(_rootPackState.RootCategory.GetOrAddCategoryFromNamespace(categoryNamespace));
                 }
             }
@@ -59,8 +58,10 @@ namespace BhModule.Community.Pathing.State {
             _calculationDirty = true;
         }
 
-        private void SaveState(GameTime gameTime) {
+        private async Task SaveState(GameTime gameTime) {
             if (!_stateDirty) return;
+
+            Logger.Debug($"Saving {nameof(CategoryStates)} state.");
 
             PathingCategory[] inactiveCategories;
 
@@ -69,7 +70,7 @@ namespace BhModule.Community.Pathing.State {
             string categoryStatesPath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), STATE_FILE);
 
             try {
-                File.WriteAllLines(categoryStatesPath, inactiveCategories.Select(c => c.GetNamespace()));
+                await FileUtil.WriteLinesAsync(categoryStatesPath, inactiveCategories.Select(c => c.GetNamespace()));
             } catch (Exception e) {
                 Logger.Error(e, $"Failed to write {STATE_FILE} ({categoryStatesPath}).");
             }
@@ -119,9 +120,9 @@ namespace BhModule.Community.Pathing.State {
             await LoadState();
         }
 
-        protected override void Update(GameTime gameTime) {
+        public override void Update(GameTime gameTime) {
             UpdateCadenceUtil.UpdateWithCadence(CalculateOptimizedCategoryStates, gameTime, INTERVAL_UPDATEINACTIVECATEGORIES, ref _lastInactiveCategoriesCalculation);
-            UpdateCadenceUtil.UpdateWithCadence(SaveState,                        gameTime, INTERVAL_SAVESTATE,                ref _lastSaveState);
+            UpdateCadenceUtil.UpdateAsyncWithCadence(SaveState, gameTime, INTERVAL_SAVESTATE, ref _lastSaveState);
         }
 
         protected override void Unload() {

@@ -1,6 +1,4 @@
-﻿using System;
-using BhModule.Community.Pathing.Utility;
-using Blish_HUD.Input;
+﻿using Blish_HUD.Input;
 using Blish_HUD.Settings;
 using Microsoft.Xna.Framework.Input;
 
