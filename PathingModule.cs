@@ -97,6 +97,8 @@ namespace BhModule.Community.Pathing {
         /// <inheritdoc />
         protected override void Unload() {
             _watcher?.Unload();
+            _pathingIcon?.Dispose();
+            _pathingContextMenuStrip.Dispose();
 
             Instance = null;
         }
