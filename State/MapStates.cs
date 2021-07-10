@@ -22,7 +22,7 @@ namespace BhModule.Community.Pathing.State {
 
         private readonly Dictionary<int, MapDetails> _mapDetails = new();
 
-        public MapStates(IRootPackState rootPackState) : base(rootPackState, 1000) { /* NOOP */ }
+        public MapStates(IRootPackState rootPackState) : base(rootPackState) { /* NOOP */ }
 
         protected override async Task<bool> Initialize() {
             await LoadMapData();
@@ -51,10 +51,9 @@ namespace BhModule.Community.Pathing.State {
             return (0, 0);
         }
 
-        public override async Task Reload() {
-        }
+        public override async Task Reload() { }
 
-        protected override void Update(GameTime gameTime) { /* NOOP */ }
+        public override void Update(GameTime gameTime) { /* NOOP */ }
 
         protected override void Unload() {
 

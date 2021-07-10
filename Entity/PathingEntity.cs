@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BhModule.Community.Pathing.Behavior;
+using BhModule.Community.Pathing.State;
 using Blish_HUD;
 using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
@@ -19,6 +20,12 @@ namespace BhModule.Community.Pathing.Entity {
         public float DistanceToPlayer { get; set; }
 
         public abstract float DrawOrder { get; }
+        
+        protected readonly IPackState _packState;
+
+        protected PathingEntity(IPackState packState) {
+            _packState = packState;
+        }
 
         public abstract void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity);
 
@@ -43,7 +50,10 @@ namespace BhModule.Community.Pathing.Entity {
                 _needsFadeIn   = false;
             }
 
-            this.UpdateBehaviors(gameTime);
+            // Only update behaviors found within enabled category namespaces.
+            if (!_packState.CategoryStates.GetNamespaceInactive(this.CategoryNamespace)) {
+                this.UpdateBehaviors(gameTime);
+            }
         }
 
     }

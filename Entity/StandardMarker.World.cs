@@ -46,8 +46,7 @@ namespace BhModule.Community.Pathing.Entity {
             if (this.DistanceToPlayer > maxRender) return;
 
             graphicsDevice.RasterizerState = this.CullDirection;
-
-            var modelMatrix = Matrix.CreateScale(Math.Max(this.Size.X, this.Size.Y) / 2f) * Matrix.CreateScale(this.Scale);
+            var modelMatrix = Matrix.CreateScale(this.Size.X / 2f, this.Size.Y / 2f, 1f) * Matrix.CreateScale(this.Scale);
 
             if (this.RotationXyz == Vector3.Zero) {
                 modelMatrix *= Matrix.CreateBillboard(this.Position + new Vector3(0, 0, this.HeightOffset),

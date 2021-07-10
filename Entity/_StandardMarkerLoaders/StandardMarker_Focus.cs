@@ -40,7 +40,7 @@ namespace BhModule.Community.Pathing.Entity {
         private void Populate_Triggers(AttributeCollection collection, IPackResourceManager resourceManager) {
             this.TriggerRange = _packState.UserResourceStates.Population.MarkerPopulationDefaults.TriggerRange;
 
-            { if (collection.TryPopAttribute(ATTR_TRIGGERRANGE, out var attribute)) this.TriggerRange = attribute.GetValueAsFloat(); }
+            { if (collection.TryPopAttribute(ATTR_TRIGGERRANGE, out var attribute)) this.TriggerRange = attribute.GetValueAsFloat(_packState.UserResourceStates.Population.MarkerPopulationDefaults.TriggerRange); }
         }
 
         public override void Focus() {

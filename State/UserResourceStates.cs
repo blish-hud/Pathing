@@ -17,14 +17,10 @@ namespace BhModule.Community.Pathing.State {
         private const string POPULATE_FILE = "populate.yaml";
         private const string IGNORE_FILE   = "ignore.yaml";
 
-        private const int INTERVAL_UPDATELOOP = int.MaxValue;
-
         public PopulationDefaults Population { get; set; }
         public IgnoreDefaults     Ignore     { get; set; }
 
-        public UserResourceStates(IRootPackState rootPackState) : base(rootPackState, INTERVAL_UPDATELOOP) {
-
-        }
+        public UserResourceStates(IRootPackState rootPackState) : base(rootPackState) { /* NOOP */ }
 
         protected override async Task<bool> Initialize() {
             await ExportDefault();
@@ -79,7 +75,7 @@ namespace BhModule.Community.Pathing.State {
                 this.Population = yamlDeserializer.Deserialize<PopulationDefaults>(await populateReader.ReadToEndAsync());
             } catch (Exception e) {
                 Logger.Error(e, $"Failed to read or parse {POPULATE_FILE}.");
-                Logger.Warn($"Since {POPULATE_FILE} failed to load, internal defaults will be used instead. Delete it to have it rebuilt.");
+                Logger.Warn($"Since {POPULATE_FILE} failed to load, internal defaults will be used instead.  Delete it to have it rebuilt.");
             } finally {
                 this.Population ??= new PopulationDefaults();
             }
@@ -107,7 +103,7 @@ namespace BhModule.Community.Pathing.State {
             await LoadState();
         }
 
-        protected override void Update(GameTime gameTime) { /* NOOP */ }
+        public override void Update(GameTime gameTime) { /* NOOP */ }
 
     }
 }

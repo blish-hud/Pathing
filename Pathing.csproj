@@ -154,6 +154,7 @@
     <Compile Include="Utility\2mgfx\TPGParser\ShaderInfo.cs" />
     <Compile Include="Utility\2mgfx\TPGParser\TechniqueInfo.cs" />
     <Compile Include="Utility\DataDirUtil.cs" />
+    <Compile Include="Utility\FileUtil.cs" />
     <Compile Include="Utility\GuidExtension.cs" />
     <Compile Include="Utility\Gw2SharpModelExtensions.cs" />
     <Compile Include="Utility\MapNavUtil.cs" />
@@ -221,10 +222,8 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Blish HUD, Version=0.8.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\BlishHUD.0.7.0\lib\net472\Blish HUD.exe</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+    <Reference Include="Blish HUD, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\BlishHUD.0.8.0-ci.72\lib\net472\Blish HUD.exe</HintPath>
     </Reference>
     <Reference Include="CppNet">
       <HintPath>.\CppNet.dll</HintPath>
@@ -373,6 +372,7 @@
          It needs the additional 'OutputItemType' and 'ReferenceOutputAssmbly' attributes. -->
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Blish HUD.DebugHelper.exe" />
     <Content Include="License-2mgfx.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -399,14 +399,14 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\BlishHUD.0.7.0\build\BlishHUD.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\BlishHUD.0.7.0\build\BlishHUD.targets'))" />
     <Error Condition="!Exists('packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets'))" />
+    <Error Condition="!Exists('packages\BlishHUD.0.8.0-ci.72\build\BlishHUD.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\BlishHUD.0.8.0-ci.72\build\BlishHUD.targets'))" />
   </Target>
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties manifest_1json__JsonSchema="" />
     </VisualStudio>
   </ProjectExtensions>
-  <Import Project="packages\BlishHUD.0.7.0\build\BlishHUD.targets" Condition="Exists('packages\BlishHUD.0.7.0\build\BlishHUD.targets')" />
   <Import Project="packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets')" />
+  <Import Project="packages\BlishHUD.0.8.0-ci.72\build\BlishHUD.targets" Condition="Exists('packages\BlishHUD.0.8.0-ci.72\build\BlishHUD.targets')" />
 </Project>

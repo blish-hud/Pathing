@@ -22,9 +22,7 @@ namespace BhModule.Community.Pathing.State {
 
         private const double INTERVAL_CHECKTIMERS       = 5000;   // 5 seconds
         private const double INTERVAL_CHECKACHIEVEMENTS = 240000; // 4 minutes
-        private const double INTERVAL_SAVESTATE         = 10000; // 10 seconds
-
-        private const int INTERVAL_UPDATELOOP = 5000; // 5 seconds
+        private const double INTERVAL_SAVESTATE         = 10000;  // 10 seconds
 
         /// <summary>
         /// TacO Behavior 1
@@ -61,7 +59,7 @@ namespace BhModule.Community.Pathing.State {
 
         private bool _stateDirty = false;
 
-        public BehaviorStates(IRootPackState packState) : base(packState, INTERVAL_UPDATELOOP) {
+        public BehaviorStates(IRootPackState packState) : base(packState) {
             GameService.Gw2Mumble.CurrentMap.MapChanged += CurrentMapOnMapChanged;
         }
 
@@ -165,12 +163,12 @@ namespace BhModule.Community.Pathing.State {
             return true;
         }
 
-        public override async Task Reload() { /* NOOP */ }
+        public override Task Reload() { return Task.CompletedTask; /* NOOP */ }
 
-        protected override void Update(GameTime gameTime) {
+        public override void Update(GameTime gameTime) {
             UpdateCadenceUtil.UpdateWithCadence(UpdateTimers,       gameTime, INTERVAL_CHECKTIMERS,       ref _lastTimerCheck);
             UpdateCadenceUtil.UpdateWithCadence(UpdateAchievements, gameTime, INTERVAL_CHECKACHIEVEMENTS, ref _lastAchievementCheck);
-            UpdateCadenceUtil.UpdateWithCadence(SaveState,          gameTime, INTERVAL_SAVESTATE,         ref _lastSaveState);
+            UpdateCadenceUtil.UpdateAsyncWithCadence(SaveState,          gameTime, INTERVAL_SAVESTATE,         ref _lastSaveState);
         }
 
         protected override void Unload() {
@@ -183,31 +181,36 @@ namespace BhModule.Community.Pathing.State {
 
             if (!File.Exists(timerStatesPath)) return;
 
-            string recordedTimerMetadata = "";
+            string[] recordedTimerMetadata = Array.Empty<string>();
 
             try {
-                using var timerReader = File.OpenText(timerStatesPath);
-                recordedTimerMetadata = await timerReader.ReadToEndAsync();
+                recordedTimerMetadata = await FileUtil.ReadLinesAsync(timerStatesPath);
             } catch (Exception e) {
                 Logger.Error(e, $"Failed to read {STATE_FILE} ({timerStatesPath}).");
             }
 
             lock (_timerMetadata)
             lock (_hiddenUntilTimer) {
-                foreach (string line in recordedTimerMetadata.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)) {
+                foreach (string line in recordedTimerMetadata) {
                     string[] lineParts = line.Split(',');
 
-                    var markerGuid   = Guid.ParseExact(lineParts[0], "D");
-                    var markerExpire = DateTime.Parse(lineParts[1]);
+                    try {
+                        var markerGuid   = Guid.ParseExact(lineParts[0], "D");
+                        var markerExpire = DateTime.Parse(lineParts[1]);
 
-                    _hiddenUntilTimer.Add(markerGuid);
-                    _timerMetadata.Add((markerExpire, markerGuid));
+                        _hiddenUntilTimer.Add(markerGuid);
+                        _timerMetadata.Add((markerExpire, markerGuid));
+                    } catch (Exception ex) {
+                        Logger.Warn(ex, $"Failed to parse behavior state '{line}' from {timerStatesPath}");
+                    }
                 }
             }
         }
 
-        private void SaveState(GameTime gameTime) {
+        private async Task SaveState(GameTime gameTime) {
             if (!_stateDirty) return;
+
+            Logger.Debug($"Saving {nameof(CategoryStates)} state.");
 
             (DateTime timerExpiration, Guid guid)[] timerMetadata;
 
@@ -216,7 +219,7 @@ namespace BhModule.Community.Pathing.State {
             string timerStatesPath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), STATE_FILE);
 
             try {
-                File.WriteAllLines(timerStatesPath, timerMetadata.Select(metadata => $"{metadata.guid},{metadata.timerExpiration}"));
+                await FileUtil.WriteLinesAsync(timerStatesPath, timerMetadata.Select(metadata => $"{metadata.guid},{metadata.timerExpiration}"));
             } catch (Exception e) {
                 Logger.Error(e, $"Failed to write {STATE_FILE} ({timerStatesPath}).");
             }
@@ -237,9 +240,15 @@ namespace BhModule.Community.Pathing.State {
         }
 
         private void UpdateAchievements(GameTime gameTime) {
-            // v2/account/achivements requires "account" and "progression" permissions.
-            if (PathingModule.Instance.Gw2ApiManager.HavePermissions(new[] {TokenPermission.Account, TokenPermission.Progression})) {
-                PathingModule.Instance.Gw2ApiManager.Gw2ApiClient.V2.Account.Achievements.GetAsync().ContinueWith(HandleAchievementUpdate, TaskContinuationOptions.NotOnFaulted);
+            if (!this.Running) return;
+
+            try {
+                // v2/account/achivements requires "account" and "progression" permissions.
+                if (PathingModule.Instance.Gw2ApiManager.HavePermissions(new[] {TokenPermission.Account, TokenPermission.Progression})) {
+                    PathingModule.Instance.Gw2ApiManager.Gw2ApiClient.V2.Account.Achievements.GetAsync().ContinueWith(HandleAchievementUpdate, TaskContinuationOptions.NotOnFaulted);
+                }
+            } catch (Exception ex) {
+                Logger.Warn(ex, "Failed to load account achievements.");
             }
         }
 

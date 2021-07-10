@@ -12,15 +12,11 @@ namespace BhModule.Community.Pathing.Entity {
 
         private static readonly Logger Logger = Logger.GetLogger<StandardTrail>();
 
-        private readonly IPackState _packState;
-
         public override float DrawOrder => float.MaxValue;
 
         private Vector3[][] _sectionPoints;
 
-        public StandardTrail(IPackState packState, ITrail trail) {
-            _packState = packState;
-
+        public StandardTrail(IPackState packState, ITrail trail) : base(packState) {
             Initialize(trail);
         }
 
