@@ -224,6 +224,8 @@
     </Reference>
     <Reference Include="Blish HUD, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\BlishHUD.0.8.0-ci.72\lib\net472\Blish HUD.exe</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="CppNet">
       <HintPath>.\CppNet.dll</HintPath>

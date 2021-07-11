@@ -136,11 +136,9 @@ namespace BhModule.Community.Pathing {
         }
 
         public void Update(GameTime gameTime) {
-            GameService.Debug.StartTimeFunc("Pathing States");
             foreach (var state in _managedStates) {
                 state.Update(gameTime);
             }
-            GameService.Debug.StopTimeFunc("Pathing States");
         }
 
     }
