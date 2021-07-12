@@ -21,7 +21,7 @@ namespace BhModule.Community.Pathing.State {
         private const string STATE_FILE = "timers.txt";
 
         private const double INTERVAL_CHECKTIMERS       = 5000;   // 5 seconds
-        private const double INTERVAL_CHECKACHIEVEMENTS = 240000; // 4 minutes
+        private const double INTERVAL_CHECKACHIEVEMENTS = 150000; // 2.5 minutes
         private const double INTERVAL_SAVESTATE         = 10000;  // 10 seconds
 
         /// <summary>
