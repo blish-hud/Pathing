@@ -19,14 +19,22 @@ namespace BhModule.Community.Pathing.Entity {
             if (!this.MapVisibility && GameService.Gw2Mumble.UI.IsMapOpen) return;
             if (!this.MiniMapVisibility && !GameService.Gw2Mumble.UI.IsMapOpen) return;
 
+            bool lastPointInBounds = false;
+
             foreach (var trailSection in _sectionPoints) {
                 for (int i = 0; i < trailSection.Length - 1; i++) {
                     var thisPoint = GetScaledLocation(trailSection[i].X, trailSection[i].Y, scale, offsets);
                     var nextPoint = GetScaledLocation(trailSection[i + 1].X, trailSection[i + 1].Y, scale, offsets);
 
-                    float distance = Vector2.Distance(thisPoint, nextPoint);
-                    float angle = (float)Math.Atan2(nextPoint.Y - thisPoint.Y, nextPoint.X - thisPoint.X);
-                    DrawLine(spriteBatch, thisPoint, angle, distance, this.TrailSampleColor * opacity, 2f);
+                    bool inBounds = false;
+
+                    if (lastPointInBounds | (inBounds = bounds.Contains(nextPoint))) {
+                        float distance = Vector2.Distance(thisPoint, nextPoint);
+                        float angle    = (float)Math.Atan2(nextPoint.Y - thisPoint.Y, nextPoint.X - thisPoint.X);
+                        DrawLine(spriteBatch, thisPoint, angle, distance, this.TrailSampleColor * opacity, 2f);
+                    }
+
+                    lastPointInBounds = inBounds;
                 }
             }
 

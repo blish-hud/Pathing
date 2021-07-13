@@ -122,7 +122,7 @@ namespace BhModule.Community.Pathing.Entity {
 
             bounds = new Rectangle(this.Location, bounds.Size);
 
-            double scale   = GameService.Gw2Mumble.UI.MapScale*0.9d; //Workaround to fix pixel to coordinate scaling, Mumble gives the wrong Value
+            double scale   = GameService.Gw2Mumble.UI.MapScale * 0.9d; //Workaround to fix pixel to coordinate scaling - appears we're somehow not getting the correct value.
             double offsetX = GameService.Gw2Mumble.UI.MapCenter.X / scale - (bounds.Width  / 2d) - bounds.X;
             double offsetY = GameService.Gw2Mumble.UI.MapCenter.Y / scale - (bounds.Height / 2d) - bounds.Y;
 

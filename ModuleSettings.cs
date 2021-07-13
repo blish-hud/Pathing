@@ -83,9 +83,11 @@ namespace BhModule.Community.Pathing {
 
         public SettingCollection MapSettings { get; private set; }
 
-        public SettingEntry<bool> MapPathablesEnabled   { get; private set; }
+        public SettingEntry<bool> MapPathablesEnabled         { get; private set; }
         public SettingEntry<bool> MapShowMarkersOnFullscreen  { get; private set; }
+        public SettingEntry<bool> MapShowTrailsOnFullscreen   { get; private set; }
         public SettingEntry<bool> MapShowMarkersOnCompass     { get; private set; }
+        public SettingEntry<bool> MapShowTrailsOnCompass      { get; private set; }    
         public SettingEntry<bool> MapShowAboveBelowIndicators { get; private set; }
 
         private void InitMapSettings(SettingCollection settings) {
