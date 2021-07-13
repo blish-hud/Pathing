@@ -124,6 +124,24 @@ namespace BhModule.Community.Pathing {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Trails on the Minimap / Compass.
+        /// </summary>
+        internal static string Setting_MapShowTrailsOnCompass {
+            get {
+                return ResourceManager.GetString("Setting_MapShowTrailsOnCompass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Trails on Fullscreen Map.
+        /// </summary>
+        internal static string Setting_MapShowTrailsOnFullscreen {
+            get {
+                return ResourceManager.GetString("Setting_MapShowTrailsOnFullscreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Allow Markers to Animate.
         /// </summary>
         internal static string Setting_PackAllowMarkersToAnimate {

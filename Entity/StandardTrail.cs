@@ -10,8 +10,6 @@ using TmfLib.Prototype;
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail : PathingEntity {
 
-        private static readonly Logger Logger = Logger.GetLogger<StandardTrail>();
-
         public override float DrawOrder => float.MaxValue;
 
         private Vector3[][] _sectionPoints;

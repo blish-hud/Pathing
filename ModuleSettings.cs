@@ -97,7 +97,9 @@ namespace BhModule.Community.Pathing {
             // TODO: Add description to settings.
             this.MapPathablesEnabled         = this.MapSettings.DefineSetting(nameof(this.MapPathablesEnabled),         true, "Show Markers on Maps");
             this.MapShowMarkersOnFullscreen  = this.MapSettings.DefineSetting(nameof(this.MapShowMarkersOnFullscreen),  true, Strings.Setting_MapShowMarkersOnFullscreen,  "");
+            //this.MapShowMarkersOnFullscreen  = this.MapSettings.DefineSetting(nameof(this.MapShowTrailsOnFullscreen),   true, Strings.Setting_MapShowTrailsOnFullscreen,   "");
             this.MapShowMarkersOnCompass     = this.MapSettings.DefineSetting(nameof(this.MapShowMarkersOnCompass),     true, Strings.Setting_MapShowMarkersOnCompass,     "");
+            //this.MapShowMarkersOnCompass     = this.MapSettings.DefineSetting(nameof(this.MapShowTrailsOnCompass),      true, Strings.Setting_MapShowTrailsOnCompass,      "");
             this.MapShowAboveBelowIndicators = this.MapSettings.DefineSetting(nameof(this.MapShowAboveBelowIndicators), true, Strings.Setting_MapShowAboveBelowIndicators, "");
         }
 

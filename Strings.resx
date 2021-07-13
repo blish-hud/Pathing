@@ -160,4 +160,10 @@
   <data name="Repo_Categories" xml:space="preserve">
     <value>Categories</value>
   </data>
+  <data name="Setting_MapShowTrailsOnCompass" xml:space="preserve">
+    <value>Show Trails on the Minimap / Compass</value>
+  </data>
+  <data name="Setting_MapShowTrailsOnFullscreen" xml:space="preserve">
+    <value>Show Trails on Fullscreen Map</value>
+  </data>
 </root>

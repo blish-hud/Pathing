@@ -37,7 +37,6 @@ namespace BhModule.Community.Pathing.Entity {
                     lastPointInBounds = inBounds;
                 }
             }
-
         }
 
         private void DrawLine(SpriteBatch spriteBatch, Vector2 position, float angle, float distance, Color color, float thickness) {
