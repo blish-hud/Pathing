@@ -21,6 +21,10 @@ namespace BhModule.Community.Pathing.Entity {
 
             { if (collection.TryPopAttribute(ATTR_COLOR, out var attribute)) this.Tint = attribute.GetValueAsColor(this.Tint); }
             { if (collection.TryPopAttribute(ATTR_TINT,  out var attribute)) this.Tint = attribute.GetValueAsColor(this.Tint); }
+
+            if (this.Tint != _packState.UserResourceStates.Population.TrailPopulationDefaults.Tint) {
+                this.TrailSampleColor = this.Tint;
+            }
         }
 
     }

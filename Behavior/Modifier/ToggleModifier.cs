@@ -20,9 +20,11 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
         }
 
         public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
-            return new ToggleModifier(packState.RootCategory.GetOrAddCategoryFromNamespace(attributes[PRIMARY_ATTR_NAME].GetValueAsString()),
-                                      marker,
-                                      packState);
+            return attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)
+                       ? new ToggleModifier(packState.RootCategory.GetOrAddCategoryFromNamespace(attribute.GetValueAsString()),
+                                            marker,
+                                            packState)
+                       : null;
         }
 
         public void Interact(bool autoTriggered) {

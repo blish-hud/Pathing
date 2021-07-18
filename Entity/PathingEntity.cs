@@ -46,7 +46,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         public virtual void Update(GameTime gameTime) {
             if (_needsFadeIn) {
-                _lastFadeStart = gameTime.ElapsedGameTime.TotalMilliseconds;
+                _lastFadeStart = gameTime.TotalGameTime.TotalMilliseconds;
                 _needsFadeIn   = false;
             }
 

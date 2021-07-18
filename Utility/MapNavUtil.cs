@@ -45,7 +45,7 @@ namespace BhModule.Community.Pathing.Utility {
                 await WaitForTick();
             }
 
-            double totalDist  = GetDistance(mapPos.X, mapPos.Y, x, y) / GameService.Gw2Mumble.UI.MapScale;
+            double totalDist  = GetDistance(mapPos.X, mapPos.Y, x, y) / (GameService.Gw2Mumble.UI.MapScale * 0.9d);
 
             Logger.Debug($"Distance: {totalDist}");
 
@@ -56,8 +56,6 @@ namespace BhModule.Community.Pathing.Utility {
             if (Math.Sqrt(Math.Pow(mapPos.Y - y, 2)) / GameService.Gw2Mumble.UI.MapScale > GameService.Graphics.WindowHeight / 2f) {
                 Logger.Debug("Point is off vertically");
             }
-
-            return true;
 
             double targetDist = 0;
 
@@ -78,13 +76,13 @@ namespace BhModule.Community.Pathing.Utility {
                 Mouse.SetPosition(GameService.Graphics.WindowWidth / 2, GameService.Graphics.WindowHeight / 2);
 
                 Mouse.Press(MouseButton.RIGHT);
-                Mouse.SetPosition(startPos.X + (int)MathHelper.Clamp((float)offsetX / (float)GameService.Gw2Mumble.UI.MapScale, -100000, 100000),
-                                  startPos.Y + (int)MathHelper.Clamp((float)offsetY / (float)GameService.Gw2Mumble.UI.MapScale, -100000, 100000));
+                Mouse.SetPosition(startPos.X + (int)MathHelper.Clamp((float)offsetX / (float)(GameService.Gw2Mumble.UI.MapScale * 0.9d), -100000, 100000),
+                                  startPos.Y + (int)MathHelper.Clamp((float)offsetY / (float)(GameService.Gw2Mumble.UI.MapScale * 0.9d), -100000, 100000));
 
                 await WaitForTick();
 
-                Mouse.SetPosition(startPos.X + (int)MathHelper.Clamp((float)offsetX / (float)GameService.Gw2Mumble.UI.MapScale, -100000, 100000),
-                                  startPos.Y + (int)MathHelper.Clamp((float)offsetY / (float)GameService.Gw2Mumble.UI.MapScale, -100000, 100000));
+                Mouse.SetPosition(startPos.X + (int)MathHelper.Clamp((float)offsetX / (float)(GameService.Gw2Mumble.UI.MapScale * 0.9d), -100000, 100000),
+                                  startPos.Y + (int)MathHelper.Clamp((float)offsetY / (float)(GameService.Gw2Mumble.UI.MapScale * 0.9d), -100000, 100000));
 
                 Mouse.Release(MouseButton.RIGHT);
 

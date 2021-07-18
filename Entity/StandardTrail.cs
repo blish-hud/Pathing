@@ -36,7 +36,7 @@ namespace BhModule.Community.Pathing.Entity {
         private void Initialize(ITrail trail) {
             var trailSections = new List<Vector3[]>(trail.TrailSections.Count());
             foreach (var trailSection in trail.TrailSections) {
-                trailSections.Add(PostProcessing_DouglasPeucker(trailSection.TrailPoints.Select(v => new Vector3(v.X, v.Y, v.Z))).ToArray());
+                trailSections.Add(PostProcessing_DouglasPeucker(trailSection.TrailPoints.Select(v => new Vector3(v.X, v.Y, v.Z)), _packState.UserResourceStates.Static.MapTrailDouglasPeuckerError).ToArray());
             }
 
             _sectionPoints = trailSections.ToArray();

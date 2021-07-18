@@ -1,11 +1,6 @@
-﻿using System;
-using BhModule.Community.Pathing.Entity;
+﻿using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
-using BhModule.Community.Pathing.UI.Controls;
 using BhModule.Community.Pathing.Utility;
-using Blish_HUD;
-using Blish_HUD.Controls;
-using Microsoft.Xna.Framework;
 using TmfLib.Prototype;
 
 namespace BhModule.Community.Pathing.Behavior.Modifier {
@@ -16,7 +11,7 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
 
         private const float  DEFAULT_INFORANGE = 2f;
 
-        private IPackState _packState;
+        private readonly IPackState _packState;
 
         public string InfoValue { get; set; }
 

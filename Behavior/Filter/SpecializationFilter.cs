@@ -42,7 +42,9 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
         }
 
         public static IBehavior BuildFromAttributes(AttributeCollection attributes) {
-            return new SpecializationFilter(attributes[PRIMARY_ATTR_NAME].GetValueAsInts());
+            return attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)
+                       ? new SpecializationFilter(attribute.GetValueAsInts())
+                       : null;
         }
 
         public void Update(GameTime gameTime) { /* NOOP */ }

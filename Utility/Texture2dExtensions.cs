@@ -14,8 +14,8 @@ namespace BhModule.Community.Pathing.Utility {
             return GetPixels(texture)[x + (y * texture.Width)];
         }
 
-        public static Color Sample24(this Texture2D texture) {
-            int samples = Math.Min(24, texture.Width - 1);
+        public static Color SampleN(this Texture2D texture, int n) {
+            int samples = Math.Min(n, texture.Width - 1);
 
             Color[] pixels = GetPixels(texture);
 

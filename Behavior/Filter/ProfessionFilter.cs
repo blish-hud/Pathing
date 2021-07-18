@@ -43,7 +43,9 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
         }
 
         public static IBehavior BuildFromAttributes(AttributeCollection attributes) {
-            return new ProfessionFilter(attributes[PRIMARY_ATTR_NAME].GetValueAsEnums<ProfessionType>());
+            return attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)
+                       ? new ProfessionFilter(attribute.GetValueAsEnums<ProfessionType>())
+                       : null;
         }
 
         public void Update(GameTime gameTime) { /* NOOP */ }

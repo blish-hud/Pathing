@@ -24,10 +24,8 @@ namespace BhModule.Community.Pathing.Entity {
                 if (collection.TryGetAttribute(ATTR_TEXTURE, out var attribute)) {
                     this.Texture = attribute.GetValueAsTexture(resourceManager);
 
-                    if (this.Tint != _packState.UserResourceStates.Population.TrailPopulationDefaults.Tint) {
-                        this.TrailSampleColor = this.Tint;
-                    } else if (this.Texture != null) {
-                        this.TrailSampleColor = this.Texture.Sample24();
+                    if (this.Texture != null && this.TrailSampleColor == Color.White) {
+                        this.TrailSampleColor = this.Texture.SampleN(_packState.UserResourceStates.Static.MapTrailColorSamples);
                     }
                 } else {
                     this.Texture = ContentService.Textures.Error;

@@ -31,7 +31,7 @@ namespace BhModule.Community.Pathing.Entity {
                              this.Tint * opacity,
                              GameService.Gw2Mumble.UI.IsCompassRotationEnabled ? (float) GameService.Gw2Mumble.UI.CompassRotation : 0f,
                              new Vector2(this.Texture.Width / 2f, this.Texture.Height / 2f),
-                             (float) (0.25f / scale),
+                             (float) (0.3f / scale),
                              SpriteEffects.None,
                              0f);
 

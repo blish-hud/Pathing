@@ -37,7 +37,10 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
         }
 
         public static IBehavior BuildFromAttributes(AttributeCollection attributes) {
-            return new FestivalFilter(attributes[PRIMARY_ATTR_NAME].GetValueAsStrings().Select(FestivalContext.Festival.FromName));
+            return attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)
+                       ? new FestivalFilter(attribute.GetValueAsStrings().Select(FestivalContext.Festival.FromName))
+                       : null;
+
         }
 
         public void Update(GameTime gameTime) { /* NOOP */ }

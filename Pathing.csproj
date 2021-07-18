@@ -91,6 +91,7 @@
     <Compile Include="PackLoader.cs" />
     <Compile Include="State\MapStates.cs" />
     <Compile Include="State\UserResourceStates.cs" />
+    <Compile Include="State\UserResources\StaticValues.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

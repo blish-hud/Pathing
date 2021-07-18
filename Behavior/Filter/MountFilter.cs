@@ -43,7 +43,9 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
         }
 
         public static IBehavior BuildFromAttributes(AttributeCollection attributes) {
-            return new MountFilter(attributes[PRIMARY_ATTR_NAME].GetValueAsEnums<MountType>());
+            return attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)
+                       ? new MountFilter(attribute.GetValueAsEnums<MountType>())
+                       : null;
         }
 
         public void Update(GameTime gameTime) { /* NOOP */ }

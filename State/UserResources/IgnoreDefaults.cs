@@ -2,7 +2,13 @@
 using System.Linq;
 
 namespace BhModule.Community.Pathing.State.UserResources {
+
+    /// <summary>
+    /// Ignore defaults which defines which maps certain features are ignored on.
+    /// </summary>
     public class IgnoreDefaults {
+
+        public const string FILENAME = "ignore.yaml";
 
         public HashSet<int> Compass { get; set; } = new(new[] {
             935, // SAB Lobby

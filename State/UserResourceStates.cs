@@ -14,22 +14,42 @@ namespace BhModule.Community.Pathing.State {
 
         private static readonly Logger Logger = Logger.GetLogger<UserResourceStates>();
 
-        private const string POPULATE_FILE = "populate.yaml";
-        private const string IGNORE_FILE   = "ignore.yaml";
-
+        /// <summary>
+        /// <inheritdoc cref="PopulationDefaults"/>
+        /// </summary>
         public PopulationDefaults Population { get; set; }
-        public IgnoreDefaults     Ignore     { get; set; }
+
+        /// <summary>
+        /// <inheritdoc cref="IgnoreDefaults"/>
+        /// </summary>
+        public IgnoreDefaults Ignore { get; set; }
+
+        /// <summary>
+        /// <inheritdoc cref="StaticValues"/>
+        /// </summary>
+        public StaticValues Static { get; set; }
 
         public UserResourceStates(IRootPackState rootPackState) : base(rootPackState) { /* NOOP */ }
 
         protected override async Task<bool> Initialize() {
-            await ExportDefault();
-            await LoadState();
+            await ExportAllDefault();
+            await LoadAllStates();
 
             return true;
         }
 
-        private async Task ExportDefault() {
+        private async Task ExportDefaultState<T>(string statePath, ISerializer yamlSerializer, T defaultExport) {
+            if (!File.Exists(statePath)) {
+                try {
+                    using var stateWriter = File.CreateText(statePath);
+                    await stateWriter.WriteAsync(yamlSerializer.Serialize(defaultExport));
+                } catch (Exception e) {
+                    Logger.Error(e, $"Failed to write state defaults to {statePath}");
+                }
+            }
+        }
+
+        private async Task ExportAllDefault() {
             string userResourceDir = DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_USER);
 
             var yamlSerializer = new SerializerBuilder()
@@ -37,30 +57,26 @@ namespace BhModule.Community.Pathing.State {
                                 .WithTypeConverter(new ColorConverter())
                                 .Build();
 
-            // populate
-            string populateFile = Path.Combine(userResourceDir, POPULATE_FILE);
-            if (!File.Exists(populateFile)) {
-                try {
-                    using var populateWriter = File.CreateText(populateFile);
-                    await populateWriter.WriteAsync(yamlSerializer.Serialize(new PopulationDefaults()));
-                } catch (Exception e) {
-                    Logger.Error(e, $"Failed to write defaults to {POPULATE_FILE}");
-                }
-            }
-
-            // ignore
-            string ignoreFile = Path.Combine(userResourceDir, IGNORE_FILE);
-            if (!File.Exists(Path.Combine(userResourceDir, IGNORE_FILE))) {
-                try {
-                    using var ignoreWriter = File.CreateText(ignoreFile);
-                    await ignoreWriter.WriteAsync(yamlSerializer.Serialize(new IgnoreDefaults()));
-                } catch (Exception e) {
-                    Logger.Error(e, $"Failed to write defaults to {IGNORE_FILE}");
-                }
-            }
+            await ExportDefaultState(Path.Combine(userResourceDir, PopulationDefaults.FILENAME), yamlSerializer, new PopulationDefaults());
+            await ExportDefaultState(Path.Combine(userResourceDir, IgnoreDefaults.FILENAME),     yamlSerializer, new IgnoreDefaults());
+            await ExportDefaultState(Path.Combine(userResourceDir, StaticValues.FILENAME),       yamlSerializer, new StaticValues());
         }
 
-        private async Task LoadState() {
+        private async Task<T> LoadState<T>(string statePath, IDeserializer yamlDeserializer, Func<T> returnOnError) where T : class {
+            T result = null;
+
+            try {
+                using var stateReader = File.OpenText(statePath);
+                result = yamlDeserializer.Deserialize<T>(await stateReader.ReadToEndAsync());
+            } catch (Exception e) {
+                Logger.Error(e, $"Failed to read or parse {statePath}.");
+                Logger.Warn($"Since {statePath} failed to load, internal defaults will be used instead.  Delete it to have it rebuilt.");
+            }
+
+            return result ?? returnOnError();
+        }
+
+        private async Task LoadAllStates() {
             string userResourceDir = DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_USER);
 
             var yamlDeserializer = new DeserializerBuilder()
@@ -68,39 +84,22 @@ namespace BhModule.Community.Pathing.State {
                                   .WithTypeConverter(new ColorConverter())
                                   .IgnoreUnmatchedProperties()
                                   .Build();
-
-            // Load population defaults (defines the default values for pathable attributes when a value isn't provided).
-            try {
-                using var populateReader = File.OpenText(Path.Combine(userResourceDir, POPULATE_FILE));
-                this.Population = yamlDeserializer.Deserialize<PopulationDefaults>(await populateReader.ReadToEndAsync());
-            } catch (Exception e) {
-                Logger.Error(e, $"Failed to read or parse {POPULATE_FILE}.");
-                Logger.Warn($"Since {POPULATE_FILE} failed to load, internal defaults will be used instead.  Delete it to have it rebuilt.");
-            } finally {
-                this.Population ??= new PopulationDefaults();
-            }
-
-            // Load ignore defaults (defines which maps certain features are ignored on).
-            try {
-                using var ignoreReader = File.OpenText(Path.Combine(userResourceDir, IGNORE_FILE));
-                this.Ignore = yamlDeserializer.Deserialize<IgnoreDefaults>(await ignoreReader.ReadToEndAsync());
-            } catch (Exception e) {
-                Logger.Error(e, $"Failed to read or parse {IGNORE_FILE}.");
-                Logger.Warn($"Since {IGNORE_FILE} failed to load, internal defaults will be used instead.  Delete it to have it rebuilt.");
-            } finally {
-                this.Ignore ??= new IgnoreDefaults();
-            }
+            
+            this.Population = await LoadState(Path.Combine(userResourceDir, PopulationDefaults.FILENAME), yamlDeserializer, () => new PopulationDefaults());
+            this.Ignore     = await LoadState(Path.Combine(userResourceDir, IgnoreDefaults.FILENAME),     yamlDeserializer, () => new IgnoreDefaults());
+            this.Static     = await LoadState(Path.Combine(userResourceDir, StaticValues.FILENAME),       yamlDeserializer, () => new StaticValues());
         }
 
         protected override void Unload() {
             this.Population = null;
             this.Ignore     = null;
+            this.Static     = null;
         }
 
         public override async Task Reload() {
             Unload();
 
-            await LoadState();
+            await LoadAllStates();
         }
 
         public override void Update(GameTime gameTime) { /* NOOP */ }
