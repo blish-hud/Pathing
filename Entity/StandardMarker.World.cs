@@ -39,7 +39,7 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         public override void Render(GraphicsDevice graphicsDevice, IWorld world, ICamera camera) {
-            if (this.IsFiltered(EntityRenderTarget.World, _packState) || _texture == null) return;
+            if (IsFiltered(EntityRenderTarget.World) || _texture == null) return;
 
             // Skip rendering stuff beyond the max view distance
             float maxRender = Math.Min(this.FadeFar, _packState.UserConfiguration.PackMaxViewDistance.Value);

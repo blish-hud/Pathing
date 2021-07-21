@@ -56,5 +56,50 @@ namespace BhModule.Community.Pathing.Entity {
             }
         }
 
+        private void UpdateBehaviors(GameTime gameTime) {
+            lock (this.Behaviors.SyncRoot) {
+                for (int i = 0; i < this.Behaviors.Count; i++) {
+                    this.Behaviors[i].Update(gameTime);
+                }
+
+                if (this.DistanceToPlayer <= this.TriggerRange) {
+                    this.Focus();
+                } else {
+                    this.Unfocus();
+                }
+            }
+        }
+
+        public bool IsFiltered(EntityRenderTarget renderTarget) {
+            // If all pathables are disabled.
+            if (!_packState.UserConfiguration.GlobalPathablesEnabled.Value) return true;
+
+            if (renderTarget == EntityRenderTarget.World) {
+                // If world pathables are disabled.
+                if (!_packState.UserConfiguration.PackWorldPathablesEnabled.Value) return true;
+            } else /*if (EntityRenderTarget.Map.HasFlag(renderTarget))*/ {
+                // If map pathables are disabled.
+                if (!_packState.UserConfiguration.MapPathablesEnabled.Value) return true;
+
+                // TODO: Consider moving IsMapOpen toggles into here.
+            }
+
+            // If category is disabled.
+            if (_packState.CategoryStates.GetNamespaceInactive(this.CategoryNamespace)) return true;
+
+            if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
+                lock (this.Behaviors.SyncRoot) {
+                    for (int i = 0; i < this.Behaviors.Count; i++) {
+                        if (this.Behaviors[i] is ICanFilter filterable) {
+                            // If behavior is filtering.
+                            if (filterable.IsFiltered()) return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
     }
 }

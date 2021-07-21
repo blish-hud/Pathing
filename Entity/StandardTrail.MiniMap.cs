@@ -14,7 +14,7 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         public override void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
-            if (this.IsFiltered(EntityRenderTarget.Map, _packState) || this.Texture == null) return;
+            if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return;
 
             if (!this.MapVisibility && GameService.Gw2Mumble.UI.IsMapOpen) return;
             if (!this.MiniMapVisibility && !GameService.Gw2Mumble.UI.IsMapOpen) return;
