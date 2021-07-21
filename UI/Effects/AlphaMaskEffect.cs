@@ -35,7 +35,6 @@ namespace BhModule.Community.Pathing.UI.Effects {
         }
 
         protected override void Update(GameTime gameTime) { /* NOOP */ }
-
-
+        
     }
 }

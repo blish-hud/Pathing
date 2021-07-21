@@ -169,8 +169,7 @@ namespace BhModule.Community.Pathing {
 
             await LoadMapFromEachPack(e.Value);
         }
-
-
+        
         public void Update(GameTime gameTime) {
             _packState.Update(gameTime);
         }

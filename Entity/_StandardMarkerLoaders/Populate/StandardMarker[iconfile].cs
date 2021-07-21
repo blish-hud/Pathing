@@ -64,7 +64,7 @@ namespace BhModule.Community.Pathing.Entity {
                 } else {
                     Logger.Warn($"Markers '{this.Guid}' is missing {ATTR_ICONFILE} attribute.");
                 }
-            };
+            }
         }
 
     }

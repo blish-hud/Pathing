@@ -13,7 +13,7 @@ namespace BhModule.Community.Pathing.Entity {
         private IEnumerable<Vector3> PostProcessing_SetTrailResolution(IEnumerable<Vector3> points, float resolution = DEFAULT_TRAILRESOLUTION) {
             Vector3[] pointsArr = points as Vector3[] ?? points.ToArray();
 
-            if (1 > pointsArr.Length) yield break;
+            if (pointsArr.Length < 1) yield break;
 
             Vector3 prevPoint;
 
