@@ -1,9 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
-using Blish_HUD.Pathing.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;

@@ -73,6 +73,7 @@
     <Compile Include="Behavior\Modifier\ToggleModifier.cs" />
     <Compile Include="Behavior\StandardPathableBehavior.cs" />
     <Compile Include="Content\WebReader.cs" />
+    <Compile Include="Entity\BillboardVerticalConstraint.cs" />
     <Compile Include="Entity\EntityRenderTarget.cs" />
     <Compile Include="Entity\SpritebatchEntity.cs" />
     <Compile Include="Entity\StandardMarker.World.cs" />
@@ -223,10 +224,8 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Blish HUD, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\BlishHUD.0.8.0-ci.72\lib\net472\Blish HUD.exe</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+    <Reference Include="Blish HUD, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\BlishHUD.0.10.0-ci.91\lib\net472\Blish HUD.exe</HintPath>
     </Reference>
     <Reference Include="CppNet">
       <HintPath>.\CppNet.dll</HintPath>
@@ -403,7 +402,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets'))" />
-    <Error Condition="!Exists('packages\BlishHUD.0.8.0-ci.72\build\BlishHUD.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\BlishHUD.0.8.0-ci.72\build\BlishHUD.targets'))" />
+    <Error Condition="!Exists('packages\BlishHUD.0.10.0-ci.91\build\BlishHUD.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\BlishHUD.0.10.0-ci.91\build\BlishHUD.targets'))" />
   </Target>
   <ProjectExtensions>
     <VisualStudio>
@@ -411,5 +410,5 @@
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets')" />
-  <Import Project="packages\BlishHUD.0.8.0-ci.72\build\BlishHUD.targets" Condition="Exists('packages\BlishHUD.0.8.0-ci.72\build\BlishHUD.targets')" />
+  <Import Project="packages\BlishHUD.0.10.0-ci.91\build\BlishHUD.targets" Condition="Exists('packages\BlishHUD.0.10.0-ci.91\build\BlishHUD.targets')" />
 </Project>

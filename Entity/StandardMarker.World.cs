@@ -1,7 +1,6 @@
 ﻿using System;
 using Blish_HUD;
 using Blish_HUD.Entities;
-using Blish_HUD.Pathing.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
