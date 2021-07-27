@@ -6,9 +6,9 @@ using TmfLib.Prototype;
 namespace BhModule.Community.Pathing.Behavior.Filter {
     public class AchievementFilter : IBehavior, ICanFilter, ICanInteract {
 
-        public const  string PRIMARY_ATTR_NAME = "achievement";
-        private const string ATTR_ID           = PRIMARY_ATTR_NAME + "id";
-        private const string ATTR_BIT          = PRIMARY_ATTR_NAME + "bit";
+        public const string PRIMARY_ATTR_NAME = "achievement";
+        public const string ATTR_ID           = PRIMARY_ATTR_NAME + "id";
+        public const string ATTR_BIT          = PRIMARY_ATTR_NAME + "bit";
 
         private readonly BehaviorStates _behaviorStates;
 

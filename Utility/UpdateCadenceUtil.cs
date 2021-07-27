@@ -14,9 +14,9 @@ namespace BhModule.Community.Pathing.Utility {
         public static void UpdateWithCadence(Action<GameTime> call, GameTime gameTime, double cadence, ref double lastCheck) {
             lastCheck += gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (lastCheck >= cadence) {
+            if (lastCheck >= cadence || lastCheck < 1 /* RUN ONCE */) {
                 call(gameTime);
-                lastCheck = 0;
+                lastCheck = 1;
             }
         }
 
@@ -30,11 +30,11 @@ namespace BhModule.Community.Pathing.Utility {
             
             lastCheck += gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (lastCheck >= cadence) {
+            if (lastCheck >= cadence || lastCheck < 1 /* RUN ONCE */) {
                 call(gameTime).ContinueWith((task) => {
                                                 _asyncStateMonitor.Remove(call.Method.MethodHandle.Value);
                                             });
-                lastCheck = 0;
+                lastCheck = 1;
             }
         }
 

@@ -168,7 +168,7 @@ namespace BhModule.Community.Pathing.State {
         public override void Update(GameTime gameTime) {
             UpdateCadenceUtil.UpdateWithCadence(UpdateTimers,       gameTime, INTERVAL_CHECKTIMERS,       ref _lastTimerCheck);
             UpdateCadenceUtil.UpdateWithCadence(UpdateAchievements, gameTime, INTERVAL_CHECKACHIEVEMENTS, ref _lastAchievementCheck);
-            UpdateCadenceUtil.UpdateAsyncWithCadence(SaveState,          gameTime, INTERVAL_SAVESTATE,         ref _lastSaveState);
+            UpdateCadenceUtil.UpdateAsyncWithCadence(SaveState, gameTime, INTERVAL_SAVESTATE, ref _lastSaveState);
         }
 
         protected override void Unload() {
@@ -227,7 +227,7 @@ namespace BhModule.Community.Pathing.State {
             _stateDirty = false;
         }
 
-        private Task HandleAchievementUpdate(Task<IApiV2ObjectList<AccountAchievement>> accountAchievementTask) {
+        private void HandleAchievementUpdate(Task<IApiV2ObjectList<AccountAchievement>> accountAchievementTask) {
             lock (_achievementStates) {
                 foreach (var achievement in accountAchievementTask.Result) {
                     _achievementStates.AddOrUpdate(achievement.Id,
@@ -235,8 +235,6 @@ namespace BhModule.Community.Pathing.State {
                                                    (_, _) => new AchievementStatus(achievement.Done, achievement.Bits ?? Enumerable.Empty<int>()));
                 }
             }
-
-            return Task.CompletedTask;
         }
 
         private void UpdateAchievements(GameTime gameTime) {

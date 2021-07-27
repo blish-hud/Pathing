@@ -7,6 +7,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.UI.Common;
 using BhModule.Community.Pathing.UI.Controls;
 using BhModule.Community.Pathing.UI.Views;
 using Blish_HUD.Controls;

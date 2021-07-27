@@ -25,13 +25,6 @@ namespace BhModule.Community.Pathing.UI.Controls {
                  || category.Any(CategoryIsNotFiltered));
         }
 
-        private string BuildTooltipText(PathingCategory category) {
-            int markerQty = category.Pathables.Count(poi => poi.Type == PointOfInterestType.Marker);
-            int trailQty  = category.Pathables.Count(poi => poi.Type == PointOfInterestType.Trail);
-
-            return $"Contains:\n{markerQty} Markers\n{trailQty} Trails";
-        }
-
         private IEnumerable<PathingCategory> GetSubCategories() {
             var filteredSubCategories = new List<PathingCategory>();
 
@@ -61,21 +54,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         protected override void OnShown(EventArgs e) {
             foreach (var subCategory in GetSubCategories()) {
-                var categoryMenuItem = this.AddMenuItem(new CategoryContextMenuStripItem() { Text = subCategory.DisplayName });
-
-                if (subCategory.Any(CategoryIsNotFiltered)) {
-                    categoryMenuItem.Submenu = new CategoryContextMenuStrip(_packState, subCategory);
-                }
-                
-                categoryMenuItem.BasicTooltipText = BuildTooltipText(subCategory);
-
-                if (!subCategory.IsSeparator) {
-                    categoryMenuItem.CanCheck       =  true;
-                    categoryMenuItem.Checked        =  !_packState.CategoryStates.GetCategoryInactive(subCategory);
-                    categoryMenuItem.CheckedChanged += delegate(object sender, CheckChangedEvent checkChangedEvent) {
-                        _packState.CategoryStates.SetInactive(subCategory, !checkChangedEvent.Checked);
-                    };
-                }
+                this.AddMenuItem(new CategoryContextMenuStripItem(_packState, subCategory));
             }
 
             base.OnShown(e);

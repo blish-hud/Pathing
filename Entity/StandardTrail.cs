@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BhModule.Community.Pathing.State;
-using Blish_HUD;
 using Microsoft.Xna.Framework;
 using TmfLib;
 using TmfLib.Pathable;

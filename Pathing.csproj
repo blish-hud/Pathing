@@ -98,6 +98,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\Common\Achievement\AchievementPresenter.cs" />
+    <Compile Include="UI\Common\Achievement\AchievementTooltipView.cs" />
     <Compile Include="UI\Controls\BlueButton.cs" />
     <Compile Include="UI\Controls\FlatMap.cs" />
     <Compile Include="SharedPackCollection.cs" />
