@@ -17,7 +17,7 @@ namespace BhModule.Community.Pathing.Entity {
             if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return;
 
             if ((!this.MapVisibility     || !_packState.UserConfiguration.MapShowTrailsOnFullscreen.Value) && GameService.Gw2Mumble.UI.IsMapOpen) return;
-            if ((!this.MiniMapVisibility || !_packState.UserConfiguration.MapShowMarkersOnCompass.Value)   && !GameService.Gw2Mumble.UI.IsMapOpen) return;
+            if ((!this.MiniMapVisibility || !_packState.UserConfiguration.MapShowTrailsOnCompass.Value)   && !GameService.Gw2Mumble.UI.IsMapOpen) return;
 
             bool lastPointInBounds = false;
 

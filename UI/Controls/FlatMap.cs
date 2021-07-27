@@ -38,13 +38,6 @@ namespace BhModule.Community.Pathing.Entity {
 
             GameService.Gw2Mumble.UI.UISizeChanged    += UIOnUISizeChanged;
             GameService.Gw2Mumble.UI.IsMapOpenChanged += UIOnIsMapOpenChanged;
-
-            _packState.UserConfiguration.MapShowMarkersOnFullscreen.SettingChanged += UserConfigurationChanged;
-            _packState.UserConfiguration.MapShowMarkersOnCompass.SettingChanged    += UserConfigurationChanged;
-        }
-
-        private void UserConfigurationChanged(object sender, ValueChangedEventArgs<bool> e) {
-            UpdateBounds();
         }
 
         private void TriggerFadeIn() {
@@ -59,8 +52,6 @@ namespace BhModule.Community.Pathing.Entity {
             TriggerFadeIn();
 
             _lastCameraPos = GameService.Gw2Mumble.PlayerCamera.Position.Z;
-
-            this.Visible = true;
         }
 
         private int GetOffset(float curr, float max, float min, float val) {
@@ -77,8 +68,6 @@ namespace BhModule.Community.Pathing.Entity {
                 this.Location = Point.Zero;
 
                 newSize = GameService.Graphics.SpriteScreen.Size;
-
-                this.Visible = _packState.UserConfiguration.MapShowMarkersOnFullscreen.Value;
             } else {
                 int offsetWidth  = GetOffset(GameService.Gw2Mumble.UI.CompassSize.Width,  MAPWIDTH_MAX,  MAPWIDTH_MIN,  40);
                 int offsetHeight = GetOffset(GameService.Gw2Mumble.UI.CompassSize.Height, MAPHEIGHT_MAX, MAPHEIGHT_MIN, 40);
@@ -92,8 +81,6 @@ namespace BhModule.Community.Pathing.Entity {
 
                 newSize = new Point(GameService.Gw2Mumble.UI.CompassSize.Width  + offsetWidth,
                                     GameService.Gw2Mumble.UI.CompassSize.Height + offsetHeight);
-                
-                this.Visible = _packState.UserConfiguration.MapShowMarkersOnCompass.Value;
             }
 
             this.Size = newSize;
@@ -142,9 +129,6 @@ namespace BhModule.Community.Pathing.Entity {
         protected override void DisposeControl() {
             GameService.Gw2Mumble.UI.UISizeChanged    -= UIOnUISizeChanged;
             GameService.Gw2Mumble.UI.IsMapOpenChanged -= UIOnIsMapOpenChanged;
-
-            _packState.UserConfiguration.MapShowMarkersOnFullscreen.SettingChanged -= UserConfigurationChanged;
-            _packState.UserConfiguration.MapShowMarkersOnCompass.SettingChanged    -= UserConfigurationChanged;
 
             base.DisposeControl();
         }
