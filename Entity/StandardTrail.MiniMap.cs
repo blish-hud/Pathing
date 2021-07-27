@@ -16,8 +16,8 @@ namespace BhModule.Community.Pathing.Entity {
         public override void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
             if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return;
 
-            if (!this.MapVisibility && GameService.Gw2Mumble.UI.IsMapOpen) return;
-            if (!this.MiniMapVisibility && !GameService.Gw2Mumble.UI.IsMapOpen) return;
+            if ((!this.MapVisibility     || !_packState.UserConfiguration.MapShowTrailsOnFullscreen.Value) && GameService.Gw2Mumble.UI.IsMapOpen) return;
+            if ((!this.MiniMapVisibility || !_packState.UserConfiguration.MapShowMarkersOnCompass.Value)   && !GameService.Gw2Mumble.UI.IsMapOpen) return;
 
             bool lastPointInBounds = false;
 

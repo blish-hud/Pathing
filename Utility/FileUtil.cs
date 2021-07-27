@@ -34,8 +34,7 @@ namespace BhModule.Community.Pathing.Utility {
         }
 
         public static async Task WriteBytesAsync(string path, byte[] data) {
-            using var stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write, 4096, FileOptions.Asynchronous);
-
+            using var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write, 4096, FileOptions.Asynchronous);
             await stream.WriteAsync(data, 0, data.Length);
         }
 
