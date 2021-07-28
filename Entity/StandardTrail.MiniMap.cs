@@ -31,7 +31,7 @@ namespace BhModule.Community.Pathing.Entity {
                     if (lastPointInBounds | (inBounds = bounds.Contains(nextPoint))) {
                         float averageVert = (trailSection[i].Z + trailSection[i + 1].Z) / 2f;
 
-                        float vertDistance = MathHelper.Clamp(1f - Math.Abs(averageVert - GameService.Gw2Mumble.PlayerCharacter.Position.Z) * 0.01f, 0.15f, 1f);
+                        float vertDistance = MathHelper.Clamp(1f - Math.Abs(averageVert - GameService.Gw2Mumble.PlayerCharacter.Position.Z) * 0.005f, 0.15f, 1f);
 
                         float distance = Vector2.Distance(thisPoint, nextPoint);
                         float angle    = (float)Math.Atan2(nextPoint.Y - thisPoint.Y, nextPoint.X - thisPoint.X);

@@ -32,8 +32,6 @@ namespace BhModule.Community.Pathing {
         private readonly SemaphoreSlim _packMutex = new(1, 1);
 
         private ContextMenuStripItem _allMarkers;
-
-        private readonly FlatMap _mapRender;
         
         private readonly PackReaderSettings _packReaderSettings;
 
@@ -85,11 +83,6 @@ namespace BhModule.Community.Pathing {
             //        }
             //    }
             //};
-
-            _mapRender = new FlatMap(_packState) {
-                Parent  = GameService.Graphics.SpriteScreen,
-                Visible = false
-            };
         }
 
         public async Task Init() {
@@ -158,7 +151,6 @@ namespace BhModule.Community.Pathing {
             await _packState.LoadPackCollection(_sharedPackCollection);
 
             // TODO: Check Map and Compass individually (currently map values are ignored and are assumed to match).
-            _mapRender.Visible = !_packState.UserResourceStates.Ignore.Compass.Contains(mapId);
             _allMarkers.Submenu = new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories);
         }
 

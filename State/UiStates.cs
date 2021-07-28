@@ -28,8 +28,7 @@ namespace BhModule.Community.Pathing.State {
 
         private void InitMap() {
             _map = new FlatMap(_rootPackState) {
-                Parent  = GameService.Graphics.SpriteScreen,
-                Visible = false
+                Parent  = GameService.Graphics.SpriteScreen
             };
 
             GameService.Gw2Mumble.CurrentMap.MapChanged += CurrentMapChanged;
@@ -39,9 +38,9 @@ namespace BhModule.Community.Pathing.State {
         private void UpdateMapState() {
             if (_map == null) return;
 
-            _map.Visible = (GameService.Gw2Mumble.UI.IsMapOpen
-                                ? _rootPackState.UserResourceStates.Ignore.Map
-                                : _rootPackState.UserResourceStates.Ignore.Compass).Contains(GameService.Gw2Mumble.CurrentMap.Id);
+            _map.Visible = !(GameService.Gw2Mumble.UI.IsMapOpen
+                                 ? _rootPackState.UserResourceStates.Ignore.Map
+                                 : _rootPackState.UserResourceStates.Ignore.Compass).Contains(GameService.Gw2Mumble.CurrentMap.Id);
         }
 
         private void MapOpenedChanged(object  sender, ValueEventArgs<bool> e) => UpdateMapState();
