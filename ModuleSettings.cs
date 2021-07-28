@@ -60,7 +60,7 @@ namespace BhModule.Community.Pathing {
             // TODO: Add description to settings.
             this.PackWorldPathablesEnabled                = this.PackSettings.DefineSetting(nameof(this.PackWorldPathablesEnabled),                true, "Show Markers in World");
             this.PackMaxOpacityOverride                   = this.PackSettings.DefineSetting(nameof(this.PackMaxOpacityOverride),                   1f, Strings.Setting_PackMaxOpacityOverride, "");
-            this.PackMaxViewDistance                      = this.PackSettings.DefineSetting(nameof(this.PackMaxViewDistance),                      1000000f, Strings.Setting_PackMaxViewDistance, "");
+            this.PackMaxViewDistance                      = this.PackSettings.DefineSetting(nameof(this.PackMaxViewDistance),                      25000f, Strings.Setting_PackMaxViewDistance, "");
             this.PackMaxTrailAnimationSpeed               = this.PackSettings.DefineSetting(nameof(this.PackMaxTrailAnimationSpeed),               10f, Strings.Setting_PackMaxTrailAnimationSpeed, "");
             this.PackFadeTrailsAroundCharacter            = this.PackSettings.DefineSetting(nameof(this.PackFadeTrailsAroundCharacter),            true, Strings.Setting_PackFadeTrailsAroundCharacter, "");
             this.PackFadePathablesDuringCombat            = this.PackSettings.DefineSetting(nameof(this.PackFadePathablesDuringCombat),            true, Strings.Setting_PackFadePathablesDuringCombat, "");
@@ -71,7 +71,7 @@ namespace BhModule.Community.Pathing {
             this.PackShowCategoriesFromAllMaps            = this.PackSettings.DefineSetting(nameof(this.PackShowCategoriesFromAllMaps),            false, Strings.Setting_PackShowCategoriesFromAllMaps, "");
 
             this.PackMaxOpacityOverride.SetRange(0f, 1f);
-            this.PackMaxViewDistance.SetRange(0f, 1000000f);
+            this.PackMaxViewDistance.SetRange(25f, 25000f);
             this.PackMaxTrailAnimationSpeed.SetRange(0f, 10f);
         }
 

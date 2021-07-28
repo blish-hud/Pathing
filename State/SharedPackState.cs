@@ -112,8 +112,6 @@ namespace BhModule.Community.Pathing {
         private Effect GetEffect(string effectPath) {
             byte[] compiledShader = Utility.TwoMGFX.ShaderCompilerUtil.CompileShader(effectPath);
 
-            System.IO.File.WriteAllBytes(@"C:\Users\dade\source\repos\Pathing\ref\hlsl\marker.mgfx2", compiledShader);
-
             return new Effect(GameService.Graphics.GraphicsDevice, compiledShader, 0, compiledShader.Length);
         }
 
@@ -121,7 +119,7 @@ namespace BhModule.Community.Pathing {
             //this.SharedMarkerEffect = new MarkerEffect(GetEffect(@"C:\Users\dade\source\repos\Pathing\ref\hlsl\marker.hlsl"));
             //this.SharedTrailEffect  = new TrailEffect(GetEffect(@"C:\Users\dade\source\repos\Pathing\ref\hlsl\trail.hlsl"));
             this.SharedMarkerEffect = new MarkerEffect(PathingModule.Instance.ContentsManager.GetEffect(@"hlsl\marker.mgfx"));
-            this.SharedTrailEffect  = new TrailEffect(PathingModule.Instance.ContentsManager.GetEffect(@"hlsl\trail.mgfx"));
+            this.SharedTrailEffect = new TrailEffect(PathingModule.Instance.ContentsManager.GetEffect(@"hlsl\trail.mgfx"));
         }
 
         private void OnInteractPressed(object sender, EventArgs e) {
