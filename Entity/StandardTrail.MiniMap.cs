@@ -29,13 +29,16 @@ namespace BhModule.Community.Pathing.Entity {
                     bool inBounds = false;
 
                     if (lastPointInBounds | (inBounds = bounds.Contains(nextPoint))) {
-                        float averageVert = (trailSection[i].Z + trailSection[i + 1].Z) / 2f;
+                        float drawOpacity = opacity;
 
-                        float vertDistance = MathHelper.Clamp(1f - Math.Abs(averageVert - GameService.Gw2Mumble.PlayerCharacter.Position.Z) * 0.005f, 0.15f, 1f);
+                        if (_packState.UserConfiguration.MapFadeVerticallyDistantTrailSegments.Value) {
+                            float averageVert  = (trailSection[i].Z + trailSection[i + 1].Z) / 2f;
+                            drawOpacity *= MathHelper.Clamp(1f - Math.Abs(averageVert - GameService.Gw2Mumble.PlayerCharacter.Position.Z) * 0.005f, 0.15f, 1f);
+                        }
 
                         float distance = Vector2.Distance(thisPoint, nextPoint);
                         float angle    = (float)Math.Atan2(nextPoint.Y - thisPoint.Y, nextPoint.X - thisPoint.X);
-                        DrawLine(spriteBatch, thisPoint, angle, distance, this.TrailSampleColor * opacity * vertDistance, 2f);
+                        DrawLine(spriteBatch, thisPoint, angle, distance, this.TrailSampleColor * drawOpacity, 2f);
                     }
 
                     lastPointInBounds = inBounds;

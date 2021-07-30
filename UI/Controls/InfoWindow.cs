@@ -11,11 +11,13 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private static readonly Texture2D _windowTexture;
         private static readonly Texture2D _windowMask;
         private static readonly Texture2D _windowClose;
+        private static readonly Texture2D _windowCloseHover;
 
         static InfoWindow() {
-            _windowTexture = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156475+156476.png");
-            _windowMask    = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156477.png");
-            _windowClose   = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156106.png");
+            _windowTexture    = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156475+156476.png");
+            _windowMask       = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156477.png");
+            _windowClose      = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156106.png");
+            _windowCloseHover = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156011.png");
         }
 
         public InfoWindow() {
@@ -66,7 +68,11 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
             AlphaMaskEffect.SharedInstance.SetEffectState(ContentService.Textures.Pixel);
 
-            spriteBatch.DrawOnCtrl(this, _windowClose, _closeButtonBounds);
+            spriteBatch.DrawOnCtrl(this,
+                                   _closeButtonBounds.Contains(this.RelativeMousePosition)
+                                       ? _windowCloseHover
+                                       : _windowClose,
+                                   _closeButtonBounds);
         }
 
     }

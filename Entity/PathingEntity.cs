@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BhModule.Community.Pathing.Entity {
     public abstract class PathingEntity : IPathingEntity {
 
-        protected const float FADEIN_DURATION = 2000;
+        protected const float FADEIN_DURATION = 800;
 
         public SynchronizedCollection<IBehavior> Behaviors { get; } = new();
 
@@ -45,6 +45,9 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         public virtual void Update(GameTime gameTime) {
+            // If all markers are disabled, skip updates.
+            if (!_packState.UserConfiguration.PackWorldPathablesEnabled.Value) return;
+
             if (_needsFadeIn) {
                 _lastFadeStart = gameTime.TotalGameTime.TotalMilliseconds;
                 _needsFadeIn   = false;
@@ -53,6 +56,8 @@ namespace BhModule.Community.Pathing.Entity {
             // Only update behaviors found within enabled category namespaces.
             if (!_packState.CategoryStates.GetNamespaceInactive(this.CategoryNamespace)) {
                 this.UpdateBehaviors(gameTime);
+            } else {
+                _needsFadeIn = true;
             }
         }
 
