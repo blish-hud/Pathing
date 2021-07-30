@@ -14,9 +14,9 @@ namespace BhModule.Community.Pathing.State {
         private FlatMap    _map;
 
         // Info
-        private InfoWindow   _info;
-        private Label        _infoLabel;
-        private List<string> _infoList;
+        private InfoWindow       _info;
+        private Label            _infoLabel;
+        private SafeList<string> _infoList;
 
         public UiStates(IRootPackState rootPackState) : base(rootPackState) { /* NOOP */ }
 
@@ -65,15 +65,11 @@ namespace BhModule.Community.Pathing.State {
                 Parent              = _info
             };
 
-            _infoList = new List<string>();
+            _infoList = new SafeList<string>();
         }
 
         private void UpdateInfoText() {
-            string currentInfo;
-
-            lock (_infoList) {
-                currentInfo = _infoList.LastOrDefault() ?? string.Empty;
-            }
+            string currentInfo = _infoList.LastOrDefault() ?? string.Empty;
 
             // Add spacing to make font a little more readable.
             _infoLabel.Text = currentInfo.Replace(" ", "  ");
@@ -87,17 +83,13 @@ namespace BhModule.Community.Pathing.State {
         }
 
         public void AddInfoString(string info) {
-            lock (_infoList) {
-                _infoList.Add(info);
-            }
+            _infoList.Add(info);
 
             UpdateInfoText();
         }
 
         public void RemoveInfoString(string info) {
-            lock (_infoList) {
-                _infoList.Remove(info);
-            }
+            _infoList.Remove(info);
 
             UpdateInfoText();
         }

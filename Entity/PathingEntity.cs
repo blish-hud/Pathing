@@ -11,7 +11,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         protected const float FADEIN_DURATION = 800;
 
-        public SynchronizedCollection<IBehavior> Behaviors { get; } = new();
+        public IList<IBehavior> Behaviors { get; } = new SafeList<IBehavior>();
 
         public abstract string CategoryNamespace { get; set; }
 
@@ -36,7 +36,7 @@ namespace BhModule.Community.Pathing.Entity {
         public virtual void Interact(bool autoTriggered) { /* NOOP */ }
         
         private double _lastFadeStart = 0;
-        private bool   _needsFadeIn   = false;
+        private bool   _needsFadeIn   = true;
 
         public float AnimatedFadeOpacity => MathHelper.Clamp((float) (GameService.Overlay.CurrentGameTime.TotalGameTime.TotalMilliseconds - _lastFadeStart) / FADEIN_DURATION, 0f, 1f);
 
@@ -46,7 +46,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         public virtual void Update(GameTime gameTime) {
             // If all markers are disabled, skip updates.
-            if (!_packState.UserConfiguration.PackWorldPathablesEnabled.Value) return;
+            if (!_packState.UserConfiguration.GlobalPathablesEnabled.Value) return;
 
             if (_needsFadeIn) {
                 _lastFadeStart = gameTime.TotalGameTime.TotalMilliseconds;
@@ -62,16 +62,14 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         private void UpdateBehaviors(GameTime gameTime) {
-            lock (this.Behaviors.SyncRoot) {
-                for (int i = 0; i < this.Behaviors.Count; i++) {
-                    this.Behaviors[i].Update(gameTime);
-                }
+            foreach (var behavior in this.Behaviors) {
+                behavior.Update(gameTime);
+            }
 
-                if (this.DistanceToPlayer <= this.TriggerRange) {
-                    this.Focus();
-                } else {
-                    this.Unfocus();
-                }
+            if (this.DistanceToPlayer <= this.TriggerRange) {
+                this.Focus();
+            } else {
+                this.Unfocus();
             }
         }
 
@@ -93,17 +91,24 @@ namespace BhModule.Community.Pathing.Entity {
             if (_packState.CategoryStates.GetNamespaceInactive(this.CategoryNamespace)) return true;
 
             if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
-                lock (this.Behaviors.SyncRoot) {
-                    for (int i = 0; i < this.Behaviors.Count; i++) {
-                        if (this.Behaviors[i] is ICanFilter filterable) {
-                            // If behavior is filtering.
-                            if (filterable.IsFiltered()) return true;
-                        }
+                foreach (var behavior in this.Behaviors) {
+                    if (behavior is ICanFilter filterable) {
+                        // If behavior is filtering.
+                        if (filterable.IsFiltered()) return true;
                     }
                 }
             }
 
             return false;
+        }
+
+        public virtual void Unload() {
+            // Unload and clear behaviors.
+            foreach (var behavior in this.Behaviors) {
+                behavior.Unload();
+            }
+
+            this.Behaviors.Clear();
         }
 
     }

@@ -39,5 +39,9 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
             _packState.UiStates.RemoveInfoString(this.InfoValue);
         }
 
+        public override void Unload() {
+            _packState.UiStates.RemoveInfoString(this.InfoValue);
+        }
+
     }
 }

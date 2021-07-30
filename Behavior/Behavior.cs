@@ -11,6 +11,7 @@ namespace BhModule.Community.Pathing.Behavior {
         }
 
         public virtual void Update(GameTime gameTime) { /* NOOP */ }
+        public virtual void Unload() { /* NOOP */ }
 
     }
 }

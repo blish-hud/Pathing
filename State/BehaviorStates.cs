@@ -36,10 +36,10 @@ namespace BhModule.Community.Pathing.State {
 
         /// <summary>
         /// TacO Behavior 2, 4, and 7
-        /// Blish HUD Behavior 101
+        /// Blish HUD Behavior 801
         /// </summary>
         private readonly HashSet<Guid> _hiddenUntilTimer = new();
-        private readonly List<(DateTime timerExpiration, Guid guid)> _timerMetadata = new();
+        private readonly SafeList<(DateTime timerExpiration, Guid guid)> _timerMetadata = new();
 
         /// <summary>
         /// TacO Behavior 6
@@ -148,8 +148,8 @@ namespace BhModule.Community.Pathing.State {
         }
 
         public void AddFilteredBehavior(Guid guid, DateTime expire) {
-            // Behaviors 2, 4, 7, and 101
-            lock (_hiddenUntilTimer) lock (_timerMetadata) {
+            // Behaviors 2, 4, 7, and 801
+            lock (_hiddenUntilTimer) {
                 _hiddenUntilTimer.Add(guid);
                 _timerMetadata.Add((expire, guid));
             }
@@ -189,7 +189,6 @@ namespace BhModule.Community.Pathing.State {
                 Logger.Error(e, $"Failed to read {STATE_FILE} ({timerStatesPath}).");
             }
 
-            lock (_timerMetadata)
             lock (_hiddenUntilTimer) {
                 foreach (string line in recordedTimerMetadata) {
                     string[] lineParts = line.Split(',');
@@ -212,9 +211,7 @@ namespace BhModule.Community.Pathing.State {
 
             Logger.Debug($"Saving {nameof(CategoryStates)} state.");
 
-            (DateTime timerExpiration, Guid guid)[] timerMetadata;
-
-            lock (_timerMetadata) timerMetadata = _timerMetadata.ToArray();
+            (DateTime timerExpiration, Guid guid)[] timerMetadata = _timerMetadata.GetNoLockArray();
 
             string timerStatesPath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), STATE_FILE);
 
@@ -251,8 +248,8 @@ namespace BhModule.Community.Pathing.State {
         }
 
         private void UpdateTimers(GameTime gameTime) {
-            lock (_timerMetadata) lock (_hiddenUntilTimer) {
-                foreach (var guidDetails in _timerMetadata.ToArray()) {
+            lock (_hiddenUntilTimer) {
+                foreach (var guidDetails in _timerMetadata.GetNoLockArray()) {
                     if (guidDetails.timerExpiration < DateTime.UtcNow) {
                         _timerMetadata.Remove(guidDetails);
                         _hiddenUntilTimer.Remove(guidDetails.guid);

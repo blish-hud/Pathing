@@ -22,7 +22,7 @@ namespace BhModule.Community.Pathing.State {
 
         private HashSet<string> _inactiveCategories = new(StringComparer.OrdinalIgnoreCase);
 
-        private readonly List<PathingCategory> _rawInactiveCategories   = new();
+        private readonly SafeList<PathingCategory> _rawInactiveCategories   = new();
 
         private double _lastSaveState                     = 0;
         private double _lastInactiveCategoriesCalculation = 0;
@@ -44,15 +44,13 @@ namespace BhModule.Community.Pathing.State {
             } catch (Exception e) {
                 Logger.Error(e, $"Failed to read {STATE_FILE} ({categoryStatesPath}).");
             }
+            
+            _rawInactiveCategories.Clear();
 
-            lock (_rawInactiveCategories) {
-                _rawInactiveCategories.Clear();
-
-                foreach (string categoryNamespace in recordedCategories) {
-                    // TODO: Consider the case where a category no longer exists - this will create it.
-                    // Luckily, it shouldn't display anyways because it will not have a displayname.
-                    _rawInactiveCategories.Add(_rootPackState.RootCategory.GetOrAddCategoryFromNamespace(categoryNamespace));
-                }
+            foreach (string categoryNamespace in recordedCategories) {
+                // TODO: Consider the case where a category no longer exists - this will create it.
+                // Luckily, it shouldn't display anyways because it will not have a displayname.
+                _rawInactiveCategories.Add(_rootPackState.RootCategory.GetOrAddCategoryFromNamespace(categoryNamespace));
             }
 
             _calculationDirty = true;
@@ -63,9 +61,7 @@ namespace BhModule.Community.Pathing.State {
 
             Logger.Debug($"Saving {nameof(CategoryStates)} state.");
 
-            PathingCategory[] inactiveCategories;
-
-            lock (_rawInactiveCategories) inactiveCategories = _rawInactiveCategories.ToArray();
+            PathingCategory[] inactiveCategories = _rawInactiveCategories.GetNoLockArray();
 
             string categoryStatesPath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), STATE_FILE);
 
@@ -81,9 +77,7 @@ namespace BhModule.Community.Pathing.State {
         private void CalculateOptimizedCategoryStates(GameTime gameTime) {
             if (!_calculationDirty) return;
 
-            PathingCategory[] inactiveCategories;
-
-            lock (_rawInactiveCategories) inactiveCategories = _rawInactiveCategories.ToArray();
+            PathingCategory[] inactiveCategories = _rawInactiveCategories.GetNoLockArray();
 
             var preCalcInactiveCategories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -91,7 +85,7 @@ namespace BhModule.Community.Pathing.State {
                 AddAllSubCategories(preCalcInactiveCategories, inactiveCategory);
             }
 
-            lock (_inactiveCategories) _inactiveCategories = preCalcInactiveCategories;
+            _inactiveCategories = preCalcInactiveCategories;
 
             _calculationDirty = false;
         }
@@ -111,11 +105,8 @@ namespace BhModule.Community.Pathing.State {
         }
 
         public override async Task Reload() {
-            lock (_inactiveCategories)
-            lock (_rawInactiveCategories) {
-                _inactiveCategories.Clear();
-                _rawInactiveCategories.Clear();
-            }
+            _inactiveCategories.Clear();
+            _rawInactiveCategories.Clear();
 
             await LoadState();
         }
@@ -138,12 +129,10 @@ namespace BhModule.Community.Pathing.State {
         }
 
         public void SetInactive(PathingCategory category, bool isInactive) {
-            lock (_rawInactiveCategories) {
-                _rawInactiveCategories.Remove(category);
+            _rawInactiveCategories.Remove(category);
 
-                if (isInactive) {
-                    _rawInactiveCategories.Add(category);
-                }
+            if (isInactive) {
+                _rawInactiveCategories.Add(category);
             }
 
             _stateDirty       = true;

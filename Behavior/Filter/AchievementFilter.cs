@@ -32,6 +32,8 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
 
         public void Update(GameTime gameTime) { /* NOOP */ }
 
+        public void Unload() { /* NOOP */ }
+
         public bool IsFiltered() {
             return _triggered || _behaviorStates.IsAchievementHidden(this.AchievementId, this.AchievementBit);
         }

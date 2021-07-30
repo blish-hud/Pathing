@@ -33,7 +33,7 @@ namespace BhModule.Community.Pathing.Utility {
             if (lastCheck >= cadence || lastCheck < 1 /* RUN ONCE */) {
                 call(gameTime).ContinueWith((task) => {
                                                 _asyncStateMonitor.Remove(call.Method.MethodHandle.Value);
-                                            });
+                                            }, TaskContinuationOptions.NotOnFaulted);
                 lastCheck = 1;
             }
         }

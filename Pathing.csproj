@@ -165,6 +165,7 @@
     <Compile Include="Utility\Texture2dExtensions.cs" />
     <Compile Include="Utility\UpdateCadenceUtil.cs" />
     <Compile Include="Utility\VectorExtensions.cs" />
+    <Compile Include="_Types\SafeList[T].cs" />
     <None Include="App.config" />
     <Compile Include="State\BehaviorStates.cs" />
     <Compile Include="Behavior\Filter\SpecializationFilter.cs" />
@@ -387,7 +388,6 @@
          It needs the additional 'OutputItemType' and 'ReferenceOutputAssmbly' attributes. -->
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Blish HUD.DebugHelper.exe" />
     <Content Include="License-2mgfx.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

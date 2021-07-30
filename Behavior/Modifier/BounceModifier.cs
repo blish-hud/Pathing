@@ -69,5 +69,9 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
                                           .Ease(Ease.BounceOut);
         }
 
+        public override void Unload() {
+            _bounceAnimation?.Cancel();
+        }
+
     }
 }

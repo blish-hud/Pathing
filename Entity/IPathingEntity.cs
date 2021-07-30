@@ -10,7 +10,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// <summary>
         /// Filters or modifiers which add functionality to the <see cref="IPathingEntity"/>.
         /// </summary>
-        SynchronizedCollection<IBehavior> Behaviors { get; }
+        IList<IBehavior> Behaviors { get; }
 
         float TriggerRange { get; set; }
 
@@ -27,6 +27,8 @@ namespace BhModule.Community.Pathing.Entity {
         float AnimatedFadeOpacity { get; }
 
         void FadeIn();
+
+        void Unload();
 
     }
 }

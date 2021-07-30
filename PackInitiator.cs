@@ -25,11 +25,9 @@ namespace BhModule.Community.Pathing {
 
         private readonly IRootPackState _packState;
 
-        private readonly List<Pack> _packs = new();
+        private readonly SafeList<Pack> _packs = new();
 
         private SharedPackCollection _sharedPackCollection;
-
-        private readonly SemaphoreSlim _packMutex = new(1, 1);
 
         private ContextMenuStripItem _allMarkers;
         
@@ -91,17 +89,13 @@ namespace BhModule.Community.Pathing {
 
         private async Task LoadUnpackedPackFiles(string unpackedDir) {
             var newPack = Pack.FromDirectoryMarkerPack(unpackedDir);
-
-            await _packMutex.WaitAsync();
+            
             _packs.Add(newPack);
-            _packMutex.Release();
         }
 
         private async Task LoadPackedPackFiles(IEnumerable<string> zipPackFiles) {
             foreach (var newPack in zipPackFiles.Select(Pack.FromArchivedMarkerPack)) {
-                await _packMutex.WaitAsync();
                 _packs.Add(newPack);
-                _packMutex.Release();
             }
         }
 
@@ -128,16 +122,12 @@ namespace BhModule.Community.Pathing {
         private async Task LoadMapFromEachPack(int mapId, int retry = 3) {
             PrepareState(mapId);
 
-            await _packMutex.WaitAsync();
-
             try {
-                foreach (var pack in _packs) {
+                foreach (var pack in _packs.GetNoLockArray()) {
                     await pack.LoadMapAsync(mapId, _sharedPackCollection, _packReaderSettings);
                 }
             } catch (Exception e) {
                 Logger.Warn(e, "Loading pack failed.");
-
-                _packMutex.Release();
 
                 if (retry > 0) {
                     await LoadMapFromEachPack(--retry);
@@ -145,8 +135,6 @@ namespace BhModule.Community.Pathing {
 
                 Logger.Error($"Loading pack failed after {LOAD_RETRY_COUNTS} attempts.");
             }
-
-            _packMutex.Release();
 
             await _packState.LoadPackCollection(_sharedPackCollection);
 

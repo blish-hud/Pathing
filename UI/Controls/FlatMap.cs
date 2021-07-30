@@ -115,11 +115,7 @@ namespace BhModule.Community.Pathing.Entity {
 
             float opacity = MathHelper.Clamp((float)(GameService.Overlay.CurrentGameTime.TotalGameTime.TotalSeconds - _lastMapViewChanged) / 0.65f, 0f, 1f) * 0.8f;
 
-            IPathingEntity[] entities = null;
-
-            lock ((_packState.Entities as SynchronizedCollection<IPathingEntity>).SyncRoot) {
-                entities = _packState.Entities.OrderBy(poi => -poi.DrawOrder).ToArray();
-            }
+            IPathingEntity[] entities = _packState.Entities.OrderBy(poi => -poi.DrawOrder).ToArray();
 
             foreach (var pathable in entities) {
                 pathable.RenderToMiniMap(spriteBatch, bounds, (offsetX, offsetY), scale, opacity);

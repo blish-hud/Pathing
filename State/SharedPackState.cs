@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,10 +30,11 @@ namespace BhModule.Community.Pathing {
         public UserResourceStates UserResourceStates { get; private set; }
         public UiStates           UiStates           { get; private set; }
 
-        private readonly SynchronizedCollection<IPathingEntity> _entities = new();
+        private readonly SafeList<IPathingEntity> _entities = new();
         public IEnumerable<IPathingEntity> Entities => _entities;
 
         private bool _initialized = false;
+        private bool _loadingPack = false;
 
         public SharedPackState(ModuleSettings moduleSettings) {
             this.UserConfiguration = moduleSettings;
@@ -61,15 +63,13 @@ namespace BhModule.Community.Pathing {
         }
 
         public void UnloadPacks() {
-            lock (_entities.SyncRoot) {
-                foreach (var pathingEntity in _entities) {
-                    lock (pathingEntity.Behaviors.SyncRoot) pathingEntity.Behaviors.Clear();
-                }
-
-                GameService.Graphics.World.RemoveEntities(_entities);
-
-                _entities.Clear();
+            foreach (var pathingEntity in _entities) {
+                pathingEntity.Unload();
             }
+
+            GameService.Graphics.World.RemoveEntities(_entities);
+
+            _entities.Clear();
 
             this.RootCategory = null;
         }
@@ -84,6 +84,13 @@ namespace BhModule.Community.Pathing {
         }
 
         public async Task LoadPackCollection(IPackCollection collection) {
+            // TODO: Support cancel instead of spinning like this.
+            while (_loadingPack) {
+                await Task.Delay(1000);
+            }
+
+            _loadingPack = true;
+
             this.RootCategory = collection.Categories;
 
             if (!_initialized) {
@@ -93,17 +100,26 @@ namespace BhModule.Community.Pathing {
             }
 
             await InitPointsOfInterest(collection.PointsOfInterest);
+
+            _loadingPack = false;
         }
 
         private async Task InitPointsOfInterest(IEnumerable<PointOfInterest> pois) {
-            // TODO: Resolve load / unload deadlock
-            //lock (_entities.SyncRoot) {
+            var poiBag = new ConcurrentBag<IPathingEntity>();
+
             pois.AsParallel()
                 .Select(BuildEntity)
-                .ForAll(newEntity => {
-                            _entities.Add(newEntity);
-                            GameService.Graphics.World.AddEntity(newEntity);
-                            newEntity.FadeIn(); });
+                .ForAll(poiBag.Add);
+
+            _entities.AddRange(poiBag);
+            GameService.Graphics.World.AddEntities(poiBag);
+
+            //foreach (var poi in pois) {
+            //    var newEntity = BuildEntity(poi);
+
+            //    _entities.Add(newEntity);
+            //    GameService.Graphics.World.AddEntity(newEntity);
+            //    newEntity.FadeIn();
             //}
 
             await Task.CompletedTask;
@@ -124,11 +140,9 @@ namespace BhModule.Community.Pathing {
 
         private void OnInteractPressed(object sender, EventArgs e) {
             // TODO: OnInteractPressed needs a better place.
-            lock (_entities.SyncRoot) {
-                foreach (var entity in _entities) {
-                    if (entity is StandardMarker {Focused: true} marker) {
-                        marker.Interact(false);
-                    }
+            foreach (var entity in _entities) {
+                if (entity is StandardMarker {Focused: true} marker) {
+                    marker.Interact(false);
                 }
             }
         }

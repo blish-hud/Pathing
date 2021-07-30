@@ -18,15 +18,13 @@ namespace BhModule.Community.Pathing.Entity {
                 if (_focused == value) return;
 
                 _focused = value;
-
-                lock (this.Behaviors.SyncRoot) {
-                    for (int i = 0; i < this.Behaviors.Count; i++) {
-                        if (this.Behaviors[i] is ICanFocus focusable) {
-                            if (_focused) {
-                                focusable.Focus();
-                            } else {
-                                focusable.Unfocus();
-                            }
+                
+                foreach (var behavior in this.Behaviors) {
+                    if (behavior is ICanFocus focusable) {
+                        if (_focused) {
+                            focusable.Focus();
+                        } else {
+                            focusable.Unfocus();
                         }
                     }
                 }
@@ -58,11 +56,9 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         public override void Interact(bool autoTriggered) {
-            lock (this.Behaviors.SyncRoot) {
-                for (int i = 0; i < this.Behaviors.Count; i++) {
-                    if (this.Behaviors[i] is ICanInteract interactable) {
-                        interactable.Interact(autoTriggered);
-                    }
+            foreach (var behavior in this.Behaviors) {
+                if (behavior is ICanInteract interactable) {
+                    interactable.Interact(autoTriggered);
                 }
             }
         }

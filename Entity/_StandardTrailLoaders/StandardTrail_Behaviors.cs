@@ -13,17 +13,15 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         private void Populate_Behaviors(AttributeCollection collection, IPackResourceManager resourceManager) {
-            lock (this.Behaviors.SyncRoot) {
-                // Filters
-                { if (collection.TryGetSubset(FestivalFilter.PRIMARY_ATTR_NAME,       out var attributes)) AddBehavior(FestivalFilter.BuildFromAttributes(attributes)); }
-                { if (collection.TryGetSubset(MountFilter.PRIMARY_ATTR_NAME,          out var attributes)) AddBehavior(MountFilter.BuildFromAttributes(attributes)); }
-                { if (collection.TryGetSubset(ProfessionFilter.PRIMARY_ATTR_NAME,     out var attributes)) AddBehavior(ProfessionFilter.BuildFromAttributes(attributes)); }
-                { if (collection.TryGetSubset(RaceFilter.PRIMARY_ATTR_NAME,           out var attributes)) AddBehavior(RaceFilter.BuildFromAttributes(attributes)); }
-                { if (collection.TryGetSubset(SpecializationFilter.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(SpecializationFilter.BuildFromAttributes(attributes)); }
-                { if (collection.TryGetSubset(MapTypeFilter.PRIMARY_ATTR_NAME,        out var attributes)) AddBehavior(MapTypeFilter.BuildFromAttributes(attributes)); }
+            // Filters
+            { if (collection.TryGetSubset(FestivalFilter.PRIMARY_ATTR_NAME,       out var attributes)) AddBehavior(FestivalFilter.BuildFromAttributes(attributes)); }
+            { if (collection.TryGetSubset(MountFilter.PRIMARY_ATTR_NAME,          out var attributes)) AddBehavior(MountFilter.BuildFromAttributes(attributes)); }
+            { if (collection.TryGetSubset(ProfessionFilter.PRIMARY_ATTR_NAME,     out var attributes)) AddBehavior(ProfessionFilter.BuildFromAttributes(attributes)); }
+            { if (collection.TryGetSubset(RaceFilter.PRIMARY_ATTR_NAME,           out var attributes)) AddBehavior(RaceFilter.BuildFromAttributes(attributes)); }
+            { if (collection.TryGetSubset(SpecializationFilter.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(SpecializationFilter.BuildFromAttributes(attributes)); }
+            { if (collection.TryGetSubset(MapTypeFilter.PRIMARY_ATTR_NAME,        out var attributes)) AddBehavior(MapTypeFilter.BuildFromAttributes(attributes)); }
 
-                { if (collection.TryGetSubset(AchievementFilter.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(AchievementFilter.BuildFromAttributes(attributes, _packState.BehaviorStates)); }
-            }
+            { if (collection.TryGetSubset(AchievementFilter.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(AchievementFilter.BuildFromAttributes(attributes, _packState.BehaviorStates)); }
         }
 
     }

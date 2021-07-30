@@ -45,5 +45,7 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
 
         public void Update(GameTime gameTime) { /* NOOP */ }
 
+        public void Unload() { /* NOOP */ }
+
     }
 }
