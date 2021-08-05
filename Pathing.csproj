@@ -82,7 +82,6 @@
     <Compile Include="Entity\BillboardVerticalConstraint.cs" />
     <Compile Include="Entity\EntityRenderTarget.cs" />
     <Compile Include="Entity\IHasMapInfo.cs" />
-    <Compile Include="Entity\SpritebatchEntity.cs" />
     <Compile Include="Entity\StandardMarker.World.cs" />
     <Compile Include="Entity\StandardRoute.World.cs" />
     <Compile Include="Entity\StandardTrail.MiniMap.cs" />
