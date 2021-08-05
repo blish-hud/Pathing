@@ -15,6 +15,8 @@ namespace BhModule.Community.Pathing.Entity {
         public override float DrawOrder => Vector3.DistanceSquared(this.Position, GameService.Gw2Mumble.PlayerCamera.Position);
 
         public StandardMarker(IPackState packState, IPointOfInterest pointOfInterest) : base(packState) {
+            this.TipName = pointOfInterest.ParentPathingCategory.DisplayName;
+
             Populate(pointOfInterest.GetAggregatedAttributes(), pointOfInterest.ResourceManager);
 
             Initialize();
@@ -38,6 +40,7 @@ namespace BhModule.Community.Pathing.Entity {
             Populate_Cull(collection, resourceManager);
             Populate_MapVisibility(collection, resourceManager);
             Populate_CanFade(collection, resourceManager);
+            Populate_Tip(collection, resourceManager);
 
             Populate_TacOMisc(collection, resourceManager);
 

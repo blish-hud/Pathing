@@ -52,9 +52,6 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private readonly ViewContainer _activeViewContainer;
 
-        // TODO: Remove public access to _panels - only kept currently as it is used by KillProof.me module (need more robust "Navigate()" call for panel history)
-        public Dictionary<WindowTab, Panel> Panels => _panels;
-
         private Texture2D _textureDefaultBackround;
         private Texture2D _textureSplitLine;
         private Texture2D _textureBlackFade;

@@ -2,6 +2,7 @@
 using Blish_HUD;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
@@ -13,11 +14,11 @@ namespace BhModule.Community.Pathing.Entity {
                                (float)(mapY / scale - offsets.Y));
         }
 
-        public override void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
-            if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return;
+        public override RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
+            if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return null;
 
-            if ((!this.MapVisibility     || !_packState.UserConfiguration.MapShowTrailsOnFullscreen.Value) && GameService.Gw2Mumble.UI.IsMapOpen) return;
-            if ((!this.MiniMapVisibility || !_packState.UserConfiguration.MapShowTrailsOnCompass.Value)   && !GameService.Gw2Mumble.UI.IsMapOpen) return;
+            if ((!this.MapVisibility     || !_packState.UserConfiguration.MapShowTrailsOnFullscreen.Value) && GameService.Gw2Mumble.UI.IsMapOpen) return null;
+            if ((!this.MiniMapVisibility || !_packState.UserConfiguration.MapShowTrailsOnCompass.Value)   && !GameService.Gw2Mumble.UI.IsMapOpen) return null;
 
             bool lastPointInBounds = false;
 
@@ -44,6 +45,8 @@ namespace BhModule.Community.Pathing.Entity {
                     lastPointInBounds = inBounds;
                 }
             }
+
+            return null;
         }
 
         private void DrawLine(SpriteBatch spriteBatch, Vector2 position, float angle, float distance, Color color, float thickness) {

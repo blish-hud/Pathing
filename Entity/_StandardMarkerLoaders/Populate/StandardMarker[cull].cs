@@ -1,16 +1,17 @@
-﻿using System;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
-using Blish_HUD;
 using Microsoft.Xna.Framework.Graphics;
 using TmfLib;
-using TmfLib.Prototype;
+using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
 
         private const string ATTR_CULL = "cull";
 
+        [Description("By default markers and trails are rendered without culling meaning that both sides are rendered at all times. Alternative culling settings allow you to disable culling for one side or the other. For example, a trail can be made to be visible from only below.")]
+        [Category("Appearance")]
         public RasterizerState CullDirection { get; set; } = RasterizerState.CullNone;
 
         /// <summary>

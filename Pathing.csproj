@@ -73,14 +73,22 @@
     <Compile Include="Behavior\Modifier\ToggleModifier.cs" />
     <Compile Include="Behavior\StandardPathableBehavior.cs" />
     <Compile Include="Content\WebReader.cs" />
+    <Compile Include="Editor\MarkerEditWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editor\MarkerEditWindow.Designer.cs">
+      <DependentUpon>MarkerEditWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entity\BillboardVerticalConstraint.cs" />
     <Compile Include="Entity\EntityRenderTarget.cs" />
+    <Compile Include="Entity\IHasMapInfo.cs" />
     <Compile Include="Entity\SpritebatchEntity.cs" />
     <Compile Include="Entity\StandardMarker.World.cs" />
     <Compile Include="Entity\StandardRoute.World.cs" />
     <Compile Include="Entity\StandardTrail.MiniMap.cs" />
     <Compile Include="Entity\StandardTrail.World.cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[canfade].cs" />
+    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[tip-name,tip-description].cs" />
     <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[canfade].cs" />
     <Compile Include="State\UiStates.cs" />
     <Compile Include="State\UserResources\Converters\ColorConverter.cs" />
@@ -162,6 +170,7 @@
     <Compile Include="Utility\GuidExtension.cs" />
     <Compile Include="Utility\Gw2SharpModelExtensions.cs" />
     <Compile Include="Utility\MapNavUtil.cs" />
+    <Compile Include="Utility\SpriteBatchUtil.cs" />
     <Compile Include="Utility\Texture2dExtensions.cs" />
     <Compile Include="Utility\UpdateCadenceUtil.cs" />
     <Compile Include="Utility\VectorExtensions.cs" />
@@ -325,6 +334,7 @@
       <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -393,6 +403,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Editor\MarkerEditWindow.resx">
+      <DependentUpon>MarkerEditWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>

@@ -1,14 +1,17 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
-using TmfLib.Prototype;
+using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
 
         private const string ATTR_ALPHA = "alpha";
 
+        [Description("Specifies the opacity of a marker or trail where 1 is opaque and 0 is fully transparent. Values outside of this range will be clamped to this range.")]
+        [Category("Appearance")]
         public float Alpha { get; set; }
 
         /// <summary>

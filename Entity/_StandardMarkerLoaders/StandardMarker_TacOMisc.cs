@@ -1,7 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using TmfLib.Prototype;
+using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -12,11 +13,15 @@ namespace BhModule.Community.Pathing.Entity {
         /// <summary>
         /// Used by behavior 4 to indicate how long the timer should last.
         /// </summary>
+        [Description("When using behavior 4 (reappear after timer) this value defines, in seconds, the duration until the marker is reset after being activated.")]
+        [Category("Behavior")]
         public float ResetLength { get; set; } = 0f;
 
         /// <summary>
         /// Calls <see cref="Interact"/> when focused.
         /// </summary>
+        [Description("If enabled, attributes and behaviors which would normally require an interaction to activate will instead activate automatically when within TriggerRange.")]
+        [Category("Behavior")]
         public bool AutoTrigger { get; set; } = false;
 
         /// <summary>

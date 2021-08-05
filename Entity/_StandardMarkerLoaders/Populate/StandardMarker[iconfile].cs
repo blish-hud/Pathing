@@ -1,11 +1,12 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using TmfLib;
-using TmfLib.Prototype;
+using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -33,6 +34,7 @@ namespace BhModule.Community.Pathing.Entity {
             }
         }
 
+        [Browsable(false)]
         public BillboardVerticalConstraint VerticalConstraint { get; set; }
 
         /// <summary>

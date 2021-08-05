@@ -1,24 +1,30 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using BhModule.Community.Pathing.Behavior;
 using BhModule.Community.Pathing.State;
 using Blish_HUD;
 using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 
 namespace BhModule.Community.Pathing.Entity {
     public abstract class PathingEntity : IPathingEntity {
 
         protected const float FADEIN_DURATION = 800;
 
+        [Browsable(false)]
         public IList<IBehavior> Behaviors { get; } = new SafeList<IBehavior>();
 
+        [DisplayName("Type")]
         public abstract string CategoryNamespace { get; set; }
 
         public abstract float TriggerRange { get; set; }
 
+        [Browsable(false)]
         public float DistanceToPlayer { get; set; } = -1;
 
+        [Browsable(false)]
         public abstract float DrawOrder { get; }
         
         protected readonly IPackState _packState;
@@ -27,7 +33,7 @@ namespace BhModule.Community.Pathing.Entity {
             _packState = packState;
         }
 
-        public abstract void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity);
+        public abstract RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity);
 
         public abstract void Render(GraphicsDevice graphicsDevice, IWorld world, ICamera camera);
 

@@ -1,9 +1,10 @@
-﻿using System.Linq;
+﻿using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
-using TmfLib.Prototype;
+using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -13,6 +14,9 @@ namespace BhModule.Community.Pathing.Entity {
         private const string ATTR_ROTATEY = ATTR_ROTATE + "-y";
         private const string ATTR_ROTATEZ = ATTR_ROTATE + "-z";
 
+        [DisplayName("Rotate")]
+        [Description("Allows you to statically rotate a marker instead of it automatically facing the player.")]
+        [Category("Appearance")]
         public Vector3 RotationXyz { get; set; }
         
         /// <summary>

@@ -1,8 +1,9 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
-using TmfLib.Prototype;
+using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -11,6 +12,8 @@ namespace BhModule.Community.Pathing.Entity {
         private const string ATTR_YPOS = "ypos";
         private const string ATTR_ZPOS = "zpos";
 
+        [Description("The primary attributes used to determine where to position a marker.")]
+        [Category("Appearance")]
         public Vector3 Position { get; set; }
 
         /// <summary>

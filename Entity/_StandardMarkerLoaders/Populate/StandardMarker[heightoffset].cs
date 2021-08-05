@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using TmfLib.Prototype;
+using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
 
         private const string ATTR_HEIGHTOFFSET = "heightoffset";
 
+        [Description("Renders the marker the specified amount higher than the actual position.")]
+        [Category("Appearance")]
         public float HeightOffset { get; set; }
 
         /// <summary>

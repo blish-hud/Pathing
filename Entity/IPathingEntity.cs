@@ -3,6 +3,7 @@ using BhModule.Community.Pathing.Behavior;
 using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 
 namespace BhModule.Community.Pathing.Entity {
     public interface IPathingEntity : IEntity {
@@ -18,7 +19,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         string CategoryNamespace { get; }
 
-        void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity);
+        RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity);
 
         void Focus();
         void Unfocus();

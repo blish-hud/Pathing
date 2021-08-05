@@ -1,8 +1,9 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
-using TmfLib.Prototype;
+using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -11,7 +12,12 @@ namespace BhModule.Community.Pathing.Entity {
         private const string ATTR_TITLE      = "title";
         private const string ATTR_TITLECOLOR = "title-color";
 
-        public string BillboardText      { get; set; }
+        [DisplayName("Title")]
+        [Category("Appearance")]
+        public string BillboardText { get; set; }
+
+        [DisplayName("Title-Color")]
+        [Category("Appearance")]
         public Color  BillboardTextColor { get; set; }
 
         /// <summary>

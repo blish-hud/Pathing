@@ -1,8 +1,9 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
-using TmfLib.Prototype;
+using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -10,6 +11,8 @@ namespace BhModule.Community.Pathing.Entity {
         private const string ATTR_COLOR = "color";
         private const string ATTR_TINT  = "tint";  // Blish HUD only - extended color parsing.
 
+        [Description("Tints the marker or trail with the color provided. Powerful when reusing existing marker icons or trail textures to make them differ in color.")]
+        [Category("Appearance")]
         public Color Tint { get; set; }
 
         /// <summary>

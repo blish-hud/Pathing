@@ -1,17 +1,21 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Behavior;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using TmfLib.Prototype;
+using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
 
         private const string ATTR_TRIGGERRANGE = "triggerrange";
-        
+
+        [Description("This attribute is used by multiple other attributes to define a distance from the marker in which those attributes will activate their functionality or behavior.")]
+        [Category("Behavior")]
         public override float TriggerRange { get; set; }
 
         private bool _focused;
+        [Browsable(false)]
         public bool Focused {
             get => _focused;
             private set {

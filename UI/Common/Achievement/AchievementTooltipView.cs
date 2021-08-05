@@ -4,10 +4,11 @@ using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace BhModule.Community.Pathing.UI.Common {
     public class AchievementTooltipView : View {
+
+        // TODO: Support checking `RequiresUnlock` in `flags`
 
         private Achievement _achievement;
         public Achievement Achievement {

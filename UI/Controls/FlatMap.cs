@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using BhModule.Community.Pathing.State;
 using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Input;
 using Gw2Sharp.Models;
 using Gw2Sharp.Mumble.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
 
 namespace BhModule.Community.Pathing.Entity {
     public class FlatMap : Control {
-
-        private static readonly Logger Logger = Logger.GetLogger<FlatMap>();
 
         private const int MAPWIDTH_MAX  = 362;
         private const int MAPHEIGHT_MAX = 338;
@@ -24,6 +24,26 @@ namespace BhModule.Community.Pathing.Entity {
 
         private double _lastMapViewChanged = 0;
         private float  _lastCameraPos      = 0f;
+
+        private IPathingEntity _activeEntity;
+
+        private ContextMenuStrip BuildPathableMenu(IPathingEntity pathingEntry) {
+            var newMenu = new ContextMenuStrip();
+
+            newMenu.AddMenuItem("Hide Parent Category").Click += delegate {
+                _packState.CategoryStates.SetInactive(pathingEntry.CategoryNamespace, true);
+            };
+
+            if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {
+                newMenu.AddMenuItem("Copy Parent Category Namespace").Click += async delegate { await ClipboardUtil.WindowsClipboardService.SetTextAsync(pathingEntry.CategoryNamespace); };
+                newMenu.AddMenuItem("Edit Marker").Click                    += async delegate { await Editor.MarkerEditWindow.SetMarker(pathingEntry as StandardMarker); };
+                newMenu.AddMenuItem("Delete Marker").Click                  += delegate { ScreenNotification.ShowNotification("Not yet supported", ScreenNotification.NotificationType.Warning, null, 5); };
+            }
+
+            newMenu.Hidden += delegate { newMenu.Dispose(); };
+
+            return newMenu;
+        }
 
         public FlatMap(IRootPackState packState) {
             this.ZIndex = int.MinValue;
@@ -52,6 +72,14 @@ namespace BhModule.Community.Pathing.Entity {
             TriggerFadeIn();
 
             _lastCameraPos = GameService.Gw2Mumble.PlayerCamera.Position.Z;
+        }
+
+        protected override void OnRightMouseButtonPressed(MouseEventArgs e) {
+            base.OnRightMouseButtonPressed(e);
+
+            if (_activeEntity != null) {
+                BuildPathableMenu(_activeEntity).Show(e.MousePosition);
+            }
         }
 
         private int GetOffset(float curr, float max, float min, float val) {
@@ -86,7 +114,7 @@ namespace BhModule.Community.Pathing.Entity {
             this.Size = newSize;
         }
 
-        protected override CaptureType CapturesInput() => CaptureType.ForceNone;
+        protected override CaptureType CapturesInput() => CaptureType.Filter;
 
         public override void DoUpdate(GameTime gameTime) {
             UpdateBounds();
@@ -117,8 +145,26 @@ namespace BhModule.Community.Pathing.Entity {
 
             IPathingEntity[] entities = _packState.Entities.OrderBy(poi => -poi.DrawOrder).ToArray();
 
+            string finalTooltip = string.Empty;
+            
             foreach (var pathable in entities) {
-                pathable.RenderToMiniMap(spriteBatch, bounds, (offsetX, offsetY), scale, opacity);
+                RectangleF? hint = pathable.RenderToMiniMap(spriteBatch, bounds, (offsetX, offsetY), scale, opacity);
+
+                if (this.MouseOver && hint.HasValue && hint.Value.Contains(GameService.Input.Mouse.Position)) {
+                    _activeEntity = pathable;
+
+                    if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {
+                        finalTooltip = pathable.CategoryNamespace;
+                    } else if (pathable is IHasMapInfo mapPathable) {
+                        finalTooltip = mapPathable.TipName;
+                    }
+                }
+            }
+
+            this.BasicTooltipText = finalTooltip;
+
+            if (finalTooltip == string.Empty) {
+                _activeEntity = null;
             }
         }
 

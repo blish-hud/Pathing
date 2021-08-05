@@ -139,5 +139,7 @@ namespace BhModule.Community.Pathing.State {
             _calculationDirty = true;
         }
 
+        public void SetInactive(string categoryNamespace, bool isInactive) => SetInactive(_rootPackState.RootCategory.GetOrAddCategoryFromNamespace(categoryNamespace), isInactive);
+
     }
 }

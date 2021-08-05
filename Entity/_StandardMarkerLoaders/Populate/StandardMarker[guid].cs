@@ -1,14 +1,17 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using TmfLib.Prototype;
+using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
 
         private const string ATTR_GUID = "guid";
 
+        [Description("A unique identifier used to track the state of certain behaviors between launch sessions.")]
+        [Category("Behavior")]
         public Guid Guid { get; set; }
 
         /// <summary>
