@@ -110,8 +110,8 @@ namespace BhModule.Community.Pathing.Entity {
             bounds = new Rectangle(this.Location, bounds.Size);
 
             double scale   = GameService.Gw2Mumble.UI.MapScale * Graphics.GetScaleRatio(UiSize.Normal); //Workaround to fix pixel to coordinate scaling - Blish HUD scale of 1 is "Larger" but game is "Normal".
-            double offsetX = GameService.Gw2Mumble.UI.MapCenter.X / scale - (bounds.Width  / 2d) - bounds.X;
-            double offsetY = GameService.Gw2Mumble.UI.MapCenter.Y / scale - (bounds.Height / 2d) - bounds.Y;
+            double offsetX = bounds.X + (bounds.Width / 2d);
+            double offsetY = bounds.Y + (bounds.Height / 2d);
 
             float opacity = MathHelper.Clamp((float)(GameService.Overlay.CurrentGameTime.TotalGameTime.TotalSeconds - _lastMapViewChanged) / 0.65f, 0f, 1f) * 0.8f;
 

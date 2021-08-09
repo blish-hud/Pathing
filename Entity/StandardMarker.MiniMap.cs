@@ -20,15 +20,14 @@ namespace BhModule.Community.Pathing.Entity {
 
             var scaledCoords = _packState.MapStates.EventCoordsToMapCoords(this.Position.X, this.Position.Y);
 
-            var location = new Vector2((float) (scaledCoords.X / scale - offsets.X), 
-                                       (float) (scaledCoords.Y / scale - offsets.Y));
+            var location = new Vector2((float) ((scaledCoords.X - GameService.Gw2Mumble.UI.MapCenter.X) / scale), 
+                                       (float) ((scaledCoords.Y - GameService.Gw2Mumble.UI.MapCenter.Y) / scale));
 
             if (!GameService.Gw2Mumble.UI.IsMapOpen && GameService.Gw2Mumble.UI.IsCompassRotationEnabled) {
-	            Vector2 rotationPoint = new Vector2((float)((GameService.Gw2Mumble.UI.MapCenter.X / scale) - offsets.X), (float)((GameService.Gw2Mumble.UI.MapCenter.Y / scale) - offsets.Y));
-	            location -= rotationPoint;
 	            location =  Vector2.Transform(location, Matrix.CreateRotationZ((float)GameService.Gw2Mumble.UI.CompassRotation));
-	            location += rotationPoint;
             }
+
+            location += new Vector2((float)offsets.X, (float)offsets.Y);
 
             if (!bounds.Contains(location)) return;
 
@@ -37,7 +36,7 @@ namespace BhModule.Community.Pathing.Entity {
                              null,
                              this.Tint * opacity,
                              0f,
-                             new Vector2(0f,0f),
+                             new Vector2(this.Texture.Width / 2f, this.Texture.Height / 2f),
                              (float) (0.3f / scale),
                              SpriteEffects.None,
                              0f);

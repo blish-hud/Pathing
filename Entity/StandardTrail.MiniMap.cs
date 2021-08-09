@@ -9,15 +9,14 @@ namespace BhModule.Community.Pathing.Entity {
         private Vector2 GetScaledLocation(double x, double y, double scale, (double X, double Y) offsets) {
             (double mapX, double mapY) = _packState.MapStates.EventCoordsToMapCoords(x, y);
 
-            Vector2 scaledLocation =  new Vector2((float)(mapX / scale - offsets.X),
-                                                  (float)(mapY / scale - offsets.Y));
+            var scaledLocation = new Vector2((float) ((mapX - GameService.Gw2Mumble.UI.MapCenter.X) / scale), 
+                                       (float) ((mapY - GameService.Gw2Mumble.UI.MapCenter.Y) / scale));
 
             if (!GameService.Gw2Mumble.UI.IsMapOpen && GameService.Gw2Mumble.UI.IsCompassRotationEnabled) {
-	            Vector2 rotationPoint = new Vector2((float)((GameService.Gw2Mumble.UI.MapCenter.X / scale) - offsets.X), (float)((GameService.Gw2Mumble.UI.MapCenter.Y / scale) - offsets.Y));
-	            scaledLocation -= rotationPoint;
-	            scaledLocation =  Vector2.Transform(scaledLocation, Matrix.CreateRotationZ((float)GameService.Gw2Mumble.UI.CompassRotation));
-	            scaledLocation += rotationPoint;
+	            scaledLocation = Vector2.Transform(scaledLocation, Matrix.CreateRotationZ((float)GameService.Gw2Mumble.UI.CompassRotation));
             }
+
+            scaledLocation += new Vector2((float)offsets.X, (float)offsets.Y);
 
             return scaledLocation;
         }
