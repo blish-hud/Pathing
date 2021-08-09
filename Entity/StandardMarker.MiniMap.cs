@@ -18,16 +18,7 @@ namespace BhModule.Community.Pathing.Entity {
             if ((!this.MapVisibility     || !_packState.UserConfiguration.MapShowMarkersOnFullscreen.Value) && GameService.Gw2Mumble.UI.IsMapOpen) return;
             if ((!this.MiniMapVisibility || !_packState.UserConfiguration.MapShowMarkersOnCompass.Value)    && !GameService.Gw2Mumble.UI.IsMapOpen) return;
 
-            var scaledCoords = _packState.MapStates.EventCoordsToMapCoords(this.Position.X, this.Position.Y);
-
-            var location = new Vector2((float) ((scaledCoords.X - GameService.Gw2Mumble.UI.MapCenter.X) / scale), 
-                                       (float) ((scaledCoords.Y - GameService.Gw2Mumble.UI.MapCenter.Y) / scale));
-
-            if (!GameService.Gw2Mumble.UI.IsMapOpen && GameService.Gw2Mumble.UI.IsCompassRotationEnabled) {
-	            location =  Vector2.Transform(location, Matrix.CreateRotationZ((float)GameService.Gw2Mumble.UI.CompassRotation));
-            }
-
-            location += new Vector2((float)offsets.X, (float)offsets.Y);
+            var location = GetScaledLocation(this.Position.X, this.Position.Y, scale, offsets);
 
             if (!bounds.Contains(location)) return;
 

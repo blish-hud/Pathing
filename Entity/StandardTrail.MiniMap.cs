@@ -6,22 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
 
-        private Vector2 GetScaledLocation(double x, double y, double scale, (double X, double Y) offsets) {
-            (double mapX, double mapY) = _packState.MapStates.EventCoordsToMapCoords(x, y);
-
-            var scaledLocation = new Vector2((float) ((mapX - GameService.Gw2Mumble.UI.MapCenter.X) / scale), 
-                                       (float) ((mapY - GameService.Gw2Mumble.UI.MapCenter.Y) / scale));
-
-            if (!GameService.Gw2Mumble.UI.IsMapOpen && GameService.Gw2Mumble.UI.IsCompassRotationEnabled) {
-	            scaledLocation = Vector2.Transform(scaledLocation, Matrix.CreateRotationZ((float)GameService.Gw2Mumble.UI.CompassRotation));
-            }
-
-            scaledLocation += new Vector2((float)offsets.X, (float)offsets.Y);
-
-            return scaledLocation;
-        }
-
-        public override void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
+	    public override void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
             if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return;
 
             if ((!this.MapVisibility     || !_packState.UserConfiguration.MapShowTrailsOnFullscreen.Value) && GameService.Gw2Mumble.UI.IsMapOpen) return;
