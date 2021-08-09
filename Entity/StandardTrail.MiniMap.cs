@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
 
-	    public override void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
+	public override void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
             if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return;
 
             if ((!this.MapVisibility     || !_packState.UserConfiguration.MapShowTrailsOnFullscreen.Value) && GameService.Gw2Mumble.UI.IsMapOpen) return;
