@@ -9,8 +9,17 @@ namespace BhModule.Community.Pathing.Entity {
         private Vector2 GetScaledLocation(double x, double y, double scale, (double X, double Y) offsets) {
             (double mapX, double mapY) = _packState.MapStates.EventCoordsToMapCoords(x, y);
 
-            return new Vector2((float)(mapX / scale - offsets.X),
-                               (float)(mapY / scale - offsets.Y));
+            Vector2 scaledLocation =  new Vector2((float)(mapX / scale - offsets.X),
+                                                  (float)(mapY / scale - offsets.Y));
+
+            if (!GameService.Gw2Mumble.UI.IsMapOpen && GameService.Gw2Mumble.UI.IsCompassRotationEnabled) {
+	            Vector2 rotationPoint = new Vector2((float)((GameService.Gw2Mumble.UI.MapCenter.X / scale) - offsets.X), (float)((GameService.Gw2Mumble.UI.MapCenter.Y / scale) - offsets.Y));
+	            scaledLocation -= rotationPoint;
+	            scaledLocation =  Vector2.Transform(scaledLocation, Matrix.CreateRotationZ((float)GameService.Gw2Mumble.UI.CompassRotation));
+	            scaledLocation += rotationPoint;
+            }
+
+            return scaledLocation;
         }
 
         public override void RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
