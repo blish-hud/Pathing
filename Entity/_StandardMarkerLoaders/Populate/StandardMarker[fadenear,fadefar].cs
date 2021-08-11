@@ -22,6 +22,12 @@ namespace BhModule.Community.Pathing.Entity {
 
             { if (collection.TryPopAttribute(ATTR_FADENEAR, out var attribute)) this.FadeNear = attribute.GetValueAsFloat(this.FadeNear); }
             { if (collection.TryPopAttribute(ATTR_FADEFAR,  out var attribute)) this.FadeFar  = attribute.GetValueAsFloat(this.FadeFar); }
+
+            if (this.FadeNear < 0 || this.FadeFar < 0) {
+                // If value is left default, the marker won't end up visible.
+                this.FadeNear = float.MaxValue;
+                this.FadeFar  = float.MaxValue;
+            }
         }
 
     }

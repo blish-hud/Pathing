@@ -110,7 +110,11 @@ namespace BhModule.Community.Pathing {
             await LoadPackedPackFiles(Directory.GetFiles(_watchPath, "*.taco", SearchOption.AllDirectories));
             await LoadUnpackedPackFiles(_watchPath);
 
-            await LoadMapFromEachPack(_packState.CurrentMapId = GameService.Gw2Mumble.CurrentMap.Id);
+            // If the module loads at launch, this can end up firing twice.
+            // If the module loads after launch (manually enabled), we need this to populate the current map.
+            if (GameService.Gw2Mumble.CurrentMap.Id != default) {
+                await LoadMapFromEachPack(_packState.CurrentMapId = GameService.Gw2Mumble.CurrentMap.Id);
+            }
         }
 
         private void PrepareState(int mapId) {
@@ -137,8 +141,7 @@ namespace BhModule.Community.Pathing {
             }
 
             await _packState.LoadPackCollection(_sharedPackCollection);
-
-            // TODO: Check Map and Compass individually (currently map values are ignored and are assumed to match).
+            
             _allMarkers.Submenu = new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories);
         }
 

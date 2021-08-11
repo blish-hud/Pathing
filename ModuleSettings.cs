@@ -58,17 +58,17 @@ namespace BhModule.Community.Pathing {
 
             // TODO: Add string to strings.resx for localization.
             // TODO: Add description to settings.
-            this.PackWorldPathablesEnabled                = this.PackSettings.DefineSetting(nameof(this.PackWorldPathablesEnabled),                true, "Show Markers in World");
-            this.PackMaxOpacityOverride                   = this.PackSettings.DefineSetting(nameof(this.PackMaxOpacityOverride),                   1f, Strings.Setting_PackMaxOpacityOverride, "");
-            this.PackMaxViewDistance                      = this.PackSettings.DefineSetting(nameof(this.PackMaxViewDistance),                      25000f, Strings.Setting_PackMaxViewDistance, "");
-            this.PackMaxTrailAnimationSpeed               = this.PackSettings.DefineSetting(nameof(this.PackMaxTrailAnimationSpeed),               10f, Strings.Setting_PackMaxTrailAnimationSpeed, "");
-            this.PackFadeTrailsAroundCharacter            = this.PackSettings.DefineSetting(nameof(this.PackFadeTrailsAroundCharacter),            true, Strings.Setting_PackFadeTrailsAroundCharacter, "");
-            this.PackFadePathablesDuringCombat            = this.PackSettings.DefineSetting(nameof(this.PackFadePathablesDuringCombat),            true, Strings.Setting_PackFadePathablesDuringCombat, "");
-            this.PackFadeMarkersBetweenCharacterAndCamera = this.PackSettings.DefineSetting(nameof(this.PackFadeMarkersBetweenCharacterAndCamera), true, Strings.Setting_PackFadeMarkersBetweenCharacterAndCamera, "");
-            this.PackAllowMarkersToAutomaticallyHide      = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAutomaticallyHide),      true, Strings.Setting_PackAllowMarkersToAutomaticallyHide, "");
-            this.PackMarkerConsentToClipboard             = this.PackSettings.DefineSetting(nameof(this.PackMarkerConsentToClipboard),             MarkerClipboardConsentLevel.Always, Strings.Setting_PackMarkerConsentToClipboard, "");
-            this.PackAllowMarkersToAnimate                = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAnimate),                true, Strings.Setting_PackAllowMarkersToAnimate, "");
-            this.PackShowCategoriesFromAllMaps            = this.PackSettings.DefineSetting(nameof(this.PackShowCategoriesFromAllMaps),            false, Strings.Setting_PackShowCategoriesFromAllMaps, "");
+            this.PackWorldPathablesEnabled                = this.PackSettings.DefineSetting(nameof(this.PackWorldPathablesEnabled),                true, () => "Show Markers in World");
+            this.PackMaxOpacityOverride                   = this.PackSettings.DefineSetting(nameof(this.PackMaxOpacityOverride),                   1f, () => Strings.Setting_PackMaxOpacityOverride, () => "");
+            this.PackMaxViewDistance                      = this.PackSettings.DefineSetting(nameof(this.PackMaxViewDistance),                      25000f, () => Strings.Setting_PackMaxViewDistance, () => "");
+            this.PackMaxTrailAnimationSpeed               = this.PackSettings.DefineSetting(nameof(this.PackMaxTrailAnimationSpeed),               10f, () => Strings.Setting_PackMaxTrailAnimationSpeed, () => "");
+            this.PackFadeTrailsAroundCharacter            = this.PackSettings.DefineSetting(nameof(this.PackFadeTrailsAroundCharacter),            true, () => Strings.Setting_PackFadeTrailsAroundCharacter, () => "");
+            this.PackFadePathablesDuringCombat            = this.PackSettings.DefineSetting(nameof(this.PackFadePathablesDuringCombat),            true, () => Strings.Setting_PackFadePathablesDuringCombat, () => "");
+            this.PackFadeMarkersBetweenCharacterAndCamera = this.PackSettings.DefineSetting(nameof(this.PackFadeMarkersBetweenCharacterAndCamera), true, () => Strings.Setting_PackFadeMarkersBetweenCharacterAndCamera, () => "");
+            this.PackAllowMarkersToAutomaticallyHide      = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAutomaticallyHide),      true, () => Strings.Setting_PackAllowMarkersToAutomaticallyHide, () => "");
+            this.PackMarkerConsentToClipboard             = this.PackSettings.DefineSetting(nameof(this.PackMarkerConsentToClipboard),             MarkerClipboardConsentLevel.Always, () => Strings.Setting_PackMarkerConsentToClipboard, () => "");
+            this.PackAllowMarkersToAnimate                = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAnimate),                true, () => Strings.Setting_PackAllowMarkersToAnimate, () => "");
+            this.PackShowCategoriesFromAllMaps            = this.PackSettings.DefineSetting(nameof(this.PackShowCategoriesFromAllMaps),            false, () => Strings.Setting_PackShowCategoriesFromAllMaps, () => "");
 
             this.PackMaxOpacityOverride.SetRange(0f, 1f);
             this.PackMaxViewDistance.SetRange(25f, 25000f);
@@ -96,13 +96,13 @@ namespace BhModule.Community.Pathing {
 
             // TODO: Add string to strings.resx for localization.
             // TODO: Add description to settings.
-            this.MapPathablesEnabled                   = this.MapSettings.DefineSetting(nameof(this.MapPathablesEnabled),                   true, "Show Markers on Maps");
-            this.MapShowMarkersOnFullscreen            = this.MapSettings.DefineSetting(nameof(this.MapShowMarkersOnFullscreen),            true, Strings.Setting_MapShowMarkersOnFullscreen,  "");
-            this.MapShowTrailsOnFullscreen             = this.MapSettings.DefineSetting(nameof(this.MapShowTrailsOnFullscreen),             true, Strings.Setting_MapShowTrailsOnFullscreen,   "");
-            this.MapShowMarkersOnCompass               = this.MapSettings.DefineSetting(nameof(this.MapShowMarkersOnCompass),               true, Strings.Setting_MapShowMarkersOnCompass,     "");
-            this.MapShowTrailsOnCompass                = this.MapSettings.DefineSetting(nameof(this.MapShowTrailsOnCompass),                true, Strings.Setting_MapShowTrailsOnCompass,      "");
-            this.MapShowAboveBelowIndicators           = this.MapSettings.DefineSetting(nameof(this.MapShowAboveBelowIndicators),           true, Strings.Setting_MapShowAboveBelowIndicators, "");
-            this.MapFadeVerticallyDistantTrailSegments = this.MapSettings.DefineSetting(nameof(this.MapFadeVerticallyDistantTrailSegments), true, "Fade Trail Segments Which Are High Above or Below");
+            this.MapPathablesEnabled                   = this.MapSettings.DefineSetting(nameof(this.MapPathablesEnabled),                   true, () => "Show Markers on Maps");
+            this.MapShowMarkersOnFullscreen            = this.MapSettings.DefineSetting(nameof(this.MapShowMarkersOnFullscreen),            true, () => Strings.Setting_MapShowMarkersOnFullscreen,  () => "");
+            this.MapShowTrailsOnFullscreen             = this.MapSettings.DefineSetting(nameof(this.MapShowTrailsOnFullscreen),             true, () => Strings.Setting_MapShowTrailsOnFullscreen,   () => "");
+            this.MapShowMarkersOnCompass               = this.MapSettings.DefineSetting(nameof(this.MapShowMarkersOnCompass),               true, () => Strings.Setting_MapShowMarkersOnCompass,     () => "");
+            this.MapShowTrailsOnCompass                = this.MapSettings.DefineSetting(nameof(this.MapShowTrailsOnCompass),                true, () => Strings.Setting_MapShowTrailsOnCompass,      () => "");
+            this.MapShowAboveBelowIndicators           = this.MapSettings.DefineSetting(nameof(this.MapShowAboveBelowIndicators),           true, () => Strings.Setting_MapShowAboveBelowIndicators, () => "");
+            this.MapFadeVerticallyDistantTrailSegments = this.MapSettings.DefineSetting(nameof(this.MapFadeVerticallyDistantTrailSegments), true, () => "Fade Trail Segments Which Are High Above or Below");
         }
 
         #endregion

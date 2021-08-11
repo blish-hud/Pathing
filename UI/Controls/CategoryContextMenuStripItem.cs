@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Behavior.Filter;
 using BhModule.Community.Pathing.State;
@@ -13,6 +14,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TmfLib.Pathable;
+using TmfLib.Prototype;
 
 namespace BhModule.Community.Pathing.UI.Controls {
     public class CategoryContextMenuStripItem : ContextMenuStripItem {
@@ -62,24 +64,16 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         private void DetectAndBuildContexts() {
-            if (_pathingCategory.ExplicitAttributes.TryGetAttribute(AchievementFilter.ATTR_ID, out var achievementAttr)
+            if (_pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_ID, out var achievementAttr)
                 /* && !_pathingCategory.ExplicitAttributes.TryGetAttribute(AchievementFilter.ATTR_BIT, out _) */) {
 
                 // TODO: Add as a context so that multiple characteristics can be accounted for.
 
-                int achievementId = achievementAttr.GetValueAsInt(-1);
+                if (!InvariantUtil.TryParseInt(achievementAttr, out int achievementId)) return;
 
                 if (achievementId < 0) return;
 
-                var newTooltip = new Tooltip();
-
-                var tooltipViewContainer = new ViewContainer() {
-                    Parent = newTooltip
-                };
-
-                this.Tooltip = newTooltip;
-
-                tooltipViewContainer.Show(new AchievementTooltipView(achievementId));
+                this.Tooltip = new Tooltip(new AchievementTooltipView(achievementId));
 
                 if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
                     this.Enabled = !_packState.BehaviorStates.IsAchievementHidden(achievementId, -1);

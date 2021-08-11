@@ -228,8 +228,8 @@ namespace BhModule.Community.Pathing.State {
             lock (_achievementStates) {
                 foreach (var achievement in accountAchievementTask.Result) {
                     _achievementStates.AddOrUpdate(achievement.Id,
-                                                   new AchievementStatus(achievement.Done, achievement.Bits ?? Enumerable.Empty<int>()),
-                                                   (_, _) => new AchievementStatus(achievement.Done, achievement.Bits ?? Enumerable.Empty<int>()));
+                                                   new AchievementStatus(achievement.Done, achievement.Bits ?? Enumerable.Empty<int>(), achievement.Unlocked ?? true),
+                                                   (_, _) => new AchievementStatus(achievement.Done, achievement.Bits ?? Enumerable.Empty<int>(), achievement.Unlocked ?? true));
                 }
             }
         }

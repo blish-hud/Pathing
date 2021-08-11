@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace BhModule.Community.Pathing.Behavior {
 
@@ -8,9 +9,12 @@ namespace BhModule.Community.Pathing.Behavior {
 
         public HashSet<int> AchievementBits { get; }
 
-        public AchievementStatus(bool done, IEnumerable<int> achievementBits) {
+        public bool Unlocked { get; }
+
+        public AchievementStatus(bool done, IEnumerable<int> achievementBits, bool unlocked) {
             this.Done            = done;
             this.AchievementBits = new HashSet<int>(achievementBits);
+            this.Unlocked        = unlocked;
         }
 
     }

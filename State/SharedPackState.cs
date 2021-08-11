@@ -3,10 +3,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.Editor.Entity;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Entity.Effects;
 using BhModule.Community.Pathing.State;
+using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
+using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TmfLib;
@@ -42,6 +45,37 @@ namespace BhModule.Community.Pathing {
             InitShaders();
 
             Blish_HUD.Common.Gw2.KeyBindings.Interact.Activated += OnInteractPressed;
+
+            #if SHOWINDEV
+                GameService.Input.Mouse.LeftMouseButtonPressed += MouseOnLeftMouseButtonPressed;
+            #endif
+        }
+
+        private async void MouseOnLeftMouseButtonPressed(object sender, MouseEventArgs e) {
+            var mouseRay = PickingUtil.CalculateRay(e.MousePosition,
+                                                    GameService.Gw2Mumble.PlayerCamera.View,
+                                                    GameService.Gw2Mumble.PlayerCamera.Projection);
+
+            foreach (var entity in GameService.Graphics.World.Entities.OrderBy(entity => entity.DrawOrder)) {
+                if (entity is ICanPick pickEntity) {
+                    if (pickEntity.RayIntersects(mouseRay)) {
+                        switch (entity) {
+                            case StandardMarker marker:
+                                marker.DebugRender = !marker.DebugRender;
+
+                                await Editor.MarkerEditWindow.SetMarker(marker);
+                                break;
+                            case IAxisHandle handle:
+                                handle.HandleActivated(mouseRay);
+                                break;
+                            default:
+                                continue;
+                        }
+
+                        break;
+                    }
+                }
+            }
         }
 
         private ManagedState[] _managedStates;
@@ -114,21 +148,7 @@ namespace BhModule.Community.Pathing {
             _entities.AddRange(poiBag);
             GameService.Graphics.World.AddEntities(poiBag);
 
-            //foreach (var poi in pois) {
-            //    var newEntity = BuildEntity(poi);
-
-            //    _entities.Add(newEntity);
-            //    GameService.Graphics.World.AddEntity(newEntity);
-            //    newEntity.FadeIn();
-            //}
-
             await Task.CompletedTask;
-        }
-
-        private Effect GetEffect(string effectPath) {
-            byte[] compiledShader = Utility.TwoMGFX.ShaderCompilerUtil.CompileShader(effectPath);
-
-            return new Effect(GameService.Graphics.GraphicsDevice, compiledShader, 0, compiledShader.Length);
         }
 
         private void InitShaders() {
@@ -148,6 +168,8 @@ namespace BhModule.Community.Pathing {
         }
 
         public void Update(GameTime gameTime) {
+            if (_managedStates == null) return;
+
             foreach (var state in _managedStates) {
                 state.Update(gameTime);
             }

@@ -22,6 +22,9 @@ namespace BhModule.Community.Pathing.Entity {
         public abstract float TriggerRange { get; set; }
 
         [Browsable(false)]
+        public bool DebugRender { get; set; } = false;
+
+        [Browsable(false)]
         public float DistanceToPlayer { get; set; } = -1;
 
         [Browsable(false)]
@@ -44,6 +47,7 @@ namespace BhModule.Community.Pathing.Entity {
         private double _lastFadeStart = 0;
         private bool   _needsFadeIn   = true;
 
+        [Browsable(false)]
         public float AnimatedFadeOpacity => MathHelper.Clamp((float) (GameService.Overlay.CurrentGameTime.TotalGameTime.TotalMilliseconds - _lastFadeStart) / FADEIN_DURATION, 0f, 1f);
 
         public void FadeIn() {
@@ -106,6 +110,21 @@ namespace BhModule.Community.Pathing.Entity {
             }
 
             return false;
+        }
+
+        protected Vector2 GetScaledLocation(double x, double y, double scale, (double X, double Y) offsets) {
+            (double mapX, double mapY) = _packState.MapStates.EventCoordsToMapCoords(x, y);
+
+            var scaledLocation = new Vector2((float)((mapX - GameService.Gw2Mumble.UI.MapCenter.X) / scale),
+                                             (float)((mapY - GameService.Gw2Mumble.UI.MapCenter.Y) / scale));
+
+            if (!GameService.Gw2Mumble.UI.IsMapOpen && GameService.Gw2Mumble.UI.IsCompassRotationEnabled) {
+                scaledLocation = Vector2.Transform(scaledLocation, Matrix.CreateRotationZ((float)GameService.Gw2Mumble.UI.CompassRotation));
+            }
+
+            scaledLocation += new Vector2((float)offsets.X, (float)offsets.Y);
+
+            return scaledLocation;
         }
 
         public virtual void Unload() {

@@ -63,15 +63,16 @@ namespace BhModule.Community.Pathing.Entity.Effects {
         }
 
         // Entity-unique parameters
-        private const string PARAMETER_WORLD            = "World";
-        private const string PARAMETER_TEXTURE          = "Texture";
-        private const string PARAMETER_FADETEXTURE      = "FadeTexture";
-        private const string PARAMETER_OPACITY          = "Opacity";
-        private const string PARAMETER_FADENEAR         = "FadeNear";
-        private const string PARAMETER_FADEFAR          = "FadeFar";
-        private const string PARAMETER_PLAYERFADERADIUS = "PlayerFadeRadius";
-        private const string PARAMETER_FADECENTER       = "FadeCenter";
-        private const string PARAMETER_TINTCOLOR        = "TintColor";
+        private const string PARAMETER_WORLD              = "World";
+        private const string PARAMETER_TEXTURE            = "Texture";
+        private const string PARAMETER_FADETEXTURE        = "FadeTexture";
+        private const string PARAMETER_OPACITY            = "Opacity";
+        private const string PARAMETER_FADENEAR           = "FadeNear";
+        private const string PARAMETER_FADEFAR            = "FadeFar";
+        private const string PARAMETER_PLAYERFADERADIUS   = "PlayerFadeRadius";
+        private const string PARAMETER_FADECENTER         = "FadeCenter";
+        private const string PARAMETER_TINTCOLOR          = "TintColor";
+        private const string PARAMETER_SHOWDEBUGWIREFRAME = "ShowDebugWireframe";
 
         private Matrix    _world;
         private Texture2D _texture;
@@ -81,6 +82,7 @@ namespace BhModule.Community.Pathing.Entity.Effects {
         private float     _playerFadeRadius;
         private bool      _fadeCenter;
         private Color     _tintColor;
+        private bool      _showDebugWireframe;
 
         public Matrix World {
             get => _world;
@@ -132,6 +134,11 @@ namespace BhModule.Community.Pathing.Entity.Effects {
             set => SetParameter(PARAMETER_TINTCOLOR, ref _tintColor, value);
         }
 
+        public bool ShowDebugWireframe {
+            get => _showDebugWireframe;
+            set => SetParameter(PARAMETER_SHOWDEBUGWIREFRAME, ref _showDebugWireframe, value);
+        }
+
         #region ctors
 
         public MarkerEffect(Effect baseEffect) : base(baseEffect) { }
@@ -142,14 +149,15 @@ namespace BhModule.Community.Pathing.Entity.Effects {
 
         #endregion
 
-        public void SetEntityState(Matrix world, Texture2D texture, float opacity, float fadeNear, float fadeFar, bool fadeNearCamera, Color tintColor) {
-            this.World          = world;
-            this.Texture        = texture;
-            this.Opacity        = opacity;
-            this.FadeNear       = fadeNear;
-            this.FadeFar        = fadeFar;
-            this.FadeNearCamera = fadeNearCamera;
-            this.TintColor      = tintColor;
+        public void SetEntityState(Matrix world, Texture2D texture, float opacity, float fadeNear, float fadeFar, bool fadeNearCamera, Color tintColor, bool showDebugWireframe) {
+            this.World              = world;
+            this.Texture            = texture;
+            this.Opacity            = opacity;
+            this.FadeNear           = fadeNear;
+            this.FadeFar            = fadeFar;
+            this.FadeNearCamera     = fadeNearCamera;
+            this.TintColor          = tintColor;
+            this.ShowDebugWireframe = showDebugWireframe;
         }
         
         protected override void Update(GameTime gameTime) {

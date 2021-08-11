@@ -3,6 +3,8 @@
 
 #define DEBUG false
 
+#define DEBUGBORDER 0.475
+
 float3 PlayerPosition;
 
 float Opacity;
@@ -16,6 +18,8 @@ float PlayerFadeRadius;
 bool FadeCenter;
 bool FadeNearCamera;
 float3 CameraPosition;
+
+bool ShowDebugWireframe;
 
 matrix World;
 matrix View;
@@ -116,6 +120,12 @@ PixelShaderOutput PixelShaderFunction(VSOutput input) {
 	// Marker is fully faded out due to its distance
 	if (FadeFar > 0) {
 		clip(FadeFar - input.Distance);
+	}
+	
+	// Debug outline
+	if (ShowDebugWireframe && (abs(input.TextureCoordinate.x - 0.5) > DEBUGBORDER || abs(input.TextureCoordinate.y - 0.5) > DEBUGBORDER)) {
+		output.Color.rgba = float4(1, 0, 0, 1);
+		return output;
 	}
 	
 	bool inCenter = false;

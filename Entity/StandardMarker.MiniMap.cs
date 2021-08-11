@@ -20,10 +20,12 @@ namespace BhModule.Community.Pathing.Entity {
             if ((!this.MapVisibility     || !_packState.UserConfiguration.MapShowMarkersOnFullscreen.Value) && GameService.Gw2Mumble.UI.IsMapOpen) return null;
             if ((!this.MiniMapVisibility || !_packState.UserConfiguration.MapShowMarkersOnCompass.Value)    && !GameService.Gw2Mumble.UI.IsMapOpen) return null;
 
-            var scaledCoords = _packState.MapStates.EventCoordsToMapCoords(this.Position.X, this.Position.Y);
+            //var scaledCoords = _packState.MapStates.EventCoordsToMapCoords(this.Position.X, this.Position.Y);
 
-            var location = new Vector2((float) (scaledCoords.X / scale - offsets.X),
-                                       (float) (scaledCoords.Y / scale - offsets.Y));
+            //var location = new Vector2((float) (scaledCoords.X / scale - offsets.X),
+            //                           (float) (scaledCoords.Y / scale - offsets.Y));
+
+            var location = GetScaledLocation(this.Position.X, this.Position.Y, scale, offsets);
 
             if (!bounds.Contains(location)) return null;
 
@@ -32,6 +34,8 @@ namespace BhModule.Community.Pathing.Entity {
             var drawRect = new RectangleF(location - new Vector2(this.Texture.Width / 2f * drawScale, this.Texture.Height / 2f * drawScale),
                                          new Vector2(this.Texture.Width * drawScale, this.Texture.Height * drawScale));
             
+            //spriteBatch.Draw(ContentService.Textures.Pixel, drawRect, Color.Magenta);
+
             spriteBatch.Draw(this.Texture, drawRect, this.Tint);
 
             // Draw above or below indicator, if applicable.

@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel;
+using System.Drawing.Design;
 using System.Runtime.CompilerServices;
+using BhModule.Community.Pathing.Editor.TypeConverters;
+using BhModule.Community.Pathing.Editor.TypeEditors;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
@@ -18,6 +21,8 @@ namespace BhModule.Community.Pathing.Entity {
 
         [DisplayName("Title-Color")]
         [Category("Appearance")]
+        [Editor(typeof(ColorEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(ColorConverter))]
         public Color  BillboardTextColor { get; set; }
 
         /// <summary>

@@ -109,6 +109,8 @@ namespace BhModule.Community.Pathing.Entity {
         public override void Render(GraphicsDevice graphicsDevice, IWorld world, ICamera camera) {
             if (IsFiltered(EntityRenderTarget.World) || this.Texture == null || !(_sectionBuffers.Length > 0)) return;
 
+            if (!this.InGameVisibility) return;
+
             graphicsDevice.RasterizerState = this.CullDirection;
 
             _packState.SharedTrailEffect.SetEntityState(this.Texture,

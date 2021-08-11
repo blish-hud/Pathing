@@ -62,7 +62,10 @@ namespace BhModule.Community.Pathing {
             newWindow.AddTab(new WindowTab(Strings.Window_MainSettingsTab,     ContentsManager.GetTexture(@"png\156740+155150.png"), 1), () => new SettingsView(_moduleSettings.PackSettings));
             newWindow.AddTab(new WindowTab(Strings.Window_MapSettingsTab,      ContentsManager.GetTexture(@"png\157123+155150.png"), 2), () => new SettingsView(_moduleSettings.MapSettings));
             newWindow.AddTab(new WindowTab(Strings.Window_KeyBindSettingsTab,  ContentsManager.GetTexture(@"png\156734+155150.png"), 3), () => new SettingsView(_moduleSettings.KeyBindSettings));
-            newWindow.AddTab(new WindowTab(Strings.Window_DownloadMarkerPacks, ContentsManager.GetTexture(@"png\156909.png"),        4), () => new PackRepoView());
+
+            #if SHOWINDEV
+                newWindow.AddTab(new WindowTab(Strings.Window_DownloadMarkerPacks, ContentsManager.GetTexture(@"png\156909.png"), 4), () => new PackRepoView());
+            #endif
 
             _pathingIcon.Menu = _pathingContextMenuStrip;
 

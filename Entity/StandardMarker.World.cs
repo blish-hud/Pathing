@@ -1,13 +1,19 @@
 ﻿using System;
+using System.Linq;
+using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BhModule.Community.Pathing.Entity {
-    public partial class StandardMarker {
+    public partial class StandardMarker : ICanPick {
         
         private static DynamicVertexBuffer _sharedVertexBuffer;
+
+        private static readonly Vector3[] _faceVerts = {
+            new(-0.5f, -0.5f, 0), new(0.5f, -0.5f, 0), new(-0.5f, 0.5f, 0), new(0.5f, 0.5f, 0),
+        };
 
         static StandardMarker() {
             CreateSharedVertexBuffer();
@@ -16,12 +22,13 @@ namespace BhModule.Community.Pathing.Entity {
         private static void CreateSharedVertexBuffer() {
             _sharedVertexBuffer = new DynamicVertexBuffer(GameService.Graphics.GraphicsDevice, typeof(VertexPositionTexture), 4, BufferUsage.WriteOnly);
 
-            var verts = new VertexPositionTexture[4];
+            var verts = new VertexPositionTexture[_faceVerts.Length];
 
-            verts[0] = new VertexPositionTexture(new Vector3(-0.5f, -0.5f, 0), new Vector2(1, 1));
-            verts[1] = new VertexPositionTexture(new Vector3(0.5f,  -0.5f, 0), new Vector2(0, 1));
-            verts[2] = new VertexPositionTexture(new Vector3(-0.5f, 0.5f,  0), new Vector2(1, 0));
-            verts[3] = new VertexPositionTexture(new Vector3(0.5f,  0.5f,  0), new Vector2(0, 0));
+            for (int i = 0; i < _faceVerts.Length; i++) {
+                ref var vert = ref _faceVerts[i];
+
+                verts[i] = new VertexPositionTexture(vert, new Vector2(vert.X < 0 ? 1 : 0, vert.Y < 0 ? 1 : 0));
+            }
 
             _sharedVertexBuffer.SetData(verts);
         }
@@ -37,8 +44,16 @@ namespace BhModule.Community.Pathing.Entity {
                         : 1f);
         }
 
+        private Matrix _modelMatrix = Matrix.Identity;
+        
+        public bool RayIntersects(Ray ray) {
+            return PickingUtil.IntersectDistance(BoundingBox.CreateFromPoints(_faceVerts.Select(vert => Vector3.Transform(vert, _modelMatrix))), ray) != null;
+        }
+
         public override void Render(GraphicsDevice graphicsDevice, IWorld world, ICamera camera) {
             if (IsFiltered(EntityRenderTarget.World) || _texture == null) return;
+
+            if (!this.InGameVisibility) return;
 
             // Skip rendering stuff beyond the max view distance
             float maxRender = Math.Min(this.FadeFar, _packState.UserConfiguration.PackMaxViewDistance.Value);
@@ -69,7 +84,10 @@ namespace BhModule.Community.Pathing.Entity {
                                                          Math.Min(this.FadeNear, _packState.UserConfiguration.PackMaxViewDistance.Value - (this.FadeFar - this.FadeNear)),
                                                          maxRender,
                                                          this.CanFade && _packState.UserConfiguration.PackFadeMarkersBetweenCharacterAndCamera.Value,
-                                                         Tint);
+                                                         this.Tint,
+                                                         this.DebugRender);
+
+            _modelMatrix = modelMatrix;
 
             graphicsDevice.SetVertexBuffer(_sharedVertexBuffer);
 

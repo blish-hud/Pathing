@@ -1,12 +1,13 @@
 ﻿using System.Linq;
 using Blish_HUD;
+using Blish_HUD.Common.UI.Views;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 
 namespace BhModule.Community.Pathing.UI.Common {
-    public class AchievementTooltipView : View {
+    public class AchievementTooltipView : View, ITooltipView {
 
         // TODO: Support checking `RequiresUnlock` in `flags`
 

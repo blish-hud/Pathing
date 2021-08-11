@@ -7,13 +7,6 @@ using MonoGame.Extended;
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
 
-        private Vector2 GetScaledLocation(double x, double y, double scale, (double X, double Y) offsets) {
-            (double mapX, double mapY) = _packState.MapStates.EventCoordsToMapCoords(x, y);
-
-            return new Vector2((float)(mapX / scale - offsets.X),
-                               (float)(mapY / scale - offsets.Y));
-        }
-
         public override RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
             if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return null;
 

@@ -21,8 +21,8 @@ namespace BhModule.Community.Pathing.Entity {
             this.MinSize = _packState.UserResourceStates.Population.MarkerPopulationDefaults.MinSize;
             this.MaxSize = _packState.UserResourceStates.Population.MarkerPopulationDefaults.MaxSize;
 
-            { if (collection.TryPopAttribute(ATTR_MINSIZE, out var attribute)) this.MinSize = WorldUtil.GameToWorldCoord(attribute.GetValueAsFloat(this.MinSize)); }
-            { if (collection.TryPopAttribute(ATTR_MAXSIZE, out var attribute)) this.MaxSize = WorldUtil.GameToWorldCoord(attribute.GetValueAsFloat(this.MaxSize)); }
+            { if (collection.TryPopAttribute(ATTR_MINSIZE, out var attribute)) this.MinSize = attribute.GetValueAsFloat(this.MinSize); }
+            { if (collection.TryPopAttribute(ATTR_MAXSIZE, out var attribute)) this.MaxSize = attribute.GetValueAsFloat(this.MaxSize); }
         }
 
     }

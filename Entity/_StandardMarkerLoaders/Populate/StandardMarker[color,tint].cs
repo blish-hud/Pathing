@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel;
+using System.Drawing.Design;
 using System.Runtime.CompilerServices;
+using BhModule.Community.Pathing.Editor.TypeConverters;
+using BhModule.Community.Pathing.Editor.TypeEditors;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
@@ -13,6 +16,8 @@ namespace BhModule.Community.Pathing.Entity {
 
         [Description("Tints the marker or trail with the color provided. Powerful when reusing existing marker icons or trail textures to make them differ in color.")]
         [Category("Appearance")]
+        [Editor(typeof(ColorEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(ColorConverter))]
         public Color Tint { get; set; }
 
         /// <summary>

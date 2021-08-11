@@ -10,7 +10,7 @@ namespace BhModule.Community.Pathing {
 
             var scale = new Vector2(destinationRectangle.Width / texture.Width, destinationRectangle.Height / texture.Height);
 
-            spriteBatch.Draw(texture, destinationRectangle.Center, null, tint, 0f, new Vector2(destinationRectangle.Width / 2f, destinationRectangle.Height / 2f), scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, destinationRectangle.Center - destinationRectangle.Size / 2, null, tint, 0f, new Vector2(destinationRectangle.Width / 2f, destinationRectangle.Height / 2f), scale, SpriteEffects.None, 0f);
         }
 
     }

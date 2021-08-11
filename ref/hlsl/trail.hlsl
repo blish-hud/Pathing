@@ -1,8 +1,6 @@
 #define VS_SHADERMODEL vs_4_0
 #define PS_SHADERMODEL ps_4_0
 
-#define DEBUG false
-
 float TotalMilliseconds;
 float FlowSpeed;
 float3 PlayerPosition;
@@ -110,27 +108,12 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input) {
     // Handle fade far (first since it'll clip and can skip the rest of this if it's too far away)
     clip(FadeFar - input.Distance);
 
-	bool inCenter = false;
-
 	// Handle fadeCenter (if enabled by player) - we ignore this if the player is zoomed in really close
-    if (distance(PlayerPosition, CameraPosition) > 1.5 && FadeCenter && length(input.ProjectedPosition.xy) < GetFadeRad()) {
-        //DissolvePosition(input.TextureCoordinate, input.ProjectedPosition.xy);
+    if (FadeCenter && distance(PlayerPosition, CameraPosition) > 1.5 && length(input.ProjectedPosition.xy) < GetFadeRad()) {
 		Opacity = Opacity * clamp(DissolvePosition(input.TextureCoordinate, input.ProjectedPosition.xy), 0.075, 1.0);
-		
-		inCenter = true;
-    } else {
-        //float3 color = tex2D(FadeTextureSampler, input.TextureCoordinate).rgb;
-        //half val = 0.21 * color.r + 0.71 * color.b + 0.071 * color.g;
-        //float nearDist = input.Distance - FadeNear;
-        //clip(val - clamp(nearDist / (FadeFar - FadeNear), 0.0, 1.0));
     }
 
     output.Color = tex2D(TextureSampler, input.TextureCoordinate) * TintColor * input.Color * Opacity;
-
-	if (inCenter && DEBUG) {
-		output.Color.rgba = output.Color.rgba * 0.5;
-		output.Color.r = 0.75;
-	}
 
     return output;
 }

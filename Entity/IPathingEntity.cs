@@ -19,6 +19,8 @@ namespace BhModule.Community.Pathing.Entity {
 
         string CategoryNamespace { get; }
 
+        bool DebugRender { get; set; }
+
         RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity);
 
         void Focus();
