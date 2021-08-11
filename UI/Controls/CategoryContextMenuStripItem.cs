@@ -76,7 +76,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 this.Tooltip = new Tooltip(new AchievementTooltipView(achievementId));
 
                 if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
-                    this.Enabled = !_packState.BehaviorStates.IsAchievementHidden(achievementId, -1);
+                    this.Enabled = !_packState.AchievementStates.IsAchievementHidden(achievementId, -1);
 
                     if (!this.Enabled) {
                         this.Checked = false;

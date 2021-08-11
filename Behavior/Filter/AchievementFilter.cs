@@ -10,24 +10,24 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
         public const string ATTR_ID           = PRIMARY_ATTR_NAME + "id";
         public const string ATTR_BIT          = PRIMARY_ATTR_NAME + "bit";
 
-        private readonly BehaviorStates _behaviorStates;
+        private readonly IPackState _packState;
 
         private bool _triggered = false;
 
         public int AchievementId  { get; set; }
         public int AchievementBit { get; set; }
 
-        public AchievementFilter(int achievementId, int achievementBit, BehaviorStates behaviorStates) {
+        public AchievementFilter(int achievementId, int achievementBit, IPackState packState) {
             this.AchievementId  = achievementId;
             this.AchievementBit = achievementBit;
 
-            _behaviorStates = behaviorStates;
+            _packState = packState;
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, BehaviorStates behaviorStates) {
+        public static IBehavior BuildFromAttributes(AttributeCollection attributes, IPackState packState) {
             return new AchievementFilter(attributes.TryGetAttribute(ATTR_ID,  out var idAttr) ? idAttr.GetValueAsInt() : 0,
                                          attributes.TryGetAttribute(ATTR_BIT, out var bitAttr) ? bitAttr.GetValueAsInt() : -1,
-                                         behaviorStates);
+                                         packState);
         }
 
         public void Update(GameTime gameTime) { /* NOOP */ }
@@ -35,7 +35,7 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
         public void Unload() { /* NOOP */ }
 
         public bool IsFiltered() {
-            return _triggered || _behaviorStates.IsAchievementHidden(this.AchievementId, this.AchievementBit);
+            return _triggered || _packState.AchievementStates.IsAchievementHidden(this.AchievementId, this.AchievementBit);
         }
 
         public void Interact(bool autoTriggered) {

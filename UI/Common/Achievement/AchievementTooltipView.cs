@@ -9,8 +9,6 @@ using Microsoft.Xna.Framework;
 namespace BhModule.Community.Pathing.UI.Common {
     public class AchievementTooltipView : View, ITooltipView {
 
-        // TODO: Support checking `RequiresUnlock` in `flags`
-
         private Achievement _achievement;
         public Achievement Achievement {
             get => _achievement;
@@ -63,12 +61,12 @@ namespace BhModule.Community.Pathing.UI.Common {
                 Padding             = new Thickness(0, 8, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment   = VerticalAlignment.Middle,
-                Font = GameService.Content.DefaultFont16,
+                Font                = GameService.Content.DefaultFont16,
                 Parent              = buildPanel
             };
 
             _achievementDescriptionLabel = new Label() {
-                AutoSizeHeight      = false,
+                AutoSizeHeight      = true,
                 AutoSizeWidth       = true,
                 Location            = new Point(_achievementNameLabel.Left, _categoryIconImage.Top + _categoryIconImage.Height / 2),
                 Height              = _categoryIconImage.Height / 2,

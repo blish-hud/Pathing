@@ -16,6 +16,7 @@ namespace BhModule.Community.Pathing.State {
         TrailEffect SharedTrailEffect { get; }
 
         BehaviorStates     BehaviorStates     { get; }
+        AchievementStates  AchievementStates  { get; }
         CategoryStates     CategoryStates     { get; }
         MapStates          MapStates          { get; }
         UserResourceStates UserResourceStates { get; }

@@ -28,6 +28,7 @@ namespace BhModule.Community.Pathing {
         public TrailEffect  SharedTrailEffect  { get; private set; }
 
         public BehaviorStates     BehaviorStates     { get; private set; }
+        public AchievementStates  AchievementStates  { get; private set; }
         public CategoryStates     CategoryStates     { get; private set; }
         public MapStates          MapStates          { get; private set; }
         public UserResourceStates UserResourceStates { get; private set; }
@@ -87,6 +88,7 @@ namespace BhModule.Community.Pathing {
         private async Task InitStates() {
             _managedStates = new[] {
                 await (this.CategoryStates     = new CategoryStates(this)).Start(),
+                await (this.AchievementStates  = new AchievementStates(this)).Start(),
                 await (this.BehaviorStates     = new BehaviorStates(this)).Start(),
                 await (this.MapStates          = new MapStates(this)).Start(), 
                 await (this.UserResourceStates = new UserResourceStates(this)).Start(),
@@ -152,10 +154,8 @@ namespace BhModule.Community.Pathing {
         }
 
         private void InitShaders() {
-            //this.SharedMarkerEffect = new MarkerEffect(GetEffect(@"C:\Users\dade\source\repos\Pathing\ref\hlsl\marker.hlsl"));
-            //this.SharedTrailEffect  = new TrailEffect(GetEffect(@"C:\Users\dade\source\repos\Pathing\ref\hlsl\trail.hlsl"));
             this.SharedMarkerEffect = new MarkerEffect(PathingModule.Instance.ContentsManager.GetEffect(@"hlsl\marker.mgfx"));
-            this.SharedTrailEffect = new TrailEffect(PathingModule.Instance.ContentsManager.GetEffect(@"hlsl\trail.mgfx"));
+            this.SharedTrailEffect  = new TrailEffect(PathingModule.Instance.ContentsManager.GetEffect(@"hlsl\trail.mgfx"));
         }
 
         private void OnInteractPressed(object sender, EventArgs e) {

@@ -23,8 +23,8 @@ namespace BhModule.Community.Pathing.Entity {
             { if (collection.TryGetSubset(MapTypeFilter.PRIMARY_ATTR_NAME,        out var attributes)) AddBehavior(MapTypeFilter.BuildFromAttributes(attributes)); }
 
             // TacO Behaviors
-            { if (collection.TryGetSubset(StandardBehaviorFilter.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(StandardBehaviorFilter.BuildFromAttributes(attributes, _packState.BehaviorStates, this)); }
-            { if (collection.TryGetSubset(AchievementFilter.PRIMARY_ATTR_NAME,      out var attributes)) AddBehavior(AchievementFilter.BuildFromAttributes(attributes, _packState.BehaviorStates)); }
+            { if (collection.TryGetSubset(StandardBehaviorFilter.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(StandardBehaviorFilter.BuildFromAttributes(attributes, _packState, this)); }
+            { if (collection.TryGetSubset(AchievementFilter.PRIMARY_ATTR_NAME,      out var attributes)) AddBehavior(AchievementFilter.BuildFromAttributes(attributes, _packState)); }
             { if (collection.TryGetSubset(InfoModifier.PRIMARY_ATTR_NAME,           out var attributes)) AddBehavior(InfoModifier.BuildFromAttributes(attributes, this, _packState)); }
 
             // Modifiers

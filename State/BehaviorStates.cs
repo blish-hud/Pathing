@@ -21,7 +21,6 @@ namespace BhModule.Community.Pathing.State {
         private const string STATE_FILE = "timers.txt";
 
         private const double INTERVAL_CHECKTIMERS       = 5000;   // 5 seconds
-        private const double INTERVAL_CHECKACHIEVEMENTS = 150000; // 2.5 minutes
         private const double INTERVAL_SAVESTATE         = 10000;  // 10 seconds
 
         /// <summary>
@@ -46,14 +45,8 @@ namespace BhModule.Community.Pathing.State {
         /// </summary>
         private readonly ConcurrentDictionary<ulong, HashSet<Guid>> _hiddenInShard = new();
 
-        /// <summary>
-        /// TacO Achievement Attributes
-        /// </summary>
-        private readonly ConcurrentDictionary<int, AchievementStatus> _achievementStates = new();
-
         // Some last checks are intentionally set to target wait times to force them to run on the first loop.
-        private double _lastTimerCheck       = INTERVAL_CHECKTIMERS;
-        private double _lastAchievementCheck = INTERVAL_CHECKACHIEVEMENTS;
+        private double _lastTimerCheck = INTERVAL_CHECKTIMERS;
 
         private double _lastSaveState = 0;
 
@@ -94,19 +87,6 @@ namespace BhModule.Community.Pathing.State {
                 // Other?
                 _ => UnsupportedBehavior(behavior),
             };
-        }
-
-        public bool IsAchievementHidden(int achievementId, int achievementBit) {
-            AchievementStatus achievement;
-
-            // If the achievement is not found, we show it.
-            lock (_achievementStates) if (!_achievementStates.TryGetValue(achievementId, out achievement)) return false;
-
-            // If the achievement reports that it has been completed, we hide it.
-            if (achievement.Done) return true;
-
-            // If the achievement is partially done and this bit has been completed, we hide it.
-            return achievement.AchievementBits.Contains(achievementBit);
         }
 
         private bool UnsupportedBehavior(StandardPathableBehavior behavior) {
@@ -166,8 +146,7 @@ namespace BhModule.Community.Pathing.State {
         public override Task Reload() { return Task.CompletedTask; /* NOOP */ }
 
         public override void Update(GameTime gameTime) {
-            UpdateCadenceUtil.UpdateWithCadence(UpdateTimers,       gameTime, INTERVAL_CHECKTIMERS,       ref _lastTimerCheck);
-            UpdateCadenceUtil.UpdateWithCadence(UpdateAchievements, gameTime, INTERVAL_CHECKACHIEVEMENTS, ref _lastAchievementCheck);
+            UpdateCadenceUtil.UpdateWithCadence(UpdateTimers, gameTime, INTERVAL_CHECKTIMERS, ref _lastTimerCheck);
             UpdateCadenceUtil.UpdateAsyncWithCadence(SaveState, gameTime, INTERVAL_SAVESTATE, ref _lastSaveState);
         }
 
@@ -222,29 +201,6 @@ namespace BhModule.Community.Pathing.State {
             }
 
             _stateDirty = false;
-        }
-
-        private void HandleAchievementUpdate(Task<IApiV2ObjectList<AccountAchievement>> accountAchievementTask) {
-            lock (_achievementStates) {
-                foreach (var achievement in accountAchievementTask.Result) {
-                    _achievementStates.AddOrUpdate(achievement.Id,
-                                                   new AchievementStatus(achievement.Done, achievement.Bits ?? Enumerable.Empty<int>(), achievement.Unlocked ?? true),
-                                                   (_, _) => new AchievementStatus(achievement.Done, achievement.Bits ?? Enumerable.Empty<int>(), achievement.Unlocked ?? true));
-                }
-            }
-        }
-
-        private void UpdateAchievements(GameTime gameTime) {
-            if (!this.Running) return;
-
-            try {
-                // v2/account/achivements requires "account" and "progression" permissions.
-                if (PathingModule.Instance.Gw2ApiManager.HavePermissions(new[] {TokenPermission.Account, TokenPermission.Progression})) {
-                    PathingModule.Instance.Gw2ApiManager.Gw2ApiClient.V2.Account.Achievements.GetAsync().ContinueWith(HandleAchievementUpdate, TaskContinuationOptions.NotOnFaulted);
-                }
-            } catch (Exception ex) {
-                Logger.Warn(ex, "Failed to load account achievements.");
-            }
         }
 
         private void UpdateTimers(GameTime gameTime) {
