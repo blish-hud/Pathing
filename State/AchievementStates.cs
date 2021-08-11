@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Behavior;
 using BhModule.Community.Pathing.Utility;
@@ -23,7 +22,7 @@ namespace BhModule.Community.Pathing.State {
         public AchievementStates(IRootPackState rootPackState) : base(rootPackState) { }
 
         public override Task Reload() {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public override void Update(GameTime gameTime) {
@@ -55,8 +54,8 @@ namespace BhModule.Community.Pathing.State {
             lock (_achievementStates) {
                 foreach (var achievement in accountAchievementTask.Result) {
                     _achievementStates.AddOrUpdate(achievement.Id,
-                                                   new AchievementStatus(achievement.Done, achievement.Bits ?? Enumerable.Empty<int>(), achievement.Unlocked ?? true),
-                                                   (_, _) => new AchievementStatus(achievement.Done, achievement.Bits ?? Enumerable.Empty<int>(), achievement.Unlocked ?? true));
+                                                   new AchievementStatus(achievement),
+                                                   (_, _) => new AchievementStatus(achievement));
                 }
             }
         }
