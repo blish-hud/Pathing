@@ -38,8 +38,8 @@ namespace BhModule.Community.Pathing.UI.Common {
 
         public AchievementTooltipView() { /* NOOP */ }
 
-        public AchievementTooltipView(int acheivementId) {
-            this.WithPresenter(new AchievementPresenter(this, acheivementId));
+        public AchievementTooltipView(int achievementId) {
+            this.WithPresenter(new AchievementPresenter(this, achievementId));
         }
 
         protected override void Build(Panel buildPanel) {
