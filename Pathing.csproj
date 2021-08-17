@@ -73,6 +73,10 @@
     <Compile Include="Behavior\Modifier\ToggleModifier.cs" />
     <Compile Include="Behavior\StandardPathableBehavior.cs" />
     <Compile Include="Content\WebReader.cs" />
+    <Compile Include="Editor\CategoryNode.cs" />
+    <Compile Include="Editor\CategoryTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\Entity\IAxisHandle.cs" />
     <Compile Include="Editor\Entity\TranslateAxisHandle.cs" />
     <Compile Include="Editor\Entity\TranslateTool.cs" />
@@ -88,11 +92,12 @@
     <Compile Include="Editor\Panels\BehaviorPanel.Designer.cs">
       <DependentUpon>BehaviorPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editor\Panels\Vector3PositionPanel.cs">
+    <Compile Include="Editor\Panels\IAttributeToolPanel.cs" />
+    <Compile Include="Editor\Panels\Vector3PositionToolPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Editor\Panels\Vector3PositionPanel.Designer.cs">
-      <DependentUpon>Vector3PositionPanel.cs</DependentUpon>
+    <Compile Include="Editor\Panels\Vector3PositionToolPanel.Designer.cs">
+      <DependentUpon>Vector3PositionToolPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\Panels\Vector3RotationPanel.cs">
       <SubType>UserControl</SubType>
@@ -100,7 +105,10 @@
     <Compile Include="Editor\Panels\Vector3RotationPanel.Designer.cs">
       <DependentUpon>Vector3RotationPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Editor\PathableNode.cs" />
+    <Compile Include="Editor\PathingCategoryEditWrapper.cs" />
     <Compile Include="Editor\TypeConverters\ColorConverter.cs" />
+    <Compile Include="Editor\TypeEditors\Vector3Editor.cs" />
     <Compile Include="Editor\TypeEditors\ColorEditor.cs" />
     <Compile Include="Entity\BillboardVerticalConstraint.cs" />
     <Compile Include="Entity\EntityRenderTarget.cs" />
@@ -164,6 +172,7 @@
     <Compile Include="UI\Effects\AlphaMaskEffect.cs" />
     <Compile Include="UI\Presenters\PackRepoPresenter.cs" />
     <Compile Include="UI\Views\PackRepoView.cs" />
+    <Compile Include="Utility\CategoryUtil.cs" />
     <Compile Include="Utility\DataDirUtil.cs" />
     <Compile Include="Utility\FileUtil.cs" />
     <Compile Include="Utility\GuidExtension.cs" />
@@ -405,6 +414,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Editor\Panels\Behaviors\" />
+    <Folder Include="Editor\ToolPanels\" />
     <Folder Include="ref\" />
   </ItemGroup>
   <ItemGroup>
@@ -434,12 +444,13 @@
   <ItemGroup>
     <EmbeddedResource Include="Editor\MarkerEditWindow.resx">
       <DependentUpon>MarkerEditWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\Panels\BehaviorPanel.resx">
       <DependentUpon>BehaviorPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\Vector3PositionPanel.resx">
-      <DependentUpon>Vector3PositionPanel.cs</DependentUpon>
+    <EmbeddedResource Include="Editor\Panels\Vector3PositionToolPanel.resx">
+      <DependentUpon>Vector3PositionToolPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\Panels\Vector3RotationPanel.resx">
       <DependentUpon>Vector3RotationPanel.cs</DependentUpon>

@@ -52,7 +52,7 @@ namespace BhModule.Community.Pathing {
             #endif
         }
 
-        private async void MouseOnLeftMouseButtonPressed(object sender, MouseEventArgs e) {
+        private void MouseOnLeftMouseButtonPressed(object sender, MouseEventArgs e) {
             var mouseRay = PickingUtil.CalculateRay(e.MousePosition,
                                                     GameService.Gw2Mumble.PlayerCamera.View,
                                                     GameService.Gw2Mumble.PlayerCamera.Projection);
@@ -64,7 +64,7 @@ namespace BhModule.Community.Pathing {
                             case StandardMarker marker:
                                 marker.DebugRender = !marker.DebugRender;
 
-                                await Editor.MarkerEditWindow.SetMarker(marker);
+                                Editor.MarkerEditWindow.SetPathingEntity(this, marker);
                                 break;
                             case IAxisHandle handle:
                                 handle.HandleActivated(mouseRay);

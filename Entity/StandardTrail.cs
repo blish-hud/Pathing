@@ -14,6 +14,8 @@ namespace BhModule.Community.Pathing.Entity {
         private Vector3[][] _sectionPoints;
 
         public StandardTrail(IPackState packState, ITrail trail) : base(packState) {
+            this.CategoryNamespace = trail.ParentPathingCategory.GetNamespace();
+
             Initialize(trail);
         }
 

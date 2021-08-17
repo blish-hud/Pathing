@@ -36,7 +36,7 @@ namespace BhModule.Community.Pathing.Entity {
 
             if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {
                 newMenu.AddMenuItem("Copy Parent Category Namespace").Click += async delegate { await ClipboardUtil.WindowsClipboardService.SetTextAsync(pathingEntry.CategoryNamespace); };
-                newMenu.AddMenuItem("Edit Marker").Click                    += async delegate { await Editor.MarkerEditWindow.SetMarker(pathingEntry as StandardMarker); };
+                newMenu.AddMenuItem("Edit Marker").Click                    += delegate { Editor.MarkerEditWindow.SetPathingEntity(_packState, pathingEntry); };
                 newMenu.AddMenuItem("Delete Marker").Click                  += delegate { ScreenNotification.ShowNotification("Not yet supported", ScreenNotification.NotificationType.Warning, null, 5); };
             }
 
@@ -46,7 +46,7 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         public FlatMap(IRootPackState packState) {
-            this.ZIndex = int.MinValue;
+            this.ZIndex = int.MinValue / 2;
 
             _packState = packState;
 
@@ -114,7 +114,7 @@ namespace BhModule.Community.Pathing.Entity {
             this.Size = newSize;
         }
 
-        protected override CaptureType CapturesInput() => CaptureType.ForceNone;
+        protected override CaptureType CapturesInput() => CaptureType.Filter;
 
         public override void DoUpdate(GameTime gameTime) {
             UpdateBounds();

@@ -15,7 +15,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Populate_Type(AttributeCollection collection, IPackResourceManager resourceManager) {
-            { if (collection.TryPopAttribute(ATTR_TYPE, out var attribute)) this.CategoryNamespace = attribute.GetValueAsString(); }
+            //{ if (collection.TryPopAttribute(ATTR_TYPE, out var attribute)) this.CategoryNamespace = attribute.GetValueAsString(); }
         }
 
     }

@@ -15,7 +15,8 @@ namespace BhModule.Community.Pathing.Entity {
         public override float DrawOrder => Vector3.DistanceSquared(this.Position, GameService.Gw2Mumble.PlayerCamera.Position);
 
         public StandardMarker(IPackState packState, IPointOfInterest pointOfInterest) : base(packState) {
-            this.TipName = pointOfInterest.ParentPathingCategory.DisplayName;
+            this.CategoryNamespace = pointOfInterest.ParentPathingCategory.GetNamespace();
+            this.TipName           = pointOfInterest.ParentPathingCategory.DisplayName;
 
             Populate(pointOfInterest.GetAggregatedAttributes(), pointOfInterest.ResourceManager);
 
