@@ -27,7 +27,7 @@ namespace BhModule.Community.Pathing.Entity {
 
             var drawRect = new RectangleF(location - new Vector2(this.Texture.Width / 2f * drawScale, this.Texture.Height / 2f * drawScale),
                                          new Vector2(this.Texture.Width * drawScale, this.Texture.Height * drawScale));
-
+            
             spriteBatch.Draw(this.Texture, drawRect, this.Tint);
 
             // Draw above or below indicator, if applicable.
@@ -36,14 +36,12 @@ namespace BhModule.Community.Pathing.Entity {
                 float diff = this.Position.Z - GameService.Gw2Mumble.PlayerCharacter.Position.Z;
 
                 if (Math.Abs(diff) > VERTICALOFFSET_THRESHOLD) {
-                    spriteBatch.Draw(diff > 0 ? _aboveTexture : _belowTexture,
-                                     new Rectangle(location.ToPoint(), new Point(RoundToInt(_aboveTexture.Width / scale), RoundToInt(_aboveTexture.Height / scale))),
-                                     null,
-                                     Color.White,
-                                     0f,
-                                     Vector2.Zero,
-                                     SpriteEffects.None,
-                                     0f);
+                    var indicatorPosition = new RectangleF(drawRect.Right - (float)(_aboveTexture.Width * drawScale),
+                                                           drawRect.Top,
+                                                           (float)(_aboveTexture.Width  * drawScale * 3),
+                                                           (float)(_aboveTexture.Height * drawScale * 3));
+
+                    spriteBatch.Draw(diff > 0 ? _aboveTexture : _belowTexture, indicatorPosition, Color.White);
                 }
             }
 
