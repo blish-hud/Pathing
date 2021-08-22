@@ -64,8 +64,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         private void DetectAndBuildContexts() {
-            if (_pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_ID, out var achievementAttr)
-                /* && !_pathingCategory.ExplicitAttributes.TryGetAttribute(AchievementFilter.ATTR_BIT, out _) */) {
+            if (_pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_ID, out var achievementAttr)) {
 
                 // TODO: Add as a context so that multiple characteristics can be accounted for.
 
