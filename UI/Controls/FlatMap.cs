@@ -114,7 +114,7 @@ namespace BhModule.Community.Pathing.Entity {
             this.Size = newSize;
         }
 
-        protected override CaptureType CapturesInput() => CaptureType.Filter;
+        protected override CaptureType CapturesInput() => CaptureType.ForceNone;
 
         public override void DoUpdate(GameTime gameTime) {
             UpdateBounds();
