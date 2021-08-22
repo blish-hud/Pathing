@@ -158,6 +158,8 @@ namespace BhModule.Community.Pathing.Entity {
                     } else if (pathable is IHasMapInfo mapPathable) {
                         finalTooltip = mapPathable.TipName;
                     }
+
+                    finalTooltip += $"\n{WorldUtil.WorldToGameCoord(pathable.DistanceToPlayer):##,###} away";
                 }
             }
 
