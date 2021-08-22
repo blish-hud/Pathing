@@ -53,13 +53,6 @@ namespace BhModule.Community.Pathing.Entity {
                         }
                     });
 
-                    //var texture = attribute.GetValueAsTexture(resourceManager);
-
-                    //if (texture != null) {
-                    //    this.Texture = texture;
-                    //} else {
-                    //    Logger.Warn($"Marker '{this.Guid}' missing texture '{attribute.GetValueAsString()}'");
-                    //}
                 } else {
                     Logger.Warn($"Markers '{this.Guid}' is missing {ATTR_ICONFILE} attribute.");
                 }
