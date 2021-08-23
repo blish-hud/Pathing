@@ -9,7 +9,7 @@ namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker : PathingEntity {
 
         private static readonly Logger Logger = Logger.GetLogger<StandardMarker>();
-
+        
         private Vector2 Size { get; set; } = Vector2.Zero;
 
         public override float DrawOrder => Vector3.DistanceSquared(this.Position, GameService.Gw2Mumble.PlayerCamera.Position);

@@ -20,6 +20,8 @@ namespace BhModule.Community.Pathing.Entity {
         private const int MAPHEIGHT_MIN = 170;
         private const int MAPOFFSET_MIN = 19;
 
+        private readonly SpriteBatchParameters _pathableParameters;
+
         private readonly IRootPackState _packState;
 
         private double _lastMapViewChanged = 0;
@@ -53,6 +55,9 @@ namespace BhModule.Community.Pathing.Entity {
             this.Location    = new Point(1);
             // TODO: Decide if FlatMap should clip or not (the game does not clip).
             // this.ClipsBounds = false;
+
+            _pathableParameters        = this.SpriteBatchParameters;
+            this.SpriteBatchParameters = new SpriteBatchParameters(SpriteSortMode.Deferred, BlendState.Opaque);
 
             UpdateBounds();
 
@@ -137,6 +142,12 @@ namespace BhModule.Community.Pathing.Entity {
 
             bounds = new Rectangle(this.Location, bounds.Size);
 
+            // We clear the bounds and start the spritebatch again
+            // to mask 3D elements from showing above the flatmap.
+            spriteBatch.Draw(ContentService.Textures.TransparentPixel, bounds, Color.Transparent);
+            spriteBatch.End();
+            spriteBatch.Begin(_pathableParameters);
+
             double scale   = GameService.Gw2Mumble.UI.MapScale * Graphics.GetScaleRatio(UiSize.Normal); //Workaround to fix pixel to coordinate scaling - Blish HUD scale of 1 is "Larger" but game is "Normal".
             double offsetX = bounds.X + (bounds.Width  / 2d);
             double offsetY = bounds.Y + (bounds.Height / 2d);
@@ -157,6 +168,10 @@ namespace BhModule.Community.Pathing.Entity {
                         finalTooltip = pathable.CategoryNamespace;
                     } else if (pathable is IHasMapInfo mapPathable) {
                         finalTooltip = mapPathable.TipName;
+
+                        if (!string.IsNullOrWhiteSpace(mapPathable.TipDescription)) {
+
+                        }
                     }
 
                     finalTooltip += $"\n{WorldUtil.WorldToGameCoord(pathable.DistanceToPlayer):##,###} away";
