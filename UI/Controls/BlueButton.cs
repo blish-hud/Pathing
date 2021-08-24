@@ -62,10 +62,6 @@ namespace BhModule.Community.Pathing.UI.Controls {
             set => SetProperty(ref _resizeIcon, value, true);
         }
 
-        protected override CaptureType CapturesInput() {
-            return CaptureType.Mouse;
-        }
-
         /// <summary>
         /// Do not directly manipulate this property.  It is only public because the animation library requires it to be public.
         /// </summary>

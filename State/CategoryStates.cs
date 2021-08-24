@@ -61,7 +61,7 @@ namespace BhModule.Community.Pathing.State {
 
             Logger.Debug($"Saving {nameof(CategoryStates)} state.");
 
-            PathingCategory[] inactiveCategories = _rawInactiveCategories.GetNoLockArray();
+            PathingCategory[] inactiveCategories = _rawInactiveCategories.ToArray();
 
             string categoryStatesPath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), STATE_FILE);
 
@@ -77,7 +77,7 @@ namespace BhModule.Community.Pathing.State {
         private void CalculateOptimizedCategoryStates(GameTime gameTime) {
             if (!_calculationDirty) return;
 
-            PathingCategory[] inactiveCategories = _rawInactiveCategories.GetNoLockArray();
+            PathingCategory[] inactiveCategories = _rawInactiveCategories.ToArray();
 
             var preCalcInactiveCategories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

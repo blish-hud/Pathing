@@ -127,7 +127,7 @@ namespace BhModule.Community.Pathing {
             PrepareState(mapId);
 
             try {
-                foreach (var pack in _packs.GetNoLockArray()) {
+                foreach (var pack in _packs.ToArray()) {
                     await pack.LoadMapAsync(mapId, _sharedPackCollection, _packReaderSettings);
                 }
             } catch (Exception e) {

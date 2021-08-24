@@ -22,7 +22,7 @@ namespace BhModule.Community.Pathing.Entity {
         public abstract float TriggerRange { get; set; }
 
         [Browsable(false)]
-        public bool DebugRender { get; set; } = false;
+        public bool DebugRender => _packState.EditorStates.SelectedPathingEntities.Contains(this);
 
         [Browsable(false)]
         public float DistanceToPlayer { get; set; } = -1;

@@ -13,11 +13,11 @@ namespace BhModule.Community.Pathing.Entity.Effects {
         private const string PARAMETER_CAMERAPOSITION      = "CameraPosition";
         private const string PARAMETER_TOTALMILLISECONDS   = "TotalMilliseconds";
 
-        private Matrix _worldViewProjection;
-        private Matrix _playerView;
+        private Matrix  _worldViewProjection;
+        private Matrix  _playerView;
         private Vector3 _playerPosition;
         private Vector3 _cameraPosition;
-        private float _totalMilliseconds;
+        private float   _totalMilliseconds;
 
         public Matrix WorldViewProjection {
             get => _worldViewProjection;

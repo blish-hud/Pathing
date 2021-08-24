@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
@@ -8,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.Entity {
-    public partial class StandardTrail {
+    public partial class StandardTrail :ICanPick {
 
         private const float TRAIL_WIDTH = 20 * 0.0254f;
 
@@ -106,6 +107,22 @@ namespace BhModule.Community.Pathing.Entity {
                         : 1f);
         }
 
+        public bool RayIntersects(Ray ray) {
+            for (int s = 0; s < _sectionPoints.Length; s++) {
+                ref Vector3[] section = ref _sectionPoints[s];
+
+                for (int i = 0; i < _sectionPoints[s].Length; i++) {
+                    ref var point = ref section[i];
+
+                    if (PickingUtil.IntersectDistance(BoundingSphere.CreateFromPoints(new[] { point, point + Vector3.One }), ray) != null) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public override void Render(GraphicsDevice graphicsDevice, IWorld world, ICamera camera) {
             if (IsFiltered(EntityRenderTarget.World) || this.Texture == null || !(_sectionBuffers.Length > 0)) return;
 
@@ -120,7 +137,7 @@ namespace BhModule.Community.Pathing.Entity {
                                                         GetOpacity(),
                                                         0.25f,
                                                         this.CanFade && _packState.UserConfiguration.PackFadeTrailsAroundCharacter.Value,
-                                                        this.Tint);
+                                                        this.DebugRender ? Color.Red : this.Tint);
 
             for (int i = 0; i < _sectionBuffers.Length; i++) {
                 ref var vertexBuffer = ref _sectionBuffers[i];

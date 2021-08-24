@@ -21,8 +21,9 @@ namespace BhModule.Community.Pathing.State {
         MapStates          MapStates          { get; }
         UserResourceStates UserResourceStates { get; }
         UiStates           UiStates           { get; }
+        EditorStates       EditorStates       { get; }
 
-        IEnumerable<IPathingEntity> Entities { get; }
+        SafeList<IPathingEntity> Entities { get; }
 
         // TODO: Needs unload
 

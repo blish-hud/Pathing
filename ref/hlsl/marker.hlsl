@@ -2,7 +2,6 @@
 #define PS_SHADERMODEL ps_4_0
 
 #define DEBUG false
-
 #define DEBUGBORDER 0.475
 
 float3 PlayerPosition;
@@ -91,7 +90,6 @@ VSOutput VertexShaderFunction(VSInput input) {
 
     viewPosition = mul(input.Position, modelView);
 
-    //viewPosition = mul(input.Position, tbb);
     output.Position = mul(viewPosition, Projection);
 
     // Get distance player is from marker
@@ -101,7 +99,6 @@ VSOutput VertexShaderFunction(VSInput input) {
 
     output.ProjectedPosition = normalize(mul(worldPosition, PlayerView).xyz) * (distance(CameraPosition, PlayerPosition) * 0.1);
 
-    // make the trail slowly move along the path
     output.TextureCoordinate = input.TextureCoordinate.xy;
 
     return output;
@@ -122,7 +119,7 @@ PixelShaderOutput PixelShaderFunction(VSOutput input) {
 		clip(FadeFar - input.Distance);
 	}
 	
-	// Debug outline
+	// Debug outline (outlines the quad)
 	if (ShowDebugWireframe && (abs(input.TextureCoordinate.x - 0.5) > DEBUGBORDER || abs(input.TextureCoordinate.y - 0.5) > DEBUGBORDER)) {
 		output.Color.rgba = float4(1, 0, 0, 1);
 		return output;

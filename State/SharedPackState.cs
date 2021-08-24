@@ -3,15 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BhModule.Community.Pathing.Editor.Entity;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Entity.Effects;
 using BhModule.Community.Pathing.State;
-using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
-using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using TmfLib;
 using TmfLib.Pathable;
 
@@ -33,9 +29,10 @@ namespace BhModule.Community.Pathing {
         public MapStates          MapStates          { get; private set; }
         public UserResourceStates UserResourceStates { get; private set; }
         public UiStates           UiStates           { get; private set; }
+        public EditorStates       EditorStates       { get; private set; }
 
         private readonly SafeList<IPathingEntity> _entities = new();
-        public IEnumerable<IPathingEntity> Entities => _entities;
+        public           SafeList<IPathingEntity> Entities => _entities;
 
         private bool _initialized = false;
         private bool _loadingPack = false;
@@ -46,37 +43,6 @@ namespace BhModule.Community.Pathing {
             InitShaders();
 
             Blish_HUD.Common.Gw2.KeyBindings.Interact.Activated += OnInteractPressed;
-
-            #if SHOWINDEV
-                GameService.Input.Mouse.LeftMouseButtonPressed += MouseOnLeftMouseButtonPressed;
-            #endif
-        }
-
-        private void MouseOnLeftMouseButtonPressed(object sender, MouseEventArgs e) {
-            var mouseRay = PickingUtil.CalculateRay(e.MousePosition,
-                                                    GameService.Gw2Mumble.PlayerCamera.View,
-                                                    GameService.Gw2Mumble.PlayerCamera.Projection);
-
-            foreach (var entity in GameService.Graphics.World.Entities.OrderBy(entity => entity.DrawOrder)) {
-                if (entity is ICanPick pickEntity) {
-                    if (pickEntity.RayIntersects(mouseRay)) {
-                        switch (entity) {
-                            case StandardMarker marker:
-                                marker.DebugRender = !marker.DebugRender;
-
-                                Editor.MarkerEditWindow.SetPathingEntity(this, marker);
-                                break;
-                            case IAxisHandle handle:
-                                handle.HandleActivated(mouseRay);
-                                break;
-                            default:
-                                continue;
-                        }
-
-                        break;
-                    }
-                }
-            }
         }
 
         private ManagedState[] _managedStates;
@@ -90,9 +56,10 @@ namespace BhModule.Community.Pathing {
                 await (this.CategoryStates     = new CategoryStates(this)).Start(),
                 await (this.AchievementStates  = new AchievementStates(this)).Start(),
                 await (this.BehaviorStates     = new BehaviorStates(this)).Start(),
-                await (this.MapStates          = new MapStates(this)).Start(), 
+                await (this.MapStates          = new MapStates(this)).Start(),
                 await (this.UserResourceStates = new UserResourceStates(this)).Start(),
-                await (this.UiStates           = new UiStates(this)).Start()
+                await (this.UiStates           = new UiStates(this)).Start(),
+                await (this.EditorStates       = new EditorStates(this)).Start()
             };
 
             _initialized = true;
@@ -156,6 +123,8 @@ namespace BhModule.Community.Pathing {
         private void InitShaders() {
             this.SharedMarkerEffect = new MarkerEffect(PathingModule.Instance.ContentsManager.GetEffect(@"hlsl\marker.mgfx"));
             this.SharedTrailEffect  = new TrailEffect(PathingModule.Instance.ContentsManager.GetEffect(@"hlsl\trail.mgfx"));
+
+            this.SharedMarkerEffect.FadeTexture = PathingModule.Instance.ContentsManager.GetTexture(@"png\42975.png");
         }
 
         private void OnInteractPressed(object sender, EventArgs e) {

@@ -119,7 +119,7 @@ namespace BhModule.Community.Pathing.Entity {
             this.Size = newSize;
         }
 
-        protected override CaptureType CapturesInput() => CaptureType.ForceNone;
+        protected override CaptureType CapturesInput() => CaptureType.Mouse | CaptureType.ForceNone;
 
         public override void DoUpdate(GameTime gameTime) {
             UpdateBounds();
@@ -154,7 +154,7 @@ namespace BhModule.Community.Pathing.Entity {
 
             float opacity = MathHelper.Clamp((float)(GameService.Overlay.CurrentGameTime.TotalGameTime.TotalSeconds - _lastMapViewChanged) / 0.65f, 0f, 1f) * 0.8f;
 
-            IPathingEntity[] entities = _packState.Entities.OrderBy(poi => -poi.DrawOrder).ToArray();
+            var entities = _packState.Entities.ToList().OrderBy(poi => -poi.DrawOrder);
             
             string finalTooltip = string.Empty;
             

@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using BhModule.Community.Pathing.Behavior;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
-using Gw2Sharp.WebApi.V2;
-using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 using File = System.IO.File;
 
@@ -190,7 +188,7 @@ namespace BhModule.Community.Pathing.State {
 
             Logger.Debug($"Saving {nameof(CategoryStates)} state.");
 
-            (DateTime timerExpiration, Guid guid)[] timerMetadata = _timerMetadata.GetNoLockArray();
+            (DateTime timerExpiration, Guid guid)[] timerMetadata = _timerMetadata.ToArray();
 
             string timerStatesPath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), STATE_FILE);
 
@@ -205,7 +203,7 @@ namespace BhModule.Community.Pathing.State {
 
         private void UpdateTimers(GameTime gameTime) {
             lock (_hiddenUntilTimer) {
-                foreach (var guidDetails in _timerMetadata.GetNoLockArray()) {
+                foreach (var guidDetails in _timerMetadata.ToArray()) {
                     if (guidDetails.timerExpiration < DateTime.UtcNow) {
                         _timerMetadata.Remove(guidDetails);
                         _hiddenUntilTimer.Remove(guidDetails.guid);

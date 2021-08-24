@@ -29,5 +29,9 @@ namespace BhModule.Community.Pathing.Utility {
             return ray.Intersects(box);
         }
 
+        public static float? IntersectDistance(BoundingSphere sphere, Ray ray) {
+            return ray.Intersects(sphere);
+        }
+
     }
 }

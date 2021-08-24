@@ -94,10 +94,6 @@ namespace BhModule.Community.Pathing.UI.Controls {
             this.TabChanged?.Invoke(this, e);
         }
 
-        protected override CaptureType CapturesInput() {
-            return CaptureType.Mouse | CaptureType.MouseWheel | CaptureType.Filter;
-        }
-
         protected override void OnMouseLeft(MouseEventArgs e) {
             this.HoveredTabIndex = -1;
 

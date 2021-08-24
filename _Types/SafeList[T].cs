@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 
@@ -15,8 +15,6 @@ namespace BhModule.Community.Pathing {
             public SafeEnumerator(IEnumerator<TEnumerator> inner, ReaderWriterLockSlim rwLock) {
                 _inner = inner;
                 _rwLock = rwLock;
-
-                _rwLock.EnterReadLock();
             }
 
             public bool MoveNext() {
@@ -36,9 +34,10 @@ namespace BhModule.Community.Pathing {
             }
 
         }
-
-        private readonly List<T>              _innerList;
+        
         private readonly ReaderWriterLockSlim _listLock = new();
+
+        private List<T> _innerList;
 
         public bool IsReadOnly => false;
 
@@ -55,6 +54,8 @@ namespace BhModule.Community.Pathing {
         }
 
         public IEnumerator<T> GetEnumerator() {
+            _listLock.EnterReadLock();
+
             return new SafeEnumerator<T>(_innerList.GetEnumerator(), _listLock);
         }
 
@@ -63,27 +64,33 @@ namespace BhModule.Community.Pathing {
         }
 
         public void Add(T item) {
-            if (item == null || this.Contains(item)) return;
+            if (this.Contains(item) || item == null) return;
 
             _listLock.EnterWriteLock();
             _innerList.Add(item);
-            _listLock.ExitWriteLock();
-
             this.IsEmpty = false;
+            _listLock.ExitWriteLock();
         }
 
         public void AddRange(IEnumerable<T> items) {
             _listLock.EnterWriteLock();
             _innerList.AddRange(items);
+            this.IsEmpty = !_innerList.Any();
+            _listLock.ExitWriteLock();
+        }
+
+        public void SetRange(IEnumerable<T> items) {
+            _listLock.EnterWriteLock();
+            _innerList   = items.ToList();
+            this.IsEmpty = !_innerList.Any();
             _listLock.ExitWriteLock();
         }
 
         public void Clear() {
             _listLock.EnterWriteLock();
             _innerList.Clear();
-            _listLock.ExitWriteLock();
-
             this.IsEmpty = true;
+            _listLock.ExitWriteLock();
         }
 
         public bool Contains(T item) {
@@ -96,14 +103,13 @@ namespace BhModule.Community.Pathing {
             }
         }
 
-        public void CopyTo(T[] array, int arrayIndex) {
-            _listLock.EnterReadLock();
 
-            try {
-                _innerList.CopyTo(array, arrayIndex);
-            } finally {
-                _listLock.ExitReadLock();
-            }
+        /// <summary>
+        /// Do not use.
+        /// </summary>
+        [Obsolete("Do not use. Throws an exception.")]
+        public void CopyTo(T[] array, int arrayIndex) {
+            throw new InvalidOperationException($"{nameof(CopyTo)} not supported.  If using LINQ, ensure you call .ToList or .ToArray directly on {nameof(SafeList<T>)} first.");
         }
 
         public bool Remove(T item) {
@@ -129,11 +135,7 @@ namespace BhModule.Community.Pathing {
             }
         }
 
-        public IReadOnlyCollection<T> AsReadOnly() {
-            return new ReadOnlyCollection<T>(this);
-        }
-
-        public List<T> GetNoLockList() {
+        public List<T> ToList() {
             _listLock.EnterReadLock();
 
             try {
@@ -143,7 +145,7 @@ namespace BhModule.Community.Pathing {
             }
         }
 
-        public T[] GetNoLockArray() {
+        public T[] ToArray() {
             _listLock.EnterReadLock();
             var items = new T[_innerList.Count];
             _innerList.CopyTo(items, 0);

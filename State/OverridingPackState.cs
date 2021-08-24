@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using BhModule.Community.Pathing.Entity;
+﻿using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Entity.Effects;
 using TmfLib.Pathable;
 
@@ -23,8 +22,9 @@ namespace BhModule.Community.Pathing.State {
         public MapStates          MapStates          => _referencePackState.MapStates;
         public UserResourceStates UserResourceStates => _referencePackState.UserResourceStates;
         public UiStates           UiStates           => _referencePackState.UiStates;
+        public EditorStates       EditorStates       => _referencePackState.EditorStates;
 
-        public IEnumerable<IPathingEntity> Entities => _referencePackState.Entities;
+        public SafeList<IPathingEntity> Entities => _referencePackState.Entities;
 
         public OverridingPackState(IPackState referencePackState) {
             _referencePackState = referencePackState;

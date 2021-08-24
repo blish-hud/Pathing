@@ -1,6 +1,9 @@
 #define VS_SHADERMODEL vs_4_0
 #define PS_SHADERMODEL ps_4_0
 
+#define DEBUG false
+#define DEBUGBORDER 0.475
+
 float TotalMilliseconds;
 float FlowSpeed;
 float3 PlayerPosition;
@@ -20,6 +23,9 @@ float3 CameraPosition;
 
 float4x4 PlayerView;
 float4x4 WorldViewProjection;
+
+// Move specifying the fade radius from the shader to so
+// that this is more easily configurable from in the module.
 
 int Race;
 int Mount;
@@ -60,7 +66,6 @@ sampler2D FadeTextureSampler : register(s1) {
 
 struct VertexShaderInput {
     float4 Position : POSITION0;
-    float4 Color : COLOR0;
     float2 TextureCoordinate : TEXCOORD0;
 };
 
@@ -85,12 +90,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input) {
     output.Distance = distance(input.Position.xyz, PlayerPosition) / 0.0254f;
 
     output.ProjectedPosition = normalize(mul(input.Position, PlayerView).xyz) * (distance(CameraPosition, PlayerPosition) * 0.1);
-
-    // Pass on to PS (some redundant for later)
-    output.Color = input.Color * Opacity;
-
-    // make the trail slowly move along the path
-    output.TextureCoordinate = float2(input.TextureCoordinate.x, input.TextureCoordinate.y + (TotalMilliseconds / 1000) * FlowSpeed);
+	output.TextureCoordinate = input.TextureCoordinate.xy;
 
     return output;
 }
@@ -107,13 +107,23 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input) {
 
     // Handle fade far (first since it'll clip and can skip the rest of this if it's too far away)
     clip(FadeFar - input.Distance);
+	
+	// Debug outline (outlines the quad)
+	if (DEBUG && (abs(input.TextureCoordinate.x - 0.5) > DEBUGBORDER || abs((input.TextureCoordinate.y % 1.0f) - 0.5) > DEBUGBORDER)) {
+		output.Color.rgba = float4(1, 0, 0, 1);
+		return output;
+	}
 
-	// Handle fadeCenter (if enabled by player) - we ignore this if the player is zoomed in really close
-    if (FadeCenter && distance(PlayerPosition, CameraPosition) > 1.5 && length(input.ProjectedPosition.xy) < GetFadeRad()) {
+    // Make the trail move along the path (after we're done using the real coords)
+    input.TextureCoordinate = float2(input.TextureCoordinate.x, input.TextureCoordinate.y + (TotalMilliseconds / 1000) * FlowSpeed);
+
+    if (/* Enabled by player?                */    FadeCenter
+		/* Pixel within the fade radius?     */ && length(input.ProjectedPosition.xy) < GetFadeRad()
+		/* Player isn't zoomed in too close? */ && distance(PlayerPosition, CameraPosition) > 1.5) {
 		Opacity = Opacity * clamp(DissolvePosition(input.TextureCoordinate, input.ProjectedPosition.xy), 0.075, 1.0);
     }
 
-    output.Color = tex2D(TextureSampler, input.TextureCoordinate) * TintColor * input.Color * Opacity;
+    output.Color = tex2D(TextureSampler, input.TextureCoordinate) * TintColor * Opacity;
 
     return output;
 }

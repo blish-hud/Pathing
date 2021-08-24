@@ -17,16 +17,14 @@ namespace BhModule.Community.Pathing.Entity {
         [DisplayName("Rotate")]
         [Description("Allows you to statically rotate a marker instead of it automatically facing the player.")]
         [Category("Appearance")]
-        public Vector3 RotationXyz { get; set; }
+        public Vector3? RotationXyz { get; set; }
         
         /// <summary>
         /// rotate, rotate-x, rotate-y, rotate-z
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Populate_Rotation(AttributeCollection collection, IPackResourceManager resourceManager) {
-            float rotationX = _packState.UserResourceStates.Population.MarkerPopulationDefaults.RotateXyz.X,
-                  rotationY = _packState.UserResourceStates.Population.MarkerPopulationDefaults.RotateXyz.Y,
-                  rotationZ = _packState.UserResourceStates.Population.MarkerPopulationDefaults.RotateXyz.Z;
+            float? rotationX = null, rotationY = null, rotationZ = null;
 
             { if (collection.TryPopAttribute(ATTR_ROTATEX, out var attribute)) rotationX = MathHelper.ToRadians(attribute.GetValueAsFloat()); }
             { if (collection.TryPopAttribute(ATTR_ROTATEY, out var attribute)) rotationY = MathHelper.ToRadians(attribute.GetValueAsFloat()); }
@@ -42,7 +40,9 @@ namespace BhModule.Community.Pathing.Entity {
                 }
             }
 
-            this.RotationXyz = new Vector3(rotationX, rotationY, rotationZ);
+            if (rotationX != null || rotationY != null || rotationZ != null) {
+                this.RotationXyz = new Vector3(rotationX ?? 0, rotationY ?? 0, rotationZ ?? 0);
+            }
         }
 
     }

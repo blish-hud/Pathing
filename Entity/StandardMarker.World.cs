@@ -45,7 +45,7 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         private Matrix _modelMatrix = Matrix.Identity;
-        
+
         public bool RayIntersects(Ray ray) {
             return PickingUtil.IntersectDistance(BoundingBox.CreateFromPoints(_faceVerts.Select(vert => Vector3.Transform(vert, _modelMatrix))), ray) != null;
         }
@@ -62,7 +62,7 @@ namespace BhModule.Community.Pathing.Entity {
             graphicsDevice.RasterizerState = this.CullDirection;
             var modelMatrix = Matrix.CreateScale(this.Size.X / 2f, this.Size.Y / 2f, 1f) * Matrix.CreateScale(this.Scale);
 
-            if (this.RotationXyz == Vector3.Zero) {
+            if (!this.RotationXyz.HasValue) {
                 modelMatrix *= Matrix.CreateBillboard(this.Position + new Vector3(0, 0, this.HeightOffset),
                                                       new Vector3(camera.Position.X,
                                                                   camera.Position.Y,
@@ -72,9 +72,9 @@ namespace BhModule.Community.Pathing.Entity {
                                                       new Vector3(0, 0, 1),
                                                       camera.Forward);
             } else {
-                modelMatrix *= Matrix.CreateRotationX(this.RotationXyz.X)
-                             * Matrix.CreateRotationY(this.RotationXyz.Y)
-                             * Matrix.CreateRotationZ(this.RotationXyz.Z)
+                modelMatrix *= Matrix.CreateRotationX(this.RotationXyz.Value.X)
+                             * Matrix.CreateRotationY(this.RotationXyz.Value.Y)
+                             * Matrix.CreateRotationZ(this.RotationXyz.Value.Z)
                              * Matrix.CreateTranslation(this.Position + new Vector3(0, 0, this.HeightOffset));
             }
 

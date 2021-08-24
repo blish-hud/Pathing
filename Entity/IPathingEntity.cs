@@ -19,7 +19,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         string CategoryNamespace { get; }
 
-        bool DebugRender { get; set; }
+        bool DebugRender { get; }
 
         RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity);
 
