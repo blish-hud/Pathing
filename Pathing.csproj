@@ -78,7 +78,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Editor\Entity\IAxisHandle.cs" />
-    <Compile Include="Editor\Entity\NodeSelector.cs" />
     <Compile Include="Editor\Entity\TranslateAxisHandle.cs" />
     <Compile Include="Editor\Entity\TranslateTool.cs" />
     <Compile Include="Editor\MarkerEditWindow.cs">

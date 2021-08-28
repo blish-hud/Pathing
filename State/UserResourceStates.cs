@@ -97,8 +97,6 @@ namespace BhModule.Community.Pathing.State {
         }
 
         public override async Task Reload() {
-            Unload();
-
             await LoadAllStates();
         }
 
