@@ -1,4 +1,5 @@
-﻿using BhModule.Community.Pathing.UI.Effects;
+﻿using System;
+using BhModule.Community.Pathing.UI.Effects;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
@@ -11,13 +12,11 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private static readonly Texture2D _windowTexture;
         private static readonly Texture2D _windowMask;
         private static readonly Texture2D _windowClose;
-        private static readonly Texture2D _windowCloseHover;
 
         static InfoWindow() {
             _windowTexture    = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156475+156476.png");
             _windowMask       = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156477.png");
             _windowClose      = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156106.png");
-            _windowCloseHover = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156011.png");
         }
 
         public InfoWindow() {
@@ -31,6 +30,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
                                                                    null,
                                                                    null,
                                                                    AlphaMaskEffect.SharedInstance);
+
+            this.ClipsBounds = false;
         }
 
         private Texture2D _croppedWindow = _windowTexture;
@@ -39,8 +40,15 @@ namespace BhModule.Community.Pathing.UI.Controls {
         protected override void OnResized(ResizedEventArgs e) {
             base.OnResized(e);
 
-            _croppedMask   = _windowMask.GetRegion(new Rectangle(0,             512 - this.Height, this.Width, this.Height));
-            _croppedWindow = _windowTexture.GetRegion(new Rectangle(Point.Zero, this.Size));
+            _croppedMask = _windowMask.GetRegion(new Rectangle(0,
+                                                               512 - Math.Min(this.Height, _windowMask.Height),
+                                                               Math.Min(this.Width,  _windowMask.Width),
+                                                               Math.Min(this.Height, _windowMask.Height)));
+
+            _croppedWindow = _windowTexture.GetRegion(new Rectangle(0,
+                                                                    0,
+                                                                    Math.Min(this.Size.X, _windowTexture.Width),
+                                                                    Math.Min(this.Size.Y, _windowTexture.Height)));
         }
 
         protected override void OnClick(MouseEventArgs e) {
@@ -68,11 +76,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
             AlphaMaskEffect.SharedInstance.SetEffectState(ContentService.Textures.Pixel);
 
-            spriteBatch.DrawOnCtrl(this,
-                                   _closeButtonBounds.Contains(this.RelativeMousePosition)
-                                       ? _windowCloseHover
-                                       : _windowClose,
-                                   _closeButtonBounds);
+            spriteBatch.DrawOnCtrl(this, _windowClose, _closeButtonBounds);
         }
 
     }
