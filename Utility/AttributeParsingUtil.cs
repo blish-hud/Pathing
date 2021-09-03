@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using TmfLib;
 using TmfLib.Prototype;
 
