@@ -11,7 +11,21 @@ namespace BhModule.Community.Pathing.Entity {
 
         private const string ATTR_TEXTURE = "texture";
 
-        public Texture2D Texture { get; set; }
+        private Texture2D _texture;
+        public Texture2D Texture {
+            get => _texture;
+            set {
+                _texture = value;
+
+                if (_texture == null) return;
+
+                if (this.Texture != null && this.TrailSampleColor == Color.White) {
+                    this.TrailSampleColor = this.Texture.SampleN(_packState.UserResourceStates.Static.MapTrailColorSamples);
+                }
+
+                FadeIn();
+            }
+        }
 
         public Color TrailSampleColor { get; set; } = Color.White;
 
@@ -22,13 +36,17 @@ namespace BhModule.Community.Pathing.Entity {
         private void Populate_Texture(AttributeCollection collection, IPackResourceManager resourceManager) {
             {
                 if (collection.TryGetAttribute(ATTR_TEXTURE, out var attribute)) {
-                    this.Texture = attribute.GetValueAsTexture(resourceManager);
-
-                    if (this.Texture != null && this.TrailSampleColor == Color.White) {
-                        this.TrailSampleColor = this.Texture.SampleN(_packState.UserResourceStates.Static.MapTrailColorSamples);
-                    }
+                    attribute.GetValueAsTextureAsync(resourceManager).ContinueWith((textureTaskResult) => {
+                        if (!textureTaskResult.IsFaulted && textureTaskResult.Result != null) {
+                            this.Texture = textureTaskResult.Result;
+                        } else {
+                            this.Texture = ContentService.Textures.Error;
+                            Logger.Warn($"Trail failed to load texture '{attribute.GetValueAsString()}'");
+                        }
+                    });
                 } else {
                     this.Texture = ContentService.Textures.Error;
+                    Logger.Warn($"Trail is missing '{ATTR_TEXTURE}' attribute.");
                 }
             }
         }

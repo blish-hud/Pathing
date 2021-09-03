@@ -52,9 +52,9 @@ namespace BhModule.Community.Pathing.Entity {
                             Logger.Warn($"Marker '{this.Guid}' failed to load texture '{attribute.GetValueAsString()}'");
                         }
                     });
-
                 } else {
-                    Logger.Warn($"Markers '{this.Guid}' is missing {ATTR_ICONFILE} attribute.");
+                    this.Texture = ContentService.Textures.Error;
+                    Logger.Warn($"Markers '{this.Guid}' is missing '{ATTR_ICONFILE}' attribute.");
                 }
             }
         }

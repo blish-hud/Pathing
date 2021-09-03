@@ -66,9 +66,7 @@ namespace BhModule.Community.Pathing.Entity {
                 modelMatrix *= Matrix.CreateBillboard(this.Position + new Vector3(0, 0, this.HeightOffset),
                                                       new Vector3(camera.Position.X,
                                                                   camera.Position.Y,
-                                                                  this.VerticalConstraint == BillboardVerticalConstraint.CameraPosition
-                                                                      ? camera.Position.Z
-                                                                      : GameService.Gw2Mumble.PlayerCharacter.Position.Z),
+                                                                  camera.Position.Z),
                                                       new Vector3(0, 0, 1),
                                                       camera.Forward);
             } else {

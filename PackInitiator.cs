@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Controls;
@@ -99,6 +100,13 @@ namespace BhModule.Community.Pathing {
             }
         }
 
+        private async Task LoadWebPackFile() {
+            var webReader = new WebReader("https://webpacks.blishhud.com/reactif-en/");
+            await webReader.InitWebReader();
+
+            _packs.Add(Pack.FromIDataReader(webReader));
+        }
+
         private void UnloadStateAndCollection() {
             _sharedPackCollection?.Unload();
             _allMarkers.Submenu = null;
@@ -108,6 +116,7 @@ namespace BhModule.Community.Pathing {
         private async Task LoadAllPacks() {
             await LoadPackedPackFiles(Directory.GetFiles(_watchPath, "*.zip", SearchOption.AllDirectories));
             await LoadPackedPackFiles(Directory.GetFiles(_watchPath, "*.taco", SearchOption.AllDirectories));
+            //await LoadWebPackFile();
             await LoadUnpackedPackFiles(_watchPath);
 
             // If the module loads at launch, this can end up firing twice.

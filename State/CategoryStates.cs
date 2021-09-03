@@ -47,10 +47,14 @@ namespace BhModule.Community.Pathing.State {
             
             _rawInactiveCategories.Clear();
 
+            var rootCategory = _rootPackState.RootCategory;
+
+            if (rootCategory == null) return; // Early skip if the pack is already getting repopulated.
+
             foreach (string categoryNamespace in recordedCategories) {
                 // TODO: Consider the case where a category no longer exists - this will create it.
                 // Luckily, it shouldn't display anyways because it will not have a displayname.
-                _rawInactiveCategories.Add(_rootPackState.RootCategory.GetOrAddCategoryFromNamespace(categoryNamespace));
+                _rawInactiveCategories.Add(rootCategory.GetOrAddCategoryFromNamespace(categoryNamespace));
             }
 
             _calculationDirty = true;

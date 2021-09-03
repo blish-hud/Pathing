@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BhModule.Community.Pathing.State;
+using Blish_HUD;
 using Microsoft.Xna.Framework;
 using TmfLib;
 using TmfLib.Pathable;
@@ -8,6 +9,8 @@ using TmfLib.Prototype;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail : PathingEntity {
+
+        private static readonly Logger Logger = Logger.GetLogger<StandardTrail>();
 
         public override float DrawOrder => float.MaxValue;
 

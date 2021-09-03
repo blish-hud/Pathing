@@ -102,34 +102,20 @@ namespace BhModule.Community.Pathing.Utility {
             return SplitAttributeValue(attribute).Select(InternalGetValueAsBool);
         }
 
-        public static Texture2D GetValueAsTexture(this IAttribute attribute, IPackResourceManager resourceManager) {
-            //var texture = new AsyncTexture2D(ContentService.Textures.Error);
-
-            string texturePath = attribute.GetValueAsString();
-
-            byte[] texture = resourceManager.LoadResource(texturePath);
-
-            return texture != null
-                       ? TextureUtil.FromStreamPremultiplied(GameService.Graphics.GraphicsDevice, new MemoryStream(texture))
-                       : null;
-
-            //resourceManager.LoadResourceAsync(texturePath).ContinueWith((loadedTexture) => {
-            //    if (loadedTexture.Result == null) return;
-
-            //    texture.SwapTexture(TextureUtil.FromStreamPremultiplied(GameService.Graphics.GraphicsDevice, new MemoryStream(loadedTexture.Result)));
-            //});
-
-            //return texture;
-        }
-
         public static async Task<AsyncTexture2D> GetValueAsTextureAsync(this IAttribute attribute, IPackResourceManager resourceManager) {
             string texturePath = attribute.GetValueAsString();
 
-            byte[] textureData = await resourceManager.LoadResourceAsync(texturePath);
+            try {
+                byte[] textureData = await resourceManager.LoadResourceAsync(texturePath);
 
-            return textureData != null
-                       ? TextureUtil.FromStreamPremultiplied(GameService.Graphics.GraphicsDevice, new MemoryStream(textureData))
-                       : null;
+                return textureData != null
+                           ? TextureUtil.FromStreamPremultiplied(GameService.Graphics.GraphicsDevice, new MemoryStream(textureData))
+                           : null;
+            } catch (Exception ex) {
+                Logger.Warn(ex, "Failed to load texture.");
+            }
+
+            return null;
         }
 
         public static Color GetValueAsColor(this IAttribute attribute, Color @default = default) {
