@@ -114,13 +114,123 @@
     <Compile Include="Entity\EntityRenderTarget.cs" />
     <Compile Include="Entity\ICanPick.cs" />
     <Compile Include="Entity\IHasMapInfo.cs" />
-    <Compile Include="Entity\StandardMarker.World.cs" />
-    <Compile Include="Entity\StandardRoute.World.cs" />
-    <Compile Include="Entity\StandardTrail.MiniMap.cs" />
-    <Compile Include="Entity\StandardTrail.World.cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[canfade].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[tip-name,tip-description].cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[canfade].cs" />
+    <Compile Include="Entity\StandardMarker.MiniMap.cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker.World.cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[alpha].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[canfade].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[color,tint].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[cull].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[fadenear,fadefar].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[guid].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[heightoffset].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[iconfile].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[iconsize].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[minimapvisibility,mapvisibility,ingamevisibility].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[minsize,maxsize].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[rotate,rotate-x,rotate-y,rotate-z].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[text,title,title-color].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[tip-name,tip-description].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker[xpos,ypos,zpos].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker_Behaviors.cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker_Focus.cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardMarker_TacOMisc.cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardRoute.MiniMap.cs">
+      <DependentUpon>StandardRoute.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardRoute.World.cs">
+      <DependentUpon>StandardRoute.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail.MiniMap.cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail.World.cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail[alpha].cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail[animspeed].cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail[canfade].cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail[color,tint].cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail[cull].cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail[fadenear,fadefar].cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail[minimapvisibility,mapvisibility,ingamevisibility].cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail[texture].cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail[trailscale].cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail_Behaviors.cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail_DouglasPeucker.cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail_HermiteCurve.cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail_OnFocus.cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail_SetTrailResolution.cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail_TacOMisc.cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -130,11 +240,8 @@
     <Compile Include="State\EditorStates.cs" />
     <Compile Include="State\UiStates.cs" />
     <Compile Include="State\UserResources\Converters\ColorConverter.cs" />
-    <Compile Include="Entity\StandardMarker.MiniMap.cs" />
     <Compile Include="State\UserResources\IgnoreDefaults.cs" />
     <Compile Include="State\UserResources\Population\MarkerPopulationDefaults.cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[minimapvisibility,mapvisibility,ingamevisibility].cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[minimapvisibility,mapvisibility,ingamevisibility].cs" />
     <Compile Include="PackLoader.cs" />
     <Compile Include="State\MapStates.cs" />
     <Compile Include="State\UserResourceStates.cs" />
@@ -151,12 +258,6 @@
     <Compile Include="SharedPackCollection.cs" />
     <Compile Include="State\CategoryStates.cs" />
     <Compile Include="Entity\CullDirection.cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[cull].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[iconsize].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[minsize,maxsize].cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[cull].cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[trailscale].cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\StandardTrail_Behaviors.cs" />
     <Compile Include="State\IRootPackState.cs" />
     <Compile Include="State\ManagedState.cs" />
     <Compile Include="State\OverridingPackState.cs" />
@@ -192,24 +293,9 @@
     <Compile Include="Behavior\ICanInteract.cs" />
     <Compile Include="Entity\Effects\MarkerEffect.cs" />
     <Compile Include="Entity\Effects\TrailEffect.cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[guid].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\StandardMarker_Behaviors.cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\StandardMarker_Focus.cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\StandardMarker_TacOMisc.cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\StandardTrail_OnFocus.cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\StandardTrail_TacOMisc.cs" />
     <Compile Include="State\IPackState.cs" />
     <Compile Include="ModuleSettings.cs" />
     <Compile Include="State\SharedPackState.cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[fadenear,fadefar].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[heightoffset].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[alpha].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[rotate,rotate-x,rotate-y,rotate-z].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[color,tint].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[text,title,title-color].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[iconfile].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[xpos,ypos,zpos].cs" />
-    <Compile Include="Entity\StandardRoute.MiniMap.cs" />
     <None Include="Content\bin\Windows\Content\atlas\ui-atlas.xnb" />
     <None Include="Content\bin\Windows\Content\atlas\ui.xnb" />
     <None Include="Content\bin\Windows\Content\common\button-states.xnb" />
@@ -289,14 +375,6 @@
     <Compile Include="Entity\StandardMarker.cs" />
     <Compile Include="Entity\StandardRoute.cs" />
     <Compile Include="Entity\StandardTrail.cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[color,tint].cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[fadenear,fadefar].cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[texture].cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[alpha].cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[animspeed].cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\PostProcessing\StandardTrail_DouglasPeucker.cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\PostProcessing\StandardTrail_HermiteCurve.cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\PostProcessing\StandardTrail_SetTrailResolution.cs" />
     <Compile Include="PathingModule.cs" />
     <Compile Include="PackInitiator.cs" />
     <Compile Include="Utility\AttributeCollectionExtensions.cs" />
