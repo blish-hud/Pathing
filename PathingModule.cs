@@ -4,6 +4,7 @@ using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using Microsoft.Xna.Framework;
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -52,28 +53,41 @@ namespace BhModule.Community.Pathing {
 
             _pathingContextMenuStrip = new ContextMenuStrip();
 
-            var newWindow = new TabbedSettingWindow() {
+            var newWindow = new TabbedWindow2(ContentsManager.GetTexture(@"png\controls\156006.png"),
+                                              new Rectangle(35, 36, 900, 640),
+                                              new Rectangle(95, 42, 783, 572)) {
                 Title    = Strings.General_UiName,
                 Parent   = GameService.Graphics.SpriteScreen,
                 Location = new Point(100, 100),
                 Emblem   = this.ContentsManager.GetTexture(@"png\controls\1615829.png")
             };
 
-            newWindow.AddTab(new WindowTab(Strings.Window_MainSettingsTab,     ContentsManager.GetTexture(@"png\156740+155150.png"), 1), () => new SettingsView(_moduleSettings.PackSettings));
-            newWindow.AddTab(new WindowTab(Strings.Window_MapSettingsTab,      ContentsManager.GetTexture(@"png\157123+155150.png"), 2), () => new SettingsView(_moduleSettings.MapSettings));
-            newWindow.AddTab(new WindowTab(Strings.Window_KeyBindSettingsTab,  ContentsManager.GetTexture(@"png\156734+155150.png"), 3), () => new SettingsView(_moduleSettings.KeyBindSettings));
+            Logger.Info(newWindow.HeightSizingMode.ToString());
+
+            newWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(_moduleSettings.PackSettings),    Strings.Window_MainSettingsTab));
+            newWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(_moduleSettings.MapSettings),     Strings.Window_MapSettingsTab));
+            newWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(_moduleSettings.KeyBindSettings), Strings.Window_KeyBindSettingsTab));
 
             #if SHOWINDEV
-                newWindow.AddTab(new WindowTab(Strings.Window_DownloadMarkerPacks, ContentsManager.GetTexture(@"png\156909.png"), 4), () => new PackRepoView());
+                newWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156909.png"), () => new PackRepoView(), Strings.Window_DownloadMarkerPacks));
             #endif
 
             _pathingIcon.Menu = _pathingContextMenuStrip;
+
+            newWindow.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e) {
+                Logger.Info($"{e.PropertyName} was changed!");
+
+                if (e.PropertyName == nameof(TabbedWindow2.HeightSizingMode)) {
+                    Debugger.Break();
+                }
+            };
+            //newWindow.Resized += delegate(object sender, ResizedEventArgs args) { Debugger.Break(); };
 
             _pathingIcon.Click += delegate {
                 if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {
                     _moduleSettings.GlobalPathablesEnabled.Value = !_moduleSettings.GlobalPathablesEnabled.Value;
                 } else {
-                    newWindow.ToggleWindow();
+                    newWindow.Show();
                 }
             };
         }

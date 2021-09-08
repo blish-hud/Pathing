@@ -12,13 +12,12 @@ namespace BhModule.Community.Pathing.UI.Views {
             this.WithPresenter(new PackRepoPresenter(this, 0));
         }
 
-        protected override void Build(Panel buildPanel) {
+        protected override void Build(Container buildPanel) {
             this.RepoFlowPanel = new FlowPanel {
-                Width               = buildPanel.Width,
-                Height              = 680,
+                Size                = buildPanel.ContentRegion.Size,
                 Top                 = 0,
                 CanScroll           = true,
-                ControlPadding      = new Vector2(0, 15),
+                ControlPadding      = new Vector2(0,  15),
                 OuterControlPadding = new Vector2(20, 5),
                 Parent              = buildPanel
             };

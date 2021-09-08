@@ -119,7 +119,7 @@ namespace BhModule.Community.Pathing.Entity {
             this.Size = newSize;
         }
 
-        protected override CaptureType CapturesInput() => CaptureType.Mouse | CaptureType.ForceNone;
+        protected override CaptureType CapturesInput() => CaptureType.Mouse | CaptureType.DoNotBlock;
 
         public override void DoUpdate(GameTime gameTime) {
             UpdateBounds();

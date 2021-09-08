@@ -42,7 +42,7 @@ namespace BhModule.Community.Pathing.UI.Common {
             this.WithPresenter(new AchievementPresenter(this, achievementId));
         }
 
-        protected override void Build(Panel buildPanel) {
+        protected override void Build(Container buildPanel) {
             //buildPanel.Size = new Point(300, 256);
             buildPanel.HeightSizingMode = SizingMode.AutoSize;
             buildPanel.WidthSizingMode  = SizingMode.AutoSize;
