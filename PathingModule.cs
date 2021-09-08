@@ -74,20 +74,11 @@ namespace BhModule.Community.Pathing {
 
             _pathingIcon.Menu = _pathingContextMenuStrip;
 
-            newWindow.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e) {
-                Logger.Info($"{e.PropertyName} was changed!");
-
-                if (e.PropertyName == nameof(TabbedWindow2.HeightSizingMode)) {
-                    Debugger.Break();
-                }
-            };
-            //newWindow.Resized += delegate(object sender, ResizedEventArgs args) { Debugger.Break(); };
-
             _pathingIcon.Click += delegate {
                 if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {
                     _moduleSettings.GlobalPathablesEnabled.Value = !_moduleSettings.GlobalPathablesEnabled.Value;
                 } else {
-                    newWindow.Show();
+                    newWindow.ToggleWindow();
                 }
             };
         }
