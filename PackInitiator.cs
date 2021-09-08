@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Content;
-using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Controls;
 using Blish_HUD;
 using Blish_HUD.Controls;
-using Blish_HUD.Input;
+using Blish_HUD.Graphics;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
 using TmfLib;
 using TmfLib.Reader;
 
@@ -142,6 +139,13 @@ namespace BhModule.Community.Pathing {
             // TODO: Localize the loading messages.
 
             _loadingIndicator.Report("Loading marker packs...");
+
+            // We unlock frames to avoid timestep frame limiter from slowing our loading down.
+            var currentFrameLimiter = GameService.Graphics.FrameLimiter;
+            var currentVsync        = GameService.Graphics.EnableVsync;
+            GameService.Graphics.FrameLimiter = FramerateMethod.Unlimited;
+            GameService.Graphics.EnableVsync  = false;
+
             await PrepareState(mapId);
 
             try {
@@ -161,6 +165,10 @@ namespace BhModule.Community.Pathing {
 
             _loadingIndicator.Report("Finalizing marker collection...");
             await _packState.LoadPackCollection(_sharedPackCollection);
+
+            // We set the frame limiter back.
+            GameService.Graphics.FrameLimiter = currentFrameLimiter;
+            GameService.Graphics.EnableVsync  = currentVsync;
 
             _loadingIndicator.Report("");
         }
