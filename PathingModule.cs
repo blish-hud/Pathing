@@ -37,7 +37,8 @@ namespace BhModule.Community.Pathing {
         private CornerIcon    _pathingIcon;
         private TabbedWindow2 _settingsWindow;
 
-
+        private bool _packsLoading = false;
+        
         [ImportingConstructor]
         public PathingModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
             Instance = this;
@@ -50,6 +51,8 @@ namespace BhModule.Community.Pathing {
         private IEnumerable<ContextMenuStripItem> GetPathingMenuItems() {
             if (_watcher != null) {
                 foreach (var menuItem in _watcher.GetPackMenuItems()) {
+                    menuItem.Enabled = menuItem.Enabled && !_packsLoading;
+
                     yield return menuItem;
                 }
             }
@@ -104,6 +107,7 @@ namespace BhModule.Community.Pathing {
 
         private void UpdateModuleLoading(string loadingMessage) {
             _pathingIcon.LoadingMessage = loadingMessage;
+            _packsLoading               = !string.IsNullOrWhiteSpace(loadingMessage);
         }
 
         protected override async Task LoadAsync() {

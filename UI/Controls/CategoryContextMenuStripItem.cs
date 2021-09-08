@@ -42,6 +42,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private void BuildCategoryMenu() {
             this.Text = _pathingCategory.DisplayName;
 
+            if (_packState.CategoryStates == null) return;
+
             if (_pathingCategory.Any()) {
                 this.Submenu = new CategoryContextMenuStrip(_packState, _pathingCategory);
             }
