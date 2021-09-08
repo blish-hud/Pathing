@@ -210,6 +210,70 @@
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[iconfile].cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[xpos,ypos,zpos].cs" />
     <Compile Include="Entity\StandardRoute.MiniMap.cs" />
+    <None Include="Content\bin\Windows\Content\atlas\ui-atlas.xnb" />
+    <None Include="Content\bin\Windows\Content\atlas\ui.xnb" />
+    <None Include="Content\bin\Windows\Content\common\button-states.xnb" />
+    <None Include="Content\bin\Windows\Content\common\error.xnb" />
+    <None Include="Content\bin\Windows\Content\common\menomonia.ttf" />
+    <None Include="Content\bin\Windows\Content\common\menomonia.xnb" />
+    <None Include="Content\bin\Windows\Content\effects\alphamask.xnb" />
+    <None Include="Content\bin\Windows\Content\effects\distancedissolve.xnb" />
+    <None Include="Content\bin\Windows\Content\effects\glow.xnb" />
+    <None Include="Content\bin\Windows\Content\effects\gw2master.xnb" />
+    <None Include="Content\bin\Windows\Content\effects\marker.xnb" />
+    <None Include="Content\bin\Windows\Content\effects\menuitem.xnb" />
+    <None Include="Content\bin\Windows\Content\effects\menuitem2.xnb" />
+    <None Include="Content\bin\Windows\Content\effects\silhouette.xnb" />
+    <None Include="Content\bin\Windows\Content\effects\trail.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\consolas-10-bold.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\consolas-10.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\consolas-12-bold.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\consolas-12.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\consolas-8-bold.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\consolas-8.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia-8-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-11-italic.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-11-italic_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-11-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-11-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-12-italic.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-12-italic_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-12-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-12-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-14-italic.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-14-italic_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-14-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-14-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-16-italic.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-16-italic_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-16-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-16-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-18-italic.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-18-italic_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-18-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-18-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-20-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-20-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-22-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-22-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-24-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-24-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-32-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-32-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-32-regular_1.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-34-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-34-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-34-regular_1.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-36-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-36-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-36-regular_1.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-8-italic.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-8-italic_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-8-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\menomonia\menomonia-8-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\newkrytan\newkrytan-12-regular.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\newkrytan\newkrytan-12-regular_0.xnb" />
+    <None Include="Content\bin\Windows\Content\fonts\newkrytan\newkrytan-12-regular_1.xnb" />
     <None Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -245,7 +309,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Blish HUD, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\BlishHUD.0.10.0-ci.144\lib\net472\Blish HUD.exe</HintPath>
+      <HintPath>packages\BlishHUD.0.10.0-ci.195\lib\net472\Blish HUD.exe</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
@@ -259,9 +323,12 @@
     </Reference>
     <Reference Include="Flurl, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Flurl.2.8.2\lib\net40\Flurl.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Flurl.Http, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Flurl.Http.2.4.2\lib\net46\Flurl.Http.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Gw2Sharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gw2Sharp.1.0.0\lib\netstandard2.0\Gw2Sharp.dll</HintPath>
@@ -286,9 +353,67 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="protobuf-net, Version=3.0.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>packages\protobuf-net.3.0.101\lib\net461\protobuf-net.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="protobuf-net.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>packages\protobuf-net.Core.3.0.101\lib\net461\protobuf-net.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.Direct2D1, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.Direct2D1.4.0.1\lib\net45\SharpDX.Direct2D1.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.Direct3D11.4.0.1\lib\net45\SharpDX.Direct3D11.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.Direct3D9.4.0.1\lib\net45\SharpDX.Direct3D9.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.DXGI, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.DXGI.4.0.1\lib\net45\SharpDX.DXGI.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.Mathematics.4.0.1\lib\net45\SharpDX.Mathematics.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.MediaFoundation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.MediaFoundation.4.0.1\lib\net45\SharpDX.MediaFoundation.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.XAudio2, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.XAudio2.4.0.1\lib\net45\SharpDX.XAudio2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX.XInput, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.XInput.4.0.1\lib\net45\SharpDX.XInput.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Collections.Immutable.1.7.1\lib\net461\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
@@ -303,6 +428,9 @@
       <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Resources.Extensions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Resources.Extensions.5.0.0\lib\net461\System.Resources.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
@@ -418,7 +546,9 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets'))" />
-    <Error Condition="!Exists('packages\BlishHUD.0.10.0-ci.144\build\BlishHUD.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\BlishHUD.0.10.0-ci.144\build\BlishHUD.targets'))" />
+    <Error Condition="!Exists('packages\System.Resources.Extensions.5.0.0\build\net461\System.Resources.Extensions.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\System.Resources.Extensions.5.0.0\build\net461\System.Resources.Extensions.targets'))" />
+    <Error Condition="!Exists('packages\BlishHUD.0.10.0-ci.195\build\BlishHUD.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\BlishHUD.0.10.0-ci.195\build\BlishHUD.targets'))" />
   </Target>
-  <Import Project="packages\BlishHUD.0.10.0-ci.144\build\BlishHUD.targets" Condition="Exists('packages\BlishHUD.0.10.0-ci.144\build\BlishHUD.targets')" />
+  <Import Project="packages\System.Resources.Extensions.5.0.0\build\net461\System.Resources.Extensions.targets" Condition="Exists('packages\System.Resources.Extensions.5.0.0\build\net461\System.Resources.Extensions.targets')" />
+  <Import Project="packages\BlishHUD.0.10.0-ci.195\build\BlishHUD.targets" Condition="Exists('packages\BlishHUD.0.10.0-ci.195\build\BlishHUD.targets')" />
 </Project>
