@@ -135,7 +135,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
             // Name and description
             spriteBatch.DrawStringOnCtrl(this, _markerPackPkg.Name.Replace(" ", "  "), GameService.Content.DefaultFont18, new Rectangle(EDGE_PADDING, EDGE_PADDING / 2, bounds.Width - EDGE_PADDING * 2, 40), ContentService.Colors.Chardonnay);
-            spriteBatch.DrawStringOnCtrl(this, _markerPackPkg.Description.Replace(@"\r\n", "\n").Replace(@"\n", "\n"), GameService.Content.DefaultFont14, new Rectangle(EDGE_PADDING, 40 + EDGE_PADDING / 2, bounds.Width - EDGE_PADDING * 2, bounds.Height - 200), StandardColors.Default, true, HorizontalAlignment.Left, VerticalAlignment.Top);
+            spriteBatch.DrawStringOnCtrl(this, _markerPackPkg.Description.Replace(@"\n", "\n"), GameService.Content.DefaultFont14, new Rectangle(EDGE_PADDING, 40 + EDGE_PADDING / 2, bounds.Width - EDGE_PADDING * 2, bounds.Height - 200), StandardColors.Default, true, HorizontalAlignment.Left, VerticalAlignment.Top);
 
             // Black bottom bar
             spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(0, bounds.Height - 40, bounds.Width, 40), Color.Black * 0.8f);
