@@ -55,7 +55,7 @@ namespace BhModule.Community.Pathing {
 
             var newWindow = new TabbedWindow2(ContentsManager.GetTexture(@"png\controls\156006.png"),
                                               new Rectangle(35, 36, 900, 640),
-                                              new Rectangle(95, 42, 783, 572)) {
+                                              new Rectangle(95, 42, 783 + 38, 572 + 20)) {
                 Title    = Strings.General_UiName,
                 Parent   = GameService.Graphics.SpriteScreen,
                 Location = new Point(100, 100),
