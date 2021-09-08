@@ -16,14 +16,11 @@ namespace BhModule.Community.Pathing.Entity {
 
         private Vector3[][] _sectionPoints;
 
-        public StandardTrail(IPackState packState, ITrail trail) : base(packState) {
-            this.CategoryNamespace = trail.ParentPathingCategory.GetNamespace();
-
+        public StandardTrail(IPackState packState, ITrail trail) : base(packState, trail) {
             Initialize(trail);
         }
 
         private void Populate(AttributeCollection collection, IPackResourceManager resourceManager) {
-            Populate_Type(collection, resourceManager);
             Populate_Alpha(collection, resourceManager);
             Populate_AnimationSpeed(collection, resourceManager);
             Populate_Tint(collection, resourceManager);

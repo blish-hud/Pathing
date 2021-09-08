@@ -154,10 +154,8 @@
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[cull].cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[iconsize].cs" />
     <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[minsize,maxsize].cs" />
-    <Compile Include="Entity\_StandardMarkerLoaders\Populate\StandardMarker[type].cs" />
     <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[cull].cs" />
     <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[trailscale].cs" />
-    <Compile Include="Entity\_StandardTrailLoaders\Populate\StandardTrail[type].cs" />
     <Compile Include="Entity\_StandardTrailLoaders\StandardTrail_Behaviors.cs" />
     <Compile Include="State\IRootPackState.cs" />
     <Compile Include="State\ManagedState.cs" />

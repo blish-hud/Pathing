@@ -7,6 +7,7 @@ using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.Entity {
     public abstract class PathingEntity : IPathingEntity {
@@ -17,7 +18,7 @@ namespace BhModule.Community.Pathing.Entity {
         public IList<IBehavior> Behaviors { get; } = new SafeList<IBehavior>();
 
         [DisplayName("Type")]
-        public abstract string CategoryNamespace { get; set; }
+        public string CategoryNamespace { get; set; }
 
         public abstract float TriggerRange { get; set; }
 
@@ -29,10 +30,16 @@ namespace BhModule.Community.Pathing.Entity {
 
         [Browsable(false)]
         public abstract float DrawOrder { get; }
-        
+
+        [Browsable(false)]
+        public int MapId { get; set; }
+
         protected readonly IPackState _packState;
 
-        protected PathingEntity(IPackState packState) {
+        protected PathingEntity(IPackState packState, IPointOfInterest pointOfInterest) {
+            this.MapId             = pointOfInterest.MapId;
+            this.CategoryNamespace = pointOfInterest.ParentPathingCategory.GetNamespace();
+
             _packState = packState;
         }
 
@@ -113,7 +120,7 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         protected Vector2 GetScaledLocation(double x, double y, double scale, (double X, double Y) offsets) {
-            (double mapX, double mapY) = _packState.MapStates.EventCoordsToMapCoords(x, y);
+            (double mapX, double mapY) = _packState.MapStates.EventCoordsToMapCoords(x, y, this.MapId);
 
             var scaledLocation = new Vector2((float)((mapX - GameService.Gw2Mumble.UI.MapCenter.X) / scale),
                                              (float)((mapY - GameService.Gw2Mumble.UI.MapCenter.Y) / scale));
