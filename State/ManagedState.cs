@@ -23,7 +23,7 @@ namespace BhModule.Community.Pathing.State {
             return this;
         }
 
-        public void Stop() {
+        private void Stop() {
             if (!this.Running) return;
 
             this.Running = false;
@@ -35,7 +35,7 @@ namespace BhModule.Community.Pathing.State {
 
         protected abstract Task<bool> Initialize();
 
-        protected abstract void Unload();
+        public abstract Task Unload();
 
         public void Dispose() {
             Stop();

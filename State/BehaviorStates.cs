@@ -148,8 +148,8 @@ namespace BhModule.Community.Pathing.State {
             UpdateCadenceUtil.UpdateAsyncWithCadence(SaveState, gameTime, INTERVAL_SAVESTATE, ref _lastSaveState);
         }
 
-        protected override void Unload() {
-            SaveState(null);
+        public override async Task Unload() {
+            await SaveState(null);
         }
 
         private async Task LoadState() {

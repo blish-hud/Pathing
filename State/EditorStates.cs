@@ -96,8 +96,10 @@ namespace BhModule.Community.Pathing.State {
             
         }
 
-        protected override void Unload() {
+        public override Task Unload() {
             this.SelectedPathingEntities = new();
+
+            return Task.CompletedTask;
         }
 
     }

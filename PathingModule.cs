@@ -4,6 +4,8 @@ using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -28,12 +30,13 @@ namespace BhModule.Community.Pathing {
         internal Gw2ApiManager      Gw2ApiManager      => this.ModuleParameters.Gw2ApiManager;
         #endregion
 
-        internal static PathingModule Instance { get; private set; }
-
-        private CornerIcon       _pathingIcon;
-        public  ContextMenuStrip _pathingContextMenuStrip;
+        internal static PathingModule  Instance { get; private set; }
 
         private ModuleSettings _moduleSettings;
+
+        private CornerIcon    _pathingIcon;
+        private TabbedWindow2 _settingsWindow;
+
 
         [ImportingConstructor]
         public PathingModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
@@ -44,6 +47,23 @@ namespace BhModule.Community.Pathing {
             _moduleSettings = new ModuleSettings(settings);
         }
 
+        private IEnumerable<ContextMenuStripItem> GetPathingMenuItems() {
+            if (_watcher != null) {
+                foreach (var menuItem in _watcher.GetPackMenuItems()) {
+                    yield return menuItem;
+                }
+            }
+
+            // Open Settings
+            var openSettings = new ContextMenuStripItem() {
+                Text = "Pathing Module Settings" // TODO: Localize "Pathing Module Settings"
+            };
+
+            openSettings.Click += (_, _) => _settingsWindow.ToggleWindow();
+
+            yield return openSettings;
+        }
+
         protected override void Initialize() {
             _pathingIcon = new CornerIcon() {
                 IconName = Strings.General_UiName,
@@ -51,43 +71,44 @@ namespace BhModule.Community.Pathing {
                 Priority = Strings.General_UiName.GetHashCode()
             };
 
-            _pathingContextMenuStrip = new ContextMenuStrip();
-
-            var newWindow = new TabbedWindow2(ContentsManager.GetTexture(@"png\controls\156006.png"),
-                                              new Rectangle(35, 36, 900, 640),
-                                              new Rectangle(95, 42, 783 + 38, 572 + 20)) {
+            _settingsWindow = new TabbedWindow2(ContentsManager.GetTexture(@"png\controls\156006.png"),
+                                                new Rectangle(35, 36, 900, 640),
+                                                new Rectangle(95, 42, 783 + 38, 572 + 20)) {
                 Title    = Strings.General_UiName,
                 Parent   = GameService.Graphics.SpriteScreen,
                 Location = new Point(100, 100),
                 Emblem   = this.ContentsManager.GetTexture(@"png\controls\1615829.png")
             };
 
-            Logger.Info(newWindow.HeightSizingMode.ToString());
-
-            newWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(_moduleSettings.PackSettings),    Strings.Window_MainSettingsTab));
-            newWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(_moduleSettings.MapSettings),     Strings.Window_MapSettingsTab));
-            newWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(_moduleSettings.KeyBindSettings), Strings.Window_KeyBindSettingsTab));
+            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(_moduleSettings.PackSettings),    Strings.Window_MainSettingsTab));
+            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(_moduleSettings.MapSettings),     Strings.Window_MapSettingsTab));
+            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(_moduleSettings.KeyBindSettings), Strings.Window_KeyBindSettingsTab));
 
             #if SHOWINDEV
-                newWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156909.png"), () => new PackRepoView(), Strings.Window_DownloadMarkerPacks));
+                _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156909.png"), () => new PackRepoView(), Strings.Window_DownloadMarkerPacks));
             #endif
-
-            _pathingIcon.Menu = _pathingContextMenuStrip;
 
             _pathingIcon.Click += delegate {
                 if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {
                     _moduleSettings.GlobalPathablesEnabled.Value = !_moduleSettings.GlobalPathablesEnabled.Value;
                 } else {
-                    newWindow.ToggleWindow();
+                    var pathingContextMenuStrip = new ContextMenuStrip();
+                    pathingContextMenuStrip.AddMenuItems(GetPathingMenuItems());
+
+                    pathingContextMenuStrip.Show(_pathingIcon);
                 }
             };
         }
 
         private PackInitiator _watcher;
 
+        private void UpdateModuleLoading(string loadingMessage) {
+            _pathingIcon.LoadingMessage = loadingMessage;
+        }
+
         protected override async Task LoadAsync() {
             var sw = Stopwatch.StartNew();
-            _watcher = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), _moduleSettings);
+            _watcher = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), _moduleSettings, new Progress<string>(UpdateModuleLoading));
             await _watcher.Init();
             sw.Stop();
             Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading...");
@@ -107,7 +128,6 @@ namespace BhModule.Community.Pathing {
         protected override void Unload() {
             _watcher?.Unload();
             _pathingIcon?.Dispose();
-            _pathingContextMenuStrip.Dispose();
 
             Instance = null;
         }

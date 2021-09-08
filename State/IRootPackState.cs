@@ -6,7 +6,7 @@ namespace BhModule.Community.Pathing.State {
     public interface IRootPackState : IPackState, IUpdatable {
         new int CurrentMapId { get; set; }
 
-        void UnloadPacks();
+        Task Unload();
 
         Task LoadPackCollection(IPackCollection collection);
 

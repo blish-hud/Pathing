@@ -33,8 +33,8 @@ namespace BhModule.Community.Pathing.State {
             return Task.FromResult(true);
         }
 
-        protected override void Unload() {
-            /* NOOP */
+        public override Task Unload() {
+            return Task.CompletedTask;
         }
 
         public bool IsAchievementHidden(int achievementId, int achievementBit) {

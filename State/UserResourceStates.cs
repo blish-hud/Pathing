@@ -90,10 +90,12 @@ namespace BhModule.Community.Pathing.State {
             this.Static     = await LoadState(Path.Combine(userResourceDir, StaticValues.FILENAME),       yamlDeserializer, () => new StaticValues());
         }
 
-        protected override void Unload() {
+        public override Task Unload() {
             this.Population = null;
             this.Ignore     = null;
             this.Static     = null;
+
+            return Task.CompletedTask;
         }
 
         public override async Task Reload() {

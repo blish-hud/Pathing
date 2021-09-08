@@ -101,9 +101,11 @@ namespace BhModule.Community.Pathing.State {
             return Task.FromResult(true);
         }
 
-        protected override void Unload() {
+        public override Task Unload() {
             GameService.Gw2Mumble.CurrentMap.MapChanged -= CurrentMapChanged;
             GameService.Gw2Mumble.UI.IsMapOpenChanged   -= MapOpenedChanged;
+
+            return Task.CompletedTask;
         }
 
         public override void Update(GameTime gameTime) { /* NOOP */ }

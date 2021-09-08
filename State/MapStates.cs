@@ -55,8 +55,8 @@ namespace BhModule.Community.Pathing.State {
 
         public override void Update(GameTime gameTime) { /* NOOP */ }
 
-        protected override void Unload() {
-
+        public override Task Unload() {
+            return Task.CompletedTask;
         }
 
     }

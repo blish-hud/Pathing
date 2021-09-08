@@ -65,18 +65,6 @@ namespace BhModule.Community.Pathing {
             _initialized = true;
         }
 
-        public void UnloadPacks() {
-            foreach (var pathingEntity in _entities) {
-                pathingEntity.Unload();
-            }
-
-            GameService.Graphics.World.RemoveEntities(_entities);
-
-            _entities.Clear();
-
-            this.RootCategory = null;
-        }
-
         private IPathingEntity BuildEntity(IPointOfInterest pointOfInterest) {
             return pointOfInterest.Type switch {
                 PointOfInterestType.Marker => new StandardMarker(this, pointOfInterest),
@@ -89,7 +77,7 @@ namespace BhModule.Community.Pathing {
         public async Task LoadPackCollection(IPackCollection collection) {
             // TODO: Support cancel instead of spinning like this.
             while (_loadingPack) {
-                await Task.Delay(1000);
+                await Task.Delay(100);
             }
 
             _loadingPack = true;
@@ -142,6 +130,17 @@ namespace BhModule.Community.Pathing {
             foreach (var state in _managedStates) {
                 state.Update(gameTime);
             }
+        }
+
+        public async Task Unload() {
+            foreach (var pathingEntity in _entities) {
+                pathingEntity.Unload();
+            }
+
+            GameService.Graphics.World.RemoveEntities(_entities);
+            _entities.Clear();
+
+            this.RootCategory = null;
         }
 
     }

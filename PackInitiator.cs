@@ -10,6 +10,7 @@ using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Controls;
 using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using TmfLib;
@@ -22,20 +23,22 @@ namespace BhModule.Community.Pathing {
 
         private const int LOAD_RETRY_COUNTS = 3;
 
-        private readonly string _watchPath;
+        private readonly string            _watchPath;
+        private readonly ModuleSettings    _moduleSettings;
+        private readonly IProgress<string> _loadingIndicator;
 
         private readonly IRootPackState _packState;
 
         private readonly SafeList<Pack> _packs = new();
 
         private SharedPackCollection _sharedPackCollection;
-
-        private ContextMenuStripItem _allMarkers;
         
         private readonly PackReaderSettings _packReaderSettings;
 
-        public PackInitiator(string watchPath, ModuleSettings moduleSettings) {
-            _watchPath = watchPath;
+        public PackInitiator(string watchPath, ModuleSettings moduleSettings, IProgress<string> loadingIndicator) {
+            _watchPath        = watchPath;
+            _moduleSettings   = moduleSettings;
+            _loadingIndicator = loadingIndicator;
 
             _packReaderSettings = new PackReaderSettings();
             _packReaderSettings.VenderPrefixes.Add("bh-"); // Support Blish HUD specific categories/markers/trails/attributes.
@@ -43,45 +46,49 @@ namespace BhModule.Community.Pathing {
             _packState = new SharedPackState(moduleSettings);
 
             GameService.Gw2Mumble.CurrentMap.MapChanged += OnMapChanged;
+        }
 
-            // TODO: Ensure this is all cleaned up in Unload() and move this to a better spot.
-
-            _allMarkers          = PathingModule.Instance._pathingContextMenuStrip.AddMenuItem("All Markers");
-            _allMarkers.CanCheck = true;
-            _allMarkers.Checked  = moduleSettings.GlobalPathablesEnabled.Value;
-
-            _allMarkers.CheckedChanged += delegate(object sender, CheckChangedEvent e) {
-                moduleSettings.GlobalPathablesEnabled.Value = e.Checked;
+        public IEnumerable<ContextMenuStripItem> GetPackMenuItems() {
+            // All Markers
+            var allMarkers = new ContextMenuStripItem() {
+                Text     = "All Markers", // TODO: Localize "All Markers"
+                CanCheck = true,
+                Checked  = _moduleSettings.GlobalPathablesEnabled.Value,
+                // TODO: Don't show menu if we're mid-loading or unloaded.
+                Submenu  = new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories)
             };
 
-            moduleSettings.GlobalPathablesEnabled.SettingChanged += delegate(object sender, ValueChangedEventArgs<bool> args) {
-                _allMarkers.Checked = args.NewValue;
+            allMarkers.CheckedChanged += (_, e) => {
+                _moduleSettings.GlobalPathablesEnabled.Value = e.Checked;
             };
 
-            PathingModule.Instance._pathingContextMenuStrip.AddMenuItem("Reload Markers").Click += async delegate {
+            // Reload Markers
+            var reloadMarkers = new ContextMenuStripItem() {
+                Text    = "Reload Markers", // TODO: Localize "Reload Markers"
+                Enabled = _packState.CurrentMapId > 0
+            };
+
+            reloadMarkers.Click += async (_, _) => {
                 if (_packState.CurrentMapId < 0) return;
-                
+
                 await LoadMapFromEachPack(_packState.CurrentMapId);
             };
 
-            PathingModule.Instance._pathingContextMenuStrip.AddMenuItem("Unload Markers").Click += delegate {
-                if (_packState.CurrentMapId < 0) return;
-
-                UnloadStateAndCollection();
+            // Unload Markers
+            var unloadMarkers = new ContextMenuStripItem() {
+                Text    = "Unload Markers", // TODO: Localize "Unload Markers"
+                Enabled = _packState.CurrentMapId > 0
             };
 
-            //PathingModule.Instance._pathingContextMenuStrip.AddMenuItem("Export Marker State").Click += delegate {
-            //    if (_packState.CurrentMapId < 0) return;
+            unloadMarkers.Click += async (_, _) => {
+                if (_packState.CurrentMapId < 0) return;
 
-            //    string exportPath = Utility.DataDirUtil.GetSafeDataDir("export");
-
-            //    foreach (var pathable in GameService.Graphics.World.Entities) {
-            //        if (pathable is StandardMarker sm) {
-            //            string output = JsonConvert.SerializeObject(sm, Formatting.Indented);
-            //            File.WriteAllText(Path.Combine(exportPath, $"{sm.Guid}.txt"), output);
-            //        }
-            //    }
-            //};
+                await UnloadStateAndCollection();
+            };
+            
+            yield return allMarkers;
+            yield return reloadMarkers;
+            yield return unloadMarkers;
         }
 
         public async Task Init() {
@@ -107,10 +114,9 @@ namespace BhModule.Community.Pathing {
             _packs.Add(Pack.FromIDataReader(webReader));
         }
 
-        private void UnloadStateAndCollection() {
+        private async Task UnloadStateAndCollection() {
             _sharedPackCollection?.Unload();
-            _allMarkers.Submenu = null;
-            _packState.UnloadPacks();
+            await _packState.Unload();
         }
 
         private async Task LoadAllPacks() {
@@ -126,17 +132,21 @@ namespace BhModule.Community.Pathing {
             }
         }
 
-        private void PrepareState(int mapId) {
-            UnloadStateAndCollection();
+        private async Task PrepareState(int mapId) {
+            await UnloadStateAndCollection();
 
             _sharedPackCollection = new SharedPackCollection();
         }
 
         private async Task LoadMapFromEachPack(int mapId, int retry = 3) {
-            PrepareState(mapId);
+            // TODO: Localize the loading messages.
+
+            _loadingIndicator.Report("Loading marker packs...");
+            await PrepareState(mapId);
 
             try {
                 foreach (var pack in _packs.ToArray()) {
+                    _loadingIndicator.Report($"Loading {pack.Name}...");
                     await pack.LoadMapAsync(mapId, _sharedPackCollection, _packReaderSettings);
                 }
             } catch (Exception e) {
@@ -149,9 +159,10 @@ namespace BhModule.Community.Pathing {
                 Logger.Error($"Loading pack failed after {LOAD_RETRY_COUNTS} attempts.");
             }
 
+            _loadingIndicator.Report("Finalizing marker collection...");
             await _packState.LoadPackCollection(_sharedPackCollection);
-            
-            _allMarkers.Submenu = new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories);
+
+            _loadingIndicator.Report("");
         }
 
         private async void OnMapChanged(object sender, ValueEventArgs<int> e) {
@@ -169,7 +180,7 @@ namespace BhModule.Community.Pathing {
         public void Unload() {
             GameService.Gw2Mumble.CurrentMap.MapChanged -= OnMapChanged;
 
-            _packState.UnloadPacks();
+            _packState.Unload();
         }
 
     }
