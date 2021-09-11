@@ -28,8 +28,8 @@ namespace BhModule.Community.Pathing.Editor {
         protected override void OnAfterExpand(TreeViewEventArgs e) {
             if (e.Node is CategoryNode categoryNode) {
                 e.Node.Nodes.Clear();
-                e.Node.Nodes.AddRange(categoryNode.PathingCategory.Where(Utility.CategoryUtil.GetCategoryIsNotFiltered).Select(childCategory => new CategoryNode(childCategory)).ToArray());
-                e.Node.Nodes.AddRange(_packState.Entities.Where(pathable => string.Equals(pathable.CategoryNamespace, categoryNode.PathingCategory.GetNamespace())).Select(pathable => new PathableNode(pathable)).ToArray());
+                e.Node.Nodes.AddRange(categoryNode.PathingCategory.Where(category => Utility.CategoryUtil.GetCategoryIsNotFiltered(category, _packState.Entities.ToArray())).Select(childCategory => new CategoryNode(childCategory, _packState)).ToArray());
+                e.Node.Nodes.AddRange(_packState.Entities.Where(pathable => string.Equals(pathable.CategoryNamespace, categoryNode.PathingCategory.Namespace)).Select(pathable => new PathableNode(pathable)).ToArray());
             }
 
             base.OnAfterExpand(e);
@@ -49,7 +49,7 @@ namespace BhModule.Community.Pathing.Editor {
             this.Nodes.Clear();
 
             if (_packState != null) {
-                this.Nodes.AddRange(_packState.RootCategory.Where(Utility.CategoryUtil.GetCategoryIsNotFiltered).Select(childCategory => new CategoryNode(childCategory)).ToArray());
+                this.Nodes.AddRange(_packState.RootCategory.Where(category => Utility.CategoryUtil.GetCategoryIsNotFiltered(category, _packState.Entities.ToArray())).Select(childCategory => new CategoryNode(childCategory, _packState)).ToArray());
             }
         }
 

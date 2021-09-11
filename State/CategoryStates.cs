@@ -22,7 +22,7 @@ namespace BhModule.Community.Pathing.State {
 
         private HashSet<string> _inactiveCategories = new(StringComparer.OrdinalIgnoreCase);
 
-        private readonly SafeList<PathingCategory> _rawInactiveCategories   = new();
+        private readonly SafeList<PathingCategory> _rawInactiveCategories = new();
 
         private double _lastSaveState                     = 0;
         private double _lastInactiveCategoriesCalculation = 0;
@@ -70,7 +70,7 @@ namespace BhModule.Community.Pathing.State {
             string categoryStatesPath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), STATE_FILE);
 
             try {
-                await FileUtil.WriteLinesAsync(categoryStatesPath, inactiveCategories.Select(c => c.GetNamespace()));
+                await FileUtil.WriteLinesAsync(categoryStatesPath, inactiveCategories.Select(c => c.Namespace));
             } catch (Exception e) {
                 Logger.Error(e, $"Failed to write {STATE_FILE} ({categoryStatesPath}).");
             }
@@ -95,7 +95,7 @@ namespace BhModule.Community.Pathing.State {
         }
 
         private void AddAllSubCategories(HashSet<string> categories, PathingCategory currentCategory) {
-            categories.Add(currentCategory.GetNamespace());
+            categories.Add(currentCategory.Namespace);
 
             foreach (var subCategory in currentCategory) {
                 AddAllSubCategories(categories, subCategory);

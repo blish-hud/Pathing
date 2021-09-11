@@ -127,5 +127,7 @@ namespace BhModule.Community.Pathing.Content {
             return memStream.ToArray();
         }
 
+        public void AttemptReleaseLocks() { /* NOOP */ }
+
     }
 }

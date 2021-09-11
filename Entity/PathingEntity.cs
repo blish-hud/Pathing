@@ -18,7 +18,9 @@ namespace BhModule.Community.Pathing.Entity {
         public IList<IBehavior> Behaviors { get; } = new SafeList<IBehavior>();
 
         [DisplayName("Type")]
-        public string CategoryNamespace { get; set; }
+        public string CategoryNamespace => this.Category.Namespace;
+
+        public PathingCategory Category { get; }
 
         public abstract float TriggerRange { get; set; }
 
@@ -38,7 +40,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         protected PathingEntity(IPackState packState, IPointOfInterest pointOfInterest) {
             this.MapId             = pointOfInterest.MapId;
-            this.CategoryNamespace = pointOfInterest.ParentPathingCategory.GetNamespace();
+            this.Category          = pointOfInterest.ParentPathingCategory;
 
             _packState = packState;
         }

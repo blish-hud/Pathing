@@ -21,7 +21,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private bool CategoryIsNotFiltered(PathingCategory category) {
             return category.DisplayName != string.Empty
                 && _packState.UserConfiguration.PackShowCategoriesFromAllMaps.Value
-                || Utility.CategoryUtil.GetCategoryIsNotFiltered(category);
+                || Utility.CategoryUtil.GetCategoryIsNotFiltered(category, _packState.Entities.ToArray());
         }
 
         private IEnumerable<PathingCategory> GetSubCategories() {

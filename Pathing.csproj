@@ -237,6 +237,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="State\AchievementStates.cs" />
+    <Compile Include="State\Category.cs" />
+    <Compile Include="State\Category.cs" />
     <Compile Include="State\EditorStates.cs" />
     <Compile Include="State\UiStates.cs" />
     <Compile Include="State\UserResources\Converters\ColorConverter.cs" />
@@ -555,6 +557,10 @@
     <Folder Include="ref\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TmfLib\TmfLib.csproj">
+      <Project>{d66aacb7-a2b7-4f13-9667-b1d7f1cf8848}</Project>
+      <Name>TmfLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TmfLib\TmfLib.csproj">
       <Project>{d66aacb7-a2b7-4f13-9667-b1d7f1cf8848}</Project>
       <Name>TmfLib</Name>

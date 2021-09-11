@@ -170,6 +170,10 @@ namespace BhModule.Community.Pathing {
             GameService.Graphics.FrameLimiter = currentFrameLimiter;
             GameService.Graphics.EnableVsync  = currentVsync;
 
+            foreach (var pack in _packs.ToArray()) {
+                pack.ReleaseLocks();
+            }
+
             _loadingIndicator.Report("");
         }
 

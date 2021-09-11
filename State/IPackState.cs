@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using BhModule.Community.Pathing.Entity;
+﻿using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Entity.Effects;
 using TmfLib.Pathable;
 

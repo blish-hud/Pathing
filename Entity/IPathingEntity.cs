@@ -4,6 +4,7 @@ using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.Entity {
     public interface IPathingEntity : IEntity {
@@ -17,7 +18,11 @@ namespace BhModule.Community.Pathing.Entity {
 
         float DistanceToPlayer { get; set; }
 
+        int MapId { get; }
+
         string CategoryNamespace { get; }
+
+        PathingCategory Category { get; }
 
         bool DebugRender { get; }
 

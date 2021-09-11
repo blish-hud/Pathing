@@ -93,29 +93,33 @@ namespace BhModule.Community.Pathing.Entity {
                                                       new Vector3(0, 0, 1),
                                                       camera.Forward);
 
-                //var _2dPosition = graphicsDevice.Viewport.Unproject(position, _packState.SharedMarkerEffect.Projection, _packState.SharedMarkerEffect.View, modelMatrix);
+                if (false) {
+                    var _2dPosition = ConvertToScreen(position, _packState.SharedMarkerEffect.View, _packState.SharedMarkerEffect.Projection);
 
-                var _2dPosition = ConvertToScreen(position, _packState.SharedMarkerEffect.View, _packState.SharedMarkerEffect.Projection);
+                    if (_2dPosition.Z < 0) return;
 
-                if (_2dPosition.Z < 0) return;
+                    var spriteBatch = new SpriteBatch(graphicsDevice);
 
-                var spriteBatch = new SpriteBatch(graphicsDevice);
+                    spriteBatch.Begin();
 
-                spriteBatch.Begin();
+                    int width  = (int)(MathHelper.Clamp(this.Size.X * this.Scale,     this.MinSize * 2f, this.MaxSize * 2f));
+                    int height = (int)(MathHelper.Clamp(this.Size.Y * this.Scale, this.MinSize * 2f, this.MaxSize * 2f));
 
-                int width  = (int) (MathHelper.Clamp(this.Size.X * this.Scale, this.MinSize * 2f, this.MaxSize * 2f));
-                int height = (int) (MathHelper.Clamp(this.Size.Y * this.Scale, this.MinSize * 2f, this.MaxSize * 2f));
+                    spriteBatch.DrawOnCtrl(
+                                           GameService.Graphics.SpriteScreen, _texture, new Rectangle(
+                                                                                                      (int)(MathHelper.Clamp(_2dPosition.X - width  / 2f, 0f, GameService.Graphics.SpriteScreen.Width  - width)),
+                                                                                                      (int)(MathHelper.Clamp(_2dPosition.Y - height / 2f, 0f, GameService.Graphics.SpriteScreen.Height - height)),
+                                                                                                      width,
+                                                                                                      height
+                                                                                                     ), this.Tint * this.GetOpacity()
+                                          );
 
-                spriteBatch.DrawOnCtrl(GameService.Graphics.SpriteScreen, _texture, new Rectangle((int)(MathHelper.Clamp(_2dPosition.X - width / 2f, 0f, GameService.Graphics.SpriteScreen.Width - width) ),
-                                                                                                  (int)(MathHelper.Clamp(_2dPosition.Y - height / 2f, 0f, GameService.Graphics.SpriteScreen.Height - height) ),
-                                                                                                  width,
-                                                                                                  height), this.Tint * this.GetOpacity());
+                    spriteBatch.End();
 
-                spriteBatch.End();
+                    spriteBatch.Dispose();
 
-                spriteBatch.Dispose();
-
-                return;
+                    return;
+                }
             } else {
                 modelMatrix *= Matrix.CreateRotationX(this.RotationXyz.Value.X)
                              * Matrix.CreateRotationY(this.RotationXyz.Value.Y)
@@ -129,7 +133,7 @@ namespace BhModule.Community.Pathing.Entity {
                                                          minRender,
                                                          maxRender,
                                                          this.CanFade && _packState.UserConfiguration.PackFadeMarkersBetweenCharacterAndCamera.Value,
-                                                         /* this.Tint */ (Color.Red),
+                                                         this.Tint,
                                                          this.DebugRender);
 
             _modelMatrix = modelMatrix;
