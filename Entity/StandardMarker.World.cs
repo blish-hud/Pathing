@@ -5,6 +5,7 @@ using Blish_HUD;
 using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker : ICanPick {
@@ -63,7 +64,7 @@ namespace BhModule.Community.Pathing.Entity {
             float x = position.X / position.Z;
             float y = position.Y / -position.Z;
 
-            x = (x + 1) * screenWidth / 2;
+            x = (x + 1) * screenWidth  / 2;
             y = (y + 1) * screenHeight / 2;
 
             return new Vector3(x, y, position.Z);
@@ -86,15 +87,8 @@ namespace BhModule.Community.Pathing.Entity {
             var position = this.Position + new Vector3(0, 0, this.HeightOffset);
 
             if (!this.RotationXyz.HasValue) {
-                modelMatrix *= Matrix.CreateBillboard(position,
-                                                      new Vector3(camera.Position.X,
-                                                                  camera.Position.Y,
-                                                                  camera.Position.Z),
-                                                      new Vector3(0, 0, 1),
-                                                      camera.Forward);
-
-                if (false) {
-                    var _2dPosition = ConvertToScreen(position, _packState.SharedMarkerEffect.View, _packState.SharedMarkerEffect.Projection);
+                if (true) {
+                    var _2dPosition = position.ToScreenSpace( _packState.SharedMarkerEffect.View, _packState.SharedMarkerEffect.Projection);
 
                     if (_2dPosition.Z < 0) return;
 
@@ -105,14 +99,21 @@ namespace BhModule.Community.Pathing.Entity {
                     int width  = (int)(MathHelper.Clamp(this.Size.X * this.Scale,     this.MinSize * 2f, this.MaxSize * 2f));
                     int height = (int)(MathHelper.Clamp(this.Size.Y * this.Scale, this.MinSize * 2f, this.MaxSize * 2f));
 
-                    spriteBatch.DrawOnCtrl(
-                                           GameService.Graphics.SpriteScreen, _texture, new Rectangle(
-                                                                                                      (int)(MathHelper.Clamp(_2dPosition.X - width  / 2f, 0f, GameService.Graphics.SpriteScreen.Width  - width)),
-                                                                                                      (int)(MathHelper.Clamp(_2dPosition.Y - height / 2f, 0f, GameService.Graphics.SpriteScreen.Height - height)),
-                                                                                                      width,
-                                                                                                      height
-                                                                                                     ), this.Tint * this.GetOpacity()
-                                          );
+                    //spriteBatch.DrawOnCtrl(
+                    //                       GameService.Graphics.SpriteScreen, _texture, new Rectangle(
+                    //                                                                                  (int)(MathHelper.Clamp(_2dPosition.X - width  / 2f, 0f, GameService.Graphics.SpriteScreen.Width  - width)),
+                    //                                                                                  (int)(MathHelper.Clamp(_2dPosition.Y - height / 2f, 0f, GameService.Graphics.SpriteScreen.Height - height)),
+                    //                                                                                  width,
+                    //                                                                                  height
+                    //                                                                                 ), this.Tint * this.GetOpacity()
+                    //                      );
+
+                    spriteBatch.Draw(_texture,
+                                     new RectangleF((MathHelper.Clamp(_2dPosition.X - width  / 2f, 0f, GameService.Graphics.SpriteScreen.Width  - width)),
+                                                   (MathHelper.Clamp(_2dPosition.Y - height / 2f, 0f, GameService.Graphics.SpriteScreen.Height - height)),
+                                                   width,
+                                                   height),
+                                     this.Tint * this.GetOpacity());
 
                     spriteBatch.End();
 
@@ -120,6 +121,13 @@ namespace BhModule.Community.Pathing.Entity {
 
                     return;
                 }
+
+                modelMatrix *= Matrix.CreateBillboard(position,
+                                                      new Vector3(camera.Position.X,
+                                                                  camera.Position.Y,
+                                                                  camera.Position.Z),
+                                                      new Vector3(0, 0, 1),
+                                                      camera.Forward);
             } else {
                 modelMatrix *= Matrix.CreateRotationX(this.RotationXyz.Value.X)
                              * Matrix.CreateRotationY(this.RotationXyz.Value.Y)
