@@ -87,41 +87,6 @@ namespace BhModule.Community.Pathing.Entity {
             var position = this.Position + new Vector3(0, 0, this.HeightOffset);
 
             if (!this.RotationXyz.HasValue) {
-                if (true) {
-                    var _2dPosition = position.ToScreenSpace( _packState.SharedMarkerEffect.View, _packState.SharedMarkerEffect.Projection);
-
-                    if (_2dPosition.Z < 0) return;
-
-                    var spriteBatch = new SpriteBatch(graphicsDevice);
-
-                    spriteBatch.Begin();
-
-                    int width  = (int)(MathHelper.Clamp(this.Size.X * this.Scale,     this.MinSize * 2f, this.MaxSize * 2f));
-                    int height = (int)(MathHelper.Clamp(this.Size.Y * this.Scale, this.MinSize * 2f, this.MaxSize * 2f));
-
-                    //spriteBatch.DrawOnCtrl(
-                    //                       GameService.Graphics.SpriteScreen, _texture, new Rectangle(
-                    //                                                                                  (int)(MathHelper.Clamp(_2dPosition.X - width  / 2f, 0f, GameService.Graphics.SpriteScreen.Width  - width)),
-                    //                                                                                  (int)(MathHelper.Clamp(_2dPosition.Y - height / 2f, 0f, GameService.Graphics.SpriteScreen.Height - height)),
-                    //                                                                                  width,
-                    //                                                                                  height
-                    //                                                                                 ), this.Tint * this.GetOpacity()
-                    //                      );
-
-                    spriteBatch.Draw(_texture,
-                                     new RectangleF((MathHelper.Clamp(_2dPosition.X - width  / 2f, 0f, GameService.Graphics.SpriteScreen.Width  - width)),
-                                                   (MathHelper.Clamp(_2dPosition.Y - height / 2f, 0f, GameService.Graphics.SpriteScreen.Height - height)),
-                                                   width,
-                                                   height),
-                                     this.Tint * this.GetOpacity());
-
-                    spriteBatch.End();
-
-                    spriteBatch.Dispose();
-
-                    return;
-                }
-
                 modelMatrix *= Matrix.CreateBillboard(position,
                                                       new Vector3(camera.Position.X,
                                                                   camera.Position.Y,
@@ -141,7 +106,7 @@ namespace BhModule.Community.Pathing.Entity {
                                                          minRender,
                                                          maxRender,
                                                          this.CanFade && _packState.UserConfiguration.PackFadeMarkersBetweenCharacterAndCamera.Value,
-                                                         this.Tint,
+                                                         /* this.Tint */ Color.Yellow * 0.9f,
                                                          this.DebugRender);
 
             _modelMatrix = modelMatrix;
