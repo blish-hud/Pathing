@@ -10,8 +10,13 @@ namespace BhModule.Community.Pathing.Entity {
         public override RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
             if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return null;
 
-            if ((!this.MapVisibility     || !_packState.UserConfiguration.MapShowTrailsOnFullscreen.Value) && GameService.Gw2Mumble.UI.IsMapOpen) return null;
-            if ((!this.MiniMapVisibility || !_packState.UserConfiguration.MapShowTrailsOnCompass.Value)   && !GameService.Gw2Mumble.UI.IsMapOpen) return null;
+            bool isMapOpen = GameService.Gw2Mumble.UI.IsMapOpen;
+
+            var mapShowTrailsOnFullscreen = _packState.UserConfiguration.MapShowTrailsOnFullscreen.Value;
+            if (mapShowTrailsOnFullscreen != VisibilityLevel.Always && (!this.MapVisibility || mapShowTrailsOnFullscreen == VisibilityLevel.Never) && isMapOpen) return null;
+
+            var mapShowTrailOnCompass = _packState.UserConfiguration.MapShowTrailsOnCompass.Value;
+            if (mapShowTrailOnCompass != VisibilityLevel.Always && (!this.MiniMapVisibility || mapShowTrailOnCompass == VisibilityLevel.Never) && !isMapOpen) return null;
 
             bool lastPointInBounds = false;
 
