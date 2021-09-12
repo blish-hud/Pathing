@@ -391,6 +391,10 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ColorThief.Desktop.v46, Version=1.1.0.1, Culture=neutral, PublicKeyToken=null">
+      <HintPath>packages\ksemenenko.ColorThief.1.1.1.4\lib\net46\ColorThief.Desktop.v46.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="CppNet">
       <HintPath>.\CppNet.dll</HintPath>
     </Reference>

@@ -1,15 +1,19 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
-using Microsoft.Xna.Framework;
+using ColorThiefDotNet;
 using Microsoft.Xna.Framework.Graphics;
 using TmfLib;
 using TmfLib.Prototype;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
 
-        private const string ATTR_TEXTURE = "texture";
+        private const           string     ATTR_TEXTURE  = "texture";
+        private static readonly ColorThief _colorThief   = new();
 
         private Texture2D _texture;
         public Texture2D Texture {
@@ -20,7 +24,14 @@ namespace BhModule.Community.Pathing.Entity {
                 if (_texture == null) return;
 
                 if (this.Texture != null && this.TrailSampleColor == Color.White) {
-                    this.TrailSampleColor = this.Texture.SampleN(_packState.UserResourceStates.Static.MapTrailColorSamples);
+                    List<QuantizedColor> palette = _colorThief.GetPalette(this.Texture.TextureToBitmap());
+                    palette.Sort((color, color2) => color2.Population.CompareTo(color.Population));
+                    
+                    ColorThiefDotNet.Color? dominantColor = palette.FirstOrDefault()?.Color;
+
+                    if (dominantColor != null) {
+                        this.TrailSampleColor = new Color(dominantColor.Value.R, dominantColor.Value.G, dominantColor.Value.B, dominantColor.Value.A);
+                    }
                 }
 
                 FadeIn();
