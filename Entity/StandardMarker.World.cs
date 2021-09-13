@@ -76,10 +76,10 @@ namespace BhModule.Community.Pathing.Entity {
             if (!this.InGameVisibility) return;
 
             // Skip rendering stuff beyond the max view distance
-            float maxRender = Math.Min(WorldUtil.GameToWorldCoord(this.FadeFar), _packState.UserConfiguration.PackMaxViewDistance.Value);
+            float maxRender = Math.Min(this.FadeFar, _packState.UserConfiguration.PackMaxViewDistance.Value);
             if (this.DistanceToPlayer > maxRender) return;
 
-            float minRender = Math.Min(WorldUtil.GameToWorldCoord(this.FadeNear), _packState.UserConfiguration.PackMaxViewDistance.Value - (WorldUtil.GameToWorldCoord(this.FadeFar - this.FadeNear)));
+            float minRender = Math.Min(this.FadeNear, _packState.UserConfiguration.PackMaxViewDistance.Value - (this.FadeFar - this.FadeNear));
 
             graphicsDevice.RasterizerState = this.CullDirection;
             var modelMatrix = Matrix.CreateScale(this.Size.X / 2f, this.Size.Y / 2f, 1f) * Matrix.CreateScale(this.Scale);
@@ -100,13 +100,38 @@ namespace BhModule.Community.Pathing.Entity {
                              * Matrix.CreateTranslation(position);
             }
 
+            //
+
+            // Find size of the object in screen space
+            var screenVerts = new Vector4[_faceVerts.Length];
+            var transformMatrix = Matrix.Multiply(Matrix.Multiply(modelMatrix, _packState.SharedMarkerEffect.View),
+                                                  _packState.SharedMarkerEffect.Projection);
+
+            for (int i = 0; i < _faceVerts.Length; i++) {
+                screenVerts[i] =  Vector4.Transform(_faceVerts[i], transformMatrix);
+                screenVerts[i] /= screenVerts[i].W;
+            }
+
+            var bounds = BoundingRectangle.CreateFrom(screenVerts.Select(s => new Point2(s.X, s.Y)).ToArray());
+            var pixelSize = new Vector2(bounds.HalfExtents.X * 2 * _packState.SharedMarkerEffect.GraphicsDevice.Viewport.Width,
+                                        bounds.HalfExtents.X * 2 * _packState.SharedMarkerEffect.GraphicsDevice.Viewport.Height);
+
+            float limitWidth = MathHelper.Clamp(pixelSize.X, this.MinSize * 2, this.MaxSize * 2);
+            float limitHeight = MathHelper.Clamp(pixelSize.Y, this.MinSize * 2, this.MaxSize * 2);
+
+            modelMatrix *= Matrix.CreateTranslation(-position)
+                         * Matrix.CreateScale(limitHeight / pixelSize.Y)
+                         * Matrix.CreateTranslation(position);
+
+            //
+
             _packState.SharedMarkerEffect.SetEntityState(modelMatrix,
                                                          this.Texture,
                                                          GetOpacity(),
                                                          minRender,
                                                          maxRender,
                                                          this.CanFade && _packState.UserConfiguration.PackFadeMarkersBetweenCharacterAndCamera.Value,
-                                                         /* this.Tint */ Color.Yellow * 0.9f,
+                                                         this.Tint,
                                                          this.DebugRender);
 
             _modelMatrix = modelMatrix;

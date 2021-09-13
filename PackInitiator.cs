@@ -142,9 +142,7 @@ namespace BhModule.Community.Pathing {
 
             // We unlock frames to avoid timestep frame limiter from slowing our loading down.
             var currentFrameLimiter = GameService.Graphics.FrameLimiter;
-            var currentVsync        = GameService.Graphics.EnableVsync;
             GameService.Graphics.FrameLimiter = FramerateMethod.Unlimited;
-            GameService.Graphics.EnableVsync  = false;
 
             await PrepareState(mapId);
 
@@ -168,7 +166,6 @@ namespace BhModule.Community.Pathing {
 
             // We set the frame limiter back.
             GameService.Graphics.FrameLimiter = currentFrameLimiter;
-            GameService.Graphics.EnableVsync  = currentVsync;
 
             foreach (var pack in _packs.ToArray()) {
                 pack.ReleaseLocks();
