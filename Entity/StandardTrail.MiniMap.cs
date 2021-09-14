@@ -15,12 +15,12 @@ namespace BhModule.Community.Pathing.Entity {
             // TODO: Make this more simple
 
             var  mapTrailVisibilityLevel = _packState.UserConfiguration.MapTrailVisibilityLevel.Value;
-            bool allowedOnMap            = this.MapVisibility && mapTrailVisibilityLevel != VisibilityLevel.Never;
-            if (isMapOpen && !allowedOnMap && mapTrailVisibilityLevel != VisibilityLevel.Always) return null;
+            bool allowedOnMap            = this.MapVisibility && mapTrailVisibilityLevel != MapVisibilityLevel.Never;
+            if (isMapOpen && !allowedOnMap && mapTrailVisibilityLevel != MapVisibilityLevel.Always) return null;
 
             var  miniMapTrailVisibilityLevel = _packState.UserConfiguration.MiniMapTrailVisibilityLevel.Value;
-            bool allowedOnMiniMap            = this.MiniMapVisibility && miniMapTrailVisibilityLevel != VisibilityLevel.Never;
-            if (!isMapOpen && !allowedOnMiniMap && miniMapTrailVisibilityLevel != VisibilityLevel.Always) return null;
+            bool allowedOnMiniMap            = this.MiniMapVisibility && miniMapTrailVisibilityLevel != MapVisibilityLevel.Never;
+            if (!isMapOpen && !allowedOnMiniMap && miniMapTrailVisibilityLevel != MapVisibilityLevel.Always) return null;
 
             bool lastPointInBounds = false;
 
