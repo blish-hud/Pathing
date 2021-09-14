@@ -17,12 +17,16 @@ namespace BhModule.Community.Pathing.Entity {
             if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return null;
 
             bool isMapOpen = GameService.Gw2Mumble.UI.IsMapOpen;
+            
+            // TODO: Make this more simple
 
-            var mapShowMarkersOnFullscreen = _packState.UserConfiguration.MapShowMarkersOnFullscreen.Value;
-            if (mapShowMarkersOnFullscreen != VisibilityLevel.Always && (!this.MapVisibility || mapShowMarkersOnFullscreen == VisibilityLevel.Never) && isMapOpen) return null;
+            var  mapShowMarkersOnFullscreen = _packState.UserConfiguration.MapShowMarkersOnFullscreen.Value;
+            bool allowedOnMap               = this.MapVisibility && mapShowMarkersOnFullscreen != VisibilityLevel.Never;
+            if (isMapOpen && !allowedOnMap && mapShowMarkersOnFullscreen != VisibilityLevel.Always) return null;
 
-            var mapShowMarkersOnCompass = _packState.UserConfiguration.MapShowMarkersOnCompass.Value;
-            if (mapShowMarkersOnCompass != VisibilityLevel.Always && (!this.MiniMapVisibility || mapShowMarkersOnCompass == VisibilityLevel.Never) && !isMapOpen) return null;
+            var  mapShowMarkersOnCompass = _packState.UserConfiguration.MapShowMarkersOnCompass.Value;
+            bool allowedOnMiniMap        = this.MiniMapVisibility && mapShowMarkersOnCompass != VisibilityLevel.Never;
+            if (!isMapOpen && !allowedOnMiniMap && mapShowMarkersOnCompass != VisibilityLevel.Always) return null;
 
             var location = GetScaledLocation(this.Position.X, this.Position.Y, scale, offsets);
 

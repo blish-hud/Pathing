@@ -12,11 +12,15 @@ namespace BhModule.Community.Pathing.Entity {
 
             bool isMapOpen = GameService.Gw2Mumble.UI.IsMapOpen;
 
-            var mapShowTrailsOnFullscreen = _packState.UserConfiguration.MapShowTrailsOnFullscreen.Value;
-            if (mapShowTrailsOnFullscreen != VisibilityLevel.Always && (!this.MapVisibility || mapShowTrailsOnFullscreen == VisibilityLevel.Never) && isMapOpen) return null;
+            // TODO: Make this more simple
 
-            var mapShowTrailOnCompass = _packState.UserConfiguration.MapShowTrailsOnCompass.Value;
-            if (mapShowTrailOnCompass != VisibilityLevel.Always && (!this.MiniMapVisibility || mapShowTrailOnCompass == VisibilityLevel.Never) && !isMapOpen) return null;
+            var  mapShowTrailsOnFullscreen = _packState.UserConfiguration.MapShowTrailsOnFullscreen.Value;
+            bool allowedOnMap              = this.MapVisibility && mapShowTrailsOnFullscreen != VisibilityLevel.Never;
+            if (isMapOpen && !allowedOnMap && mapShowTrailsOnFullscreen != VisibilityLevel.Always) return null;
+
+            var  mapShowTrailOnCompass = _packState.UserConfiguration.MapShowTrailsOnCompass.Value;
+            bool allowedOnMiniMap      = this.MiniMapVisibility && mapShowTrailOnCompass != VisibilityLevel.Never;
+            if (!isMapOpen && !allowedOnMiniMap && mapShowTrailOnCompass != VisibilityLevel.Always) return null;
 
             bool lastPointInBounds = false;
 
