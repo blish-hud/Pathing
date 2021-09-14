@@ -16,8 +16,17 @@ namespace BhModule.Community.Pathing.Entity {
         public override RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
             if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return null;
 
-            if ((!this.MapVisibility     || !_packState.UserConfiguration.MapShowMarkersOnFullscreen.Value) && GameService.Gw2Mumble.UI.IsMapOpen) return null;
-            if ((!this.MiniMapVisibility || !_packState.UserConfiguration.MapShowMarkersOnCompass.Value)    && !GameService.Gw2Mumble.UI.IsMapOpen) return null;
+            bool isMapOpen = GameService.Gw2Mumble.UI.IsMapOpen;
+            
+            // TODO: Make this more simple
+
+            var  mapMarkerVisibilityLevel = _packState.UserConfiguration.MapMarkerVisibilityLevel.Value;
+            bool allowedOnMap             = this.MapVisibility && mapMarkerVisibilityLevel != VisibilityLevel.Never;
+            if (isMapOpen && !allowedOnMap && mapMarkerVisibilityLevel != VisibilityLevel.Always) return null;
+
+            var  miniMapMarkerVisibilityLevel = _packState.UserConfiguration.MiniMapMarkerVisibilityLevel.Value;
+            bool allowedOnMiniMap             = this.MiniMapVisibility && miniMapMarkerVisibilityLevel != VisibilityLevel.Never;
+            if (!isMapOpen && !allowedOnMiniMap && miniMapMarkerVisibilityLevel != VisibilityLevel.Always) return null;
 
             var location = GetScaledLocation(this.Position.X, this.Position.Y, scale, offsets);
 
