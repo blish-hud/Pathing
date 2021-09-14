@@ -14,13 +14,13 @@ namespace BhModule.Community.Pathing.Entity {
 
             // TODO: Make this more simple
 
-            var  mapShowTrailsOnFullscreen = _packState.UserConfiguration.MapShowTrailsOnFullscreen.Value;
-            bool allowedOnMap              = this.MapVisibility && mapShowTrailsOnFullscreen != VisibilityLevel.Never;
-            if (isMapOpen && !allowedOnMap && mapShowTrailsOnFullscreen != VisibilityLevel.Always) return null;
+            var  mapTrailVisibilityLevel = _packState.UserConfiguration.MapTrailVisibilityLevel.Value;
+            bool allowedOnMap            = this.MapVisibility && mapTrailVisibilityLevel != VisibilityLevel.Never;
+            if (isMapOpen && !allowedOnMap && mapTrailVisibilityLevel != VisibilityLevel.Always) return null;
 
-            var  mapShowTrailOnCompass = _packState.UserConfiguration.MapShowTrailsOnCompass.Value;
-            bool allowedOnMiniMap      = this.MiniMapVisibility && mapShowTrailOnCompass != VisibilityLevel.Never;
-            if (!isMapOpen && !allowedOnMiniMap && mapShowTrailOnCompass != VisibilityLevel.Always) return null;
+            var  miniMapTrailVisibilityLevel = _packState.UserConfiguration.MiniMapTrailVisibilityLevel.Value;
+            bool allowedOnMiniMap            = this.MiniMapVisibility && miniMapTrailVisibilityLevel != VisibilityLevel.Never;
+            if (!isMapOpen && !allowedOnMiniMap && miniMapTrailVisibilityLevel != VisibilityLevel.Always) return null;
 
             bool lastPointInBounds = false;
 

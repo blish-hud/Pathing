@@ -20,13 +20,13 @@ namespace BhModule.Community.Pathing.Entity {
             
             // TODO: Make this more simple
 
-            var  mapShowMarkersOnFullscreen = _packState.UserConfiguration.MapShowMarkersOnFullscreen.Value;
-            bool allowedOnMap               = this.MapVisibility && mapShowMarkersOnFullscreen != VisibilityLevel.Never;
-            if (isMapOpen && !allowedOnMap && mapShowMarkersOnFullscreen != VisibilityLevel.Always) return null;
+            var  mapMarkerVisibilityLevel = _packState.UserConfiguration.MapMarkerVisibilityLevel.Value;
+            bool allowedOnMap             = this.MapVisibility && mapMarkerVisibilityLevel != VisibilityLevel.Never;
+            if (isMapOpen && !allowedOnMap && mapMarkerVisibilityLevel != VisibilityLevel.Always) return null;
 
-            var  mapShowMarkersOnCompass = _packState.UserConfiguration.MapShowMarkersOnCompass.Value;
-            bool allowedOnMiniMap        = this.MiniMapVisibility && mapShowMarkersOnCompass != VisibilityLevel.Never;
-            if (!isMapOpen && !allowedOnMiniMap && mapShowMarkersOnCompass != VisibilityLevel.Always) return null;
+            var  miniMapMarkerVisibilityLevel = _packState.UserConfiguration.MiniMapMarkerVisibilityLevel.Value;
+            bool allowedOnMiniMap             = this.MiniMapVisibility && miniMapMarkerVisibilityLevel != VisibilityLevel.Never;
+            if (!isMapOpen && !allowedOnMiniMap && miniMapMarkerVisibilityLevel != VisibilityLevel.Always) return null;
 
             var location = GetScaledLocation(this.Position.X, this.Position.Y, scale, offsets);
 
