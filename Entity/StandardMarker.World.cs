@@ -111,7 +111,7 @@ namespace BhModule.Community.Pathing.Entity {
                                                          minRender,
                                                          maxRender,
                                                          this.CanFade && _packState.UserConfiguration.PackFadeMarkersBetweenCharacterAndCamera.Value,
-                                                         /*this.Tint*/ Color.GreenYellow,
+                                                         this.Tint,
                                                          this.DebugRender);
 
             _modelMatrix = modelMatrix;

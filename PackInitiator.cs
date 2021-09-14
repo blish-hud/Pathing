@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.State;
@@ -65,10 +66,10 @@ namespace BhModule.Community.Pathing {
                 Enabled = _packState.CurrentMapId > 0
             };
 
-            reloadMarkers.Click += async (_, _) => {
+            reloadMarkers.Click += (_, _) => {
                 if (_packState.CurrentMapId < 0) return;
 
-                await LoadMapFromEachPack(_packState.CurrentMapId);
+                LoadMapFromEachPackInBackground(_packState.CurrentMapId);
             };
 
             // Unload Markers
@@ -125,7 +126,7 @@ namespace BhModule.Community.Pathing {
             // If the module loads at launch, this can end up firing twice.
             // If the module loads after launch (manually enabled), we need this to populate the current map.
             if (GameService.Gw2Mumble.CurrentMap.Id != default) {
-                await LoadMapFromEachPack(_packState.CurrentMapId = GameService.Gw2Mumble.CurrentMap.Id);
+                LoadMapFromEachPackInBackground(_packState.CurrentMapId = GameService.Gw2Mumble.CurrentMap.Id);
             }
         }
 
@@ -135,14 +136,20 @@ namespace BhModule.Community.Pathing {
             _sharedPackCollection = new SharedPackCollection();
         }
 
+        private void LoadMapFromEachPackInBackground(int mapId) {
+            var thread = new Thread(async () => await LoadMapFromEachPack(mapId));
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
         private async Task LoadMapFromEachPack(int mapId, int retry = 3) {
             // TODO: Localize the loading messages.
 
             _loadingIndicator.Report("Loading marker packs...");
 
             // We unlock frames to avoid timestep frame limiter from slowing our loading down.
-            var currentFrameLimiter = GameService.Graphics.FrameLimiter;
-            GameService.Graphics.FrameLimiter = FramerateMethod.Unlimited;
+            //var currentFrameLimiter = GameService.Graphics.FrameLimiter;
+            //GameService.Graphics.FrameLimiter = FramerateMethod.Unlimited;
 
             await PrepareState(mapId);
 
@@ -165,7 +172,7 @@ namespace BhModule.Community.Pathing {
             await _packState.LoadPackCollection(_sharedPackCollection);
 
             // We set the frame limiter back.
-            GameService.Graphics.FrameLimiter = currentFrameLimiter;
+            //GameService.Graphics.FrameLimiter = currentFrameLimiter;
 
             foreach (var pack in _packs.ToArray()) {
                 pack.ReleaseLocks();
@@ -174,12 +181,12 @@ namespace BhModule.Community.Pathing {
             _loadingIndicator.Report("");
         }
 
-        private async void OnMapChanged(object sender, ValueEventArgs<int> e) {
+        private void OnMapChanged(object sender, ValueEventArgs<int> e) {
             if (e.Value == _packState.CurrentMapId) return;
 
             _packState.CurrentMapId = e.Value;
 
-            await LoadMapFromEachPack(e.Value);
+            LoadMapFromEachPackInBackground(e.Value);
         }
         
         public void Update(GameTime gameTime) {

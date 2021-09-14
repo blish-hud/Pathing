@@ -1,6 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
-using Microsoft.Xna.Framework;
 using TmfLib;
 using TmfLib.Prototype;
 
