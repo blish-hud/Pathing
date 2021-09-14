@@ -148,7 +148,7 @@ namespace BhModule.Community.Pathing.Entity {
             spriteBatch.End();
             spriteBatch.Begin(_pathableParameters);
 
-            double scale   = GameService.Gw2Mumble.UI.MapScale * Graphics.GetScaleRatio(UiSize.Normal); //Workaround to fix pixel to coordinate scaling - Blish HUD scale of 1 is "Larger" but game is "Normal".
+            double scale   = GameService.Gw2Mumble.UI.MapScale * 0.897d; //Workaround to fix pixel to coordinate scaling - Blish HUD scale of 1 is "Larger" but game is "Normal".
             double offsetX = bounds.X + (bounds.Width  / 2d);
             double offsetY = bounds.Y + (bounds.Height / 2d);
 
@@ -157,15 +157,16 @@ namespace BhModule.Community.Pathing.Entity {
             // TODO: Make this more based on relative vertical axis difference.
             var entities = _packState.Entities.ToList().OrderBy(poi => -poi.DrawOrder);
             
-            string finalTooltip = string.Empty;
-            
+            string finalTooltip   = string.Empty;
+            bool   showModTooltip = (GameService.Input.Keyboard.ActiveModifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+
             foreach (var pathable in entities) {
-                RectangleF? hint = pathable.RenderToMiniMap(spriteBatch, bounds, (offsetX, offsetY), scale, opacity);
+                var hint = pathable.RenderToMiniMap(spriteBatch, bounds, (offsetX, offsetY), scale, opacity);
 
                 if (this.MouseOver && hint.HasValue && hint.Value.Contains(GameService.Input.Mouse.Position)) {
                     _activeEntity = pathable;
 
-                    if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {
+                    if (showModTooltip) {
                         finalTooltip = pathable.CategoryNamespace;
                     } else if (pathable is IHasMapInfo mapPathable) {
                         finalTooltip = mapPathable.TipName;

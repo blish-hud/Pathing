@@ -128,6 +128,7 @@ namespace BhModule.Community.Pathing {
         protected override void Unload() {
             _watcher?.Unload();
             _pathingIcon?.Dispose();
+            _settingsWindow?.Dispose();
 
             Instance = null;
         }

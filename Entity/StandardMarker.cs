@@ -10,8 +10,6 @@ namespace BhModule.Community.Pathing.Entity {
 
         private static readonly Logger Logger = Logger.GetLogger<StandardMarker>();
         
-        private Vector2 Size { get; set; } = Vector2.Zero;
-
         public override float DrawOrder => Vector3.DistanceSquared(this.Position, GameService.Gw2Mumble.PlayerCamera.Position);
 
         public StandardMarker(IPackState packState, IPointOfInterest pointOfInterest) : base(packState, pointOfInterest) {

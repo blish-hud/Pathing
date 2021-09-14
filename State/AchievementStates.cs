@@ -26,6 +26,7 @@ namespace BhModule.Community.Pathing.State {
         }
 
         public override void Update(GameTime gameTime) {
+            // TODO: Switch this to the async version
             UpdateCadenceUtil.UpdateWithCadence(UpdateAchievements, gameTime, INTERVAL_CHECKACHIEVEMENTS, ref _lastAchievementCheck);
         }
 

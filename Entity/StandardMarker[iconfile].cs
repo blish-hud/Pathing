@@ -23,19 +23,9 @@ namespace BhModule.Community.Pathing.Entity {
 
                 if (_texture == null) return;
 
-                this.Size = new Vector2(WorldUtil.GameToWorldCoord(_texture.Width  / 2f),
-                                        WorldUtil.GameToWorldCoord(_texture.Height / 2f));
-
-                this.VerticalConstraint = _texture.Height == _texture.Width
-                                              ? BillboardVerticalConstraint.CameraPosition
-                                              : BillboardVerticalConstraint.PlayerPosition;
-
                 this.FadeIn();
             }
         }
-
-        [Browsable(false)]
-        public BillboardVerticalConstraint VerticalConstraint { get; set; }
 
         /// <summary>
         /// iconfile
@@ -57,6 +47,8 @@ namespace BhModule.Community.Pathing.Entity {
                     Logger.Warn($"Markers '{this.Guid}' is missing '{ATTR_ICONFILE}' attribute.");
                 }
             }
+            
+            // TODO: Show new missing-texture.png instead of the built-in error texture.
         }
 
     }

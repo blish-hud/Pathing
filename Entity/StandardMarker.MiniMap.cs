@@ -36,22 +36,16 @@ namespace BhModule.Community.Pathing.Entity {
                 float diff = this.Position.Z - GameService.Gw2Mumble.PlayerCharacter.Position.Z;
 
                 if (Math.Abs(diff) > VERTICALOFFSET_THRESHOLD) {
-                    var indicatorPosition = new RectangleF(drawRect.Right - (float)(_aboveTexture.Width * drawScale),
+                    var indicatorPosition = new RectangleF(drawRect.Right - _aboveTexture.Width * drawScale,
                                                            drawRect.Top,
-                                                           (float)(_aboveTexture.Width  * drawScale * 3),
-                                                           (float)(_aboveTexture.Height * drawScale * 3));
+                                                           _aboveTexture.Width  * drawScale * 3,
+                                                           _aboveTexture.Height * drawScale * 3);
 
                     spriteBatch.Draw(diff > 0 ? _aboveTexture : _belowTexture, indicatorPosition, Color.White);
                 }
             }
 
             return drawRect;
-        }
-
-        private static int RoundToInt(double value) {
-            return value >= 0
-                       ? (int)(value + 0.5d)
-                       : (int)(value - 0.5d);
         }
 
     }

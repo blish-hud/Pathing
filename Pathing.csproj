@@ -237,8 +237,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="State\AchievementStates.cs" />
-    <Compile Include="State\Category.cs" />
-    <Compile Include="State\Category.cs" />
     <Compile Include="State\EditorStates.cs" />
     <Compile Include="State\UiStates.cs" />
     <Compile Include="State\UserResources\Converters\ColorConverter.cs" />

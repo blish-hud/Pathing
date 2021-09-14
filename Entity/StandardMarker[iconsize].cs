@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
+using Microsoft.Xna.Framework;
 using TmfLib;
 using TmfLib.Prototype;
 
@@ -8,16 +9,19 @@ namespace BhModule.Community.Pathing.Entity {
 
         private const string ATTR_ICONSIZE = "iconsize";
 
-        public float Scale { get; set; }
+        /// <summary>
+        /// The size of the icon.
+        /// </summary>
+        public float Size { get; set; }
 
         /// <summary>
         /// iconsize
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Populate_IconSize(AttributeCollection collection, IPackResourceManager resourceManager) {
-            this.Scale = _packState.UserResourceStates.Population.MarkerPopulationDefaults.IconSize;
+            this.Size = _packState.UserResourceStates.Population.MarkerPopulationDefaults.IconSize;
 
-            { if (collection.TryPopAttribute(ATTR_ICONSIZE, out var attribute)) this.Scale = attribute.GetValueAsFloat(this.Scale); }
+            { if (collection.TryPopAttribute(ATTR_ICONSIZE, out var attribute)) { this.Size = attribute.GetValueAsFloat(attribute.GetValueAsFloat(_packState.UserResourceStates.Population.MarkerPopulationDefaults.IconSize / 2f) * 2f); } }
         }
 
     }

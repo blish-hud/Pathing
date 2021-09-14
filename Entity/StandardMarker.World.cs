@@ -10,7 +10,8 @@ using MonoGame.Extended;
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker : ICanPick {
         
-        private static DynamicVertexBuffer _sharedVertexBuffer;
+        private static          DynamicVertexBuffer _sharedVertexBuffer;
+        private static readonly Vector4[]           _screenVerts = new Vector4[4];
 
         private static readonly Vector3[] _faceVerts = {
             new(-0.5f, -0.5f, 0), new(0.5f, -0.5f, 0), new(-0.5f, 0.5f, 0), new(0.5f, 0.5f, 0),
@@ -53,26 +54,10 @@ namespace BhModule.Community.Pathing.Entity {
         public bool RayIntersects(Ray ray) {
             return PickingUtil.IntersectDistance(BoundingBox.CreateFromPoints(_faceVerts.Select(vert => Vector3.Transform(vert, _modelMatrix))), ray) != null;
         }
-
-        private Vector3 ConvertToScreen(Vector3 position, Matrix view, Matrix projection) {
-            int screenWidth  = GameService.Graphics.SpriteScreen.Width;
-            int screenHeight = GameService.Graphics.SpriteScreen.Height;
-
-            position = Vector3.Transform(position, view);
-            position = Vector3.Transform(position, projection);
-
-            float x = position.X / position.Z;
-            float y = position.Y / -position.Z;
-
-            x = (x + 1) * screenWidth  / 2;
-            y = (y + 1) * screenHeight / 2;
-
-            return new Vector3(x, y, position.Z);
-        }
-
+        
         public override void Render(GraphicsDevice graphicsDevice, IWorld world, ICamera camera) {
             if (IsFiltered(EntityRenderTarget.World) || _texture == null) return;
-
+            
             if (!this.InGameVisibility) return;
 
             // Skip rendering stuff beyond the max view distance
@@ -82,7 +67,7 @@ namespace BhModule.Community.Pathing.Entity {
             float minRender = Math.Min(this.FadeNear, _packState.UserConfiguration.PackMaxViewDistance.Value - (this.FadeFar - this.FadeNear));
 
             graphicsDevice.RasterizerState = this.CullDirection;
-            var modelMatrix = Matrix.CreateScale(this.Size.X / 2f, this.Size.Y / 2f, 1f) * Matrix.CreateScale(this.Scale);
+            var modelMatrix = Matrix.CreateScale(this.Size * 2f, this.Size * 2f, 1f);
 
             var position = this.Position + new Vector3(0, 0, this.HeightOffset);
 
@@ -93,6 +78,26 @@ namespace BhModule.Community.Pathing.Entity {
                                                                   camera.Position.Z),
                                                       new Vector3(0, 0, 1),
                                                       camera.Forward);
+                
+                // Enforce min/max size
+                var transformMatrix = Matrix.Multiply(Matrix.Multiply(modelMatrix, _packState.SharedMarkerEffect.View),
+                                                      _packState.SharedMarkerEffect.Projection);
+
+                for (int i = 0; i < _faceVerts.Length; i++) {
+                    _screenVerts[i] =  Vector4.Transform(_faceVerts[i], transformMatrix);
+                    _screenVerts[i] /= _screenVerts[i].W;
+                }
+            
+                // Very alloc heavy
+                var bounds = BoundingRectangle.CreateFrom(_screenVerts.Select(s => new Point2(s.X, s.Y)).ToArray());
+
+                float pixelSizeY = bounds.HalfExtents.Y * 2 * _packState.SharedMarkerEffect.GraphicsDevice.Viewport.Height;
+                float limitY     = MathHelper.Clamp(pixelSizeY, this.MinSize * 4, this.MaxSize * 4);
+
+                // Eww
+                modelMatrix *= Matrix.CreateTranslation(-position)
+                             * Matrix.CreateScale(limitY / pixelSizeY)
+                             * Matrix.CreateTranslation(position);
             } else {
                 modelMatrix *= Matrix.CreateRotationX(this.RotationXyz.Value.X)
                              * Matrix.CreateRotationY(this.RotationXyz.Value.Y)
@@ -100,38 +105,13 @@ namespace BhModule.Community.Pathing.Entity {
                              * Matrix.CreateTranslation(position);
             }
 
-            //
-
-            // Find size of the object in screen space
-            var screenVerts = new Vector4[_faceVerts.Length];
-            var transformMatrix = Matrix.Multiply(Matrix.Multiply(modelMatrix, _packState.SharedMarkerEffect.View),
-                                                  _packState.SharedMarkerEffect.Projection);
-
-            for (int i = 0; i < _faceVerts.Length; i++) {
-                screenVerts[i] =  Vector4.Transform(_faceVerts[i], transformMatrix);
-                screenVerts[i] /= screenVerts[i].W;
-            }
-
-            var bounds = BoundingRectangle.CreateFrom(screenVerts.Select(s => new Point2(s.X, s.Y)).ToArray());
-            var pixelSize = new Vector2(bounds.HalfExtents.X * 2 * _packState.SharedMarkerEffect.GraphicsDevice.Viewport.Width,
-                                        bounds.HalfExtents.X * 2 * _packState.SharedMarkerEffect.GraphicsDevice.Viewport.Height);
-
-            float limitWidth = MathHelper.Clamp(pixelSize.X, this.MinSize * 2, this.MaxSize * 2);
-            float limitHeight = MathHelper.Clamp(pixelSize.Y, this.MinSize * 2, this.MaxSize * 2);
-
-            modelMatrix *= Matrix.CreateTranslation(-position)
-                         * Matrix.CreateScale(limitHeight / pixelSize.Y)
-                         * Matrix.CreateTranslation(position);
-
-            //
-
             _packState.SharedMarkerEffect.SetEntityState(modelMatrix,
                                                          this.Texture,
                                                          GetOpacity(),
                                                          minRender,
                                                          maxRender,
                                                          this.CanFade && _packState.UserConfiguration.PackFadeMarkersBetweenCharacterAndCamera.Value,
-                                                         this.Tint,
+                                                         /*this.Tint*/ Color.GreenYellow,
                                                          this.DebugRender);
 
             _modelMatrix = modelMatrix;

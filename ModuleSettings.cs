@@ -71,7 +71,7 @@ namespace BhModule.Community.Pathing {
             this.PackShowCategoriesFromAllMaps            = this.PackSettings.DefineSetting(nameof(this.PackShowCategoriesFromAllMaps),            false, () => Strings.Setting_PackShowCategoriesFromAllMaps, () => "");
 
             this.PackMaxOpacityOverride.SetRange(0f, 1f);
-            this.PackMaxViewDistance.SetRange(25f, 25000f);
+            this.PackMaxViewDistance.SetRange(25f, 50000f);
             this.PackMaxTrailAnimationSpeed.SetRange(0f, 10f);
         }
 
