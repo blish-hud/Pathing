@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace BhModule.Community.Pathing.Utility {
+namespace BhModule.Community.Pathing.Utility.ColorThief {
 
     public static class ColorThief {
 
@@ -54,7 +54,6 @@ namespace BhModule.Community.Pathing.Utility {
             return colors1D;
         }
 
-
         /// <summary>
         ///     Use the median cut algorithm to cluster similar colors.
         /// </summary>
@@ -74,7 +73,6 @@ namespace BhModule.Community.Pathing.Utility {
         }
 
         private static byte[][] ConvertPixels(Color[] pixels, int pixelCount, int quality, bool ignoreWhite) {
-
 
             var expectedDataLength = pixelCount;
 

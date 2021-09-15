@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BhModule.Community.Pathing.Utility {
+namespace BhModule.Community.Pathing.Utility.ColorThief {
 
     internal static class Mmcq {
 

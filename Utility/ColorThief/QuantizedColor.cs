@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace BhModule.Community.Pathing.Utility {
+namespace BhModule.Community.Pathing.Utility.ColorThief {
 
     public class QuantizedColor {
 

@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 
-namespace BhModule.Community.Pathing.Utility {
+namespace BhModule.Community.Pathing.Utility.ColorThief {
 
     /// <summary>
     ///     Color map

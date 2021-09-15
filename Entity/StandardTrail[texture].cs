@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
+using BhModule.Community.Pathing.Utility.ColorThief;
 using Blish_HUD;
 using Microsoft.Xna.Framework.Graphics;
 using TmfLib;

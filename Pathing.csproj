@@ -278,6 +278,8 @@
     <Compile Include="Utility\ColorThief\Mmcq.cs" />
     <Compile Include="Utility\ColorThief\QuantizedColor.cs" />
     <Compile Include="Utility\ColorThief\VBox.cs" />
+    <Compile Include="Utility\ColorThief\VBoxComparer.cs" />
+    <Compile Include="Utility\ColorThief\VBoxCountComparer.cs" />
     <Compile Include="Utility\DataDirUtil.cs" />
     <Compile Include="Utility\FileUtil.cs" />
     <Compile Include="Utility\GuidExtension.cs" />
