@@ -273,6 +273,11 @@
     <Compile Include="UI\Presenters\PackRepoPresenter.cs" />
     <Compile Include="UI\Views\PackRepoView.cs" />
     <Compile Include="Utility\CategoryUtil.cs" />
+    <Compile Include="Utility\ColorThief\CMap.cs" />
+    <Compile Include="Utility\ColorThief\ColorThief.cs" />
+    <Compile Include="Utility\ColorThief\Mmcq.cs" />
+    <Compile Include="Utility\ColorThief\QuantizedColor.cs" />
+    <Compile Include="Utility\ColorThief\VBox.cs" />
     <Compile Include="Utility\DataDirUtil.cs" />
     <Compile Include="Utility\FileUtil.cs" />
     <Compile Include="Utility\GuidExtension.cs" />
@@ -280,7 +285,6 @@
     <Compile Include="Utility\MapNavUtil.cs" />
     <Compile Include="Utility\PickingUtil.cs" />
     <Compile Include="Utility\SpriteBatchUtil.cs" />
-    <Compile Include="Utility\Texture2dExtensions.cs" />
     <Compile Include="Utility\UpdateCadenceUtil.cs" />
     <Compile Include="Utility\VectorExtensions.cs" />
     <Compile Include="_Types\SafeList[T].cs" />
@@ -390,10 +394,6 @@
       <HintPath>packages\BlishHUD.0.10.0-ci.195\lib\net472\Blish HUD.exe</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="ColorThief.Desktop.v46, Version=1.1.0.1, Culture=neutral, PublicKeyToken=null">
-      <HintPath>packages\ksemenenko.ColorThief.1.1.1.4\lib\net46\ColorThief.Desktop.v46.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="CppNet">
       <HintPath>.\CppNet.dll</HintPath>
