@@ -18,12 +18,12 @@ namespace BhModule.Community.Pathing.Entity {
         private VertexBuffer PostProcessTrailSection(IEnumerable<Vector3> points) {
             // Optional trail post-processing
 
-            // TODO: Make trail resolution a configurable setting
-            points = PostProcessing_SetTrailResolution(points, 20f);
-
             // TODO: Implement additional post processing options
             //points = PostProcessing_HermiteCurve(points);
             //points = PostProcessing_DouglasPeucker(points);
+
+            // TODO: Make trail resolution a configurable setting
+            points = PostProcessing_SetTrailResolution(points, 20f);
 
             Vector3[] pointsArr = points as Vector3[] ?? points.ToArray();
 

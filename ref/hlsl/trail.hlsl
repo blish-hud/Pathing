@@ -109,9 +109,14 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input) {
     clip(FadeFar - input.Distance);
 	
 	// Debug outline (outlines the quad)
-	if (DEBUG && (abs(input.TextureCoordinate.x - 0.5) > DEBUGBORDER || abs((input.TextureCoordinate.y % 1.0f) - 0.5) > DEBUGBORDER)) {
-		output.Color.rgba = float4(1, 0, 0, 1);
-		return output;
+	if (DEBUG) {
+		if (abs(input.TextureCoordinate.x - 0.5) > DEBUGBORDER) {
+			output.Color.rgba = float4(1, 0, input.TextureCoordinate.x, 1);
+			return output;
+		} else if (abs((input.TextureCoordinate.y % 1.0f) - 0.5) > DEBUGBORDER) {
+			output.Color.rgba = float4(0, 1, 0, 1);
+			return output;
+		}
 	}
 
     // Make the trail move along the path (after we're done using the real coords)
