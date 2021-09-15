@@ -1,10 +1,13 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
+using BhModule.Community.Pathing.Utility.ColorThief;
 using Blish_HUD;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TmfLib;
 using TmfLib.Prototype;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
@@ -20,7 +23,14 @@ namespace BhModule.Community.Pathing.Entity {
                 if (_texture == null) return;
 
                 if (this.Texture != null && this.TrailSampleColor == Color.White) {
-                    this.TrailSampleColor = this.Texture.SampleN(_packState.UserResourceStates.Static.MapTrailColorSamples);
+                    List<QuantizedColor> palette = ColorThief.GetPalette(this.Texture);
+                    palette.Sort((color, color2) => color2.Population.CompareTo(color.Population));
+                    
+                    Color? dominantColor = palette.FirstOrDefault()?.Color;
+
+                    if (dominantColor != null) {
+                        this.TrailSampleColor = dominantColor.Value;
+                    }
                 }
 
                 FadeIn();

@@ -273,6 +273,13 @@
     <Compile Include="UI\Presenters\PackRepoPresenter.cs" />
     <Compile Include="UI\Views\PackRepoView.cs" />
     <Compile Include="Utility\CategoryUtil.cs" />
+    <Compile Include="Utility\ColorThief\CMap.cs" />
+    <Compile Include="Utility\ColorThief\ColorThief.cs" />
+    <Compile Include="Utility\ColorThief\Mmcq.cs" />
+    <Compile Include="Utility\ColorThief\QuantizedColor.cs" />
+    <Compile Include="Utility\ColorThief\VBox.cs" />
+    <Compile Include="Utility\ColorThief\VBoxComparer.cs" />
+    <Compile Include="Utility\ColorThief\VBoxCountComparer.cs" />
     <Compile Include="Utility\DataDirUtil.cs" />
     <Compile Include="Utility\FileUtil.cs" />
     <Compile Include="Utility\GuidExtension.cs" />
@@ -280,7 +287,6 @@
     <Compile Include="Utility\MapNavUtil.cs" />
     <Compile Include="Utility\PickingUtil.cs" />
     <Compile Include="Utility\SpriteBatchUtil.cs" />
-    <Compile Include="Utility\Texture2dExtensions.cs" />
     <Compile Include="Utility\UpdateCadenceUtil.cs" />
     <Compile Include="Utility\VectorExtensions.cs" />
     <Compile Include="_Types\SafeList[T].cs" />

@@ -12,10 +12,5 @@
         /// </summary>
         public float MapTrailDouglasPeuckerError { get; set; } = 0.2f;
 
-        /// <summary>
-        /// The number of pixels to sample in the texture to decide what color to use.
-        /// </summary>
-        public int MapTrailColorSamples { get; set; } = 24;
-
     }
 }
