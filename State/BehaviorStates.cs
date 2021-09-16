@@ -27,12 +27,7 @@ namespace BhModule.Community.Pathing.State {
         private readonly HashSet<Guid> _hiddenUntilMapChange = new();
 
         /// <summary>
-        /// TacO Behavior 3
-        /// </summary>
-        private readonly HashSet<Guid> _hiddenStatic = new();
-
-        /// <summary>
-        /// TacO Behavior 2, 4, and 7
+        /// TacO Behavior 2, 3, 4, and 7
         /// Blish HUD Behavior 801
         /// </summary>
         private readonly HashSet<Guid> _hiddenUntilTimer = new();
@@ -71,7 +66,7 @@ namespace BhModule.Community.Pathing.State {
                 StandardPathableBehavior.AlwaysVisible => false,
                 StandardPathableBehavior.ReappearOnMapChange => SyncedCollectionContainsGuid(_hiddenUntilMapChange,                                                           guid),
                 StandardPathableBehavior.ReappearOnDailyReset => SyncedCollectionContainsGuid(_hiddenUntilTimer,                                                              guid),
-                StandardPathableBehavior.OnlyVisibleBeforeActivation => SyncedCollectionContainsGuid(_hiddenStatic,                                                           guid),
+                StandardPathableBehavior.OnlyVisibleBeforeActivation => SyncedCollectionContainsGuid(_hiddenUntilTimer,                                                       guid),
                 StandardPathableBehavior.ReappearAfterTimer => SyncedCollectionContainsGuid(_hiddenUntilTimer,                                                                guid),
                 StandardPathableBehavior.OncePerInstance => SyncedCollectionContainsGuid(_hiddenInShard.TryGetValue(GetMapInstanceKey(), out var guidList) ? guidList : null, guid),
                 StandardPathableBehavior.OnceDailyPerCharacter => SyncedCollectionContainsGuid(_hiddenUntilTimer,                                                             guid),
@@ -103,7 +98,10 @@ namespace BhModule.Community.Pathing.State {
                     lock (_hiddenUntilMapChange) _hiddenUntilMapChange.Add(guid);
                     break;
                 case StandardPathableBehavior.OnlyVisibleBeforeActivation: // Behavior 3
-                    lock (_hiddenStatic) _hiddenStatic.Add(guid);
+                    lock (_hiddenUntilTimer) {
+                        _hiddenUntilTimer.Add(guid);
+                        _timerMetadata.Add((DateTime.MaxValue, guid));
+                    }
                     break;
                 case StandardPathableBehavior.OncePerInstance: // Behavior 6
                     ulong instanceKey = GetMapInstanceKey();
@@ -186,7 +184,7 @@ namespace BhModule.Community.Pathing.State {
         private async Task SaveState(GameTime gameTime) {
             if (!_stateDirty) return;
 
-            Logger.Debug($"Saving {nameof(CategoryStates)} state.");
+            Logger.Debug($"Saving {nameof(BehaviorStates)} state.");
 
             (DateTime timerExpiration, Guid guid)[] timerMetadata = _timerMetadata.ToArray();
 

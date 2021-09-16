@@ -67,7 +67,10 @@ namespace BhModule.Community.Pathing.State {
             try {
                 // v2/account/achivements requires "account" and "progression" permissions.
                 if (PathingModule.Instance.Gw2ApiManager.HavePermissions(new[] { TokenPermission.Account, TokenPermission.Progression })) {
+                    Logger.Debug("Getting user achievements from the API.");
                     PathingModule.Instance.Gw2ApiManager.Gw2ApiClient.V2.Account.Achievements.GetAsync().ContinueWith(HandleAchievementUpdate, TaskContinuationOptions.NotOnFaulted);
+                } else {
+                    Logger.Debug("Skipping user achievements from the API - API key does not give us permission.");
                 }
             } catch (Exception ex) {
                 Logger.Warn(ex, "Failed to load account achievements.");
