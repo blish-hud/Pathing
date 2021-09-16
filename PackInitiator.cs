@@ -9,7 +9,6 @@ using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Controls;
 using Blish_HUD;
 using Blish_HUD.Controls;
-using Blish_HUD.Graphics;
 using Microsoft.Xna.Framework;
 using TmfLib;
 using TmfLib.Reader;
@@ -129,7 +128,7 @@ namespace BhModule.Community.Pathing {
             await LoadPackedPackFiles(Directory.GetFiles(_watchPath, "*.zip", SearchOption.AllDirectories));
             await LoadPackedPackFiles(Directory.GetFiles(_watchPath, "*.taco", SearchOption.AllDirectories));
             //await LoadWebPackFile();
-            //await LoadUnpackedPackFiles(_watchPath);
+            await LoadUnpackedPackFiles(_watchPath);
 
             // If the module loads at launch, this can end up firing twice.
             // If the module loads after launch (manually enabled), we need this to populate the current map.
