@@ -33,6 +33,8 @@ namespace BhModule.Community.Pathing {
         
         private readonly PackReaderSettings _packReaderSettings;
 
+        private bool _isLoading = false;
+
         public PackInitiator(string watchPath, ModuleSettings moduleSettings, IProgress<string> loadingIndicator) {
             _watchPath        = watchPath;
             _moduleSettings   = moduleSettings;
@@ -48,12 +50,18 @@ namespace BhModule.Community.Pathing {
 
         public IEnumerable<ContextMenuStripItem> GetPackMenuItems() {
             // All Markers
+            bool isAnyMarkers = !_isLoading
+                             && _sharedPackCollection != null
+                             && _sharedPackCollection.Categories != null
+                             && _sharedPackCollection.Categories.Any(category => !string.IsNullOrWhiteSpace(category.DisplayName));
+
             var allMarkers = new ContextMenuStripItem() {
-                Text     = "All Markers", // TODO: Localize "All Markers"
+                Text = "All Markers", // TODO: Localize "All Markers"
                 CanCheck = true,
-                Checked  = _moduleSettings.GlobalPathablesEnabled.Value,
-                // TODO: Don't show menu if we're mid-loading or unloaded.
-                Submenu  = new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories)
+                Checked = _moduleSettings.GlobalPathablesEnabled.Value,
+                Submenu = isAnyMarkers
+                    ? new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories)
+                    : null
             };
 
             allMarkers.CheckedChanged += (_, e) => {
@@ -63,7 +71,7 @@ namespace BhModule.Community.Pathing {
             // Reload Markers
             var reloadMarkers = new ContextMenuStripItem() {
                 Text    = "Reload Markers", // TODO: Localize "Reload Markers"
-                Enabled = _packState.CurrentMapId > 0
+                Enabled = !_isLoading && _packState.CurrentMapId > 0
             };
 
             reloadMarkers.Click += (_, _) => {
@@ -75,7 +83,7 @@ namespace BhModule.Community.Pathing {
             // Unload Markers
             var unloadMarkers = new ContextMenuStripItem() {
                 Text    = "Unload Markers", // TODO: Localize "Unload Markers"
-                Enabled = _packState.CurrentMapId > 0
+                Enabled = !_isLoading && _packState.CurrentMapId > 0
             };
 
             unloadMarkers.Click += async (_, _) => {
@@ -121,7 +129,7 @@ namespace BhModule.Community.Pathing {
             await LoadPackedPackFiles(Directory.GetFiles(_watchPath, "*.zip", SearchOption.AllDirectories));
             await LoadPackedPackFiles(Directory.GetFiles(_watchPath, "*.taco", SearchOption.AllDirectories));
             //await LoadWebPackFile();
-            await LoadUnpackedPackFiles(_watchPath);
+            //await LoadUnpackedPackFiles(_watchPath);
 
             // If the module loads at launch, this can end up firing twice.
             // If the module loads after launch (manually enabled), we need this to populate the current map.
@@ -143,13 +151,10 @@ namespace BhModule.Community.Pathing {
         }
 
         private async Task LoadMapFromEachPack(int mapId, int retry = 3) {
+            _isLoading = true;
+
             // TODO: Localize the loading messages.
-
             _loadingIndicator.Report("Loading marker packs...");
-
-            // We unlock frames to avoid timestep frame limiter from slowing our loading down.
-            //var currentFrameLimiter = GameService.Graphics.FrameLimiter;
-            //GameService.Graphics.FrameLimiter = FramerateMethod.Unlimited;
 
             await PrepareState(mapId);
 
@@ -171,14 +176,13 @@ namespace BhModule.Community.Pathing {
             _loadingIndicator.Report("Finalizing marker collection...");
             await _packState.LoadPackCollection(_sharedPackCollection);
 
-            // We set the frame limiter back.
-            //GameService.Graphics.FrameLimiter = currentFrameLimiter;
-
             foreach (var pack in _packs.ToArray()) {
                 pack.ReleaseLocks();
             }
 
             _loadingIndicator.Report("");
+
+            _isLoading = false;
         }
 
         private void OnMapChanged(object sender, ValueEventArgs<int> e) {
