@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Blish_HUD;
 using Blish_HUD.Common.UI.Views;
 using Blish_HUD.Controls;
@@ -67,20 +68,21 @@ namespace BhModule.Community.Pathing.UI.Common {
 
             _achievementDescriptionLabel = new Label() {
                 AutoSizeHeight      = true,
-                AutoSizeWidth       = true,
+                AutoSizeWidth       = false,
                 Location            = new Point(_achievementNameLabel.Left, _categoryIconImage.Top + _categoryIconImage.Height / 2),
-                Height              = _categoryIconImage.Height / 2,
+                Width               = Math.Max(_achievementNameLabel.Width, 200),
                 Padding             = new Thickness(0, 8, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment   = VerticalAlignment.Middle,
                 TextColor           = Control.StandardColors.DisabledText,
+                WrapText            = true,
                 Parent              = buildPanel
             };
 
             _achievementRequirementLabel = new Label() {
                 AutoSizeHeight = true,
                 AutoSizeWidth  = false,
-                Location       = new Point(_categoryIconImage.Left, _categoryIconImage.Bottom + 16),
+                Location       = new Point(_categoryIconImage.Left, _achievementDescriptionLabel.Bottom + 8),
                 WrapText       = true,
                 Parent         = buildPanel
             };
@@ -99,9 +101,11 @@ namespace BhModule.Community.Pathing.UI.Common {
             _achievementDescriptionLabel.Text = _achievement.Description;
             _achievementRequirementLabel.Text = _achievement.Requirement;
 
-            _achievementNameLabel.Height = string.IsNullOrEmpty(_achievement.Description) ? _categoryIconImage.Height : _categoryIconImage.Height / 2;
-
+            _achievementNameLabel.Height       = string.IsNullOrEmpty(_achievement.Description) ? _categoryIconImage.Height : _categoryIconImage.Height / 2;
+            _achievementDescriptionLabel.Width = Math.Max(_achievementNameLabel.Width, 200);
             _achievementRequirementLabel.Width = new[] { _achievementNameLabel.Right + 8, _achievementDescriptionLabel.Right + 8, 300 }.Max();
+
+            _achievementRequirementLabel.Top = Math.Max(_achievementDescriptionLabel.Bottom + 8, _categoryIconImage.Bottom + 8);
         }
 
     }
