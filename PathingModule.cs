@@ -91,12 +91,22 @@ namespace BhModule.Community.Pathing {
                 if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {
                     _moduleSettings.GlobalPathablesEnabled.Value = !_moduleSettings.GlobalPathablesEnabled.Value;
                 } else {
-                    var pathingContextMenuStrip = new ContextMenuStrip();
-                    pathingContextMenuStrip.AddMenuItems(GetPathingMenuItems());
-
-                    pathingContextMenuStrip.Show(_pathingIcon);
+                    ShowPathingContextMenu();
                 }
             };
+
+            _pathingIcon.RightMouseButtonPressed += delegate {
+                if (_pathingIcon.Enabled) {
+                    ShowPathingContextMenu();
+                }
+            };
+        }
+
+        private void ShowPathingContextMenu() {
+            var pathingContextMenuStrip = new ContextMenuStrip();
+            pathingContextMenuStrip.AddMenuItems(GetPathingMenuItems());
+
+            pathingContextMenuStrip.Show(_pathingIcon);
         }
 
         private PackInitiator _watcher;
