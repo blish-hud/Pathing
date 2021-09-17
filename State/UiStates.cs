@@ -21,7 +21,7 @@ namespace BhModule.Community.Pathing.State {
         public UiStates(IRootPackState rootPackState) : base(rootPackState) { /* NOOP */ }
 
         public override async Task Reload() {
-            Unload();
+            await Unload();
 
             await Initialize();
         }
@@ -104,6 +104,9 @@ namespace BhModule.Community.Pathing.State {
         public override Task Unload() {
             GameService.Gw2Mumble.CurrentMap.MapChanged -= CurrentMapChanged;
             GameService.Gw2Mumble.UI.IsMapOpenChanged   -= MapOpenedChanged;
+
+            _infoList.ToList().ForEach(RemoveInfoString);
+            _infoList.Clear();
 
             return Task.CompletedTask;
         }
