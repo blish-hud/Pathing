@@ -21,7 +21,10 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
             this.InfoValue = value;
 
             // TODO: Find a way to make this its own range.
-            pathingEntity.TriggerRange = range;
+            // We check trigger range against default value first to help ensure we don't ignore a specified triggerrange.
+            if (pathingEntity.TriggerRange == _packState.UserResourceStates.Population.MarkerPopulationDefaults.TriggerRange) {
+                pathingEntity.TriggerRange = range;
+            }
         }
 
         public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {

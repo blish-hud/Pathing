@@ -9,9 +9,14 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BhModule.Community.Pathing.UI.Controls {
     public class InfoWindow : Container {
 
+        private const double FADEDURATION = 300;
+
         private static readonly Texture2D _windowTexture;
         private static readonly Texture2D _windowMask;
         private static readonly Texture2D _windowClose;
+
+        private bool   _showing        = false;
+        private double _fadeCompletion = 0;
 
         static InfoWindow() {
             _windowTexture    = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156475+156476.png");
@@ -51,11 +56,46 @@ namespace BhModule.Community.Pathing.UI.Controls {
                                                                     Math.Min(this.Size.Y, _windowTexture.Height)));
         }
 
+        private void TriggerFade() {
+            float fadeOffset = _showing ? 1f - this.Opacity : this.Opacity;
+
+            _fadeCompletion = GameService.Overlay.CurrentGameTime.TotalGameTime.TotalMilliseconds + (FADEDURATION * fadeOffset);
+        }
+
+        public override void Show() {
+            if (_showing) return;
+
+            base.Show();
+            _showing = true;
+            TriggerFade();
+        }
+
+        public void Hide(bool withFade) {
+            if (withFade) {
+                Hide();
+            } else {
+                base.Hide();
+            }
+        }
+
+        public override void Hide() {
+            _showing = false;
+            TriggerFade();
+        }
+
+        public override void UpdateContainer(GameTime gameTime) {
+            float fadeLerp = MathHelper.Clamp((float)((gameTime.TotalGameTime.TotalMilliseconds - _fadeCompletion) / FADEDURATION), 0f, 1f);
+
+            this.Opacity = _showing ? fadeLerp : 1f - fadeLerp;
+
+            base.UpdateContainer(gameTime);
+        }
+
         protected override void OnClick(MouseEventArgs e) {
             base.OnClick(e);
 
             if (_closeButtonBounds.Contains(this.RelativeMousePosition)) {
-                this.Hide();
+                Hide();
             }
         }
 

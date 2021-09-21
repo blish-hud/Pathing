@@ -23,7 +23,7 @@ namespace BhModule.Community.Pathing.Entity {
         [Category("Appearance")]
         [Editor(typeof(ColorEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ColorConverter))]
-        public Color  BillboardTextColor { get; set; }
+        public Color BillboardTextColor { get; set; }
 
         /// <summary>
         /// text, title, title-color

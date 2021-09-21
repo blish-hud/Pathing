@@ -72,7 +72,7 @@ namespace BhModule.Community.Pathing {
 
             _settingsWindow = new TabbedWindow2(ContentsManager.GetTexture(@"png\controls\156006.png"),
                                                 new Rectangle(35, 36, 900, 640),
-                                                new Rectangle(95, 42, 783 + 38, 572 + 20)) {
+                                                new Rectangle(95, 42, 783 + 38, 592)) {
                 Title    = Strings.General_UiName,
                 Parent   = GameService.Graphics.SpriteScreen,
                 Location = new Point(100, 100),

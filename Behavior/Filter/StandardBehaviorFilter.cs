@@ -19,9 +19,15 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
         }
 
         public bool IsFiltered() {
-            return _behaviorMode != StandardPathableBehavior.OnceDailyPerCharacter
-                       ? _packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid)
-                       : _packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid.Xor(GameService.Gw2Mumble.PlayerCharacter.Name.ToGuid()));
+            if (_pathingEntity.InvertBehavior) {
+                return _behaviorMode != StandardPathableBehavior.OnceDailyPerCharacter
+                           ? !_packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid)
+                           : !_packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid.Xor(GameService.Gw2Mumble.PlayerCharacter.Name.ToGuid()));
+            } else {
+                return _behaviorMode != StandardPathableBehavior.OnceDailyPerCharacter
+                           ? _packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid)
+                           : _packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid.Xor(GameService.Gw2Mumble.PlayerCharacter.Name.ToGuid()));
+            }
         }
 
         public static IBehavior BuildFromAttributes(AttributeCollection attributes, IPackState packState, StandardMarker marker) {

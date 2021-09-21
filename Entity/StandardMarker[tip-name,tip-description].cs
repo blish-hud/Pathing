@@ -24,6 +24,10 @@ namespace BhModule.Community.Pathing.Entity {
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Populate_Tip(AttributeCollection collection, IPackResourceManager resourceManager) {
+            if (this.Category != null) {
+                this.TipName = this.Category.DisplayName;
+            }
+
             { if (collection.TryPopAttribute(ATTR_NAME,        out var attribute)) this.TipName        = attribute.GetValueAsString(); }
             { if (collection.TryPopAttribute(ATTR_DESCRIPTION, out var attribute)) this.TipDescription = attribute.GetValueAsString(); }
         }

@@ -52,7 +52,7 @@ namespace BhModule.Community.Pathing.State {
                 Visible = false
             };
 
-            _info.Hide();
+            _info.Hide(false);
 
             _infoLabel = new Label() {
                 Width               = 350,
@@ -71,12 +71,11 @@ namespace BhModule.Community.Pathing.State {
         private void UpdateInfoText() {
             string currentInfo = _infoList.LastOrDefault() ?? string.Empty;
 
-            // Add spacing to make font a little more readable.
-            _infoLabel.Text = currentInfo.Replace(" ", "  ");
-
             if (string.IsNullOrEmpty(currentInfo)) {
                 _info.Hide();
             } else {
+                // Add spacing to make font a little more readable.
+                _infoLabel.Text = currentInfo.Replace(" ", "  ");
                 _info.Show();
             }
 

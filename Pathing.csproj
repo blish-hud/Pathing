@@ -147,6 +147,7 @@
     <Compile Include="Entity\StandardMarker[iconsize].cs">
       <DependentUpon>StandardMarker.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entity\StandardMarker[invert-behavior].cs" />
     <Compile Include="Entity\StandardMarker[minimapvisibility,mapvisibility,ingamevisibility].cs">
       <DependentUpon>StandardMarker.cs</DependentUpon>
     </Compile>
