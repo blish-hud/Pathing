@@ -19,7 +19,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         // TODO: Make category filtering less janky.
 
         private bool CategoryIsNotFiltered(PathingCategory category) {
-            return category.DisplayName != string.Empty
+            return !string.IsNullOrWhiteSpace(category.DisplayName)
                 && _packState.UserConfiguration.PackShowCategoriesFromAllMaps.Value
                 || Utility.CategoryUtil.GetCategoryIsNotFiltered(category, _packState.Entities.ToArray());
         }
