@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Behavior.Filter;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Common;
-using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
