@@ -3,13 +3,16 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Entity.Effects;
 using BhModule.Community.Pathing.State;
+using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
 using TmfLib;
 using TmfLib.Pathable;
+using TmfLib.Prototype;
 
 namespace BhModule.Community.Pathing {
     public class SharedPackState : IRootPackState {
@@ -31,8 +34,7 @@ namespace BhModule.Community.Pathing {
         public UiStates           UiStates           { get; private set; }
         public EditorStates       EditorStates       { get; private set; }
 
-        private readonly SafeList<IPathingEntity> _entities = new();
-        public           SafeList<IPathingEntity> Entities => _entities;
+        public  SafeList<IPathingEntity> Entities { get; private set; } = new();
 
         private bool _initialized = false;
         private bool _loadingPack = false;
@@ -95,14 +97,27 @@ namespace BhModule.Community.Pathing {
             _loadingPack = false;
         }
 
-        private async Task InitPointsOfInterest(IEnumerable<PointOfInterest> pois) {
+        private static async Task PreloadTextures(IPointOfInterest pointOfInterest) {
+            string texture = pointOfInterest.Type switch {
+                PointOfInterestType.Marker => pointOfInterest.GetAggregatedAttributeValue("iconfile"),
+                PointOfInterestType.Trail => pointOfInterest.GetAggregatedAttributeValue("texture")
+            };
+
+            if (texture != null) {
+                await TextureResourceManager.GetTextureResourceManager(pointOfInterest.ResourceManager).PreloadTexture(texture);
+            }
+        }
+
+        private async Task InitPointsOfInterest(IList<PointOfInterest> pois) {
             var poiBag = new ConcurrentBag<IPathingEntity>();
+
+            await pois.AsParallel().ParallelForEachAsync(PreloadTextures, Environment.ProcessorCount);
 
             pois.AsParallel()
                 .Select(BuildEntity)
                 .ForAll(poiBag.Add);
 
-            _entities.AddRange(poiBag);
+            this.Entities.AddRange(poiBag);
             GameService.Graphics.World.AddEntities(poiBag);
 
             await Task.CompletedTask;
@@ -117,7 +132,7 @@ namespace BhModule.Community.Pathing {
 
         private void OnInteractPressed(object sender, EventArgs e) {
             // TODO: OnInteractPressed needs a better place.
-            foreach (var entity in _entities) {
+            foreach (var entity in this.Entities) {
                 if (entity is StandardMarker {Focused: true} marker) {
                     marker.Interact(false);
                 }
@@ -133,14 +148,17 @@ namespace BhModule.Community.Pathing {
         }
 
         public async Task Unload() {
-            foreach (var pathingEntity in _entities) {
+            foreach (var pathingEntity in this.Entities) {
                 pathingEntity.Unload();
             }
 
-            GameService.Graphics.World.RemoveEntities(_entities);
-            _entities.Clear();
+            GameService.Graphics.World.RemoveEntities(this.Entities);
+
+            this.Entities = new SafeList<IPathingEntity>();
 
             this.RootCategory = null;
+
+            await TextureResourceManager.UnloadAsync();
         }
 
     }

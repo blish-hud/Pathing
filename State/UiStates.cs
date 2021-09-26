@@ -27,6 +27,8 @@ namespace BhModule.Community.Pathing.State {
         }
 
         private void InitMap() {
+            if (_map != null) return;
+            
             _map = new FlatMap(_rootPackState) {
                 Parent  = GameService.Graphics.SpriteScreen
             };
@@ -47,6 +49,8 @@ namespace BhModule.Community.Pathing.State {
         private void CurrentMapChanged(object sender, ValueEventArgs<int>  e) => UpdateMapState();
 
         private void InitInfo() {
+            if (_info != null) return;
+            
             _info = new InfoWindow() {
                 Parent  = GameService.Graphics.SpriteScreen,
                 Visible = false

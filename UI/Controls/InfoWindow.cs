@@ -71,6 +71,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         public void Hide(bool withFade) {
+            _showing = false;
+
             if (withFade) {
                 Hide();
             } else {
@@ -79,7 +81,6 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         public override void Hide() {
-            _showing = false;
             TriggerFade();
         }
 
@@ -100,7 +101,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         protected override CaptureType CapturesInput() {
-            return CaptureType.Mouse;
+            return CaptureType.DoNotBlock;
         }
 
         private Rectangle _closeButtonBounds;

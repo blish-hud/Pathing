@@ -1,0 +1,90 @@
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Blish_HUD;
+using Microsoft.Xna.Framework.Graphics;
+using TmfLib;
+
+namespace BhModule.Community.Pathing.Content {
+    public class TextureResourceManager : IPackResourceManager {
+
+        private static readonly ConcurrentDictionary<IPackResourceManager, TextureResourceManager> _textureResourceManagerLookup = new();
+
+        public static TextureResourceManager GetTextureResourceManager(IPackResourceManager referencePackResourceManager) {
+            return _textureResourceManagerLookup.GetOrAdd(referencePackResourceManager, (packResourceManager) => new TextureResourceManager(packResourceManager));
+        }
+
+        public static async Task UnloadAsync() {
+            var managers = _textureResourceManagerLookup.Values;
+
+            foreach (var manager in managers) {
+                await manager.ClearCache();
+            }
+        }
+
+        private readonly ConcurrentDictionary<string, TaskCompletionSource<Texture2D>> _textureCache = new(StringComparer.OrdinalIgnoreCase);
+
+        private readonly IPackResourceManager _packResourceManager;
+
+        private TextureResourceManager(IPackResourceManager packResourceManager) {
+            _packResourceManager = packResourceManager;
+        }
+
+        public bool ResourceExists(string resourcePath) {
+            return _packResourceManager.ResourceExists(resourcePath);
+        }
+
+        public async Task<byte[]> LoadResourceAsync(string resourcePath) {
+            return await _packResourceManager.LoadResourceAsync(resourcePath);
+        }
+
+        private static void LoadTexture(TaskCompletionSource<Texture2D> textureTcs, byte[] textureData) {
+            GameService.Graphics.QueueMainThreadRender((graphicsDevice) => {
+                Texture2D loadedTexture = null;
+
+                try {
+                    loadedTexture = Texture2D.FromStream(graphicsDevice, new MemoryStream(textureData));
+                } catch (Exception ex) {
+                    textureTcs.SetException(ex);
+                }
+
+                textureTcs.SetResult(loadedTexture);
+            });
+        }
+
+        public async Task PreloadTexture(string texturePath) {
+            if (!_textureCache.ContainsKey(texturePath)) {
+                var textureTcs = new TaskCompletionSource<Texture2D>();
+
+                _textureCache[texturePath] = textureTcs;
+
+                LoadTexture(textureTcs, await LoadResourceAsync(texturePath));
+            }
+        }
+
+        public async Task<Texture2D> LoadTextureAsync(string texturePath) {
+            return await _textureCache[texturePath].Task;
+        }
+
+        public async Task ClearCache() {
+            var textureCollection = _textureCache.Values;
+            _textureCache.Clear();
+
+            var textures = new List<Texture2D>(textureCollection.Count);
+
+            foreach (var resource in textureCollection) {
+                textures.Add(await resource.Task);
+            }
+
+            // Ensure we don't dispose textures outside of the main thread.
+            GameService.Overlay.QueueMainThreadUpdate((_) => {
+                foreach (var texture in textures) {
+                    texture.Dispose();
+                }
+            });
+        }
+
+    }
+}

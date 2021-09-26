@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.Utility;
 using BhModule.Community.Pathing.Utility.ColorThief;
 using Blish_HUD;
 using Microsoft.Xna.Framework.Graphics;
-using TmfLib;
 using TmfLib.Prototype;
 using Color = Microsoft.Xna.Framework.Color;
 
@@ -43,15 +43,12 @@ namespace BhModule.Community.Pathing.Entity {
         /// texture
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Texture(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_Texture(AttributeCollection collection, TextureResourceManager resourceManager) {
             {
                 if (collection.TryGetAttribute(ATTR_TEXTURE, out var attribute)) {
                     attribute.GetValueAsTextureAsync(resourceManager).ContinueWith((textureTaskResult) => {
                         if (!textureTaskResult.IsFaulted && textureTaskResult.Result != null) {
                             this.Texture = textureTaskResult.Result;
-                        } else {
-                            this.Texture = ContentService.Textures.Error;
-                            Logger.Warn($"Trail failed to load texture '{attribute.GetValueAsString()}'");
                         }
                     });
                 } else {

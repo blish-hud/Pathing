@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using TmfLib;
 using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
@@ -31,15 +30,12 @@ namespace BhModule.Community.Pathing.Entity {
         /// iconfile
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_IconFile(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_IconFile(AttributeCollection collection, TextureResourceManager resourceManager) {
             {
                 if (collection.TryPopAttribute(ATTR_ICONFILE, out var attribute)) {
                     attribute.GetValueAsTextureAsync(resourceManager).ContinueWith((textureTaskResult) => {
                         if (!textureTaskResult.IsFaulted && textureTaskResult.Result != null) {
                             this.Texture = textureTaskResult.Result;
-                        } else {
-                            this.Texture = ContentService.Textures.Error;
-                            Logger.Warn($"Marker '{this.Guid}' failed to load texture '{attribute.GetValueAsString()}'");
                         }
                     });
                 } else {

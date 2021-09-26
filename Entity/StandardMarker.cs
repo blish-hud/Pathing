@@ -1,7 +1,7 @@
-﻿using BhModule.Community.Pathing.State;
+﻿using BhModule.Community.Pathing.Content;
+using BhModule.Community.Pathing.State;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
-using TmfLib;
 using TmfLib.Pathable;
 using TmfLib.Prototype;
 
@@ -13,12 +13,12 @@ namespace BhModule.Community.Pathing.Entity {
         public override float DrawOrder => Vector3.DistanceSquared(this.Position, GameService.Gw2Mumble.PlayerCamera.Position);
 
         public StandardMarker(IPackState packState, IPointOfInterest pointOfInterest) : base(packState, pointOfInterest) {
-            Populate(pointOfInterest.GetAggregatedAttributes(), pointOfInterest.ResourceManager);
+            Populate(pointOfInterest.GetAggregatedAttributes(), TextureResourceManager.GetTextureResourceManager(pointOfInterest.ResourceManager));
 
             Initialize();
         }
 
-        private void Populate(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate(AttributeCollection collection, TextureResourceManager resourceManager) {
             Populate_Guid(collection, resourceManager);
             
             Populate_Position(collection, resourceManager);

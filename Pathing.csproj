@@ -72,6 +72,7 @@
     <Compile Include="Behavior\Modifier\ShowHideModifier.cs" />
     <Compile Include="Behavior\Modifier\ToggleModifier.cs" />
     <Compile Include="Behavior\StandardPathableBehavior.cs" />
+    <Compile Include="Content\TextureResourceManager.cs" />
     <Compile Include="Content\WebReader.cs" />
     <Compile Include="Editor\CategoryNode.cs" />
     <Compile Include="Editor\CategoryTree.cs">
@@ -285,11 +286,13 @@
     <Compile Include="Utility\FileUtil.cs" />
     <Compile Include="Utility\GuidExtension.cs" />
     <Compile Include="Utility\Gw2SharpModelExtensions.cs" />
+    <Compile Include="Utility\EnumerableExtensions.cs" />
     <Compile Include="Utility\MapNavUtil.cs" />
     <Compile Include="Utility\PickingUtil.cs" />
     <Compile Include="Utility\SpriteBatchUtil.cs" />
     <Compile Include="Utility\UpdateCadenceUtil.cs" />
     <Compile Include="Utility\VectorExtensions.cs" />
+    <Compile Include="_Types\AsyncAutoResetEvent.cs" />
     <Compile Include="_Types\SafeList[T].cs" />
     <None Include="App.config" />
     <Compile Include="State\BehaviorStates.cs" />

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.Content;
 using Blish_HUD;
-using Blish_HUD.Content;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using TmfLib;
 using TmfLib.Prototype;
 
@@ -16,6 +16,8 @@ namespace BhModule.Community.Pathing.Utility {
     public static class AttributeParsingUtil {
 
         private static readonly Logger Logger = Logger.GetLogger(typeof(AttributeParsingUtil));
+
+        private static readonly Texture2D _textureFailedToLoad = PathingModule.Instance.ContentsManager.GetTexture(@"png\missing-texture.png");
 
         private const char ATTRIBUTEVALUE_DELIMITER = ',';
 
@@ -101,20 +103,16 @@ namespace BhModule.Community.Pathing.Utility {
             return SplitAttributeValue(attribute).Select(InternalGetValueAsBool);
         }
 
-        public static async Task<AsyncTexture2D> GetValueAsTextureAsync(this IAttribute attribute, IPackResourceManager resourceManager) {
+        public static async Task<Texture2D> GetValueAsTextureAsync(this IAttribute attribute, TextureResourceManager resourceManager) {
             string texturePath = attribute.GetValueAsString();
 
             try {
-                byte[] textureData = await resourceManager.LoadResourceAsync(texturePath);
-
-                return textureData != null
-                           ? TextureUtil.FromStreamPremultiplied(GameService.Graphics.GraphicsDevice, new MemoryStream(textureData))
-                           : null;
+                return await resourceManager.LoadTextureAsync(texturePath);
             } catch (Exception ex) {
-                Logger.Warn(ex, "Failed to load texture.");
+                Logger.Warn(ex, $"Failed to load texture '{texturePath}'");
             }
 
-            return null;
+            return _textureFailedToLoad;
         }
 
         public static Color GetValueAsColor(this IAttribute attribute, Color @default = default) {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -144,13 +145,17 @@ namespace BhModule.Community.Pathing {
         }
 
         private void LoadMapFromEachPackInBackground(int mapId) {
-            var thread = new Thread(async () => await LoadMapFromEachPack(mapId));
-            thread.IsBackground = true;
+            var thread = new Thread(async () => await LoadMapFromEachPack(mapId)) {
+                IsBackground = true
+            };
+
             thread.Start();
         }
 
         private async Task LoadMapFromEachPack(int mapId, int retry = 3) {
             _isLoading = true;
+
+            var loadTimer = Stopwatch.StartNew();
 
             // TODO: Localize the loading messages.
             _loadingIndicator.Report("Loading marker packs...");
@@ -182,6 +187,9 @@ namespace BhModule.Community.Pathing {
             _loadingIndicator.Report("");
 
             _isLoading = false;
+
+            loadTimer.Stop();
+            Logger.Info($"Finished loading packs {string.Join(", ", _packs.Select(pack => pack.Name))} in {loadTimer.ElapsedMilliseconds} ms.");
         }
 
         private void OnMapChanged(object sender, ValueEventArgs<int> e) {

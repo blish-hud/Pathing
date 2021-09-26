@@ -56,7 +56,7 @@ namespace BhModule.Community.Pathing.Entity {
         }
         
         public override void Render(GraphicsDevice graphicsDevice, IWorld world, ICamera camera) {
-            if (IsFiltered(EntityRenderTarget.World) || _texture == null) return;
+            if (IsFiltered(EntityRenderTarget.World) || _texture == null || _texture.IsDisposed) return;
             
             if (!this.InGameVisibility) return;
 

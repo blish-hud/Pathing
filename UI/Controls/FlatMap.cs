@@ -9,7 +9,6 @@ using Gw2Sharp.Mumble.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
 
 namespace BhModule.Community.Pathing.Entity {
     public class FlatMap : Control {

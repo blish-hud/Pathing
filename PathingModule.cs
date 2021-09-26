@@ -26,7 +26,7 @@ namespace BhModule.Community.Pathing {
         internal Gw2ApiManager      Gw2ApiManager      => this.ModuleParameters.Gw2ApiManager;
         #endregion
 
-        internal static PathingModule  Instance { get; private set; }
+        internal static PathingModule Instance { get; private set; }
 
         private ModuleSettings _moduleSettings;
 
@@ -121,7 +121,7 @@ namespace BhModule.Community.Pathing {
             _watcher = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), _moduleSettings, new Progress<string>(UpdateModuleLoading));
             await _watcher.Init();
             sw.Stop();
-            Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading...");
+            Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading Pathing module...");
         }
 
         protected override void OnModuleLoaded(EventArgs e) {

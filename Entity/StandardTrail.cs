@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.State;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
@@ -20,7 +21,7 @@ namespace BhModule.Community.Pathing.Entity {
             Initialize(trail);
         }
 
-        private void Populate(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate(AttributeCollection collection, TextureResourceManager resourceManager) {
             Populate_Alpha(collection, resourceManager);
             Populate_AnimationSpeed(collection, resourceManager);
             Populate_Tint(collection, resourceManager);
@@ -42,7 +43,7 @@ namespace BhModule.Community.Pathing.Entity {
 
             _sectionPoints = trailSections.ToArray();
 
-            Populate(trail.GetAggregatedAttributes(), trail.ResourceManager);
+            Populate(trail.GetAggregatedAttributes(), TextureResourceManager.GetTextureResourceManager(trail.ResourceManager));
 
             BuildBuffers(trail);
 
