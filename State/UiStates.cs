@@ -76,7 +76,7 @@ namespace BhModule.Community.Pathing.State {
             string currentInfo = _infoList.LastOrDefault() ?? string.Empty;
 
             if (string.IsNullOrEmpty(currentInfo)) {
-                _info.Hide();
+                _info.Hide(true);
             } else {
                 // Add spacing to make font a little more readable.
                 _infoLabel.Text = currentInfo.Replace(" ", "  ");
@@ -107,6 +107,8 @@ namespace BhModule.Community.Pathing.State {
         public override Task Unload() {
             GameService.Gw2Mumble.CurrentMap.MapChanged -= CurrentMapChanged;
             GameService.Gw2Mumble.UI.IsMapOpenChanged   -= MapOpenedChanged;
+
+            _info?.Hide();
 
             _infoList.ToList().ForEach(RemoveInfoString);
             _infoList.Clear();

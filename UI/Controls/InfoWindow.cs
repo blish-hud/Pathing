@@ -85,9 +85,13 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         public override void UpdateContainer(GameTime gameTime) {
-            float fadeLerp = MathHelper.Clamp((float)((gameTime.TotalGameTime.TotalMilliseconds - _fadeCompletion) / FADEDURATION), 0f, 1f);
+            float fadeLerp = MathHelper.Clamp((float)((_fadeCompletion - gameTime.TotalGameTime.TotalMilliseconds) / FADEDURATION), 0f, 1f);
 
-            this.Opacity = _showing ? fadeLerp : 1f - fadeLerp;
+            this.Opacity = _showing ? 1f - fadeLerp : fadeLerp;
+
+            //if (!_showing && fadeLerp >= 1f) {
+            //    this.Visible = false;
+            //}
 
             base.UpdateContainer(gameTime);
         }
