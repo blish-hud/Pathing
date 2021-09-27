@@ -58,6 +58,7 @@ namespace BhModule.Community.Pathing {
         public SettingEntry<MarkerClipboardConsentLevel> PackMarkerConsentToClipboard             { get; private set; }
         public SettingEntry<bool>                        PackAllowMarkersToAnimate                { get; private set; }
         public SettingEntry<bool>                        PackShowCategoriesFromAllMaps            { get; private set; }
+        public SettingEntry<bool>                        PackShowWhenCategoriesAreFiltered        { get; private set; }
 
         private void InitPackSettings(SettingCollection settings) {
             this.PackSettings = settings.AddSubCollection(PACK_SETTINGS);
@@ -75,6 +76,7 @@ namespace BhModule.Community.Pathing {
             this.PackMarkerConsentToClipboard             = this.PackSettings.DefineSetting(nameof(this.PackMarkerConsentToClipboard),             MarkerClipboardConsentLevel.Always, () => Strings.Setting_PackMarkerConsentToClipboard, () => "");
             this.PackAllowMarkersToAnimate                = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAnimate),                true, () => Strings.Setting_PackAllowMarkersToAnimate, () => "");
             this.PackShowCategoriesFromAllMaps            = this.PackSettings.DefineSetting(nameof(this.PackShowCategoriesFromAllMaps),            false, () => Strings.Setting_PackShowCategoriesFromAllMaps, () => "");
+            this.PackShowWhenCategoriesAreFiltered        = this.PackSettings.DefineSetting(nameof(this.PackShowWhenCategoriesAreFiltered),        true, () => "Indicate when categories are hidden", () => "");
 
             this.PackMaxOpacityOverride.SetRange(0f, 1f);
             this.PackMaxViewDistance.SetRange(25f, 50000f);

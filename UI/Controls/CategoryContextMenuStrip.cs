@@ -58,12 +58,12 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 this.AddMenuItem(new CategoryContextMenuStripItem(_packState, subCategory));
             }
 
-            if (skipped > 0) {
+            if (skipped > 0 && _packState.UserConfiguration.PackShowWhenCategoriesAreFiltered.Value) {
                 this.AddMenuItem(new ContextMenuStripItem() {
                                      // LOCALIZE: Skipped categories menu item
                                      Text    = $"{skipped} Categories Are Hidden",
                                      Enabled = false,
-                                     BasicTooltipText = "Hidden because they are for markers on a different map.\n\nYou can disable this filter by toggling\nPathing Module Settings > Show Categories From All Maps."
+                                     BasicTooltipText = "Categories hidden because they are for markers on a different map.\n\nYou can disable this filter by toggling\nPathing Module Settings > Show Categories From All Maps."
                                  });
             }
 
