@@ -27,14 +27,14 @@ namespace BhModule.Community.Pathing.State {
         }
 
         private void InitMap() {
+            GameService.Gw2Mumble.CurrentMap.MapChanged += CurrentMapChanged;
+            GameService.Gw2Mumble.UI.IsMapOpenChanged   += MapOpenedChanged;
+
             if (_map != null) return;
             
             _map = new FlatMap(_rootPackState) {
                 Parent  = GameService.Graphics.SpriteScreen
             };
-
-            GameService.Gw2Mumble.CurrentMap.MapChanged += CurrentMapChanged;
-            GameService.Gw2Mumble.UI.IsMapOpenChanged   += MapOpenedChanged;
         }
 
         private void UpdateMapState() {

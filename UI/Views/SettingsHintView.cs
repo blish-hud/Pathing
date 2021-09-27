@@ -27,7 +27,7 @@ namespace BhModule.Community.Pathing.UI.Views {
                 Parent = buildPanel,
             };
 
-            _bttnOpenSettings.Location = new Point(buildPanel.Width / 2 - _bttnOpenSettings.Width / 2, buildPanel.Height / 2 - _bttnOpenSettings.Height );
+            _bttnOpenSettings.Location = new Point(Math.Min(buildPanel.Width / 2 - _bttnOpenSettings.Width / 2, 20), Math.Min(buildPanel.Height / 2 - _bttnOpenSettings.Height, 20));
 
             _bttnOpenSettings.Click += _bttnOpenSettings_Click;
         }

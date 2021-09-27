@@ -10,6 +10,8 @@ using TmfLib;
 namespace BhModule.Community.Pathing.Content {
     public class TextureResourceManager : IPackResourceManager {
 
+        private static readonly Texture2D _textureFailedToLoad = PathingModule.Instance.ContentsManager.GetTexture(@"png\missing-texture.png");
+
         private static readonly ConcurrentDictionary<IPackResourceManager, TextureResourceManager> _textureResourceManagerLookup = new();
 
         public static TextureResourceManager GetTextureResourceManager(IPackResourceManager referencePackResourceManager) {
@@ -42,16 +44,12 @@ namespace BhModule.Community.Pathing.Content {
 
         private static void LoadTexture(TaskCompletionSource<Texture2D> textureTcs, byte[] textureData) {
             GameService.Graphics.QueueMainThreadRender((graphicsDevice) => {
-                Texture2D loadedTexture = null;
-
                 try {
-                    // TODO: Move the blending to the shader so that we don't have to slow load these
-                    loadedTexture = TextureUtil.FromStreamPremultiplied(graphicsDevice, new MemoryStream(textureData));
-                } catch (Exception ex) {
-                    textureTcs.SetException(ex);
+                    // TODO: Move the blending to the shader so that we don't have to slow load these.
+                    textureTcs.SetResult(TextureUtil.FromStreamPremultiplied(graphicsDevice, new MemoryStream(textureData)));
+                } catch (Exception) {
+                    textureTcs.SetResult(_textureFailedToLoad);
                 }
-
-                textureTcs.SetResult(loadedTexture);
             });
         }
 

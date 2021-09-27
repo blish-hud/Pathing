@@ -63,6 +63,7 @@ namespace BhModule.Community.Pathing.UI.Common {
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment   = VerticalAlignment.Middle,
                 Font                = GameService.Content.DefaultFont16,
+                ShowShadow          = true,
                 Parent              = buildPanel
             };
 
@@ -75,6 +76,7 @@ namespace BhModule.Community.Pathing.UI.Common {
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment   = VerticalAlignment.Middle,
                 TextColor           = Control.StandardColors.DisabledText,
+                ShowShadow          = true,
                 WrapText            = true,
                 Parent              = buildPanel
             };
@@ -83,6 +85,7 @@ namespace BhModule.Community.Pathing.UI.Common {
                 AutoSizeHeight = true,
                 AutoSizeWidth  = false,
                 Location       = new Point(_categoryIconImage.Left, _achievementDescriptionLabel.Bottom + 8),
+                ShowShadow     = true,
                 WrapText       = true,
                 Parent         = buildPanel
             };

@@ -17,8 +17,6 @@ namespace BhModule.Community.Pathing.Utility {
 
         private static readonly Logger Logger = Logger.GetLogger(typeof(AttributeParsingUtil));
 
-        private static readonly Texture2D _textureFailedToLoad = PathingModule.Instance.ContentsManager.GetTexture(@"png\missing-texture.png");
-
         private const char ATTRIBUTEVALUE_DELIMITER = ',';
 
         private static readonly CultureInfo _invariantCulture = CultureInfo.InvariantCulture;
@@ -104,15 +102,7 @@ namespace BhModule.Community.Pathing.Utility {
         }
 
         public static async Task<Texture2D> GetValueAsTextureAsync(this IAttribute attribute, TextureResourceManager resourceManager) {
-            string texturePath = attribute.GetValueAsString();
-
-            try {
-                return await resourceManager.LoadTextureAsync(texturePath);
-            } catch (Exception ex) {
-                Logger.Warn(ex, $"Failed to load texture '{texturePath}'");
-            }
-
-            return _textureFailedToLoad;
+            return await resourceManager.LoadTextureAsync(attribute.GetValueAsString());
         }
 
         public static Color GetValueAsColor(this IAttribute attribute, Color @default = default) {
