@@ -5,7 +5,7 @@
   "package": "Pathing.dll",
   "manifest_version": 1,
 
-  "description": "Display markers and trails in-game.  Supports both .zip and .taco format markers.",
+  "description": "Display markers and trails in-game.  Supports both .zip and .taco format markers.\n\nCheck out our guide: https://blishhud.com/docs/markers/",
   "dependencies": {
     "bh.blishhud": ">=0.10.0"
   },

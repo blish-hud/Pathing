@@ -12,6 +12,7 @@ using BhModule.Community.Pathing.UI.Views;
 using Blish_HUD.Controls;
 using Blish_HUD.Settings.UI.Views;
 using Microsoft.Xna.Framework.Input;
+using Blish_HUD.Graphics.UI;
 
 namespace BhModule.Community.Pathing {
     [Export(typeof(Module))]
@@ -122,6 +123,10 @@ namespace BhModule.Community.Pathing {
             await _watcher.Init();
             sw.Stop();
             Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading Pathing module...");
+        }
+
+        public override IView GetSettingsView() {
+            return new SettingsHintView((_settingsWindow.Show, _watcher));
         }
 
         protected override void OnModuleLoaded(EventArgs e) {

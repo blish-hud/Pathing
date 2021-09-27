@@ -273,7 +273,9 @@
     <Compile Include="State\UserResources\Population\TrailPopulationDefaults.cs" />
     <Compile Include="UI\Effects\AlphaMaskEffect.cs" />
     <Compile Include="UI\Presenters\PackRepoPresenter.cs" />
+    <Compile Include="UI\Presenters\SettingsHintPresenter.cs" />
     <Compile Include="UI\Views\PackRepoView.cs" />
+    <Compile Include="UI\Views\SettingsHintView.cs" />
     <Compile Include="Utility\CategoryUtil.cs" />
     <Compile Include="Utility\ColorThief\CMap.cs" />
     <Compile Include="Utility\ColorThief\ColorThief.cs" />
@@ -292,7 +294,6 @@
     <Compile Include="Utility\SpriteBatchUtil.cs" />
     <Compile Include="Utility\UpdateCadenceUtil.cs" />
     <Compile Include="Utility\VectorExtensions.cs" />
-    <Compile Include="_Types\AsyncAutoResetEvent.cs" />
     <Compile Include="_Types\SafeList[T].cs" />
     <None Include="App.config" />
     <Compile Include="State\BehaviorStates.cs" />

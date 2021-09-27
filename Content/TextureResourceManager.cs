@@ -45,7 +45,8 @@ namespace BhModule.Community.Pathing.Content {
                 Texture2D loadedTexture = null;
 
                 try {
-                    loadedTexture = Texture2D.FromStream(graphicsDevice, new MemoryStream(textureData));
+                    // TODO: Move the blending to the shader so that we don't have to slow load these
+                    loadedTexture = TextureUtil.FromStreamPremultiplied(graphicsDevice, new MemoryStream(textureData));
                 } catch (Exception ex) {
                     textureTcs.SetException(ex);
                 }

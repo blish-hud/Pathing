@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Behavior.Filter;
+using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Common;
+using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
@@ -42,7 +44,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
             if (_packState.CategoryStates == null) return;
 
-            if (_pathingCategory.Any()) {
+            // TODO: Yikes, filter is getting called a lot.  Let's pass this down from the last time we calcualted it.
+            if (_pathingCategory.Any(c => CategoryUtil.UiCategoryIsNotFiltered(c, _packState))) {
                 this.Submenu = new CategoryContextMenuStrip(_packState, _pathingCategory);
             }
 
