@@ -1,6 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
-using Blish_HUD;
 using TmfLib;
 using TmfLib.Prototype;
 
