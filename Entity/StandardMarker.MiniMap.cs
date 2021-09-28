@@ -18,8 +18,7 @@ namespace BhModule.Community.Pathing.Entity {
 
             bool isMapOpen = GameService.Gw2Mumble.UI.IsMapOpen;
             
-            // TODO: Make this more simple
-
+            // TODO: Simplify all of this
             var  mapMarkerVisibilityLevel = _packState.UserConfiguration.MapMarkerVisibilityLevel.Value;
             bool allowedOnMap             = this.MapVisibility && mapMarkerVisibilityLevel != MapVisibilityLevel.Never;
             if (isMapOpen && !allowedOnMap && mapMarkerVisibilityLevel != MapVisibilityLevel.Always) return null;
@@ -35,8 +34,8 @@ namespace BhModule.Community.Pathing.Entity {
             float drawScale = (float)(0.3f / scale);
 
             var drawRect = new RectangleF(location - new Vector2(this.Texture.Width / 2f * drawScale, this.Texture.Height / 2f * drawScale),
-                                         new Vector2(this.Texture.Width * drawScale, this.Texture.Height * drawScale));
-            
+                                          new Vector2(this.Texture.Width * drawScale, this.Texture.Height * drawScale));
+
             spriteBatch.Draw(this.Texture, drawRect, this.Tint);
 
             // Draw above or below indicator, if applicable.

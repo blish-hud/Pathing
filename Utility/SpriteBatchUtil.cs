@@ -7,10 +7,9 @@ namespace BhModule.Community.Pathing {
 
         public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, RectangleF destinationRectangle, Color tint) {
             // Hacky trick to let us use RectangleF with spritebatch.
-
             var scale = new Vector2(destinationRectangle.Width / texture.Width, destinationRectangle.Height / texture.Height);
 
-            spriteBatch.Draw(texture, destinationRectangle.Center - destinationRectangle.Size / 2, null, tint, 0f, new Vector2(destinationRectangle.Width / 2f, destinationRectangle.Height / 2f), scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, destinationRectangle.Center - destinationRectangle.Size / 2f, null, tint, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
 
     }
