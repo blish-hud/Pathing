@@ -116,7 +116,11 @@ namespace BhModule.Community.Pathing.State {
             return Task.CompletedTask;
         }
 
-        public override void Update(GameTime gameTime) { /* NOOP */ }
+        public override void Update(GameTime gameTime) {
+            if (!_rootPackState.UserConfiguration.GlobalPathablesEnabled.Value) {
+                _info?.Hide();
+            }
+        }
 
     }
 }

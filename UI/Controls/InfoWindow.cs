@@ -5,6 +5,7 @@ using Blish_HUD.Controls;
 using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace BhModule.Community.Pathing.UI.Controls {
     public class InfoWindow : Container {
@@ -35,6 +36,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
                                                                    null,
                                                                    null,
                                                                    AlphaMaskEffect.SharedInstance);
+
+            this.Opacity = 0f;
 
             this.ClipsBounds = false;
         }
@@ -81,6 +84,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         public override void Hide() {
+            _showing = false;
             TriggerFade();
         }
 
@@ -89,9 +93,9 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
             this.Opacity = _showing ? 1f - fadeLerp : fadeLerp;
 
-            //if (!_showing && fadeLerp >= 1f) {
-            //    this.Visible = false;
-            //}
+            if (!_showing && fadeLerp <= 0f) {
+                this.Visible = false;
+            }
 
             base.UpdateContainer(gameTime);
         }
@@ -105,7 +109,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         protected override CaptureType CapturesInput() {
-            return CaptureType.DoNotBlock;
+            return CaptureType.Filter;
         }
 
         private Rectangle _closeButtonBounds;
@@ -114,7 +118,24 @@ namespace BhModule.Community.Pathing.UI.Controls {
             _closeButtonBounds = new Rectangle(this.Width - 64, 45, 32, 32);
         }
 
+        public override void Draw(SpriteBatch spriteBatch, Rectangle drawBounds, Rectangle scissor) {
+            // Don't show on loading screens or during vistas.  This is not a clean way to do this.
+            if (!GameService.GameIntegration.IsInGame) return;
+
+            base.Draw(spriteBatch, drawBounds, scissor);
+        }
+
+        public override Control TriggerMouseInput(MouseEventType mouseEventType, MouseState ms) {
+            // Force us to not block when the mouse touches this control.  This is also not a clean way to do this.
+            _ = base.TriggerMouseInput(mouseEventType, ms);
+
+            return null;
+        }
+
         public override void PaintBeforeChildren(SpriteBatch spriteBatch, Rectangle bounds) {
+            // Don't show on loading screens or during vistas.
+            if (!GameService.GameIntegration.IsInGame) return;
+
             AlphaMaskEffect.SharedInstance.SetEffectState(_croppedMask);
 
             spriteBatch.DrawOnCtrl(this, _croppedWindow, bounds, Color.White * 0.9f);

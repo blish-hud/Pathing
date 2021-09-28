@@ -52,9 +52,11 @@ namespace BhModule.Community.Pathing.Entity {
         public virtual void Focus()                      { /* NOOP */ }
         public virtual void Unfocus()                    { /* NOOP */ }
         public virtual void Interact(bool autoTriggered) { /* NOOP */ }
-        
+
         private double _lastFadeStart = 0;
         private bool   _needsFadeIn   = true;
+
+        bool _wasInactive = false;
 
         [Browsable(false)]
         public float AnimatedFadeOpacity => MathHelper.Clamp((float) (GameService.Overlay.CurrentGameTime.TotalGameTime.TotalMilliseconds - _lastFadeStart) / FADEIN_DURATION, 0f, 1f);
@@ -74,10 +76,29 @@ namespace BhModule.Community.Pathing.Entity {
 
             // Only update behaviors found within enabled category namespaces.
             if (!_packState.CategoryStates.GetNamespaceInactive(this.CategoryNamespace)) {
-                this.UpdateBehaviors(gameTime);
+                if (_wasInactive) {
+                    OnCategoryActivated();
+                }
+
+                UpdateBehaviors(gameTime);
+                _wasInactive = false;
             } else {
+                if (!_wasInactive) {
+                    OnCategoryDeactivated();
+                }
+
                 _needsFadeIn = true;
+                _wasInactive = true;
             }
+        }
+
+        // Rising edge
+        protected virtual void OnCategoryActivated() { /* NOOP */ }
+
+
+        // Falling edge
+        protected virtual void OnCategoryDeactivated() {
+            this.Unfocus();
         }
 
         private void UpdateBehaviors(GameTime gameTime) {
