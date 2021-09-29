@@ -7,7 +7,7 @@ using Blish_HUD.Graphics.UI;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 
-namespace BhModule.Community.Pathing.UI.Common {
+namespace BhModule.Community.Pathing.UI.Tooltips {
     public class AchievementTooltipView : View, ITooltipView {
 
         private Achievement _achievement;
@@ -44,7 +44,6 @@ namespace BhModule.Community.Pathing.UI.Common {
         }
 
         protected override void Build(Container buildPanel) {
-            //buildPanel.Size = new Point(300, 256);
             buildPanel.HeightSizingMode = SizingMode.AutoSize;
             buildPanel.WidthSizingMode  = SizingMode.AutoSize;
 

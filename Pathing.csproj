@@ -254,8 +254,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="UI\Common\Achievement\AchievementPresenter.cs" />
-    <Compile Include="UI\Common\Achievement\AchievementTooltipView.cs" />
+    <Compile Include="UI\Tooltips\AchievementPresenter.cs" />
+    <Compile Include="UI\Tooltips\AchievementTooltipView.cs" />
+    <Compile Include="UI\Tooltips\DescriptionTooltipView.cs" />
     <Compile Include="UI\Controls\BlueButton.cs" />
     <Compile Include="UI\Controls\FlatMap.cs" />
     <Compile Include="SharedPackCollection.cs" />
@@ -268,7 +269,6 @@
     <Compile Include="UI\Controls\CategoryContextMenuStripItem.cs" />
     <Compile Include="UI\Controls\InfoWindow.cs" />
     <Compile Include="UI\Controls\MarkerPackHero.cs" />
-    <Compile Include="UI\Controls\TabbedSettingWindow.cs" />
     <Compile Include="State\UserResources\Converters\ValueOnlyAttribute.cs" />
     <Compile Include="State\UserResources\PopulationDefaults.cs" />
     <Compile Include="State\UserResources\Population\TrailPopulationDefaults.cs" />
@@ -565,6 +565,7 @@
     <Folder Include="Editor\Panels\Behaviors\" />
     <Folder Include="Editor\ToolPanels\" />
     <Folder Include="ref\" />
+    <Folder Include="UI\Common\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TmfLib\TmfLib.csproj">

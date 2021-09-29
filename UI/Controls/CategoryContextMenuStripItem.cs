@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Behavior.Filter;
-using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
-using BhModule.Community.Pathing.UI.Common;
+using BhModule.Community.Pathing.UI.Tooltips;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Controls;
@@ -84,6 +83,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
                         this.Checked = false;
                     }
                 }
+            } else if (_pathingCategory.ExplicitAttributes.TryGetAttribute("tip-description", out var descriptionAttr)) {
+                this.Tooltip = new Tooltip(new DescriptionTooltipView(null, descriptionAttr.Value));
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using BhModule.Community.Pathing.State;
+using BhModule.Community.Pathing.UI.Tooltips;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
@@ -27,6 +28,9 @@ namespace BhModule.Community.Pathing.Entity {
         private float  _lastCameraPos      = 0f;
 
         private IPathingEntity _activeEntity;
+
+        private readonly DescriptionTooltipView _tooltipView;
+        private readonly Tooltip                _activeTooltip;
 
         private ContextMenuStrip BuildPathableMenu(IPathingEntity pathingEntry) {
             var newMenu = new ContextMenuStrip();
@@ -59,6 +63,10 @@ namespace BhModule.Community.Pathing.Entity {
             this.SpriteBatchParameters = new SpriteBatchParameters(SpriteSortMode.Deferred, BlendState.Opaque);
 
             UpdateBounds();
+
+            _tooltipView   = new DescriptionTooltipView();
+            _activeTooltip = new Tooltip(_tooltipView);
+            this.Tooltip   = _activeTooltip;
 
             GameService.Gw2Mumble.UI.UISizeChanged    += UIOnUISizeChanged;
             GameService.Gw2Mumble.UI.IsMapOpenChanged += UIOnIsMapOpenChanged;
@@ -136,6 +144,32 @@ namespace BhModule.Community.Pathing.Entity {
             base.DoUpdate(gameTime);
         }
 
+        private void UpdateTooltip(IPathingEntity pathable, bool isAlternativeMenu = false) {
+            string tooltipTitle;
+            string tooltipDescription = "";
+
+            if (pathable != null && isAlternativeMenu) {
+                tooltipTitle       = string.Join("\n > ", pathable.Category.GetParentsDesc().Select(category => category.DisplayName.Trim()));
+                tooltipDescription = null;
+            } else if (pathable is IHasMapInfo mapPathable) {
+                tooltipTitle = mapPathable.TipName;
+
+                if (!string.IsNullOrWhiteSpace(mapPathable.TipDescription)) {
+                    tooltipDescription = mapPathable.TipDescription + "\n\n";
+                }
+
+                tooltipDescription += $"{WorldUtil.WorldToGameCoord(pathable.DistanceToPlayer):##,###} away";
+            } else {
+                this.Tooltip = null;
+                _activeTooltip.Hide();
+                return;
+            }
+
+            _tooltipView.Title       = tooltipTitle;
+            _tooltipView.Description = tooltipDescription;
+            this.Tooltip             = _activeTooltip;
+        }
+
         protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds) {
             if (!GameService.GameIntegration.IsInGame) return;
 
@@ -154,36 +188,22 @@ namespace BhModule.Community.Pathing.Entity {
             float opacity = MathHelper.Clamp((float)(GameService.Overlay.CurrentGameTime.TotalGameTime.TotalSeconds - _lastMapViewChanged) / 0.65f, 0f, 1f) * 0.8f;
 
             // TODO: Make this more based on relative vertical axis difference.
+            // TODO: Revise how we do this - tons of memory allocations.
             var entities = _packState.Entities.ToList().OrderBy(poi => -poi.DrawOrder);
-            
-            string finalTooltip   = string.Empty;
-            bool   showModTooltip = (GameService.Input.Keyboard.ActiveModifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+
+            bool showModTooltip = (GameService.Input.Keyboard.ActiveModifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+
+            _activeEntity = null;
 
             foreach (var pathable in entities) {
                 var hint = pathable.RenderToMiniMap(spriteBatch, bounds, (offsetX, offsetY), scale, opacity);
 
                 if (this.MouseOver && hint.HasValue && hint.Value.Contains(GameService.Input.Mouse.Position)) {
                     _activeEntity = pathable;
-
-                    if (showModTooltip) {
-                        finalTooltip = pathable.CategoryNamespace;
-                    } else if (pathable is IHasMapInfo mapPathable) {
-                        finalTooltip = mapPathable.TipName;
-
-                        if (!string.IsNullOrWhiteSpace(mapPathable.TipDescription)) {
-                            // TODO: Include tip description.
-                        }
-                    }
-
-                    finalTooltip += $"\n{WorldUtil.WorldToGameCoord(pathable.DistanceToPlayer):##,###} away";
                 }
             }
 
-            this.BasicTooltipText = finalTooltip;
-
-            if (finalTooltip == string.Empty) {
-                _activeEntity = null;
-            }
+            UpdateTooltip(_activeEntity, showModTooltip);
         }
 
         protected override void DisposeControl() {

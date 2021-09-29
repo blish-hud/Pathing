@@ -5,8 +5,8 @@ using Blish_HUD;
 using Blish_HUD.Graphics.UI;
 using Gw2Sharp.WebApi.V2.Models;
 
-namespace BhModule.Community.Pathing.UI.Common {
-    class AchievementPresenter : Presenter<AchievementTooltipView, int> {
+namespace BhModule.Community.Pathing.UI.Tooltips {
+    public class AchievementPresenter : Presenter<AchievementTooltipView, int> {
 
         private static readonly Logger Logger = Logger.GetLogger<AchievementPresenter>();
 
