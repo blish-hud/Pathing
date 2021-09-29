@@ -582,6 +582,7 @@
     <Content Include="License-2mgfx.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="LICENSE.txt" />
     <None Include="Resources\add.png" />
     <None Include="Resources\shape_square.png" />
     <None Include="Resources\box.png" />
