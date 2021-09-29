@@ -100,7 +100,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             if (base.CanCheck) {
                 // If CTRL is held down when clicked, uncheck all adjacent menu items except for this one.
                 if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {
-                    foreach (var childMenuItem in this.Parent?.Children.Cast<CategoryContextMenuStripItem>() ?? Enumerable.Empty<CategoryContextMenuStripItem>()) {
+                    foreach (var childMenuItem in this.Parent?.Children.Where(child => child is CategoryContextMenuStripItem).Cast<CategoryContextMenuStripItem>() ?? Enumerable.Empty<CategoryContextMenuStripItem>()) {
                         childMenuItem.Checked = (childMenuItem == this);
                     }
 
