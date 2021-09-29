@@ -583,6 +583,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="LICENSE.txt" />
+    <None Include="README.md" />
     <None Include="Resources\add.png" />
     <None Include="Resources\shape_square.png" />
     <None Include="Resources\box.png" />
