@@ -72,6 +72,7 @@
     <Compile Include="Behavior\Modifier\ShowHideModifier.cs" />
     <Compile Include="Behavior\Modifier\ToggleModifier.cs" />
     <Compile Include="Behavior\StandardPathableBehavior.cs" />
+    <Compile Include="Content\MarkerPackDownloader.cs" />
     <Compile Include="Content\TextureResourceManager.cs" />
     <Compile Include="Content\WebReader.cs" />
     <Compile Include="Editor\CategoryNode.cs" />

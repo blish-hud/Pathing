@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BhModule.Community.Pathing.UI.Controls {
     public class MarkerPackHero : Container {
 
-        // TODO: MarkerPackHero really should be a view.
+        // TODO: MarkerPackHero really probably should be a view.
 
         private static readonly Logger Logger = Logger.GetLogger<MarkerPackHero>();
 
@@ -60,7 +60,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             };
 
             _downloadButton.Click += DownloadButtonOnClick;
-            _infoButton.Click += InfoButtonOnClick;
+            _infoButton.Click     += InfoButtonOnClick;
 
             this.Size    = new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT);
             this.Padding = new Thickness(13, 0, 0, 9);
@@ -98,6 +98,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private void InfoButtonOnClick(object sender, MouseEventArgs e) {
             if (Url.IsValid(_markerPackPkg.Info)) {
+                // TODO: Let's do something more to prevent something slipping in to process.start - even if we host the repo.
                 Process.Start(_markerPackPkg.Info);
             }
         }
