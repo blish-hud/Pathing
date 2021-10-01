@@ -36,11 +36,11 @@ namespace BhModule.Community.Pathing.Entity {
             var newMenu = new ContextMenuStrip();
 
             newMenu.AddMenuItem("Hide Parent Category").Click += delegate {
-                _packState.CategoryStates.SetInactive(pathingEntry.CategoryNamespace, true);
+                _packState.CategoryStates.SetInactive(pathingEntry.Category.Namespace, true);
             };
 
             if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {
-                newMenu.AddMenuItem("Copy Parent Category Namespace").Click += async delegate { await ClipboardUtil.WindowsClipboardService.SetTextAsync(pathingEntry.CategoryNamespace); };
+                newMenu.AddMenuItem("Copy Parent Category Namespace").Click += async delegate { await ClipboardUtil.WindowsClipboardService.SetTextAsync(pathingEntry.Category.Namespace); };
                 newMenu.AddMenuItem("Edit Marker").Click                    += delegate { Editor.MarkerEditWindow.SetPathingEntity(_packState, pathingEntry); };
                 newMenu.AddMenuItem("Delete Marker").Click                  += delegate { ScreenNotification.ShowNotification("Not yet supported", ScreenNotification.NotificationType.Warning, null, 5); };
             }

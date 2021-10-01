@@ -30,7 +30,7 @@ namespace BhModule.Community.Pathing.Editor {
             if (e.Node is CategoryNode categoryNode) {
                 e.Node.Nodes.Clear();
                 e.Node.Nodes.AddRange(categoryNode.PathingCategory.Where(category => CategoryUtil.GetCategoryIsNotFiltered(category, _packState.Entities.ToArray(), CategoryUtil.CurrentMapCategoryFilter)).Select(childCategory => new CategoryNode(childCategory, _packState)).ToArray());
-                e.Node.Nodes.AddRange(_packState.Entities.Where(pathable => string.Equals(pathable.CategoryNamespace, categoryNode.PathingCategory.Namespace)).Select(pathable => new PathableNode(pathable)).ToArray());
+                e.Node.Nodes.AddRange(_packState.Entities.Where(pathable => string.Equals(pathable.Category.Namespace, categoryNode.PathingCategory.Namespace)).Select(pathable => new PathableNode(pathable)).ToArray());
             }
 
             base.OnAfterExpand(e);

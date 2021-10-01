@@ -20,8 +20,6 @@ namespace BhModule.Community.Pathing.Entity {
 
         int MapId { get; }
 
-        string CategoryNamespace { get; }
-
         PathingCategory Category { get; }
 
         bool DebugRender { get; }

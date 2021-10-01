@@ -17,9 +17,6 @@ namespace BhModule.Community.Pathing.Entity {
         [Browsable(false)]
         public IList<IBehavior> Behaviors { get; } = new SafeList<IBehavior>();
 
-        [DisplayName("Type")]
-        public string CategoryNamespace => this.Category.Namespace;
-
         public PathingCategory Category { get; }
 
         public abstract float TriggerRange { get; set; }
@@ -39,10 +36,10 @@ namespace BhModule.Community.Pathing.Entity {
         protected readonly IPackState _packState;
 
         protected PathingEntity(IPackState packState, IPointOfInterest pointOfInterest) {
-            this.MapId             = pointOfInterest.MapId;
-            this.Category          = pointOfInterest.ParentPathingCategory;
+            _packState    = packState;
 
-            _packState = packState;
+            this.MapId    = pointOfInterest.MapId;
+            this.Category = pointOfInterest.ParentPathingCategory ?? _packState.RootCategory;
         }
 
         public abstract RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity);
@@ -75,7 +72,7 @@ namespace BhModule.Community.Pathing.Entity {
             }
 
             // Only update behaviors found within enabled category namespaces.
-            if (!_packState.CategoryStates.GetNamespaceInactive(this.CategoryNamespace)) {
+            if (!_packState.CategoryStates.GetNamespaceInactive(this.Category.Namespace)) {
                 if (_wasInactive) {
                     OnCategoryActivated();
                 }
@@ -128,7 +125,7 @@ namespace BhModule.Community.Pathing.Entity {
             }
 
             // If category is disabled.
-            if (_packState.CategoryStates.GetNamespaceInactive(this.CategoryNamespace)) return true;
+            if (_packState.CategoryStates.GetNamespaceInactive(this.Category.Namespace)) return true;
 
             if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
                 foreach (var behavior in this.Behaviors) {
