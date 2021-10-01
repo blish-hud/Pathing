@@ -31,6 +31,7 @@ namespace BhModule.Community.Pathing.Entity {
             Populate_Cull(collection, resourceManager);
             Populate_MapVisibility(collection, resourceManager);
             Populate_CanFade(collection, resourceManager);
+            Populate_IsWall(collection, resourceManager);
 
             Populate_Behaviors(collection, resourceManager);
         }

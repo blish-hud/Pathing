@@ -53,7 +53,9 @@ namespace BhModule.Community.Pathing.Entity {
                 var nextPoint     = pointsArr[i + 1];
                 var pathDirection = nextPoint - curPoint;
 
-                offset = Vector3.Cross(pathDirection, Vector3.Forward); // Forward = 0, 0, -1
+                offset = Vector3.Cross(pathDirection, this.IsWall
+                                                          ? Vector3.Up        // Up      = 0, 1,  0
+                                                          : Vector3.Forward); // Forward = 0, 0, -1
                 offset.Normalize();
 
                 var leftPoint  = curPoint + (offset * TRAIL_WIDTH  * this.TrailScale);
