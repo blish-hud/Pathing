@@ -20,6 +20,10 @@ namespace BhModule.Community.Pathing.UI.Controls {
         // TODO: Make category filtering less janky.
 
         private (IEnumerable<PathingCategory> SubCategories, int Skipped) GetSubCategories() {
+            if (_packState.UserConfiguration.PackShowCategoriesFromAllMaps.Value) {
+                return (_pathingCategory.Where(cat => cat.LoadedFromPack), 0);
+            }
+
             var filteredSubCategories = new List<PathingCategory>();
 
             PathingCategory lastCategory = null;
