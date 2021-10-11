@@ -20,8 +20,10 @@ namespace BhModule.Community.Pathing.UI.Controls {
         // TODO: Make category filtering less janky.
 
         private (IEnumerable<PathingCategory> SubCategories, int Skipped) GetSubCategories() {
+            var subCategories = _pathingCategory.Where(cat => cat.LoadedFromPack);
+
             if (_packState.UserConfiguration.PackShowCategoriesFromAllMaps.Value) {
-                return (_pathingCategory.Where(cat => cat.LoadedFromPack), 0);
+                return (subCategories, 0);
             }
 
             var filteredSubCategories = new List<PathingCategory>();
@@ -33,7 +35,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             int skipped = 0;
 
             // We go bottom to top to check if the categories are potentially relevant to categories below.
-            foreach (var subCategory in _pathingCategory.Reverse()) {
+            foreach (var subCategory in subCategories.Reverse()) {
                 if (subCategory.IsSeparator && ((!lastCategory?.IsSeparator ?? false) || lastIsSeparator)) {
                     // If separator was relevant to this category, we include it.
                     filteredSubCategories.Add(subCategory);
