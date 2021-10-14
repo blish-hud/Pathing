@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using BhModule.Community.Pathing.Entity;
+using BhModule.Community.Pathing.Utility;
 
 namespace BhModule.Community.Pathing.Editor {
     public class PathableNode : TreeNode {
@@ -11,7 +12,7 @@ namespace BhModule.Community.Pathing.Editor {
 
             if (this.PathingEntity is StandardMarker marker) {
                 this.SelectedImageKey = this.ImageKey = "marker";
-                this.Text     = $"Marker [{marker.Guid}]";
+                this.Text     = $"Marker [{marker.Guid.ToBase64String()}]";
             } else if (this.PathingEntity is StandardTrail trail) {
                 this.SelectedImageKey = this.ImageKey = "trail";
                 this.Text             = $"Trail";

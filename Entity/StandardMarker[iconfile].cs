@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
@@ -40,11 +39,9 @@ namespace BhModule.Community.Pathing.Entity {
                     });
                 } else {
                     this.Texture = ContentService.Textures.Error;
-                    Logger.Warn($"Markers '{this.Guid}' is missing '{ATTR_ICONFILE}' attribute.");
+                    Logger.Warn($"Marker '{this.Guid.ToBase64String()}' is missing '{ATTR_ICONFILE}' attribute.");
                 }
             }
-            
-            // TODO: Show new missing-texture.png instead of the built-in error texture.
         }
 
     }

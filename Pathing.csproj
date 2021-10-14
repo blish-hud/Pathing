@@ -288,7 +288,8 @@
     <Compile Include="Utility\ColorThief\VBoxCountComparer.cs" />
     <Compile Include="Utility\DataDirUtil.cs" />
     <Compile Include="Utility\FileUtil.cs" />
-    <Compile Include="Utility\GuidExtension.cs" />
+    <Compile Include="Utility\GuidExtensions.cs" />
+    <Compile Include="Utility\GuidExtensions.cs" />
     <Compile Include="Utility\Gw2SharpModelExtensions.cs" />
     <Compile Include="Utility\EnumerableExtensions.cs" />
     <Compile Include="Utility\MapNavUtil.cs" />

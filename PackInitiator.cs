@@ -34,6 +34,7 @@ namespace BhModule.Community.Pathing {
         private readonly PackReaderSettings _packReaderSettings;
 
         private bool _isLoading = false;
+        private int  _lastMap   = -1;
 
         public PackInitiator(string watchPath, ModuleSettings moduleSettings, IProgress<string> loadingIndicator) {
             _watchPath        = watchPath;
@@ -44,8 +45,6 @@ namespace BhModule.Community.Pathing {
             _packReaderSettings.VenderPrefixes.Add("bh-"); // Support Blish HUD specific categories/markers/trails/attributes.
 
             _packState = new SharedPackState(moduleSettings);
-
-            GameService.Gw2Mumble.CurrentMap.MapChanged += OnMapChanged;
         }
 
         public IEnumerable<ContextMenuStripItem> GetPackMenuItems() {
@@ -76,6 +75,8 @@ namespace BhModule.Community.Pathing {
 
             reloadMarkers.Click += (_, _) => {
                 if (_packState.CurrentMapId < 0) return;
+
+                _lastMap = -1;
 
                 LoadMapFromEachPackInBackground(_packState.CurrentMapId);
             };
@@ -136,6 +137,8 @@ namespace BhModule.Community.Pathing {
             if (GameService.Gw2Mumble.CurrentMap.Id != default) {
                 LoadMapFromEachPackInBackground(_packState.CurrentMapId = GameService.Gw2Mumble.CurrentMap.Id);
             }
+
+            GameService.Gw2Mumble.CurrentMap.MapChanged += OnMapChanged;
         }
 
         private async Task PrepareState(int mapId) {
@@ -145,6 +148,16 @@ namespace BhModule.Community.Pathing {
         }
 
         private void LoadMapFromEachPackInBackground(int mapId) {
+            lock (this) {
+                if (mapId == _lastMap) {
+                    Debugger.Break();
+                    return;
+                };
+                _lastMap = mapId;
+            }
+
+            Logger.Info($"Loading markers for map {mapId}...");
+
             var thread = new Thread(async () => await LoadMapFromEachPack(mapId)) {
                 IsBackground = true
             };

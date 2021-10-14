@@ -10,6 +10,8 @@ using TmfLib;
 namespace BhModule.Community.Pathing.Content {
     public class TextureResourceManager : IPackResourceManager {
 
+        private static readonly Logger Logger = Logger.GetLogger<TextureResourceManager>();
+
         private static readonly Texture2D _textureFailedToLoad = PathingModule.Instance.ContentsManager.GetTexture(@"png\missing-texture.png");
 
         private static readonly ConcurrentDictionary<IPackResourceManager, TextureResourceManager> _textureResourceManagerLookup = new();
