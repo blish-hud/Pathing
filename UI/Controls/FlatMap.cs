@@ -32,6 +32,8 @@ namespace BhModule.Community.Pathing.Entity {
         private readonly DescriptionTooltipView _tooltipView;
         private readonly Tooltip                _activeTooltip;
 
+        private ContextMenuStrip _activeContextMenu;
+
         private ContextMenuStrip BuildPathableMenu(IPathingEntity pathingEntry) {
             var newMenu = new ContextMenuStrip();
 
@@ -45,7 +47,9 @@ namespace BhModule.Community.Pathing.Entity {
                 newMenu.AddMenuItem("Delete Marker").Click                  += delegate { ScreenNotification.ShowNotification("Not yet supported", ScreenNotification.NotificationType.Warning, null, 5); };
             }
 
-            newMenu.Hidden += delegate { newMenu.Dispose(); };
+            newMenu.Hidden += delegate { _activeContextMenu.Dispose(); _activeContextMenu = null; };
+
+            _activeContextMenu = newMenu;
 
             return newMenu;
         }
@@ -82,6 +86,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         private void UIOnIsMapOpenChanged(object sender, ValueEventArgs<bool> e) {
             TriggerFadeIn();
+            if (_activeContextMenu != null) { _activeContextMenu.Visible = false; }
 
             _lastCameraPos = GameService.Gw2Mumble.PlayerCamera.Position.Z;
         }
