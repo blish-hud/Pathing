@@ -117,9 +117,14 @@ namespace BhModule.Community.Pathing {
             _packsLoading               = !string.IsNullOrWhiteSpace(loadingMessage);
         }
 
+        public IProgress<string> GetModuleProgressHandler() {
+            // TODO: Consider enforcing a source so that multiple items can be shown in the loading tooltip.
+            return new Progress<string>(UpdateModuleLoading);
+        }
+
         protected override async Task LoadAsync() {
             var sw = Stopwatch.StartNew();
-            _watcher = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), _moduleSettings, new Progress<string>(UpdateModuleLoading));
+            _watcher = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), _moduleSettings, GetModuleProgressHandler());
             await _watcher.Init();
             sw.Stop();
             Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading Pathing module...");

@@ -72,7 +72,6 @@
     <Compile Include="Behavior\Modifier\ShowHideModifier.cs" />
     <Compile Include="Behavior\Modifier\ToggleModifier.cs" />
     <Compile Include="Behavior\StandardPathableBehavior.cs" />
-    <Compile Include="Content\MarkerPackDownloader.cs" />
     <Compile Include="Content\TextureResourceManager.cs" />
     <Compile Include="Content\WebReader.cs" />
     <Compile Include="Editor\CategoryNode.cs" />
@@ -149,7 +148,9 @@
     <Compile Include="Entity\StandardMarker[iconsize].cs">
       <DependentUpon>StandardMarker.cs</DependentUpon>
     </Compile>
-    <Compile Include="Entity\StandardMarker[invert-behavior].cs" />
+	<Compile Include="Entity\StandardMarker[invert-behavior].cs">
+      <DependentUpon>StandardMarker.cs</DependentUpon>
+	</Compile>
     <Compile Include="Entity\StandardMarker[minimapvisibility,mapvisibility,ingamevisibility].cs">
       <DependentUpon>StandardMarker.cs</DependentUpon>
     </Compile>
@@ -216,7 +217,9 @@
     <Compile Include="Entity\StandardTrail[trailscale].cs">
       <DependentUpon>StandardTrail.cs</DependentUpon>
     </Compile>
-    <Compile Include="Entity\StandardTrail[wall].cs" />
+	<Compile Include="Entity\StandardTrail[wall].cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+	</Compile>
     <Compile Include="Entity\StandardTrail_Behaviors.cs">
       <DependentUpon>StandardTrail.cs</DependentUpon>
     </Compile>
@@ -293,6 +296,7 @@
     <Compile Include="Utility\Gw2SharpModelExtensions.cs" />
     <Compile Include="Utility\EnumerableExtensions.cs" />
     <Compile Include="Utility\MapNavUtil.cs" />
+    <Compile Include="Utility\PackHandlingUtil.cs" />
     <Compile Include="Utility\PickingUtil.cs" />
     <Compile Include="Utility\SpriteBatchUtil.cs" />
     <Compile Include="Utility\UpdateCadenceUtil.cs" />
