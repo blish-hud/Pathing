@@ -1,13 +1,13 @@
 {
   "name": "Pathing",
-  "version": "0.13.11",
+  "version": "0.13.12",
   "namespace": "bh.community.pathing",
   "package": "Pathing.dll",
   "manifest_version": 1,
 
   "description": "Display markers and trails in-game.  Supports both .zip and .taco format markers.\n\nCheck out our guide: https://blishhud.com/docs/markers/",
   "dependencies": {
-    "bh.blishhud": ">=0.10.0"
+    "bh.blishhud": ">=0.11.1"
   },
   "url": "https://github.com/Blish-HUD/Pathing",
   "contributors": [

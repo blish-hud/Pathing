@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Behavior;
 using BhModule.Community.Pathing.Utility;
@@ -26,12 +27,23 @@ namespace BhModule.Community.Pathing.State {
         }
 
         public override void Update(GameTime gameTime) {
-            // TODO: Switch this to the async version
-            UpdateCadenceUtil.UpdateWithCadence(UpdateAchievements, gameTime, INTERVAL_CHECKACHIEVEMENTS, ref _lastAchievementCheck);
+            UpdateCadenceUtil.UpdateAsyncWithCadence(UpdateAchievements, gameTime, INTERVAL_CHECKACHIEVEMENTS, ref _lastAchievementCheck);
         }
 
         protected override Task<bool> Initialize() {
+            PathingModule.Instance.Gw2ApiManager.SubtokenUpdated += Gw2ApiManager_SubtokenUpdated;
+
             return Task.FromResult(true);
+        }
+
+        private void Gw2ApiManager_SubtokenUpdated(object sender, ValueEventArgs<IEnumerable<TokenPermission>> e) {
+            lock (_achievementStates) {
+                // Clear achievement states so that we don't continue to use achievement info from the last user.
+                _achievementStates.Clear();
+            }
+
+            // Reset our check interval so that we check immediately now that we have a new token.
+            _lastAchievementCheck = INTERVAL_CHECKACHIEVEMENTS;
         }
 
         public override Task Unload() {
@@ -51,24 +63,25 @@ namespace BhModule.Community.Pathing.State {
             return achievement.AchievementBits.Contains(achievementBit);
         }
 
-        private void HandleAchievementUpdate(Task<IApiV2ObjectList<AccountAchievement>> accountAchievementTask) {
-            lock (_achievementStates) {
-                foreach (var achievement in accountAchievementTask.Result) {
-                    _achievementStates.AddOrUpdate(achievement.Id,
-                                                   new AchievementStatus(achievement),
-                                                   (_, _) => new AchievementStatus(achievement));
-                }
-            }
-        }
-
-        private void UpdateAchievements(GameTime gameTime) {
+        private async Task UpdateAchievements(GameTime gameTime) {
             if (!this.Running) return;
 
             try {
                 // v2/account/achivements requires "account" and "progression" permissions.
-                if (PathingModule.Instance.Gw2ApiManager.HavePermissions(new[] { TokenPermission.Account, TokenPermission.Progression })) {
+                if (PathingModule.Instance.Gw2ApiManager.HasPermissions(new[] { TokenPermission.Account, TokenPermission.Progression })) {
                     Logger.Debug("Getting user achievements from the API.");
-                    PathingModule.Instance.Gw2ApiManager.Gw2ApiClient.V2.Account.Achievements.GetAsync().ContinueWith(HandleAchievementUpdate, TaskContinuationOptions.NotOnFaulted);
+
+                    var achievements = await PathingModule.Instance.Gw2ApiManager.Gw2ApiClient.V2.Account.Achievements.GetAsync();
+
+                    lock (_achievementStates) {
+                        foreach (var achievement in achievements) {
+                            _achievementStates.AddOrUpdate(achievement.Id,
+                                                           new AchievementStatus(achievement),
+                                                           (_, _) => new AchievementStatus(achievement));
+                        }
+                    }
+
+                    Logger.Debug("Loaded {achievementCount} player achievements from the API.", achievements.Count);
                 } else {
                     Logger.Debug("Skipping user achievements from the API - API key does not give us permission.");
                 }

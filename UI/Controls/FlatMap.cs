@@ -176,7 +176,7 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds) {
-            if (!GameService.GameIntegration.IsInGame) return;
+            if (!GameService.GameIntegration.Gw2Instance.IsInGame) return;
 
             bounds = new Rectangle(this.Location, bounds.Size);
 

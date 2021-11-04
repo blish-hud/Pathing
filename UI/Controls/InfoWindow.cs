@@ -120,7 +120,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         public override void Draw(SpriteBatch spriteBatch, Rectangle drawBounds, Rectangle scissor) {
             // Don't show on loading screens or during vistas.  This is not a clean way to do this.
-            if (!GameService.GameIntegration.IsInGame) return;
+            if (!GameService.GameIntegration.Gw2Instance.IsInGame) return;
 
             base.Draw(spriteBatch, drawBounds, scissor);
         }
@@ -134,7 +134,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         public override void PaintBeforeChildren(SpriteBatch spriteBatch, Rectangle bounds) {
             // Don't show on loading screens or during vistas.
-            if (!GameService.GameIntegration.IsInGame) return;
+            if (!GameService.GameIntegration.Gw2Instance.IsInGame) return;
 
             AlphaMaskEffect.SharedInstance.SetEffectState(_croppedMask);
 
