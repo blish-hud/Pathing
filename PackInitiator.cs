@@ -156,8 +156,6 @@ namespace BhModule.Community.Pathing {
                 _lastMap = mapId;
             }
 
-            Logger.Info($"Loading markers for map {mapId}...");
-
             var thread = new Thread(async () => await LoadMapFromEachPack(mapId)) {
                 IsBackground = true
             };
@@ -202,7 +200,7 @@ namespace BhModule.Community.Pathing {
             _isLoading = false;
 
             loadTimer.Stop();
-            Logger.Info($"Finished loading packs {string.Join(", ", _packs.Select(pack => pack.Name))} in {loadTimer.ElapsedMilliseconds} ms.");
+            Logger.Info($"Finished loading packs {string.Join(", ", _packs.Select(pack => pack.Name))} in {loadTimer.ElapsedMilliseconds} ms for map {mapId}.");
         }
 
         private void OnMapChanged(object sender, ValueEventArgs<int> e) {
