@@ -157,7 +157,11 @@ namespace BhModule.Community.Pathing.Entity {
                 tooltipTitle       = string.Join("\n > ", pathable.Category.GetParentsDesc().Select(category => category.DisplayName.Trim()));
                 tooltipDescription = null;
             } else if (pathable is IHasMapInfo mapPathable) {
-                tooltipTitle = mapPathable.TipName;
+                if ((tooltipTitle = mapPathable.TipName) == "") {
+                    this.Tooltip = null;
+                    _activeTooltip.Hide();
+                    return;
+                }
 
                 if (!string.IsNullOrWhiteSpace(mapPathable.TipDescription)) {
                     tooltipDescription = mapPathable.TipDescription + "\n\n";

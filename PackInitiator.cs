@@ -182,7 +182,7 @@ namespace BhModule.Community.Pathing {
                 Logger.Warn(e, "Loading pack failed.");
 
                 if (retry > 0) {
-                    await LoadMapFromEachPack(--retry);
+                    await LoadMapFromEachPack(retry - 1);
                 }
 
                 Logger.Error($"Loading pack failed after {LOAD_RETRY_COUNTS} attempts.");

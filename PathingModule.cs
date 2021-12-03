@@ -135,7 +135,6 @@ namespace BhModule.Community.Pathing {
         }
 
         protected override void OnModuleLoaded(EventArgs e) {
-
             // Base handler must be called
             base.OnModuleLoaded(e);
         }
