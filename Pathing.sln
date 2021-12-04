@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30709.132
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pathing", "Pathing.csproj", "{B5DE694A-0648-4A39-8349-8C0BB0DD538C}"
 EndProject
@@ -28,7 +28,6 @@ Global
 		{B5DE694A-0648-4A39-8349-8C0BB0DD538C}.Release|Any CPU.ActiveCfg = Release|x64
 		{B5DE694A-0648-4A39-8349-8C0BB0DD538C}.Release|x64.ActiveCfg = Release|x64
 		{B5DE694A-0648-4A39-8349-8C0BB0DD538C}.Release|x64.Build.0 = Release|x64
-		{B5DE694A-0648-4A39-8349-8C0BB0DD538C}.Debug|Any CPU.Build.0 = Debug|x64
 		{D66AACB7-A2B7-4F13-9667-B1D7F1CF8848}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D66AACB7-A2B7-4F13-9667-B1D7F1CF8848}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D66AACB7-A2B7-4F13-9667-B1D7F1CF8848}.Debug|x64.ActiveCfg = Debug|x64
@@ -38,6 +37,7 @@ Global
 		{D66AACB7-A2B7-4F13-9667-B1D7F1CF8848}.Release|x64.ActiveCfg = Release|Any CPU
 		{D66AACB7-A2B7-4F13-9667-B1D7F1CF8848}.Release|x64.Build.0 = Release|Any CPU
 		{C4BB59ED-D4FA-4A58-9694-C131E0BBB337}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4BB59ED-D4FA-4A58-9694-C131E0BBB337}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4BB59ED-D4FA-4A58-9694-C131E0BBB337}.Debug|x64.ActiveCfg = Debug|x64
 		{C4BB59ED-D4FA-4A58-9694-C131E0BBB337}.Debug|x64.Build.0 = Debug|x64
 		{C4BB59ED-D4FA-4A58-9694-C131E0BBB337}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,6 +49,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		RESX_ConfirmAddLanguageFile = True
+		RESX_AutoCreateNewLanguageFiles = True
 		SolutionGuid = {B276431F-D539-478A-9D42-0E6405B9CEBC}
 	EndGlobalSection
 EndGlobal
