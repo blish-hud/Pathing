@@ -137,7 +137,7 @@
     <value>Show Markers on Fullscreen Map</value>
   </data>
   <data name="Setting_MapShowMarkersOnCompass" xml:space="preserve">
-    <value>Show Markers on the Minimap / Compass</value>
+    <value>Show Markers on the Minimap</value>
   </data>
   <data name="Setting_MapShowAboveBelowIndicators" xml:space="preserve">
     <value>Show Above/Below Indicators</value>
@@ -161,7 +161,7 @@
     <value>Categories</value>
   </data>
   <data name="Setting_MapShowTrailsOnCompass" xml:space="preserve">
-    <value>Show Trails on the Minimap / Compass</value>
+    <value>Show Trails on the Minimap</value>
   </data>
   <data name="Setting_MapShowTrailsOnFullscreen" xml:space="preserve">
     <value>Show Trails on Fullscreen Map</value>

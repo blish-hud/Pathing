@@ -12,9 +12,8 @@ namespace BhModule.Community.Pathing.Entity {
 
             bool isMapOpen = GameService.Gw2Mumble.UI.IsMapOpen;
 
-            // TODO: Make this more simple
-
-            var  mapTrailVisibilityLevel = _packState.UserConfiguration.MapTrailVisibilityLevel.Value;
+            // TODO: Simplify these two map visibility filters
+            var mapTrailVisibilityLevel = _packState.UserConfiguration.MapTrailVisibilityLevel.Value;
             bool allowedOnMap            = this.MapVisibility && mapTrailVisibilityLevel != MapVisibilityLevel.Never;
             if (isMapOpen && !allowedOnMap && mapTrailVisibilityLevel != MapVisibilityLevel.Always) return null;
 

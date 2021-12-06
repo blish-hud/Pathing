@@ -204,8 +204,13 @@ namespace BhModule.Community.Pathing.Entity {
 
             _activeEntity = null;
 
+            // Used to allow users to reduce the opacity of markers on either the compass or fullscreen map.
+            float overrideOpacity = GameService.Gw2Mumble.UI.IsMapOpen 
+                                        ? _packState.UserConfiguration.MapDrawOpacity.Value 
+                                        : _packState.UserConfiguration.MiniMapDrawOpacity.Value;
+
             foreach (var pathable in entities) {
-                var hint = pathable.RenderToMiniMap(spriteBatch, bounds, (offsetX, offsetY), scale, opacity);
+                var hint = pathable.RenderToMiniMap(spriteBatch, bounds, (offsetX, offsetY), scale, overrideOpacity * opacity);
 
                 if (this.MouseOver && hint.HasValue && hint.Value.Contains(GameService.Input.Mouse.Position)) {
                     _activeEntity = pathable;

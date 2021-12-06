@@ -106,7 +106,7 @@ namespace BhModule.Community.Pathing {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Markers on the Minimap / Compass.
+        ///   Looks up a localized string similar to Show Markers on the Minimap.
         /// </summary>
         internal static string Setting_MapShowMarkersOnCompass {
             get {
@@ -124,7 +124,7 @@ namespace BhModule.Community.Pathing {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Trails on the Minimap / Compass.
+        ///   Looks up a localized string similar to Show Trails on the Minimap.
         /// </summary>
         internal static string Setting_MapShowTrailsOnCompass {
             get {

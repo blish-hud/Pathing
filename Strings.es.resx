@@ -178,6 +178,6 @@
     <value>Mostrar indicadores de apuesta/abajo</value>
   </data>
   <data name="Setting_MapShowMarkersOnCompass" xml:space="preserve">
-    <value>Mostrar marcadores en minimap / brújula</value>
+    <value>Mostrar marcadores en minimap</value>
   </data>
 </root>

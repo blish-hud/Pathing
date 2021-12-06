@@ -91,26 +91,33 @@ namespace BhModule.Community.Pathing {
 
         public SettingCollection MapSettings { get; private set; }
 
-        public SettingEntry<bool> MapPathablesEnabled { get; private set; }
-        public SettingEntry<MapVisibilityLevel> MapMarkerVisibilityLevel { get; private set; }
-        public SettingEntry<MapVisibilityLevel> MapTrailVisibilityLevel { get; private set; }
-        public SettingEntry<MapVisibilityLevel> MiniMapMarkerVisibilityLevel { get; private set; }
-        public SettingEntry<MapVisibilityLevel> MiniMapTrailVisibilityLevel { get; private set; }
-        public SettingEntry<bool> MapShowAboveBelowIndicators { get; private set; }
-        public SettingEntry<bool> MapFadeVerticallyDistantTrailSegments { get; private set; }
+        public SettingEntry<bool>               MapPathablesEnabled                   { get; private set; }
+        public SettingEntry<MapVisibilityLevel> MapMarkerVisibilityLevel              { get; private set; }
+        public SettingEntry<MapVisibilityLevel> MapTrailVisibilityLevel               { get; private set; }
+        public SettingEntry<float>              MapDrawOpacity                        { get; private set; }
+        public SettingEntry<MapVisibilityLevel> MiniMapMarkerVisibilityLevel          { get; private set; }
+        public SettingEntry<MapVisibilityLevel> MiniMapTrailVisibilityLevel           { get; private set; }
+        public SettingEntry<float>              MiniMapDrawOpacity                    { get; private set; }
+        public SettingEntry<bool>               MapShowAboveBelowIndicators           { get; private set; }
+        public SettingEntry<bool>               MapFadeVerticallyDistantTrailSegments { get; private set; }
 
         private void InitMapSettings(SettingCollection settings) {
             this.MapSettings = settings.AddSubCollection(MAP_SETTINGS);
 
             // TODO: Add string to strings.resx for localization.
             // TODO: Add description to settings.
-            this.MapPathablesEnabled = this.MapSettings.DefineSetting(nameof(this.MapPathablesEnabled), true, () => "Show Markers on Maps");
-            this.MapMarkerVisibilityLevel = this.MapSettings.DefineSetting(nameof(this.MapMarkerVisibilityLevel), MapVisibilityLevel.Default, () => Strings.Setting_MapShowMarkersOnFullscreen, () => "");
-            this.MapTrailVisibilityLevel = this.MapSettings.DefineSetting(nameof(this.MapTrailVisibilityLevel), MapVisibilityLevel.Default, () => Strings.Setting_MapShowTrailsOnFullscreen, () => "");
-            this.MiniMapMarkerVisibilityLevel = this.MapSettings.DefineSetting(nameof(this.MiniMapMarkerVisibilityLevel), MapVisibilityLevel.Default, () => Strings.Setting_MapShowMarkersOnCompass, () => "");
-            this.MiniMapTrailVisibilityLevel = this.MapSettings.DefineSetting(nameof(this.MiniMapTrailVisibilityLevel), MapVisibilityLevel.Default, () => Strings.Setting_MapShowTrailsOnCompass, () => "");
-            this.MapShowAboveBelowIndicators = this.MapSettings.DefineSetting(nameof(this.MapShowAboveBelowIndicators), true, () => Strings.Setting_MapShowAboveBelowIndicators, () => "");
-            this.MapFadeVerticallyDistantTrailSegments = this.MapSettings.DefineSetting(nameof(this.MapFadeVerticallyDistantTrailSegments), true, () => "Fade Trail Segments Which Are High Above or Below");
+            this.MapPathablesEnabled                   = this.MapSettings.DefineSetting(nameof(this.MapPathablesEnabled),                   true,                       () => "Show Markers on Maps");
+            this.MapMarkerVisibilityLevel              = this.MapSettings.DefineSetting(nameof(this.MapMarkerVisibilityLevel),              MapVisibilityLevel.Default, () => Strings.Setting_MapShowMarkersOnFullscreen,  () => "");
+            this.MapTrailVisibilityLevel               = this.MapSettings.DefineSetting(nameof(this.MapTrailVisibilityLevel),               MapVisibilityLevel.Default, () => Strings.Setting_MapShowTrailsOnFullscreen,   () => "");
+            this.MapDrawOpacity                        = this.MapSettings.DefineSetting(nameof(this.MapDrawOpacity),                        1f,                         () => "Opacity on Fullscreen Map",                 () => "");
+            this.MiniMapMarkerVisibilityLevel          = this.MapSettings.DefineSetting(nameof(this.MiniMapMarkerVisibilityLevel),          MapVisibilityLevel.Default, () => Strings.Setting_MapShowMarkersOnCompass,     () => "");
+            this.MiniMapTrailVisibilityLevel           = this.MapSettings.DefineSetting(nameof(this.MiniMapTrailVisibilityLevel),           MapVisibilityLevel.Default, () => Strings.Setting_MapShowTrailsOnCompass,      () => "");
+            this.MiniMapDrawOpacity                    = this.MapSettings.DefineSetting(nameof(this.MiniMapDrawOpacity),                    1f,                         () => "Opacity on the Minimap",                    () => "");
+            this.MapShowAboveBelowIndicators           = this.MapSettings.DefineSetting(nameof(this.MapShowAboveBelowIndicators),           true,                       () => Strings.Setting_MapShowAboveBelowIndicators, () => "");
+            this.MapFadeVerticallyDistantTrailSegments = this.MapSettings.DefineSetting(nameof(this.MapFadeVerticallyDistantTrailSegments), true,                       () => "Fade Trail Segments Which Are High Above or Below", () => "");
+
+            this.MapDrawOpacity.SetRange(0f, 1f);
+            this.MiniMapDrawOpacity.SetRange(0f, 1f);
         }
 
         #endregion
