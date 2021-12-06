@@ -152,6 +152,7 @@
     <Compile Include="Entity\StandardMarker[invert-behavior].cs">
       <DependentUpon>StandardMarker.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entity\StandardMarker[mapdisplaysize,scaleonmapwithzoom].cs" />
     <Compile Include="Entity\StandardMarker[minimapvisibility,mapvisibility,ingamevisibility].cs">
       <DependentUpon>StandardMarker.cs</DependentUpon>
     </Compile>

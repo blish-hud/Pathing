@@ -27,14 +27,19 @@ namespace BhModule.Community.Pathing.Entity {
             bool allowedOnMiniMap             = this.MiniMapVisibility && miniMapMarkerVisibilityLevel != MapVisibilityLevel.Never;
             if (!isMapOpen && !allowedOnMiniMap && miniMapMarkerVisibilityLevel != MapVisibilityLevel.Always) return null;
 
+            if (!this.ScaleOnMapWithZoom) {
+                // Zoom scaling is disabled, so we override back to 1.
+                scale = 1f;
+            }
+
             var location = GetScaledLocation(this.Position.X, this.Position.Y, scale, offsets);
 
             if (!bounds.Contains(location)) return null;
 
-            float drawScale = (float)(0.3f / scale);
+            float drawScale = (float)(1f / scale);
 
-            var drawRect = new RectangleF(location - new Vector2(this.Texture.Width / 2f * drawScale, this.Texture.Height / 2f * drawScale),
-                                          new Vector2(this.Texture.Width * drawScale, this.Texture.Height * drawScale));
+            var drawRect = new RectangleF(location - new Vector2(this.MapDisplaySize / 2f * drawScale, this.MapDisplaySize / 2f * drawScale),
+                                          new Vector2(this.MapDisplaySize * drawScale, this.MapDisplaySize * drawScale));
 
             spriteBatch.Draw(this.Texture, drawRect, this.Tint);
 
@@ -46,8 +51,8 @@ namespace BhModule.Community.Pathing.Entity {
                 if (Math.Abs(diff) > VERTICALOFFSET_THRESHOLD) {
                     var indicatorPosition = new RectangleF(drawRect.Right - _aboveTexture.Width * drawScale,
                                                            drawRect.Top,
-                                                           _aboveTexture.Width  * drawScale * 3,
-                                                           _aboveTexture.Height * drawScale * 3);
+                                                           _aboveTexture.Width  * drawScale,
+                                                           _aboveTexture.Height * drawScale);
 
                     spriteBatch.Draw(diff > 0 ? _aboveTexture : _belowTexture, indicatorPosition, Color.White);
                 }

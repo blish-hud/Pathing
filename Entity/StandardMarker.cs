@@ -14,8 +14,6 @@ namespace BhModule.Community.Pathing.Entity {
 
         public StandardMarker(IPackState packState, IPointOfInterest pointOfInterest) : base(packState, pointOfInterest) {
             Populate(pointOfInterest.GetAggregatedAttributes(), TextureResourceManager.GetTextureResourceManager(pointOfInterest.ResourceManager));
-
-            Initialize();
         }
 
         private void Populate(AttributeCollection collection, TextureResourceManager resourceManager) {
@@ -33,6 +31,7 @@ namespace BhModule.Community.Pathing.Entity {
             Populate_Alpha(collection, resourceManager);
             Populate_FadeNearAndFar(collection, resourceManager);
             Populate_Cull(collection, resourceManager);
+            Populate_MapScaling(collection, resourceManager);
             Populate_MapVisibility(collection, resourceManager);
             Populate_CanFade(collection, resourceManager);
             Populate_Tip(collection, resourceManager);
@@ -41,12 +40,6 @@ namespace BhModule.Community.Pathing.Entity {
             Populate_TacOMisc(collection, resourceManager);
 
             Populate_Behaviors(collection, resourceManager);
-        }
-
-        private void Initialize() {
-            if (true) {
-                this.FadeIn();
-            }
         }
 
         public override void Update(GameTime gameTime) {
