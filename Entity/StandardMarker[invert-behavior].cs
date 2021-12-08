@@ -6,12 +6,12 @@ using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
 
-        private const string ATTR_INVERTBEHAVIOR = "invert-behavior";
+        private const string ATTR_INVERTBEHAVIOR = "invertbehavior";
 
         public bool InvertBehavior { get; set; }
 
         /// <summary>
-        /// invert-behavior
+        /// invertbehavior
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Populate_InvertBehavior(AttributeCollection collection, IPackResourceManager resourceManager) {
