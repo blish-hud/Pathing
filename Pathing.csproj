@@ -65,6 +65,7 @@
     <Compile Include="Behavior\Behavior.cs" />
     <Compile Include="Behavior\Filter\AchievementFilter.cs" />
     <Compile Include="Behavior\Filter\MapTypeFilter.cs" />
+    <Compile Include="Behavior\Filter\ScheduleFilter.cs" />
     <Compile Include="Behavior\ICanFilter.cs" />
     <Compile Include="Behavior\Modifier\BounceModifier.cs" />
     <Compile Include="Behavior\Modifier\CopyModifier.cs" />
@@ -416,6 +417,10 @@
     <Reference Include="CppNet">
       <HintPath>.\CppNet.dll</HintPath>
     </Reference>
+    <Reference Include="Cronos, Version=0.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Cronos.0.7.1\lib\net45\Cronos.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="CSCore, Version=1.2.1.2, Culture=neutral, PublicKeyToken=5a08f2b6f4415dea, processorArchitecture=MSIL">
       <HintPath>packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -561,7 +566,8 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="YamlDotNet, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
-      <HintPath>packages\YamlDotNet.11.2.0\lib\net45\YamlDotNet.dll</HintPath>
+      <HintPath>packages\YamlDotNet.11.2.1\lib\net45\YamlDotNet.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

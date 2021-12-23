@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Content;
 using Blish_HUD;
+using Cronos;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TmfLib;
@@ -115,6 +116,16 @@ namespace BhModule.Community.Pathing.Utility {
                 "green" => Color.FromNonPremultiplied(85,   221, 85, 255),
                 _ => ColorUtil.TryParseHex(attrValue, out var color) ? color : @default
             };
+        }
+
+        public static CronExpression GetValueAsCronExpression(this IAttribute attribute) {
+            try {
+                return CronExpression.Parse(attribute.GetValueAsString());
+            } catch (CronFormatException ex) {
+                Logger.Warn(ex, "Failed to parse value {attributeValue} as a cron expression.", attribute.GetValueAsString());
+            }
+
+            return null;
         }
 
         public static T GetValueAsEnum<T>(this IAttribute attribute) where T : struct {
