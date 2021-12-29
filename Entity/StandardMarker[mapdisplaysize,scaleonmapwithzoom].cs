@@ -21,7 +21,7 @@ namespace BhModule.Community.Pathing.Entity {
             this.ScaleOnMapWithZoom = _packState.UserResourceStates.Population.MarkerPopulationDefaults.ScaleOnMapWithZoom;
 
             { if (collection.TryPopAttribute(ATTR_MAPDISPLAYSIZE,     out var attribute)) this.MapDisplaySize     = attribute.GetValueAsFloat(this.MapDisplaySize); }
-            { if (collection.TryPopAttribute(ATTR_SCALEONMAPWITHZOOM, out var attribute)) this.ScaleOnMapWithZoom = attribute.GetValueAsBool(); }
+            //{ if (collection.TryPopAttribute(ATTR_SCALEONMAPWITHZOOM, out var attribute)) this.ScaleOnMapWithZoom = attribute.GetValueAsBool(); }
         }
 
     }
