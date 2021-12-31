@@ -43,6 +43,10 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
         }
 
         public void Interact(bool autoTriggered) {
+            if (_pathingEntity.BehaviorFiltered) {
+                return;
+            }
+
             _packstate.CategoryStates.SetInactive(this.Category,
                                                   !this.ShowOnInteract);
         }

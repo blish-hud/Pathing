@@ -35,6 +35,10 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
         }
 
         public void Focus() {
+            if (_pathingEntity.BehaviorFiltered) {
+                return;
+            }
+
             _packState.UiStates.AddInfoString(this.InfoValue);
         }
 

@@ -15,7 +15,8 @@ namespace BhModule.Community.Pathing.Entity {
         public override float TriggerRange { get; set; }
 
         private bool _focused;
-        [Browsable(false)]
+        [Description("The focused state indicates if the player is within the trigger range which may activate a behavior.")]
+        [Category("State Debug")]
         public bool Focused {
             get => _focused;
             private set {

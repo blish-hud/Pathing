@@ -36,6 +36,10 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
              || (_packState.UserConfiguration.PackMarkerConsentToClipboard.Value == MarkerClipboardConsentLevel.OnlyWhenInteractedWith && autoTriggered))
                 return;
 
+            if (_pathingEntity.BehaviorFiltered) {
+                return;
+            }
+
             Blish_HUD.ClipboardUtil.WindowsClipboardService.SetTextAsync(this.CopyValue).ContinueWith(t => {
                   if (t.IsCompleted && t.Result) {
                       ScreenNotification.ShowNotification(string.Format(this.CopyMessage, this.CopyValue),

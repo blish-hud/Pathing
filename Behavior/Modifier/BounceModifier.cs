@@ -46,9 +46,14 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
         }
 
         public void Focus() {
+
             if (!_packState.UserConfiguration.PackAllowMarkersToAnimate.Value) return;
 
             _bounceAnimation?.CancelAndComplete();
+
+            if (_pathingEntity.BehaviorFiltered) {
+                return;
+            }
 
             _bounceAnimation = GameService.Animation.Tweener.Tween(_pathingEntity,
                                                                    new { HeightOffset = _originalVerticalOffset + this.BounceHeight },

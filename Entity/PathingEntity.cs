@@ -30,6 +30,10 @@ namespace BhModule.Community.Pathing.Entity {
         [Browsable(false)]
         public abstract float DrawOrder { get; }
 
+        [Description("Indicates if the entity is currently filtered.")]
+        [Category("State Debug")]
+        public bool BehaviorFiltered { get; private set; }
+
         [Browsable(false)]
         public int MapId { get; set; }
 
@@ -99,16 +103,22 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         private void UpdateBehaviors(GameTime gameTime) {
+            bool filtered = false;
+
             foreach (var behavior in this.Behaviors) {
                 behavior.Update(gameTime);
+
+                if (behavior is ICanFilter filter) {
+                    filtered |= filter.IsFiltered();
+                }
             }
 
-            if (this.DistanceToPlayer <= this.TriggerRange) {
-                this.Focus();
-            } else {
-                this.Unfocus();
-            }
+            this.BehaviorFiltered = _packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value && filtered;
+
+            HandleBehavior();
         }
+
+        public abstract void HandleBehavior();
 
         public bool IsFiltered(EntityRenderTarget renderTarget) {
             // If all pathables are disabled.
@@ -127,16 +137,7 @@ namespace BhModule.Community.Pathing.Entity {
             // If category is disabled.
             if (_packState.CategoryStates.GetNamespaceInactive(this.Category.Namespace)) return true;
 
-            if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
-                foreach (var behavior in this.Behaviors) {
-                    if (behavior is ICanFilter filterable) {
-                        // If behavior is filtering.
-                        if (filterable.IsFiltered()) return true;
-                    }
-                }
-            }
-
-            return false;
+            return this.BehaviorFiltered;
         }
 
         protected Vector2 GetScaledLocation(double x, double y, double scale, (double X, double Y) offsets) {
