@@ -61,8 +61,25 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 this.BasicTooltipText = $"[Achievement]\r\n\r\n {DrawUtil.WrapText(GameService.Content.DefaultFont14, achievementTask.Result.Description, 300)}\r\n\r\n{DrawUtil.WrapText(GameService.Content.DefaultFont14, achievementTask.Result.Requirement, 300)}";
             }, TaskContinuationOptions.NotOnFaulted);
 
-            _contexts.Add((PathingModule.Instance.ContentsManager.GetTexture(@"png/context/155062.png"), "", () => { }));
-            _contexts.Add((PathingModule.Instance.ContentsManager.GetTexture(@"png/context/102365.png"), "", () => { }));
+            // Add the icon showing this marker is tied to an achievement
+            _contexts.Add((PathingModule.Instance.ContentsManager.GetTexture(@"png/context/155062.png"), "", null));
+
+            // Add the link to the wiki
+            _contexts.Add((
+                PathingModule.Instance.ContentsManager.GetTexture(@"png/context/102365.png"),
+                "Click to open wiki",
+                new Action(() => {
+                    PathingModule.Instance.Gw2ApiManager.Gw2ApiClient.V2.Achievements.GetAsync(achievementId).ContinueWith(
+                        (achievementTask) => {
+                            String safeAchievementName = System.Uri.EscapeDataString(achievementTask.Result.Name);
+                            String url = "https://wiki.guildwars2.com/index.php?title=Special%3ASearch&go=Go&search=" + safeAchievementName;
+
+                            System.Diagnostics.Process.Start(url);
+                        },
+                        TaskContinuationOptions.NotOnFaulted
+                    );
+                })
+            ));
         }
 
         private void DetectAndBuildContexts() {
@@ -73,6 +90,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 if (!InvariantUtil.TryParseInt(achievementAttr, out int achievementId)) return;
 
                 if (achievementId < 0) return;
+
+                AddAchievementContext(achievementId);
 
                 this.Tooltip = new Tooltip(new AchievementTooltipView(achievementId));
 
@@ -94,6 +113,27 @@ namespace BhModule.Community.Pathing.UI.Controls {
             }
 
             base.OnCheckedChanged(e);
+        }
+
+        protected override void OnLeftMouseButtonReleased(MouseEventArgs e)
+        {
+            // Check for context clicks before delegating to base
+            // Click area on context icons is extended to full height (ignore upper/lower bounds)
+            int clickDistanceFromRight = AbsoluteBounds.Right - e.MousePosition.X;
+            int contextIndex = _contexts.Count - (clickDistanceFromRight - 1) / 18;
+
+            // If we're within a valid context, run its action and exit
+            if (contextIndex >= 0 && contextIndex < _contexts.Count) {
+                // null actions indicate clickthrough
+                Action action = _contexts[contextIndex].Item3;
+                if (action != null) {
+                    action();
+                    return;
+                }
+            }
+
+            // If we haven't returned out, delegate to base
+            base.OnLeftMouseButtonReleased(e);
         }
 
         protected override void OnClick(MouseEventArgs e) {
