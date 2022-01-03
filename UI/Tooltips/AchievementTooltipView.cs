@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Blish_HUD;
 using Blish_HUD.Common.UI.Views;
 using Blish_HUD.Controls;
@@ -100,14 +101,36 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
             if (_achievement == null) return;
 
             _achievementNameLabel.Text        = _achievement.Name;
-            _achievementDescriptionLabel.Text = _achievement.Description;
-            _achievementRequirementLabel.Text = _achievement.Requirement;
+            _achievementDescriptionLabel.Text = CleanMessage(_achievement.Description);
+            _achievementRequirementLabel.Text = CleanMessage(_achievement.Requirement);
 
             _achievementNameLabel.Height       = string.IsNullOrEmpty(_achievement.Description) ? _categoryIconImage.Height : _categoryIconImage.Height / 2;
             _achievementDescriptionLabel.Width = Math.Max(_achievementNameLabel.Width, 200);
             _achievementRequirementLabel.Width = new[] { _achievementNameLabel.Right + 8, _achievementDescriptionLabel.Right + 8, 300 }.Max();
 
             _achievementRequirementLabel.Top = Math.Max(_achievementDescriptionLabel.Bottom + 8, _categoryIconImage.Bottom + 8);
+        }
+
+        static string CleanMessage(string message) {
+            // Perform manipulations on the cleaned message
+            string cleanedMessage = message;
+
+            // This Regex catches both the color and raw text of colored segments
+            string pattern = @"<c[=@][@=]?([^>]+)>(.*?)(<\/?c\/?>|$)";
+            MatchCollection colorCatches = Regex.Matches(cleanedMessage, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+            foreach (Match match in colorCatches) {
+                GroupCollection groups = match.Groups;
+                string rawText = groups[2].Value;
+
+                // Just strip out the codes entirely
+                cleanedMessage = cleanedMessage.Replace(match.Value, rawText);
+            }
+
+            // Next, replace any <br> tags with \n
+            // Also crushes multiple linebreaks into a single linebreak
+            cleanedMessage = Regex.Replace(cleanedMessage, @"(<br ?\/?>)+", "\n", RegexOptions.IgnoreCase);
+            return cleanedMessage;
         }
 
     }
