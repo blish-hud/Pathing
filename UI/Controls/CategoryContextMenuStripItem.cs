@@ -57,10 +57,6 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private void AddAchievementContext(int achievementId) {
             if (achievementId < 0) return;
 
-            PathingModule.Instance.Gw2ApiManager.Gw2ApiClient.V2.Achievements.GetAsync(achievementId).ContinueWith((achievementTask) => {
-                this.BasicTooltipText = $"[Achievement]\r\n\r\n {DrawUtil.WrapText(GameService.Content.DefaultFont14, achievementTask.Result.Description, 300)}\r\n\r\n{DrawUtil.WrapText(GameService.Content.DefaultFont14, achievementTask.Result.Requirement, 300)}";
-            }, TaskContinuationOptions.NotOnFaulted);
-
             // Add the icon showing this marker is tied to an achievement
             _contexts.Add((PathingModule.Instance.ContentsManager.GetTexture(@"png/context/155062.png"), "", null));
 
