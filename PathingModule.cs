@@ -138,18 +138,10 @@ namespace BhModule.Community.Pathing {
             return new SettingsHintView((_settingsWindow.Show, _watcher));
         }
 
-        protected override void OnModuleLoaded(EventArgs e) {
-            MessageBox.Show("hi", GameService.Graphics.GraphicsDeviceManager.PreferredBackBufferFormat.ToString(), new string[] {"OK"});
-
-            // Base handler must be called
-            base.OnModuleLoaded(e);
-        }
-
         protected override void Update(GameTime gameTime) {
             _watcher?.Update(gameTime);
         }
 
-        /// <inheritdoc />
         protected override void Unload() {
             _watcher?.Unload();
             _pathingIcon?.Dispose();
