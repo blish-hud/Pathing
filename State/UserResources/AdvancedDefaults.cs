@@ -1,4 +1,6 @@
-﻿namespace BhModule.Community.Pathing.State.UserResources {
+﻿using System;
+
+namespace BhModule.Community.Pathing.State.UserResources {
 
     /// <summary>
     /// Additional advanced settings which do not have a place in the UI yet.
@@ -7,7 +9,7 @@
 
         public const string FILENAME = "advanced.yaml";
 
-        public string[] MarkerLoadPaths { get; set; }
+        public string[] MarkerLoadPaths { get; set; } = Array.Empty<string>();
 
     }
 }

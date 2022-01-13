@@ -1,6 +1,6 @@
 {
   "name": "Pathing",
-  "version": "0.17.0",
+  "version": "0.17.2",
   "namespace": "bh.community.pathing",
   "package": "Pathing.dll",
   "manifest_version": 1,

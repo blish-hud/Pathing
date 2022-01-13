@@ -119,7 +119,7 @@ namespace BhModule.Community.Pathing {
 
         private async Task LoadAllPacks() {
             // Load from base and advanced markers paths
-            foreach (string markerDir in _packState.UserResourceStates.Advanced.MarkerLoadPaths.Concat(new [] {_watchPath})) {
+            foreach (string markerDir in (_packState.UserResourceStates.Advanced.MarkerLoadPaths ?? Array.Empty<string>()).Concat(new [] {_watchPath})) {
                 await LoadPackedPackFiles(Directory.GetFiles(markerDir, "*.zip",  SearchOption.AllDirectories));
                 await LoadPackedPackFiles(Directory.GetFiles(markerDir, "*.taco", SearchOption.AllDirectories));
                 await LoadUnpackedPackFiles(markerDir);
