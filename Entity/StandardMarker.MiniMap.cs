@@ -27,14 +27,15 @@ namespace BhModule.Community.Pathing.Entity {
             bool allowedOnMiniMap             = this.MiniMapVisibility && miniMapMarkerVisibilityLevel != MapVisibilityLevel.Never;
             if (!isMapOpen && !allowedOnMiniMap && miniMapMarkerVisibilityLevel != MapVisibilityLevel.Always) return null;
 
-            if (!this.ScaleOnMapWithZoom) {
-                // Zoom scaling is disabled, so we override back to 1.
-                scale = 1f;
-            }
-
             var location = GetScaledLocation(this.Position.X, this.Position.Y, scale, offsets);
 
             if (!bounds.Contains(location)) return null;
+
+            if (!this.ScaleOnMapWithZoom) {
+                // Zoom scaling is disabled, so we override back to 1
+                // Only do this after setting the location
+                scale = 1f;
+            }
 
             float drawScale = (float)(1f / scale);
 
