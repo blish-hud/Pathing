@@ -120,7 +120,12 @@ namespace BhModule.Community.Pathing.Utility {
 
         public static CronExpression GetValueAsCronExpression(this IAttribute attribute) {
             try {
-                return CronExpression.Parse(attribute.GetValueAsString());
+                string strAttribute = attribute.GetValueAsString();
+                int    segmentCount = strAttribute.Split(new [] {' '}, StringSplitOptions.RemoveEmptyEntries).Length;
+
+                return segmentCount > 5 
+                           ? CronExpression.Parse(attribute.GetValueAsString(), CronFormat.IncludeSeconds) 
+                           : CronExpression.Parse(attribute.GetValueAsString());
             } catch (CronFormatException ex) {
                 Logger.Warn(ex, "Failed to parse value {attributeValue} as a cron expression.", attribute.GetValueAsString());
             }

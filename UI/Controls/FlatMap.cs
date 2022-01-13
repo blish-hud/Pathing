@@ -88,7 +88,8 @@ namespace BhModule.Community.Pathing.Entity {
             TriggerFadeIn();
             if (_activeContextMenu != null) { _activeContextMenu.Visible = false; }
 
-            _lastCameraPos = GameService.Gw2Mumble.PlayerCamera.Position.Z;
+            _lastCameraPos    = GameService.Gw2Mumble.PlayerCamera.Position.Z;
+            _mapFallTriggered = false;
         }
 
         protected override void OnRightMouseButtonPressed(MouseEventArgs e) {
@@ -133,14 +134,29 @@ namespace BhModule.Community.Pathing.Entity {
 
         protected override CaptureType CapturesInput() => CaptureType.Mouse | CaptureType.DoNotBlock;
 
+        private bool _mapFallTriggered = false;
+
         public override void DoUpdate(GameTime gameTime) {
             UpdateBounds();
 
             if (GameService.Gw2Mumble.UI.IsMapOpen) {
-                if (GameService.Gw2Mumble.PlayerCharacter.CurrentMount == MountType.None
-                    && GameService.Overlay.CurrentGameTime?.TotalGameTime.TotalSeconds - _lastMapViewChanged > 1f
-                    && Math.Abs(_lastCameraPos - GameService.Gw2Mumble.PlayerCamera.Position.Z) > 0.1f) {
-                    this.Hide();
+                // We can detect the map closing earlier than the game reports it by monitoring the z position of the camera.
+                // This only works while unmounted, though.  This is good as it makes the transition less janky looking.
+                // First, we check that we're not mounted.
+                if (GameService.Gw2Mumble.PlayerCharacter.CurrentMount == MountType.None) {
+                    if (GameService.Overlay.CurrentGameTime?.TotalGameTime.TotalSeconds - _lastMapViewChanged < 1.2f) {
+                        // It takes about a second for the camera to animate out when the map is opened, so we want to get the final Z position.
+                        _lastCameraPos = GameService.Gw2Mumble.PlayerCamera.Position.Z;
+                    } else if (Math.Abs(_lastCameraPos - GameService.Gw2Mumble.PlayerCamera.Position.Z) > 0.25f) {
+                        // If it triggers to quickly, the player was likely jumping and we want to avoid accidentally triggering.
+                        // This gives us about a 0.3 second buffer for there to be an issue for us to activate the failsafe.
+                        if (GameService.Overlay.CurrentGameTime?.TotalGameTime.TotalSeconds - _lastMapViewChanged < 1.5f) {
+                            _mapFallTriggered = true;
+                        } else if (!_mapFallTriggered) {
+                            // Only activates if the failsafe hasn't triggered and the Z has changed beyond 1.5 seconds.
+                            this.Hide();
+                        }
+                    }
                 }
 
                 _lastCameraPos = GameService.Gw2Mumble.PlayerCamera.Position.Z;

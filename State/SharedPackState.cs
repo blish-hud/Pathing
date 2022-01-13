@@ -36,8 +36,11 @@ namespace BhModule.Community.Pathing {
 
         public  SafeList<IPathingEntity> Entities { get; private set; } = new();
 
-        private bool _initialized = false;
-        private bool _loadingPack = false;
+        private ManagedState[] _managedStates;
+
+        private bool _initialized  = false;
+        private bool _loadingPack  = false;
+        private bool _loadingState = false;
 
         public SharedPackState(ModuleSettings moduleSettings) {
             this.UserConfiguration = moduleSettings;
@@ -47,10 +50,19 @@ namespace BhModule.Community.Pathing {
             Blish_HUD.Common.Gw2.KeyBindings.Interact.Activated += OnInteractPressed;
         }
 
-        private ManagedState[] _managedStates;
+        public async Task Load() {
+            await InitStates();
+        }
 
         private async Task ReloadStates() {
+            if (!_initialized || _loadingState)
+                return;
+
+            _loadingState = true;
+
             await Task.WhenAll(_managedStates.Select(state => state.Reload()));
+
+            _loadingState = false;
         }
 
         private async Task InitStates() {
@@ -86,11 +98,7 @@ namespace BhModule.Community.Pathing {
 
             this.RootCategory = collection.Categories;
 
-            if (!_initialized) {
-                await InitStates();
-            } else {
-                await ReloadStates();
-            }
+            await ReloadStates();
 
             await InitPointsOfInterest(collection.PointsOfInterest);
 

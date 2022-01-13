@@ -1,5 +1,4 @@
 ﻿using System;
-using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
 using Cronos;
 using Microsoft.Xna.Framework;

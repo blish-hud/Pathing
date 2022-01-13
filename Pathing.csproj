@@ -250,6 +250,7 @@
     <Compile Include="State\EditorStates.cs" />
     <Compile Include="State\PackLoadOption.cs" />
     <Compile Include="State\UiStates.cs" />
+    <Compile Include="State\UserResources\AdvancedDefaults.cs" />
     <Compile Include="State\UserResources\Converters\ColorConverter.cs" />
     <Compile Include="State\UserResources\IgnoreDefaults.cs" />
     <Compile Include="State\UserResources\Population\MarkerPopulationDefaults.cs" />

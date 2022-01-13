@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Controls;
 using Blish_HUD;
@@ -18,8 +17,6 @@ namespace BhModule.Community.Pathing {
     public class PackInitiator : IUpdatable {
 
         private static readonly Logger Logger = Logger.GetLogger<PackInitiator>();
-
-        private const int LOAD_RETRY_COUNTS = 3;
 
         private readonly string            _watchPath;
         private readonly ModuleSettings    _moduleSettings;
@@ -99,6 +96,7 @@ namespace BhModule.Community.Pathing {
         }
 
         public async Task Init() {
+            await _packState.Load();
             await LoadAllPacks();
         }
 
@@ -114,23 +112,18 @@ namespace BhModule.Community.Pathing {
             }
         }
 
-        private async Task LoadWebPackFile() {
-            var webReader = new WebReader("https://webpacks.blishhud.com/reactif-en/");
-            await webReader.InitWebReader();
-
-            _packs.Add(Pack.FromIDataReader(webReader));
-        }
-
         private async Task UnloadStateAndCollection() {
             _sharedPackCollection?.Unload();
             await _packState.Unload();
         }
 
         private async Task LoadAllPacks() {
-            await LoadPackedPackFiles(Directory.GetFiles(_watchPath, "*.zip", SearchOption.AllDirectories));
-            await LoadPackedPackFiles(Directory.GetFiles(_watchPath, "*.taco", SearchOption.AllDirectories));
-            //await LoadWebPackFile();
-            await LoadUnpackedPackFiles(_watchPath);
+            // Load from base and advanced markers paths
+            foreach (string markerDir in _packState.UserResourceStates.Advanced.MarkerLoadPaths.Concat(new [] {_watchPath})) {
+                await LoadPackedPackFiles(Directory.GetFiles(markerDir, "*.zip",  SearchOption.AllDirectories));
+                await LoadPackedPackFiles(Directory.GetFiles(markerDir, "*.taco", SearchOption.AllDirectories));
+                await LoadUnpackedPackFiles(markerDir);
+            }
 
             // If the module loads at launch, this can end up firing twice.
             // If the module loads after launch (manually enabled), we need this to populate the current map.
@@ -150,7 +143,6 @@ namespace BhModule.Community.Pathing {
         private void LoadMapFromEachPackInBackground(int mapId) {
             lock (this) {
                 if (mapId == _lastMap) {
-                    Debugger.Break();
                     return;
                 };
                 _lastMap = mapId;
@@ -163,7 +155,7 @@ namespace BhModule.Community.Pathing {
             thread.Start();
         }
 
-        private async Task LoadMapFromEachPack(int mapId, int retry = 3) {
+        private async Task LoadMapFromEachPack(int mapId) {
             _isLoading = true;
 
             var loadTimer = Stopwatch.StartNew();
@@ -173,19 +165,26 @@ namespace BhModule.Community.Pathing {
 
             await PrepareState(mapId);
 
+            Pack lastPack = null;
+
             try {
                 foreach (var pack in _packs.ToArray()) {
+                    lastPack = pack;
                     _loadingIndicator.Report($"Loading {pack.Name}...");
                     await pack.LoadMapAsync(mapId, _sharedPackCollection, _packReaderSettings);
+                }
+            } catch (FileNotFoundException e) {
+                Logger.Warn("Pack file '{packPath}' failed to load because it could not be found.", e.FileName);
+
+                if (lastPack != null) {
+                    _packs.Remove(lastPack);
                 }
             } catch (Exception e) {
                 Logger.Warn(e, "Loading pack failed.");
 
-                if (retry > 0) {
-                    await LoadMapFromEachPack(retry - 1);
+                if (lastPack != null) {
+                    _packs.Remove(lastPack);
                 }
-
-                Logger.Error($"Loading pack failed after {LOAD_RETRY_COUNTS} attempts.");
             }
 
             _loadingIndicator.Report("Finalizing marker collection...");

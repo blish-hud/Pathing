@@ -15,6 +15,11 @@ namespace BhModule.Community.Pathing.State {
         private static readonly Logger Logger = Logger.GetLogger<UserResourceStates>();
 
         /// <summary>
+        /// <inheritdoc cref="AdvancedDefaults"/>
+        /// </summary>
+        public AdvancedDefaults Advanced { get; set; }
+
+        /// <summary>
         /// <inheritdoc cref="PopulationDefaults"/>
         /// </summary>
         public PopulationDefaults Population { get; set; }
@@ -57,6 +62,7 @@ namespace BhModule.Community.Pathing.State {
                                 .WithTypeConverter(new ColorConverter())
                                 .Build();
 
+            await ExportDefaultState(Path.Combine(userResourceDir, AdvancedDefaults.FILENAME),   yamlSerializer, new AdvancedDefaults());
             await ExportDefaultState(Path.Combine(userResourceDir, PopulationDefaults.FILENAME), yamlSerializer, new PopulationDefaults());
             await ExportDefaultState(Path.Combine(userResourceDir, IgnoreDefaults.FILENAME),     yamlSerializer, new IgnoreDefaults());
             await ExportDefaultState(Path.Combine(userResourceDir, StaticValues.FILENAME),       yamlSerializer, new StaticValues());
@@ -84,7 +90,8 @@ namespace BhModule.Community.Pathing.State {
                                   .WithTypeConverter(new ColorConverter())
                                   .IgnoreUnmatchedProperties()
                                   .Build();
-            
+
+            this.Advanced   = await LoadState(Path.Combine(userResourceDir, AdvancedDefaults.FILENAME),   yamlDeserializer, () => new AdvancedDefaults());
             this.Population = await LoadState(Path.Combine(userResourceDir, PopulationDefaults.FILENAME), yamlDeserializer, () => new PopulationDefaults());
             this.Ignore     = await LoadState(Path.Combine(userResourceDir, IgnoreDefaults.FILENAME),     yamlDeserializer, () => new IgnoreDefaults());
             this.Static     = await LoadState(Path.Combine(userResourceDir, StaticValues.FILENAME),       yamlDeserializer, () => new StaticValues());

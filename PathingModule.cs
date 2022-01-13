@@ -139,6 +139,8 @@ namespace BhModule.Community.Pathing {
         }
 
         protected override void OnModuleLoaded(EventArgs e) {
+            MessageBox.Show("hi", GameService.Graphics.GraphicsDeviceManager.PreferredBackBufferFormat.ToString(), new string[] {"OK"});
+
             // Base handler must be called
             base.OnModuleLoaded(e);
         }

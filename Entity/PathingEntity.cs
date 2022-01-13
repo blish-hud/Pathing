@@ -24,7 +24,8 @@ namespace BhModule.Community.Pathing.Entity {
         [Browsable(false)]
         public bool DebugRender => _packState.EditorStates.SelectedPathingEntities.Contains(this);
 
-        [Browsable(false)]
+        [Description("Indicates the distance the entity is from the player.")]
+        [Category("State Debug")]
         public float DistanceToPlayer { get; set; } = -1;
 
         [Browsable(false)]
