@@ -166,4 +166,10 @@
   <data name="Setting_MapShowTrailsOnFullscreen" xml:space="preserve">
     <value>Show Trails on Fullscreen Map</value>
   </data>
+  <data name="Info_HiddenCategories" xml:space="preserve">
+    <value>Categories hidden because they are for markers on a different map.
+
+Click to view them or you can disable this filter by toggling:
+Pathing Module Settings &gt; Show Categories From All Maps.</value>
+  </data>
 </root>

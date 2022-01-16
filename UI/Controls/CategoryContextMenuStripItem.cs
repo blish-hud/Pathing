@@ -26,13 +26,16 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private readonly IPackState      _packState;
         private readonly PathingCategory _pathingCategory;
 
+        private readonly bool _forceShowAll = false;
+
         private readonly List<(Texture2D, string, Action)> _contexts;
 
-        public CategoryContextMenuStripItem(IPackState packState, PathingCategory pathingCategory) {
+        public CategoryContextMenuStripItem(IPackState packState, PathingCategory pathingCategory, bool forceShowAll) {
             _packState       = packState;
             _pathingCategory = pathingCategory;
-
-            _contexts = new List<(Texture2D, string, Action)>();
+            
+            _contexts     = new List<(Texture2D, string, Action)>();
+            _forceShowAll = forceShowAll;
 
             BuildCategoryMenu();
             DetectAndBuildContexts();
@@ -44,8 +47,9 @@ namespace BhModule.Community.Pathing.UI.Controls {
             if (_packState.CategoryStates == null) return;
 
             // TODO: Yikes, filter is getting called a lot.  Let's pass this down from the last time we calcualted it.
-            if (_pathingCategory.Any(c => CategoryUtil.UiCategoryIsNotFiltered(c, _packState))) {
-                this.Submenu = new CategoryContextMenuStrip(_packState, _pathingCategory);
+            if (_forceShowAll && _pathingCategory.Any() 
+             || _pathingCategory.Any(c => CategoryUtil.UiCategoryIsNotFiltered(c, _packState))) {
+                this.Submenu = new CategoryContextMenuStrip(_packState, _pathingCategory, _forceShowAll);
             }
 
             if (!_pathingCategory.IsSeparator) {

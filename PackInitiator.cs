@@ -56,7 +56,7 @@ namespace BhModule.Community.Pathing {
                 CanCheck = true,
                 Checked = _moduleSettings.GlobalPathablesEnabled.Value,
                 Submenu = isAnyMarkers
-                    ? new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories)
+                    ? new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories, false)
                     : null
             };
 

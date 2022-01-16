@@ -70,6 +70,18 @@ namespace BhModule.Community.Pathing {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Categories hidden because they are for markers on a different map.
+        ///
+        ///Click to view them or you can disable this filter by toggling:
+        ///Pathing Module Settings &gt; Show Categories From All Maps..
+        /// </summary>
+        internal static string Info_HiddenCategories {
+            get {
+                return ResourceManager.GetString("Info_HiddenCategories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Categories.
         /// </summary>
         internal static string Repo_Categories {

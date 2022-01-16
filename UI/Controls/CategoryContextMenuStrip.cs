@@ -12,17 +12,21 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private readonly IPackState      _packState;
         private readonly PathingCategory _pathingCategory;
 
-        public CategoryContextMenuStrip(IPackState packState, PathingCategory pathingCategory) {
+        private bool _forceShowAll = false;
+
+        public CategoryContextMenuStrip(IPackState packState, PathingCategory pathingCategory, bool forceShowAll) {
             _packState       = packState;
             _pathingCategory = pathingCategory;
+
+            _forceShowAll = forceShowAll;
         }
 
         // TODO: Make category filtering less janky.
 
-        private (IEnumerable<PathingCategory> SubCategories, int Skipped) GetSubCategories() {
+        private (IEnumerable<PathingCategory> SubCategories, int Skipped) GetSubCategories(bool forceShowAll = false) {
             var subCategories = _pathingCategory.Where(cat => cat.LoadedFromPack);
 
-            if (_packState.UserConfiguration.PackShowCategoriesFromAllMaps.Value) {
+            if (_packState.UserConfiguration.PackShowCategoriesFromAllMaps.Value || forceShowAll) {
                 return (subCategories, 0);
             }
 
@@ -57,22 +61,38 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         protected override void OnShown(EventArgs e) {
-            (IEnumerable<PathingCategory> subCategories, int skipped) = GetSubCategories();
+            (IEnumerable<PathingCategory> subCategories, int skipped) = GetSubCategories(_forceShowAll);
 
             foreach (var subCategory in subCategories) {
-                this.AddMenuItem(new CategoryContextMenuStripItem(_packState, subCategory));
+                this.AddMenuItem(new CategoryContextMenuStripItem(_packState, subCategory, _forceShowAll));
             }
 
             if (skipped > 0 && _packState.UserConfiguration.PackShowWhenCategoriesAreFiltered.Value) {
-                this.AddMenuItem(new ContextMenuStripItem() {
-                                     // LOCALIZE: Skipped categories menu item
-                                     Text    = $"{skipped} Categories Are Hidden",
-                                     Enabled = false,
-                                     BasicTooltipText = "Categories hidden because they are for markers on a different map.\n\nYou can disable this filter by toggling\nPathing Module Settings > Show Categories From All Maps."
-                                 });
+                var showAllSkippedCategories = new ContextMenuStripItem() {
+                    // LOCALIZE: Skipped categories menu item
+                    Text             = $"{skipped} Categories Are Hidden",
+                    Enabled          = false,
+                    CanCheck         = true,
+                    BasicTooltipText = Strings.Info_HiddenCategories
+                };
+
+                this.AddMenuItem(showAllSkippedCategories);
+
+                // The control is disabled, so the .Click event won't fire.  We cheat by just doing LeftMouseButtonReleased.
+                showAllSkippedCategories.LeftMouseButtonReleased += ShowAllSkippedCategories_LeftMouseButtonReleased;
             }
 
             base.OnShown(e);
+        }
+
+        private void ShowAllSkippedCategories_LeftMouseButtonReleased(object sender, Blish_HUD.Input.MouseEventArgs e) {
+            this.ClearChildren();
+
+            (IEnumerable<PathingCategory> subCategories, int skipped) = GetSubCategories(true);
+
+            foreach (var subCategory in subCategories) {
+                this.AddMenuItem(new CategoryContextMenuStripItem(_packState, subCategory, true));
+            }
         }
 
         protected override void OnHidden(EventArgs e) {
@@ -81,7 +101,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             }
 
             this.ClearChildren();
-            
+
             base.OnHidden(e);
         }
 
