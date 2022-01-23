@@ -119,7 +119,11 @@ namespace BhModule.Community.Pathing {
         private async Task InitPointsOfInterest(IList<PointOfInterest> pois) {
             var poiBag = new ConcurrentBag<IPathingEntity>();
 
-            await pois.AsParallel().ParallelForEachAsync(PreloadTextures, Environment.ProcessorCount);
+            // Avoid locking things up too much on lower-spec systems.
+            await pois.AsParallel()
+                      .ParallelForEachAsync(PreloadTextures, Math.Min(1, Environment.ProcessorCount > 8 
+                                                                                          ? Environment.ProcessorCount - 2 
+                                                                                          : Environment.ProcessorCount / 2));
 
             pois.AsParallel()
                 .Select(BuildEntity)

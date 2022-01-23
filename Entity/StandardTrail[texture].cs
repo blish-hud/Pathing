@@ -25,7 +25,7 @@ namespace BhModule.Community.Pathing.Entity {
                 if (this.Texture != null && this.TrailSampleColor == Color.White) {
                     List<QuantizedColor> palette = ColorThief.GetPalette(this.Texture);
                     palette.Sort((color, color2) => color2.Population.CompareTo(color.Population));
-                    
+
                     Color? dominantColor = palette.FirstOrDefault()?.Color;
 
                     if (dominantColor != null) {

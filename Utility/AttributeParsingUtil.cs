@@ -24,8 +24,9 @@ namespace BhModule.Community.Pathing.Utility {
 
         private static IEnumerable<string> SplitAttributeValue(this IAttribute attribute) => attribute.Value.Split(ATTRIBUTEVALUE_DELIMITER);
 
-        private static T InternalGetValueAsEnum<T>(string attributeValue) where T : struct {
-            return Enum.TryParse(attributeValue, true, out T value) ? value : default;
+        private static T InternalGetValueAsEnum<T>(string attributeValue) where T : Enum {
+            //return Enum.TryParse(attributeValue, true, out T value) ? value : default;
+            return EnumUtil.TryParseCacheEnum(attributeValue, out T value) ? value : default;
         }
 
         private static int InternalGetValueAsInt(string attributeValue, int @default = default) {
@@ -133,11 +134,11 @@ namespace BhModule.Community.Pathing.Utility {
             return null;
         }
 
-        public static T GetValueAsEnum<T>(this IAttribute attribute) where T : struct {
+        public static T GetValueAsEnum<T>(this IAttribute attribute) where T : Enum {
             return InternalGetValueAsEnum<T>(attribute.Value);
         }
 
-        public static IEnumerable<T> GetValueAsEnums<T>(this IAttribute attribute) where T : struct {
+        public static IEnumerable<T> GetValueAsEnums<T>(this IAttribute attribute) where T : Enum {
             return SplitAttributeValue(attribute).Select(InternalGetValueAsEnum<T>);
         }
 

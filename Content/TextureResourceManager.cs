@@ -10,8 +10,6 @@ using TmfLib;
 namespace BhModule.Community.Pathing.Content {
     public class TextureResourceManager : IPackResourceManager {
 
-        private static readonly Logger Logger = Logger.GetLogger<TextureResourceManager>();
-
         private static readonly Texture2D _textureFailedToLoad = PathingModule.Instance.ContentsManager.GetTexture(@"png\missing-texture.png");
 
         private static readonly ConcurrentDictionary<IPackResourceManager, TextureResourceManager> _textureResourceManagerLookup = new();
@@ -44,11 +42,15 @@ namespace BhModule.Community.Pathing.Content {
             return await _packResourceManager.LoadResourceAsync(resourcePath);
         }
 
-        private static void LoadTexture(TaskCompletionSource<Texture2D> textureTcs, byte[] textureData) {
+        public async Task<Stream> LoadResourceStreamAsync(string resourcePath) {
+            return await _packResourceManager.LoadResourceStreamAsync(resourcePath);
+        }
+
+        private static void LoadTexture(TaskCompletionSource<Texture2D> textureTcs, Stream textureStream) {
             GameService.Graphics.QueueMainThreadRender((graphicsDevice) => {
                 try {
                     // TODO: Move the blending to the shader so that we don't have to slow load these.
-                    textureTcs.SetResult(TextureUtil.FromStreamPremultiplied(graphicsDevice, new MemoryStream(textureData)));
+                    textureTcs.SetResult(TextureUtil.FromStreamPremultiplied(graphicsDevice, textureStream));
                 } catch (Exception) {
                     textureTcs.SetResult(_textureFailedToLoad);
                 }
@@ -61,7 +63,7 @@ namespace BhModule.Community.Pathing.Content {
 
                 _textureCache[texturePath] = textureTcs;
 
-                LoadTexture(textureTcs, await LoadResourceAsync(texturePath));
+                LoadTexture(textureTcs, await LoadResourceStreamAsync(texturePath));
             }
         }
 

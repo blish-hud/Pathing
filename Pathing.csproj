@@ -296,6 +296,7 @@
     <Compile Include="Utility\ColorThief\VBoxComparer.cs" />
     <Compile Include="Utility\ColorThief\VBoxCountComparer.cs" />
     <Compile Include="Utility\DataDirUtil.cs" />
+    <Compile Include="Utility\EnumUtil.cs" />
     <Compile Include="Utility\FileUtil.cs" />
     <Compile Include="Utility\GuidExtensions.cs" />
     <Compile Include="Utility\GuidExtensions.cs" />
