@@ -210,7 +210,7 @@ namespace BhModule.Community.Pathing.Entity {
             double offsetX = bounds.X + (bounds.Width  / 2d);
             double offsetY = bounds.Y + (bounds.Height / 2d);
 
-            float opacity = MathHelper.Clamp((float)(GameService.Overlay.CurrentGameTime.TotalGameTime.TotalSeconds - _lastMapViewChanged) / 0.65f, 0f, 1f) * 0.8f;
+            float opacity = MathHelper.Clamp((float)(GameService.Overlay.CurrentGameTime.TotalGameTime.TotalSeconds - _lastMapViewChanged) / 0.65f, 0f, 1f);
 
             // TODO: Make this more based on relative vertical axis difference.
             // TODO: Revise how we do this - tons of memory allocations.
