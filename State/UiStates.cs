@@ -73,7 +73,7 @@ namespace BhModule.Community.Pathing.State {
         }
 
         private void UpdateInfoText() {
-            string currentInfo = _infoList.LastOrDefault() ?? string.Empty;
+            string currentInfo = _infoList.ToList().LastOrDefault() ?? string.Empty;
 
             if (string.IsNullOrEmpty(currentInfo)) {
                 _info.Hide(true);
