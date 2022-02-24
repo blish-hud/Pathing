@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using BhModule.Community.Pathing.UI.Presenters;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
@@ -14,6 +15,7 @@ namespace BhModule.Community.Pathing.UI.Views {
         public event EventHandler<EventArgs> OpenSettingsClicked;
 
         private StandardButton _bttnOpenSettings;
+        private StandardButton _bttnOpenSetupGuide;
 
         public SettingsHintView() { /* NOOP */  }
 
@@ -23,21 +25,38 @@ namespace BhModule.Community.Pathing.UI.Views {
 
         protected override void Build(Container buildPanel) {
             _bttnOpenSettings = new StandardButton() {
-                Text = "Open Settings",
+                Text   = "Open Settings",
+                Width  = 192,
                 Parent = buildPanel,
             };
 
-            _bttnOpenSettings.Location = new Point(Math.Max(buildPanel.Width / 2 - _bttnOpenSettings.Width / 2, 20), Math.Max(buildPanel.Height / 2 - _bttnOpenSettings.Height, 20));
+            _bttnOpenSetupGuide = new StandardButton() {
+                Text   = "Open Setup Guide",
+                Width  = _bttnOpenSettings.Width,
+                Parent = buildPanel,
+            };
 
-            _bttnOpenSettings.Click += _bttnOpenSettings_Click;
+            _bttnOpenSettings.Location   = new Point(Math.Max(buildPanel.Width / 2 - _bttnOpenSettings.Width / 2, 20), Math.Max(buildPanel.Height / 2 - _bttnOpenSettings.Height, 20) - _bttnOpenSettings.Height - 10);
+            _bttnOpenSetupGuide.Location = new Point(_bttnOpenSettings.Left,                                           _bttnOpenSettings.Bottom                                       + 10);
+
+            _bttnOpenSettings.Click   += _bttnOpenSettings_Click;
+            _bttnOpenSetupGuide.Click += BttnOpenSetupGuideClick;
         }
 
         private void _bttnOpenSettings_Click(object sender, Blish_HUD.Input.MouseEventArgs e) {
             this.OpenSettingsClicked?.Invoke(this, e);
         }
 
+        private void BttnOpenSetupGuideClick(object sender, Blish_HUD.Input.MouseEventArgs e) {
+            Process.Start("https://link.blishhud.com/pathingsetup");
+        }
+
         protected override void Unload() {
-            _bttnOpenSettings.Click -= _bttnOpenSettings_Click;
+            if (_bttnOpenSettings != null)
+                _bttnOpenSettings.Click -= _bttnOpenSettings_Click;
+
+            if (_bttnOpenSetupGuide != null)
+                _bttnOpenSetupGuide.Click -= BttnOpenSetupGuideClick;
         }
     }
 }

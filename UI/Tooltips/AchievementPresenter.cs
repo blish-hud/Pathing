@@ -26,7 +26,7 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
                 if (attempt > 0) {
                     return await AttemptLoadAchievement(progress, --attempt);
                 } else {
-                    Logger.Error(ex, "Failed to load achievement details.");
+                    Logger.Warn(ex, "Failed to load details for achievement with ID {achievementId}.", this.Model);
                     return false;
                 }
             }

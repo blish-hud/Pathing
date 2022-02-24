@@ -48,6 +48,11 @@ namespace BhModule.Community.Pathing.Content {
 
         private static void LoadTexture(TaskCompletionSource<Texture2D> textureTcs, Stream textureStream) {
             GameService.Graphics.QueueMainThreadRender((graphicsDevice) => {
+                if (textureStream == null) {
+                    textureTcs.SetResult(_textureFailedToLoad);
+                    return;
+                }
+
                 try {
                     // TODO: Move the blending to the shader so that we don't have to slow load these.
                     textureTcs.SetResult(TextureUtil.FromStreamPremultiplied(graphicsDevice, textureStream));
@@ -62,7 +67,7 @@ namespace BhModule.Community.Pathing.Content {
                 var textureTcs = new TaskCompletionSource<Texture2D>();
 
                 _textureCache[texturePath] = textureTcs;
-
+                Logger.GetLogger<TextureResourceManager>().Debug(texturePath);
                 LoadTexture(textureTcs, await LoadResourceStreamAsync(texturePath));
             }
         }

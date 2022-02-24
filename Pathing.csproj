@@ -428,6 +428,10 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Etm.Sdk" />
+    <Reference Include="Etm.Sdk">
+      <HintPath>..\etm.sdk\bin\Release\netstandard2.0\Etm.Sdk.dll</HintPath>
+    </Reference>
     <Reference Include="Flurl, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Flurl.2.8.2\lib\net40\Flurl.dll</HintPath>
       <Private>False</Private>
