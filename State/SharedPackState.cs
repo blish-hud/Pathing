@@ -121,7 +121,7 @@ namespace BhModule.Community.Pathing {
 
             // Avoid locking things up too much on lower-spec systems.
             await pois.AsParallel()
-                      .ParallelForEachAsync(PreloadTextures, Math.Min(1, Environment.ProcessorCount > 8 
+                      .ParallelForEachAsync(PreloadTextures, Math.Max(1, Environment.ProcessorCount > 8 
                                                                                           ? Environment.ProcessorCount - 2 
                                                                                           : Environment.ProcessorCount / 2));
 
