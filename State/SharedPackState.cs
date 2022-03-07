@@ -128,7 +128,7 @@ namespace BhModule.Community.Pathing {
             pois.AsParallel()
                 .Select(BuildEntity)
                 .ForAll(poiBag.Add);
-
+            
             this.Entities.AddRange(poiBag);
             GameService.Graphics.World.AddEntities(poiBag);
 
@@ -141,7 +141,7 @@ namespace BhModule.Community.Pathing {
 
             this.SharedMarkerEffect.FadeTexture = PathingModule.Instance.ContentsManager.GetTexture(@"png\42975.png");
         }
-
+        
         private void OnInteractPressed(object sender, EventArgs e) {
             // TODO: OnInteractPressed needs a better place.
             foreach (var entity in this.Entities) {
