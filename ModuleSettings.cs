@@ -57,7 +57,7 @@ namespace BhModule.Community.Pathing {
         public SettingEntry<bool>                        PackAllowMarkersToAutomaticallyHide      { get; private set; }
         public SettingEntry<MarkerClipboardConsentLevel> PackMarkerConsentToClipboard             { get; private set; }
         public SettingEntry<bool>                        PackAllowMarkersToAnimate                { get; private set; }
-        public SettingEntry<bool>                        PackShowCategoriesFromAllMaps            { get; private set; }
+        public SettingEntry<bool>                        PackEnableSmartCategoryFilter            { get; private set; }
         public SettingEntry<bool>                        PackShowWhenCategoriesAreFiltered        { get; private set; }
 
         private void InitPackSettings(SettingCollection settings) {
@@ -75,7 +75,7 @@ namespace BhModule.Community.Pathing {
             this.PackAllowMarkersToAutomaticallyHide      = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAutomaticallyHide),      true, () => Strings.Setting_PackAllowMarkersToAutomaticallyHide, () => "");
             this.PackMarkerConsentToClipboard             = this.PackSettings.DefineSetting(nameof(this.PackMarkerConsentToClipboard),             MarkerClipboardConsentLevel.Always, () => Strings.Setting_PackMarkerConsentToClipboard, () => "");
             this.PackAllowMarkersToAnimate                = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAnimate),                true, () => Strings.Setting_PackAllowMarkersToAnimate, () => "");
-            this.PackShowCategoriesFromAllMaps            = this.PackSettings.DefineSetting(nameof(this.PackShowCategoriesFromAllMaps),            false, () => Strings.Setting_PackShowCategoriesFromAllMaps, () => "");
+            this.PackEnableSmartCategoryFilter            = this.PackSettings.DefineSetting(nameof(this.PackEnableSmartCategoryFilter),            true, () => "Hide Irrelevant Categories", () => "If a category doesn't contain markers or trails relevant to the current map, the category is hidden.");
             this.PackShowWhenCategoriesAreFiltered        = this.PackSettings.DefineSetting(nameof(this.PackShowWhenCategoriesAreFiltered),        true, () => "Indicate when categories are hidden", () => "");
 
             this.PackMaxOpacityOverride.SetRange(0f, 1f);

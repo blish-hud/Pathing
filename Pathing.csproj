@@ -299,7 +299,6 @@
     <Compile Include="Utility\EnumUtil.cs" />
     <Compile Include="Utility\FileUtil.cs" />
     <Compile Include="Utility\GuidExtensions.cs" />
-    <Compile Include="Utility\GuidExtensions.cs" />
     <Compile Include="Utility\Gw2SharpModelExtensions.cs" />
     <Compile Include="Utility\EnumerableExtensions.cs" />
     <Compile Include="Utility\MapNavUtil.cs" />
@@ -576,8 +575,8 @@
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TmfLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\TmfLib.2.0.0\lib\netstandard2.0\TmfLib.dll</HintPath>
+    <Reference Include="TmfLib, Version=2.0.1.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>packages\TmfLib.2.0.1\lib\netstandard2.0\TmfLib.dll</HintPath>
     </Reference>
     <Reference Include="YamlDotNet, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
       <HintPath>packages\YamlDotNet.11.2.1\lib\net45\YamlDotNet.dll</HintPath>
@@ -602,20 +601,10 @@
     <Folder Include="ref\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TmfLib\TmfLib.csproj">
-      <Project>{d66aacb7-a2b7-4f13-9667-b1d7f1cf8848}</Project>
-      <Name>TmfLib</Name>
-    </ProjectReference>
-    <!-- Note that this is not a "normal" ProjectReference.
-         It needs the additional 'OutputItemType' and 'ReferenceOutputAssmbly' attributes. -->
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="License-2mgfx.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="License-NanoXml.htm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="License-NanoXml.htm" />
     <None Include="LICENSE.txt" />
     <None Include="README.md" />
     <None Include="Resources\add.png" />
@@ -693,6 +682,7 @@
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

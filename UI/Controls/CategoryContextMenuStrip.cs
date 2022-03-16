@@ -26,7 +26,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private (IEnumerable<PathingCategory> SubCategories, int Skipped) GetSubCategories(bool forceShowAll = false) {
             var subCategories = _pathingCategory.Where(cat => cat.LoadedFromPack);
 
-            if (_packState.UserConfiguration.PackShowCategoriesFromAllMaps.Value || forceShowAll) {
+            if (!_packState.UserConfiguration.PackEnableSmartCategoryFilter.Value || forceShowAll) {
                 return (subCategories, 0);
             }
 
@@ -70,10 +70,10 @@ namespace BhModule.Community.Pathing.UI.Controls {
             if (skipped > 0 && _packState.UserConfiguration.PackShowWhenCategoriesAreFiltered.Value) {
                 var showAllSkippedCategories = new ContextMenuStripItem() {
                     // LOCALIZE: Skipped categories menu item
-                    Text             = $"{skipped} Categories Are Hidden",
-                    Enabled          = false,
-                    CanCheck         = true,
-                    BasicTooltipText = Strings.Info_HiddenCategories
+                    Text = $"{skipped} Categories Are Hidden",
+                    Enabled = false,
+                    CanCheck = true,
+                    BasicTooltipText = string.Format(Strings.Info_HiddenCategories, _packState.UserConfiguration.PackEnableSmartCategoryFilter.DisplayName)
                 };
 
                 this.AddMenuItem(showAllSkippedCategories);

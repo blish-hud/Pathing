@@ -20,7 +20,7 @@ namespace BhModule.Community.Pathing.Utility {
             pathingEntities ??= packState.Entities.ToArray();
 
             return !string.IsNullOrWhiteSpace(category.DisplayName)
-                && (packState.UserConfiguration.PackShowCategoriesFromAllMaps.Value && GetCategoryIsNotFiltered(category, Array.Empty<IPathingEntity>(), LoadedCategoryFilter))
+                && (!packState.UserConfiguration.PackEnableSmartCategoryFilter.Value && GetCategoryIsNotFiltered(category, Array.Empty<IPathingEntity>(), LoadedCategoryFilter))
                 || GetCategoryIsNotFiltered(category, pathingEntities, CurrentMapCategoryFilter);
         }
 
