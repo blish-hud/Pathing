@@ -170,7 +170,12 @@ namespace BhModule.Community.Pathing.Entity {
             string tooltipDescription = "";
 
             if (pathable != null && isAlternativeMenu) {
-                tooltipTitle       = string.Join("\n > ", pathable.Category.GetParentsDesc().Select(category => category.DisplayName.Trim()));
+                if (pathable.Category == null) {
+                    tooltipTitle = "Unassigned Category";
+                } else {
+                    tooltipTitle = string.Join("\n > ", pathable.Category?.GetParentsDesc().Select(category => category.DisplayName.Trim()));
+                }
+
                 tooltipDescription = null;
             } else if (pathable is IHasMapInfo mapPathable) {
                 if ((tooltipTitle = mapPathable.TipName) == "") {
