@@ -40,7 +40,7 @@ namespace BhModule.Community.Pathing.Entity {
 
                         float distance = Vector2.Distance(thisPoint, nextPoint);
                         float angle    = (float)Math.Atan2(nextPoint.Y - thisPoint.Y, nextPoint.X - thisPoint.X);
-                        DrawLine(spriteBatch, thisPoint, angle, distance, this.TrailSampleColor * drawOpacity, 2f);
+                        DrawLine(spriteBatch, thisPoint, angle, distance, this.TrailSampleColor * drawOpacity, _packState.UserConfiguration.MapTrailWidth.Value);
                     }
 
                     lastPointInBounds = inBounds;

@@ -208,6 +208,21 @@ namespace BhModule.Community.Pathing {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Some markers support copying text to your clipboard (such as waypoints or build templates).
+        ///
+        ///Always (Default) - Markers can always update your clipboard.  This can occur on interact ({0}) or automatically when you walk in range of the marker.
+        ///
+        ///Only When Interacted With - Markers can update your clipboard ONLY when interacted ({0}) with directly.  Markers configured as automatic will require interaction.
+        ///
+        ///Never - Markers can never update your clipboard..
+        /// </summary>
+        internal static string Setting_PackMarkerConsentToClipboardDescription {
+            get {
+                return ResourceManager.GetString("Setting_PackMarkerConsentToClipboardDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Max Opacity Override.
         /// </summary>
         internal static string Setting_PackMaxOpacityOverride {

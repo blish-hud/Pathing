@@ -192,4 +192,13 @@
 Click to view them or you can disable this filter by toggling:
 Pathing Module Settings &gt; {0}.</value>
   </data>
+  <data name="Setting_PackMarkerConsentToClipboardDescription" xml:space="preserve">
+    <value>Some markers support copying text to your clipboard (such as waypoints or build templates).
+
+Always (Default) - Markers can always update your clipboard.  This can occur on interact ({0}) or automatically when you walk in range of the marker.
+
+Only When Interacted With - Markers can update your clipboard ONLY when interacted ({0}) with directly.  Markers configured as automatic will require interaction.
+
+Never - Markers can never update your clipboard.</value>
+  </data>
 </root>
