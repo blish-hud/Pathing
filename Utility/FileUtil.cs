@@ -11,7 +11,7 @@ namespace BhModule.Community.Pathing.Utility {
         private const string NEWLINE = "\r\n";
 
         public static async Task<byte[]> ReadAsync(string path) {
-            using var stream = File.Open(path, FileMode.Open);
+            using var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             byte[] result    = new byte[(int)stream.Length];
             int    readIndex = 0;

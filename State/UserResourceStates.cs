@@ -75,8 +75,7 @@ namespace BhModule.Community.Pathing.State {
                 using var stateReader = File.OpenText(statePath);
                 result = yamlDeserializer.Deserialize<T>(await stateReader.ReadToEndAsync());
             } catch (Exception e) {
-                Logger.Error(e, $"Failed to read or parse {statePath}.");
-                Logger.Warn($"Since {statePath} failed to load, internal defaults will be used instead.  Delete it to have it rebuilt.");
+                Logger.Warn(e, $"Failed to read or parse {statePath}.  As a result, internal defaults will be used instead.  Delete it to have it rebuilt.");
             }
 
             return result ?? returnOnError();

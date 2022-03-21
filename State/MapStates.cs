@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blish_HUD;
+using Gw2Sharp.WebApi.Exceptions;
 using Gw2Sharp.WebApi.V2;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
@@ -45,6 +46,8 @@ namespace BhModule.Community.Pathing.State {
                     await Task.Yield();
                     await Task.Delay(30000);
                     await LoadMapData(remainingAttempts - 1);
+                } else if (ex is TooManyRequestsException) {
+                    Logger.Warn(ex, "After multiple attempts no map data could be loaded due to being rate limited by the API.");
                 } else {
                     Logger.Error(ex, "Final attempt to pull map data from the Gw2 API failed.  This session won't have map data.");
                 }

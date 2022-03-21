@@ -79,7 +79,7 @@ namespace BhModule.Community.Pathing.State {
             try {
                 await FileUtil.WriteLinesAsync(categoryStatePath, toggledCategories.Select(c => c.Namespace));
             } catch (Exception e) {
-                Logger.Error(e, $"Failed to write {stateFileName} ({categoryStatePath}).");
+                Logger.Warn(e, $"Failed to write {stateFileName} ({categoryStatePath}).");
             }
         }
 

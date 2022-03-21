@@ -193,7 +193,7 @@ namespace BhModule.Community.Pathing.State {
             try {
                 await FileUtil.WriteLinesAsync(timerStatesPath, timerMetadata.Select(metadata => $"{metadata.guid},{metadata.timerExpiration}"));
             } catch (Exception e) {
-                Logger.Error(e, $"Failed to write {STATE_FILE} ({timerStatesPath}).");
+                Logger.Warn(e, $"Failed to write {STATE_FILE} ({timerStatesPath}).");
             }
 
             _stateDirty = false;
