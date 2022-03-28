@@ -67,6 +67,8 @@ namespace BhModule.Community.Pathing.Content {
                 var textureTcs = new TaskCompletionSource<Texture2D>();
 
                 _textureCache[texturePath] = textureTcs;
+
+                await Task.Yield();
                 LoadTexture(textureTcs, await LoadResourceStreamAsync(texturePath));
             }
         }

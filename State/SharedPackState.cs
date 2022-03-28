@@ -117,20 +117,16 @@ namespace BhModule.Community.Pathing {
         }
 
         private async Task InitPointsOfInterest(IList<PointOfInterest> pois) {
-            var poiBag = new ConcurrentBag<IPathingEntity>();
+            var poiBag = new List<IPathingEntity>(pois.Count);
 
             // Avoid locking things up too much on lower-spec systems.
-            await pois.AsParallel()
-                      .ParallelForEachAsync(PreloadTextures, Math.Max(1, Environment.ProcessorCount > 8 
-                                                                                          ? Environment.ProcessorCount - 2 
-                                                                                          : Environment.ProcessorCount / 2));
+            foreach (var poi in pois) {
+                await PreloadTextures(poi);
+                var entity = BuildEntity(poi);
 
-            pois.AsParallel()
-                .Select(BuildEntity)
-                .ForAll(poiBag.Add);
-            
-            this.Entities.AddRange(poiBag);
-            GameService.Graphics.World.AddEntities(poiBag);
+                this.Entities.Add(entity);
+                GameService.Graphics.World.AddEntity(entity);
+            }
 
             await Task.CompletedTask;
         }
