@@ -30,7 +30,8 @@ namespace BhModule.Community.Pathing {
         
         private readonly PackReaderSettings _packReaderSettings;
 
-        private bool _isLoading = false;
+        public bool IsLoading { get; private set; } = false;
+
         private int  _lastMap   = -1;
 
         public PackInitiator(string watchPath, ModuleSettings moduleSettings, IProgress<string> loadingIndicator) {
@@ -44,9 +45,17 @@ namespace BhModule.Community.Pathing {
             _packState = new SharedPackState(moduleSettings);
         }
 
+        public void ReloadPacks() {
+            if (_packState.CurrentMapId < 0) return;
+
+            _lastMap = -1;
+
+            LoadMapFromEachPackInBackground(_packState.CurrentMapId);
+        }
+
         public IEnumerable<ContextMenuStripItem> GetPackMenuItems() {
             // All Markers
-            bool isAnyMarkers = !_isLoading
+            bool isAnyMarkers = !this.IsLoading
                              && _sharedPackCollection != null
                              && _sharedPackCollection.Categories != null
                              && _sharedPackCollection.Categories.Any(category => !string.IsNullOrWhiteSpace(category.DisplayName));
@@ -67,21 +76,17 @@ namespace BhModule.Community.Pathing {
             // Reload Markers
             var reloadMarkers = new ContextMenuStripItem() {
                 Text    = "Reload Markers", // TODO: Localize "Reload Markers"
-                Enabled = !_isLoading && _packState.CurrentMapId > 0
+                Enabled = !this.IsLoading && _packState.CurrentMapId > 0
             };
 
             reloadMarkers.Click += (_, _) => {
-                if (_packState.CurrentMapId < 0) return;
-
-                _lastMap = -1;
-
-                LoadMapFromEachPackInBackground(_packState.CurrentMapId);
+                ReloadPacks();
             };
 
             // Unload Markers
             var unloadMarkers = new ContextMenuStripItem() {
                 Text    = "Unload Markers", // TODO: Localize "Unload Markers"
-                Enabled = !_isLoading && _packState.CurrentMapId > 0
+                Enabled = !this.IsLoading && _packState.CurrentMapId > 0
             };
 
             unloadMarkers.Click += async (_, _) => {
@@ -100,13 +105,13 @@ namespace BhModule.Community.Pathing {
             await LoadAllPacks();
         }
 
-        private async Task LoadUnpackedPackFiles(string unpackedDir) {
+        public async Task LoadUnpackedPackFiles(string unpackedDir) {
             var newPack = Pack.FromDirectoryMarkerPack(unpackedDir);
             
             _packs.Add(newPack);
         }
 
-        private async Task LoadPackedPackFiles(IEnumerable<string> zipPackFiles) {
+        public async Task LoadPackedPackFiles(IEnumerable<string> zipPackFiles) {
             foreach (var newPack in zipPackFiles.Select(Pack.FromArchivedMarkerPack)) {
                 _packs.Add(newPack);
             }
@@ -156,7 +161,7 @@ namespace BhModule.Community.Pathing {
         }
 
         private async Task LoadMapFromEachPack(int mapId) {
-            _isLoading = true;
+            this.IsLoading = true;
 
             var loadTimer = Stopwatch.StartNew();
 
@@ -196,7 +201,7 @@ namespace BhModule.Community.Pathing {
 
             _loadingIndicator.Report("");
 
-            _isLoading = false;
+            this.IsLoading = false;
 
             loadTimer.Stop();
             Logger.Info($"Finished loading packs {string.Join(", ", _packs.Select(pack => pack.Name))} in {loadTimer.ElapsedMilliseconds} ms for map {mapId}.");

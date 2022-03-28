@@ -46,8 +46,8 @@ namespace BhModule.Community.Pathing {
         }
 
         private IEnumerable<ContextMenuStripItem> GetPathingMenuItems() {
-            if (_watcher != null) {
-                foreach (var menuItem in _watcher.GetPackMenuItems()) {
+            if (this.PackInitiator != null) {
+                foreach (var menuItem in this.PackInitiator.GetPackMenuItems()) {
                     menuItem.Enabled = menuItem.Enabled && !_packsLoading;
 
                     yield return menuItem;
@@ -88,9 +88,7 @@ namespace BhModule.Community.Pathing {
             _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(_moduleSettings.MapSettings),     Strings.Window_MapSettingsTab));
             _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(_moduleSettings.KeyBindSettings), Strings.Window_KeyBindSettingsTab));
 
-            #if SHOWINDEV
-                _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156909.png"), () => new PackRepoView(), Strings.Window_DownloadMarkerPacks));
-            #endif
+            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156909.png"), () => new PackRepoView(), Strings.Window_DownloadMarkerPacks));
 
             _pathingIcon.Click += delegate {
                 if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {
@@ -114,7 +112,8 @@ namespace BhModule.Community.Pathing {
             pathingContextMenuStrip.Show(_pathingIcon);
         }
 
-        private PackInitiator _watcher;
+        public PackInitiator                 PackInitiator  { get; private set; }
+        public MarkerPackRepo.MarkerPackRepo MarkerPackRepo { get; private set; }
 
         private void UpdateModuleLoading(string loadingMessage) {
             _pathingIcon.LoadingMessage = loadingMessage;
@@ -128,22 +127,24 @@ namespace BhModule.Community.Pathing {
 
         protected override async Task LoadAsync() {
             var sw = Stopwatch.StartNew();
-            _watcher = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), _moduleSettings, GetModuleProgressHandler());
-            await _watcher.Init();
+            this.MarkerPackRepo = new MarkerPackRepo.MarkerPackRepo();
+            this.MarkerPackRepo.Init();
+            this.PackInitiator  = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), _moduleSettings, GetModuleProgressHandler());
+            await this.PackInitiator.Init();
             sw.Stop();
             Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading Pathing module...");
         }
 
         public override IView GetSettingsView() {
-            return new SettingsHintView((_settingsWindow.Show, _watcher));
+            return new SettingsHintView((_settingsWindow.Show, this.PackInitiator));
         }
 
         protected override void Update(GameTime gameTime) {
-            _watcher?.Update(gameTime);
+            this.PackInitiator?.Update(gameTime);
         }
 
         protected override void Unload() {
-            _watcher?.Unload();
+            this.PackInitiator?.Unload();
             _pathingIcon?.Dispose();
             _settingsWindow?.Dispose();
 

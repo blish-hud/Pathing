@@ -1,11 +1,15 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using BhModule.Community.Pathing.MarkerPackRepo;
 using BhModule.Community.Pathing.UI.Presenter;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
+using Blish_HUD.Settings;
 using Flurl;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Humanizer;
 
 namespace BhModule.Community.Pathing.UI.Controls {
     public class MarkerPackHero : Container {
@@ -29,33 +33,56 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         #endregion
 
-        private readonly PackRepoPresenter.MarkerPackPkg _markerPackPkg;
+        private readonly MarkerPackPkg _markerPackPkg;
 
         private readonly BlueButton _downloadButton;
         private readonly BlueButton _infoButton;
 
+        private readonly Checkbox _keepUpdatedCheckbox;
+
+        private readonly SettingEntry<bool> DoAutoUpdate;
+
+        private readonly string _lastUpdateStr = "";
+
         private double _hoverTick;
 
-        public MarkerPackHero(PackRepoPresenter.MarkerPackPkg markerPackPkg) {
+        public MarkerPackHero(MarkerPackPkg markerPackPkg, SettingCollection settings) {
+            this.DoAutoUpdate = settings.DefineSetting(markerPackPkg.Name + "_AutoUpdate", true);
+
             _markerPackPkg = markerPackPkg;
+
+            if (markerPackPkg.LastUpdate != default) {
+                _lastUpdateStr = $"Last update {markerPackPkg.LastUpdate.Humanize()}";
+            }
 
             this.SuspendLayout();
 
+            _keepUpdatedCheckbox = new Checkbox() {
+                Text             = "Keep Updated",
+                BasicTooltipText = "If checked, new pack versions will be automatically downloaded on launch.",
+                Parent           = this,
+                Checked          = this.DoAutoUpdate.Value,
+                Enabled          = markerPackPkg.CurrentDownloadDate != default
+            };
+
             _downloadButton = new BlueButton() {
-                Text   = Strings.Repo_Download,
-                Width  = 90,
-                Parent = this
+                Text             = Strings.Repo_Download,
+                Width            = 90,
+                BasicTooltipText = ((double)Math.Round(_markerPackPkg.Size, 2)).Megabytes().Humanize(),
+                Parent           = this
             };
 
             _infoButton = new BlueButton() {
-                Text    = Strings.Repo_Info,
-                Width   = 90,
-                Visible = _markerPackPkg.Info != null,
-                Parent  = this
+                Text             = Strings.Repo_Info,
+                Width            = 90,
+                Visible          = _markerPackPkg.Info != null,
+                BasicTooltipText = _markerPackPkg.Info,
+                Parent           = this
             };
 
-            _downloadButton.Click += DownloadButtonOnClick;
-            _infoButton.Click     += InfoButtonOnClick;
+            _downloadButton.Click               += DownloadButtonOnClick;
+            _infoButton.Click                   += InfoButtonOnClick;
+            _keepUpdatedCheckbox.CheckedChanged += KeepUpdatedCheckbox_CheckedChanged;
 
             this.Size    = new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT);
             this.Padding = new Thickness(13, 0, 0, 9);
@@ -63,14 +90,53 @@ namespace BhModule.Community.Pathing.UI.Controls {
             this.ResumeLayout(true);
         }
 
+        private void KeepUpdatedCheckbox_CheckedChanged(object sender, CheckChangedEvent e) {
+            DoAutoUpdate.Value = e.Checked;
+        }
+
         private void DownloadButtonOnClick(object sender, MouseEventArgs e) {
             _downloadButton.Enabled = false;
-            _downloadButton.Text    = "Downloading...";
+            Utility.PackHandlingUtil.DownloadPack(_markerPackPkg, OnComplete);
+        }
 
-            Utility.PackHandlingUtil.DownloadPack(_markerPackPkg);
+        private static void OnComplete(MarkerPackPkg markerPackPkg, bool success) {
+            markerPackPkg.IsDownloading = false;
 
-            _downloadButton.Text    = "Downloaded";
-            //_downloadButton.Enabled = true;
+            if (success) {
+                markerPackPkg.CurrentDownloadDate = DateTime.UtcNow;
+            }
+        }
+
+        private void UpdateDownloadButtonState() {
+            string downloadText    = "Download";
+            bool   downloadEnabled = true;
+
+            if (_markerPackPkg.CurrentDownloadDate != default) {
+                downloadEnabled = false;
+
+                if (PathingModule.Instance.PackInitiator.IsLoading) {
+                    downloadText    = "Loading...";
+                } else if (_markerPackPkg.LastUpdate > _markerPackPkg.CurrentDownloadDate) {
+                    downloadText    = "Update";
+                    downloadEnabled = true;
+                } else {
+                    downloadText = "Up to Date";
+                }
+            }
+
+            if (_markerPackPkg.IsDownloading) {
+                downloadText    = "Downloading...";
+                downloadEnabled = false;
+            }
+
+            _downloadButton.Text    = downloadText;
+            _downloadButton.Enabled = downloadEnabled;
+        }
+
+        public override void UpdateContainer(GameTime gameTime) {
+            UpdateDownloadButtonState();
+
+            base.UpdateContainer(gameTime);
         }
 
         private void InfoButtonOnClick(object sender, MouseEventArgs e) {
@@ -103,8 +169,9 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         public override void RecalculateLayout() {
-            _downloadButton.Location = new Point(this.Width           - _downloadButton.Width - EDGE_PADDING / 2, this.Height - 20 - _downloadButton.Height / 2);
-            _infoButton.Location     = new Point(_downloadButton.Left - _infoButton.Width     - 5,                this.Height - 20 - _downloadButton.Height / 2);
+            _downloadButton.Location      = new Point(this.Width           - _downloadButton.Width      - EDGE_PADDING / 2, this.Height - 20 - _downloadButton.Height / 2);
+            _infoButton.Location          = new Point(_downloadButton.Left - _infoButton.Width          - 5,                this.Height - 20 - _downloadButton.Height / 2);
+            _keepUpdatedCheckbox.Location = new Point(this.Width           - _keepUpdatedCheckbox.Width - EDGE_PADDING,     EDGE_PADDING);
         }
 
         public override void PaintBeforeChildren(SpriteBatch spriteBatch, Rectangle bounds) {
@@ -113,7 +180,11 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
             // Name and description
             spriteBatch.DrawStringOnCtrl(this, _markerPackPkg.Name.Replace(" ", "  "), GameService.Content.DefaultFont18, new Rectangle(EDGE_PADDING, EDGE_PADDING / 2, bounds.Width - EDGE_PADDING * 2, 40), ContentService.Colors.Chardonnay);
-            spriteBatch.DrawStringOnCtrl(this, _markerPackPkg.Description.Replace(@"\n", "\n"), GameService.Content.DefaultFont14, new Rectangle(EDGE_PADDING, 40 + EDGE_PADDING / 2, bounds.Width - EDGE_PADDING * 2, bounds.Height - 200), StandardColors.Default, true, HorizontalAlignment.Left, VerticalAlignment.Top);
+            spriteBatch.DrawStringOnCtrl(this, _markerPackPkg.Description.Replace(@"\n", "\n"), GameService.Content.DefaultFont14, new Rectangle(EDGE_PADDING, 40 + EDGE_PADDING / 2, bounds.Width - EDGE_PADDING, bounds.Height - 200), StandardColors.Default, true, HorizontalAlignment.Left, VerticalAlignment.Top);
+
+            // Current version
+            spriteBatch.DrawStringOnCtrl(this, _lastUpdateStr, GameService.Content.DefaultFont14, new Rectangle(EDGE_PADDING, EDGE_PADDING / 2, _keepUpdatedCheckbox.Left - EDGE_PADDING * 2, EDGE_PADDING * 2 - 5), ContentService.Colors.Chardonnay,
+                                         false, HorizontalAlignment.Right);
 
             // Black bottom bar
             spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(0, bounds.Height - 40, bounds.Width, 40), Color.Black * 0.8f);
