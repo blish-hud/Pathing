@@ -13,7 +13,7 @@ namespace BhModule.Community.Pathing.Behavior {
         public bool Unlocked { get; }
 
         public AchievementStatus(AccountAchievement accountAchievement) {
-            this.Done            = accountAchievement.Done && accountAchievement.Repeated != null;
+            this.Done            = accountAchievement.Done && accountAchievement.Repeated == null;
             this.AchievementBits = new HashSet<int>(accountAchievement.Bits ?? Enumerable.Empty<int>());
             this.Unlocked        = accountAchievement.Unlocked ?? true;
         }
