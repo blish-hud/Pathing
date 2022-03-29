@@ -112,8 +112,15 @@ namespace BhModule.Community.Pathing {
         }
 
         public async Task LoadPackedPackFiles(IEnumerable<string> zipPackFiles) {
-            foreach (var newPack in zipPackFiles.Select(Pack.FromArchivedMarkerPack)) {
-                _packs.Add(newPack);
+            foreach (string packArchive in zipPackFiles) {
+                try {
+                    var newPack = Pack.FromArchivedMarkerPack(packArchive);
+                    _packs.Add(newPack);
+                } catch (InvalidDataException) {
+                    Logger.Warn($"Pack {packArchive} appears to be corrupt.  Please remove it and download it again.");
+                } catch (Exception ex) {
+                    Logger.Warn(ex, $"Pack {packArchive} failed to load.");
+                }
             }
         }
 
