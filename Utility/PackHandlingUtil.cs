@@ -63,7 +63,7 @@ namespace BhModule.Community.Pathing.Utility {
                     await PathingModule.Instance.PackInitiator.LoadPackedPackFiles(new[] { finalPath });
                 }
             } catch (Exception ex) {
-                Logger.Error(ex, $"Failed moving marker pack {markerPackPkg.Name} from {tempPackDownloadDestination} to {finalPath}.");
+                Logger.Warn(ex, $"Failed moving marker pack {markerPackPkg.Name} from {tempPackDownloadDestination} to {finalPath}.");
                 funcOnComplete(markerPackPkg, false);
                 return;
             }
