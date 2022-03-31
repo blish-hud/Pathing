@@ -20,8 +20,11 @@ namespace BhModule.Community.Pathing.MarkerPackRepo {
         public string   AuthorUsername { get; set; }
         public DateTime LastUpdate     { get; set; }
 
+        // Lazy state handling
         public DateTime CurrentDownloadDate { get; set; }
         public bool     IsDownloading       { get; set; }
+        public string   DownloadError       { get; set; }
+        public int      DownloadProgress    { get; set; }
 
     }
 }

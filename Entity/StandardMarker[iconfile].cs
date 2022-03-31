@@ -35,10 +35,12 @@ namespace BhModule.Community.Pathing.Entity {
                     attribute.GetValueAsTextureAsync(resourceManager).ContinueWith((textureTaskResult) => {
                         if (!textureTaskResult.IsFaulted && textureTaskResult.Result != null) {
                             this.Texture = textureTaskResult.Result;
+                        } else {
+                            Logger.Warn("Marker failed to load texture '{markerTexture}'", attribute);
                         }
                     });
                 } else {
-                    this.Texture = ContentService.Textures.Error;
+                    this.Texture = _packState.UserResourceStates.Textures.DefaultMarkerTexture;
                     Logger.Warn($"Marker '{this.Guid.ToBase64String()}' is missing '{ATTR_ICONFILE}' attribute.");
                 }
             }

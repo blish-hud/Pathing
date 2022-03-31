@@ -14,7 +14,7 @@ using Humanizer;
 namespace BhModule.Community.Pathing.UI.Controls {
     public class MarkerPackHero : Container {
 
-        // TODO: MarkerPackHero really probably should be a view.
+        // TODO: MarkerPackHero really probably should be a view but control is good for performance.
 
         private const int DEFAULT_WIDTH  = 500;
         private const int DEFAULT_HEIGHT = 170;
@@ -40,14 +40,15 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private readonly Checkbox _keepUpdatedCheckbox;
 
-        private readonly SettingEntry<bool> DoAutoUpdate;
+        private readonly SettingEntry<bool> _doAutoUpdate;
 
         private readonly string _lastUpdateStr = "";
 
         private double _hoverTick;
+        private bool   _isUpToDate;
 
         public MarkerPackHero(MarkerPackPkg markerPackPkg, SettingCollection settings) {
-            this.DoAutoUpdate = settings.DefineSetting(markerPackPkg.Name + "_AutoUpdate", true);
+            _doAutoUpdate = settings.DefineSetting(markerPackPkg.Name + "_AutoUpdate", true);
 
             _markerPackPkg = markerPackPkg;
 
@@ -61,16 +62,20 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 Text             = "Keep Updated",
                 BasicTooltipText = "If checked, new pack versions will be automatically downloaded on launch.",
                 Parent           = this,
-                Checked          = this.DoAutoUpdate.Value,
+                Checked          = _doAutoUpdate.Value,
                 Enabled          = markerPackPkg.CurrentDownloadDate != default
             };
 
             _downloadButton = new BlueButton() {
                 Text             = Strings.Repo_Download,
                 Width            = 90,
-                BasicTooltipText = ((double)Math.Round(_markerPackPkg.Size, 2)).Megabytes().Humanize(),
                 Parent           = this
             };
+
+            if (_markerPackPkg.Size > 0) {
+                // We don't know the size of all packs
+                _downloadButton.BasicTooltipText = Math.Round(_markerPackPkg.Size, 2).Megabytes().Humanize();
+            }
 
             _infoButton = new BlueButton() {
                 Text             = Strings.Repo_Info,
@@ -79,6 +84,10 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 BasicTooltipText = _markerPackPkg.Info,
                 Parent           = this
             };
+
+            if (_markerPackPkg.TotalDownloads > 0) {
+                this.BasicTooltipText = $"Approx. {_markerPackPkg.TotalDownloads:n0} Downloads";
+            }
 
             _downloadButton.Click               += DownloadButtonOnClick;
             _infoButton.Click                   += InfoButtonOnClick;
@@ -91,7 +100,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         private void KeepUpdatedCheckbox_CheckedChanged(object sender, CheckChangedEvent e) {
-            DoAutoUpdate.Value = e.Checked;
+            _doAutoUpdate.Value = e.Checked;
         }
 
         private void DownloadButtonOnClick(object sender, MouseEventArgs e) {
@@ -111,6 +120,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
             string downloadText    = "Download";
             bool   downloadEnabled = true;
 
+            _isUpToDate = false;
+
             if (_markerPackPkg.CurrentDownloadDate != default) {
                 downloadEnabled = false;
 
@@ -121,16 +132,18 @@ namespace BhModule.Community.Pathing.UI.Controls {
                     downloadEnabled = true;
                 } else {
                     downloadText = "Up to Date";
+                    _isUpToDate  = true;
                 }
             }
 
             if (_markerPackPkg.IsDownloading) {
-                downloadText    = "Downloading...";
+                downloadText    = $"Downloading...";
                 downloadEnabled = false;
             }
 
             _downloadButton.Text    = downloadText;
             _downloadButton.Enabled = downloadEnabled;
+            _downloadButton.Visible = !_markerPackPkg.IsDownloading && !_isUpToDate;
         }
 
         public override void UpdateContainer(GameTime gameTime) {
@@ -141,7 +154,6 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private void InfoButtonOnClick(object sender, MouseEventArgs e) {
             if (Url.IsValid(_markerPackPkg.Info)) {
-                // TODO: Let's do something more to prevent something slipping in to process.start - even if we host the repo.
                 Process.Start(_markerPackPkg.Info);
             }
         }
@@ -189,8 +201,19 @@ namespace BhModule.Community.Pathing.UI.Controls {
             // Black bottom bar
             spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(0, bounds.Height - 40, bounds.Width, 40), Color.Black * 0.8f);
 
-            // Categories
-            spriteBatch.DrawStringOnCtrl(this, $"{Strings.Repo_Categories}: {_markerPackPkg.Categories}", GameService.Content.DefaultFont12, new Rectangle(EDGE_PADDING, bounds.Height - 40, _infoButton.Left - EDGE_PADDING / 2, 40), StandardColors.Default);
+            // Categories OR download error message
+            if (_markerPackPkg.DownloadError == null) {
+                spriteBatch.DrawStringOnCtrl(this, $"{_markerPackPkg.Categories}", GameService.Content.DefaultFont12, new Rectangle(EDGE_PADDING, bounds.Height - 40, _infoButton.Left - EDGE_PADDING / 2, 40), StandardColors.Default);
+            } else {
+                spriteBatch.DrawStringOnCtrl(this, $"Download Error: {_markerPackPkg.DownloadError}", GameService.Content.DefaultFont12, new Rectangle(EDGE_PADDING, bounds.Height - 40, _infoButton.Left - EDGE_PADDING / 2, 40), StandardColors.Red);
+            }
+            
+            // Download % / Up to Date
+            if (_markerPackPkg.IsDownloading) {
+                spriteBatch.DrawStringOnCtrl(this, $"{_markerPackPkg.DownloadProgress}%", GameService.Content.DefaultFont14, _downloadButton.LocalBounds, StandardColors.Default, false, HorizontalAlignment.Center);
+            } else if (_isUpToDate) {
+                spriteBatch.DrawStringOnCtrl(this, "Up to Date", GameService.Content.DefaultFont14, _downloadButton.LocalBounds, StandardColors.Default, false, HorizontalAlignment.Center);
+            }
         }
 
     }

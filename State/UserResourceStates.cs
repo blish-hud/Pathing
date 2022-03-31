@@ -34,13 +34,26 @@ namespace BhModule.Community.Pathing.State {
         /// </summary>
         public StaticValues Static { get; set; }
 
+        /// <summary>
+        /// <inheritdoc cref="TextureDefaults"/>
+        /// </summary>
+        public TextureDefaults Textures { get; set; }
+
         public UserResourceStates(IRootPackState rootPackState) : base(rootPackState) { /* NOOP */ }
 
         protected override async Task<bool> Initialize() {
             await ExportAllDefault();
             await LoadAllStates();
+            await LoadNonConfigs();
 
             return true;
+        }
+
+        private async Task LoadNonConfigs() {
+            string userResourceDir = DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_USER);
+
+            this.Textures = new TextureDefaults();
+            await this.Textures.Load(userResourceDir);
         }
 
         private async Task ExportDefaultState<T>(string statePath, ISerializer yamlSerializer, T defaultExport) {

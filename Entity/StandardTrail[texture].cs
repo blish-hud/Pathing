@@ -49,10 +49,12 @@ namespace BhModule.Community.Pathing.Entity {
                     attribute.GetValueAsTextureAsync(resourceManager).ContinueWith((textureTaskResult) => {
                         if (!textureTaskResult.IsFaulted && textureTaskResult.Result != null) {
                             this.Texture = textureTaskResult.Result;
+                        } else {
+                            Logger.Warn("Trail failed to load texture '{trailTexture}'", attribute);
                         }
                     });
                 } else {
-                    this.Texture = ContentService.Textures.Error;
+                    this.Texture = _packState.UserResourceStates.Textures.DefaultTrailTexture;
                     Logger.Warn($"Trail is missing '{ATTR_TEXTURE}' attribute.");
                 }
             }

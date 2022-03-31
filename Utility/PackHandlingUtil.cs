@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.MarkerPackRepo;
 using Blish_HUD;
-using Flurl.Http;
 
 namespace BhModule.Community.Pathing.Utility {
     public static class PackHandlingUtil {
@@ -22,18 +23,26 @@ namespace BhModule.Community.Pathing.Utility {
         private static async Task BeginPackDownload(MarkerPackPkg markerPackPkg, IProgress<string> progress, Action<MarkerPackPkg, bool> funcOnComplete) {
             // TODO: Localize 'Updating pack '{0}'...'
             Logger.Info($"Updating pack '{markerPackPkg.Name}'...");
-            progress.Report($"Updating pack '{markerPackPkg.Name}'...");
+            progress.Report($"Downloading pack '{markerPackPkg.Name}'...");
             markerPackPkg.IsDownloading = true;
+            markerPackPkg.DownloadError = null;
 
             string tempPackDownloadDestination = Path.GetTempFileName();
 
             try {
-                // This is stupid, but GetTempFileName actually generates a file for us which causes DownloadFileAsync to fail since the file already exists.  🤦‍
+                // This is stupid, but GetTempFileName actually generates a file for us which causes DownloadFileAsync to fail since the file already exists.
                 File.Delete(tempPackDownloadDestination);
 
-                await markerPackPkg.Download.WithHeader("user-agent", DOWNLOAD_UA).DownloadFileAsync(Path.GetDirectoryName(tempPackDownloadDestination), Path.GetFileName(tempPackDownloadDestination));
+                using (var webClient = new WebClient()) {
+                    webClient.Headers.Add("user-agent", DOWNLOAD_UA);
+                    webClient.DownloadProgressChanged += (s, e) => {
+                        markerPackPkg.DownloadProgress = e.ProgressPercentage;
+                    };
+                    await webClient.DownloadFileTaskAsync(markerPackPkg.Download, tempPackDownloadDestination);
+                }
             } catch (Exception ex) {
-                Logger.Error(ex, $"Failed to update marker pack {markerPackPkg.Name} from {markerPackPkg.Download} to {tempPackDownloadDestination}.");
+                markerPackPkg.DownloadError = "Marker pack download failed.";
+                Logger.Error(ex, $"Failed to download marker pack {markerPackPkg.Name} from {markerPackPkg.Download} to {tempPackDownloadDestination}.");
                 funcOnComplete(markerPackPkg, false);
                 return;
             }
@@ -46,9 +55,20 @@ namespace BhModule.Community.Pathing.Utility {
             try {
                 bool needsInit = true;
 
+                // Test to ensure that the pack is valid.
+                using (var packStream = File.Open(tempPackDownloadDestination, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+                    var packArchive = new ZipArchive(packStream);
+
+                    // Ensure we can see the list of entries, at least.
+                    if (!(packArchive.Entries.Count > 0)) {
+                        throw new InvalidDataException();
+                    }
+                }
+
                 if (File.Exists(finalPath)) {
                     // The pack was already downloaded - make sure we're not currently loading!
                     needsInit = false;
+
                     while (PathingModule.Instance.PackInitiator.IsLoading) {
                         // We're currently loading the packs.  Wait a second and check again.
                         Thread.Sleep(1000);
@@ -60,16 +80,22 @@ namespace BhModule.Community.Pathing.Utility {
                 File.Move(tempPackDownloadDestination, finalPath);
 
                 if (needsInit) {
-                    await PathingModule.Instance.PackInitiator.LoadPackedPackFiles(new[] { finalPath });
+                    await PathingModule.Instance.PackInitiator.LoadPackedPackFiles(
+                                                                                   new[] {
+                                                                                       finalPath
+                                                                                   }
+                                                                                  );
                 }
+            } catch (InvalidDataException ex) {
+                markerPackPkg.DownloadError = "Marker pack download is corrupt.";
+                Logger.Warn(ex, $"Failed downloading marker pack {markerPackPkg.Name} from {tempPackDownloadDestination} (it appears to be corrupt).");
             } catch (Exception ex) {
+                markerPackPkg.DownloadError = "Failed to import the new marker pack.";
                 Logger.Warn(ex, $"Failed moving marker pack {markerPackPkg.Name} from {tempPackDownloadDestination} to {finalPath}.");
-                funcOnComplete(markerPackPkg, false);
-                return;
             }
 
             progress.Report(string.Empty);
-            funcOnComplete(markerPackPkg, true);
+            funcOnComplete(markerPackPkg, markerPackPkg.DownloadError == null);
         }
 
     }

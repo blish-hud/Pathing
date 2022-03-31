@@ -177,25 +177,16 @@ namespace BhModule.Community.Pathing {
 
             await PrepareState(mapId);
 
-            Pack lastPack = null;
-
-            try {
-                foreach (var pack in _packs.ToArray()) {
-                    lastPack = pack;
+            foreach (var pack in _packs.ToArray()) {
+                try {
                     _loadingIndicator.Report($"Loading {pack.Name}...");
                     await pack.LoadMapAsync(mapId, _sharedPackCollection, _packReaderSettings);
-                }
-            } catch (FileNotFoundException e) {
-                Logger.Warn("Pack file '{packPath}' failed to load because it could not be found.", e.FileName);
-
-                if (lastPack != null) {
-                    _packs.Remove(lastPack);
-                }
-            } catch (Exception e) {
-                Logger.Warn(e, "Loading pack failed.");
-
-                if (lastPack != null) {
-                    _packs.Remove(lastPack);
+                } catch (FileNotFoundException e) {
+                    Logger.Warn("Pack file '{packPath}' failed to load because it could not be found.", e.FileName);
+                    _packs.Remove(pack);
+                } catch (Exception e) {
+                    Logger.Warn(e, $"Loading pack '{pack.Name}' failed.");
+                    _packs.Remove(pack);
                 }
             }
 
@@ -206,7 +197,7 @@ namespace BhModule.Community.Pathing {
                 pack.ReleaseLocks();
             }
 
-            _loadingIndicator.Report("");
+            _loadingIndicator.Report(null);
 
             this.IsLoading = false;
 

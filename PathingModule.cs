@@ -35,7 +35,12 @@ namespace BhModule.Community.Pathing {
         private TabbedWindow2 _settingsWindow;
 
         private bool _packsLoading = false;
-        
+
+        private Tab _packSettingsTab;
+        private Tab _mapSettingsTab;
+        private Tab _keybindSettingsTab;
+        private Tab _markerRepoTab;
+
         [ImportingConstructor]
         public PathingModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
             Instance = this;
@@ -54,13 +59,32 @@ namespace BhModule.Community.Pathing {
                 }
             }
 
+            // Download Marker Packs
+            var downloadMarkers = new ContextMenuStripItem() {
+                Text = "Download Marker Packs", // TODO: Localize "Download Marker Packs"
+            };
+
+            downloadMarkers.Click += (_, _) => {
+                _settingsWindow.SelectedTab = _markerRepoTab;
+                _settingsWindow.Show();
+            };
+
             // Open Settings
             var openSettings = new ContextMenuStripItem() {
                 Text = "Pathing Module Settings" // TODO: Localize "Pathing Module Settings"
             };
 
-            openSettings.Click += (_, _) => _settingsWindow.ToggleWindow();
+            openSettings.Click += (_, _) => {
+                if (_settingsWindow.SelectedTab == _markerRepoTab) {
+                    _settingsWindow.SelectedTab = _packSettingsTab;
 
+                    if (_settingsWindow.Visible) return;
+                }
+
+                _settingsWindow.ToggleWindow();
+            };
+
+            yield return downloadMarkers;
             yield return openSettings;
         }
 
@@ -84,11 +108,15 @@ namespace BhModule.Community.Pathing {
                 Emblem      = this.ContentsManager.GetTexture(@"png\controls\1615829.png")
             };
 
-            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(_moduleSettings.PackSettings),    Strings.Window_MainSettingsTab));
-            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(_moduleSettings.MapSettings),     Strings.Window_MapSettingsTab));
-            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(_moduleSettings.KeyBindSettings), Strings.Window_KeyBindSettingsTab));
+            _packSettingsTab    = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(_moduleSettings.PackSettings),    Strings.Window_MainSettingsTab);
+            _mapSettingsTab     = new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(_moduleSettings.MapSettings),     Strings.Window_MapSettingsTab);
+            _keybindSettingsTab = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(_moduleSettings.KeyBindSettings), Strings.Window_KeyBindSettingsTab);
+            _markerRepoTab      = new Tab(ContentsManager.GetTexture(@"png\156909.png"),        () => new PackRepoView(),                                Strings.Window_DownloadMarkerPacks);
 
-            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"png\156909.png"), () => new PackRepoView(), Strings.Window_DownloadMarkerPacks));
+            _settingsWindow.Tabs.Add(_packSettingsTab);
+            _settingsWindow.Tabs.Add(_mapSettingsTab);
+            _settingsWindow.Tabs.Add(_keybindSettingsTab);
+            _settingsWindow.Tabs.Add(_markerRepoTab);
 
             _pathingIcon.Click += delegate {
                 if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {
