@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using BhModule.Community.Pathing.MarkerPackRepo;
-using BhModule.Community.Pathing.UI.Presenter;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
@@ -37,6 +36,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private readonly BlueButton _downloadButton;
         private readonly BlueButton _infoButton;
+        private readonly BlueButton _deleteButton;
 
         private readonly Checkbox _keepUpdatedCheckbox;
 
@@ -85,13 +85,20 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 Parent           = this
             };
 
+            _deleteButton = new BlueButton() {
+                Text   = "Delete",
+                Width  = 90,
+                Parent = this
+            };
+
             if (_markerPackPkg.TotalDownloads > 0) {
                 this.BasicTooltipText = $"Approx. {_markerPackPkg.TotalDownloads:n0} Downloads";
             }
 
             _downloadButton.Click               += DownloadButtonOnClick;
             _infoButton.Click                   += InfoButtonOnClick;
-            _keepUpdatedCheckbox.CheckedChanged += KeepUpdatedCheckbox_CheckedChanged;
+            _deleteButton.Click                 += DeleteButtonOnClick;
+            _keepUpdatedCheckbox.CheckedChanged += KeepUpdatedCheckboxOnChecked;
 
             this.Size    = new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT);
             this.Padding = new Thickness(13, 0, 0, 9);
@@ -99,7 +106,11 @@ namespace BhModule.Community.Pathing.UI.Controls {
             this.ResumeLayout(true);
         }
 
-        private void KeepUpdatedCheckbox_CheckedChanged(object sender, CheckChangedEvent e) {
+        private void DeleteButtonOnClick(object sender, MouseEventArgs e) {
+            Utility.PackHandlingUtil.DeletePack(_markerPackPkg);
+        }
+
+        private void KeepUpdatedCheckboxOnChecked(object sender, CheckChangedEvent e) {
             _doAutoUpdate.Value = e.Checked;
         }
 
@@ -116,7 +127,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             }
         }
 
-        private void UpdateDownloadButtonState() {
+        private void UpdateControlStates() {
             string downloadText    = "Download";
             bool   downloadEnabled = true;
 
@@ -124,6 +135,9 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
             if (_markerPackPkg.CurrentDownloadDate != default) {
                 downloadEnabled = false;
+
+                _deleteButton.Visible = true;
+                _deleteButton.Enabled = true;
 
                 if (PathingModule.Instance.PackInitiator.IsLoading) {
                     downloadText    = "Loading...";
@@ -134,11 +148,15 @@ namespace BhModule.Community.Pathing.UI.Controls {
                     downloadText = "Up to Date";
                     _isUpToDate  = true;
                 }
+            } else {
+                _deleteButton.Visible = false;
             }
 
             if (_markerPackPkg.IsDownloading) {
                 downloadText    = $"Downloading...";
                 downloadEnabled = false;
+
+                _deleteButton.Enabled = false;
             }
 
             _downloadButton.Text    = downloadText;
@@ -147,7 +165,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         public override void UpdateContainer(GameTime gameTime) {
-            UpdateDownloadButtonState();
+            UpdateControlStates();
 
             base.UpdateContainer(gameTime);
         }
@@ -183,6 +201,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         public override void RecalculateLayout() {
             _downloadButton.Location      = new Point(this.Width           - _downloadButton.Width      - EDGE_PADDING / 2, this.Height - 20 - _downloadButton.Height / 2);
             _infoButton.Location          = new Point(_downloadButton.Left - _infoButton.Width          - 5,                this.Height - 20 - _downloadButton.Height / 2);
+            _deleteButton.Location        = new Point(_infoButton.Left     - _deleteButton.Width        - 5,                this.Height - 20 - _downloadButton.Height / 2);
             _keepUpdatedCheckbox.Location = new Point(this.Width           - _keepUpdatedCheckbox.Width - EDGE_PADDING,     EDGE_PADDING);
         }
 
@@ -205,7 +224,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             if (_markerPackPkg.DownloadError == null) {
                 spriteBatch.DrawStringOnCtrl(this, $"{_markerPackPkg.Categories}", GameService.Content.DefaultFont12, new Rectangle(EDGE_PADDING, bounds.Height - 40, _infoButton.Left - EDGE_PADDING / 2, 40), StandardColors.Default);
             } else {
-                spriteBatch.DrawStringOnCtrl(this, $"Download Error: {_markerPackPkg.DownloadError}", GameService.Content.DefaultFont12, new Rectangle(EDGE_PADDING, bounds.Height - 40, _infoButton.Left - EDGE_PADDING / 2, 40), StandardColors.Red);
+                spriteBatch.DrawStringOnCtrl(this, $"Error: {_markerPackPkg.DownloadError}", GameService.Content.DefaultFont12, new Rectangle(EDGE_PADDING, bounds.Height - 40, _infoButton.Left - EDGE_PADDING / 2, 40), StandardColors.Red);
             }
             
             // Download % / Up to Date

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.LocalHttp;
 using BhModule.Community.Pathing.UI.Views;
 using Blish_HUD.Controls;
 using Blish_HUD.Settings.UI.Views;
@@ -40,6 +41,8 @@ namespace BhModule.Community.Pathing {
         private Tab _mapSettingsTab;
         private Tab _keybindSettingsTab;
         private Tab _markerRepoTab;
+
+        private HttpHost _apiHost;
 
         [ImportingConstructor]
         public PathingModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
@@ -155,6 +158,10 @@ namespace BhModule.Community.Pathing {
 
         protected override async Task LoadAsync() {
             var sw = Stopwatch.StartNew();
+#if SHOWINDEV
+            _apiHost = new HttpHost(19903);
+            _apiHost.Start();
+#endif
             this.MarkerPackRepo = new MarkerPackRepo.MarkerPackRepo();
             this.MarkerPackRepo.Init();
             this.PackInitiator  = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), _moduleSettings, GetModuleProgressHandler());
@@ -172,6 +179,7 @@ namespace BhModule.Community.Pathing {
         }
 
         protected override void Unload() {
+            _apiHost?.Close();
             this.PackInitiator?.Unload();
             _pathingIcon?.Dispose();
             _settingsWindow?.Dispose();

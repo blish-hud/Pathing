@@ -1,19 +1,24 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Editor.Entity;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Input;
+using LiteDB;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace BhModule.Community.Pathing.State {
     public class EditorStates : ManagedState {
 
-        // TODO: Make this configurable somehow.
+        private const string DIFFDB_FILE = "changes.ddb";
+
         private const ModifierKeys EDITOR_MODIFIERKEY = ModifierKeys.Shift;
         private const Keys         EDITOR_KEYKEY      = Keys.LeftShift | Keys.RightShift;
+
+        private ILiteDatabase _editorDatabase;
 
         /// <summary>
         /// List of entities acitvely being edited.
@@ -29,6 +34,11 @@ namespace BhModule.Community.Pathing.State {
                 GameService.Input.Mouse.LeftMouseButtonPressed += MouseOnLeftMouseButtonPressed;
                 GameService.Input.Keyboard.KeyReleased += KeyboardOnKeyReleased;
             #endif
+
+            string diffDbPath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_USER), DIFFDB_FILE);
+
+            _editorDatabase = new LiteDatabase(diffDbPath);
+
 
             return Task.FromResult(true);
         }
@@ -98,6 +108,8 @@ namespace BhModule.Community.Pathing.State {
 
         public override Task Unload() {
             this.SelectedPathingEntities = new();
+
+            _editorDatabase?.Dispose();
 
             return Task.CompletedTask;
         }

@@ -46,7 +46,7 @@ namespace BhModule.Community.Pathing {
         }
 
         public void ReloadPacks() {
-            if (_packState.CurrentMapId < 0) return;
+            if (_packState.CurrentMapId < 0 || this.IsLoading) return;
 
             _lastMap = -1;
 
@@ -121,6 +121,12 @@ namespace BhModule.Community.Pathing {
                 } catch (Exception ex) {
                     Logger.Warn(ex, $"Pack {packArchive} failed to load.");
                 }
+            }
+        }
+
+        public async Task LoadPack(Pack pack) {
+            if (pack != null) {
+                _packs.Add(pack);
             }
         }
 
