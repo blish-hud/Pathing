@@ -18,10 +18,8 @@ namespace BhModule.Community.Pathing.UI.Presenter {
         protected override void UpdateView() {
             this.View.RepoFlowPanel.ClearChildren();
 
-            var settings = PathingModule.Instance.SettingsManager.ModuleSettings.AddSubCollection("MarkerRepoSettings");
-
             foreach (var markerPackPkg in this.Model.MarkerPackages.OrderByDescending(markerPkg => markerPkg.LastUpdate)) {
-                var nHero = new MarkerPackHero(markerPackPkg, settings) {
+                var nHero = new MarkerPackHero(markerPackPkg) {
                     Parent = this.View.RepoFlowPanel,
                     Width  = this.View.RepoFlowPanel.Width - 60
                 };

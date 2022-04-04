@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
+using Blish_HUD.Settings;
 using Flurl.Http;
 
 namespace BhModule.Community.Pathing.MarkerPackRepo {
@@ -12,10 +13,13 @@ namespace BhModule.Community.Pathing.MarkerPackRepo {
 
         private static readonly Logger Logger = Logger.GetLogger<MarkerPackRepo>();
 
-        private const string REPO_SETTING   = "PackRepoUrl";
-        private const string PUBLIC_REPOURL = "https://mp-repo.blishhud.com/repo.json";
+        private const string REPO_SETTING    = "PackRepoUrl";
+        private const string PUBLIC_REPOURL  = "https://mp-repo.blishhud.com/repo.json";
+        private const string MPREPO_SETTINGS = "MarkerRepoSettings";
 
         private string _repoUrl;
+
+        private SettingCollection _markerPackSettings;
 
         public MarkerPackPkg[] MarkerPackages { get; private set; } = Array.Empty<MarkerPackPkg>();
 
@@ -37,7 +41,8 @@ namespace BhModule.Community.Pathing.MarkerPackRepo {
         }
 
         private void DefineRepoSettings() {
-            _repoUrl = PathingModule.Instance.SettingsManager.ModuleSettings.DefineSetting(REPO_SETTING, PUBLIC_REPOURL).Value;
+            _repoUrl            = PathingModule.Instance.SettingsManager.ModuleSettings.DefineSetting(REPO_SETTING, PUBLIC_REPOURL).Value;
+            _markerPackSettings = PathingModule.Instance.SettingsManager.ModuleSettings.AddSubCollection(MPREPO_SETTINGS);
         }
 
         private void LoadLocalPackInfo() {
@@ -63,7 +68,7 @@ namespace BhModule.Community.Pathing.MarkerPackRepo {
                 if (associatedLocalPack != null) {
                     pack.CurrentDownloadDate = File.GetLastWriteTimeUtc(associatedLocalPack);
 
-                    if (pack.CurrentDownloadDate != default && pack.LastUpdate > pack.CurrentDownloadDate) {
+                    if (pack.AutoUpdate.Value && pack.CurrentDownloadDate != default && pack.LastUpdate > pack.CurrentDownloadDate) {
                         PackHandlingUtil.DownloadPack(pack, OnUpdateComplete);
                     }
                 }
@@ -85,6 +90,10 @@ namespace BhModule.Community.Pathing.MarkerPackRepo {
 
             if (exception != null) {
                 progress.Report($"Failed to get a list of marker packs.\r\n{exception.Message}");
+            }
+
+            foreach (var pack in releases) {
+                pack.AutoUpdate = _markerPackSettings.DefineSetting(pack.Name + "_AutoUpdate", true);
             }
 
             return releases;

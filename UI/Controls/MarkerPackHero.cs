@@ -40,16 +40,12 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private readonly Checkbox _keepUpdatedCheckbox;
 
-        private readonly SettingEntry<bool> _doAutoUpdate;
-
         private readonly string _lastUpdateStr = "";
 
         private double _hoverTick;
         private bool   _isUpToDate;
 
-        public MarkerPackHero(MarkerPackPkg markerPackPkg, SettingCollection settings) {
-            _doAutoUpdate = settings.DefineSetting(markerPackPkg.Name + "_AutoUpdate", true);
-
+        public MarkerPackHero(MarkerPackPkg markerPackPkg) {
             _markerPackPkg = markerPackPkg;
 
             if (markerPackPkg.LastUpdate != default) {
@@ -62,7 +58,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 Text             = "Keep Updated",
                 BasicTooltipText = "If checked, new pack versions will be automatically downloaded on launch.",
                 Parent           = this,
-                Checked          = _doAutoUpdate.Value,
+                Checked          = markerPackPkg.AutoUpdate.Value,
                 Enabled          = markerPackPkg.CurrentDownloadDate != default
             };
 
@@ -95,10 +91,11 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 this.BasicTooltipText = $"Approx. {_markerPackPkg.TotalDownloads:n0} Downloads";
             }
 
-            _downloadButton.Click               += DownloadButtonOnClick;
-            _infoButton.Click                   += InfoButtonOnClick;
-            _deleteButton.Click                 += DeleteButtonOnClick;
-            _keepUpdatedCheckbox.CheckedChanged += KeepUpdatedCheckboxOnChecked;
+            _downloadButton.Click                   += DownloadButtonOnClick;
+            _infoButton.Click                       += InfoButtonOnClick;
+            _deleteButton.Click                     += DeleteButtonOnClick;
+            _keepUpdatedCheckbox.CheckedChanged     += KeepUpdatedCheckboxOnChecked;
+            markerPackPkg.AutoUpdate.SettingChanged += AutoUpdateOnSettingChanged;
 
             this.Size    = new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT);
             this.Padding = new Thickness(13, 0, 0, 9);
@@ -106,12 +103,16 @@ namespace BhModule.Community.Pathing.UI.Controls {
             this.ResumeLayout(true);
         }
 
+        private void AutoUpdateOnSettingChanged(object sender, ValueChangedEventArgs<bool> e) {
+            _keepUpdatedCheckbox.Checked = e.NewValue;
+        }
+
         private void DeleteButtonOnClick(object sender, MouseEventArgs e) {
             Utility.PackHandlingUtil.DeletePack(_markerPackPkg);
         }
 
         private void KeepUpdatedCheckboxOnChecked(object sender, CheckChangedEvent e) {
-            _doAutoUpdate.Value = e.Checked;
+            _markerPackPkg.AutoUpdate.Value = e.Checked;
         }
 
         private void DownloadButtonOnClick(object sender, MouseEventArgs e) {
@@ -233,6 +234,12 @@ namespace BhModule.Community.Pathing.UI.Controls {
             } else if (_isUpToDate) {
                 spriteBatch.DrawStringOnCtrl(this, "Up to Date", GameService.Content.DefaultFont14, _downloadButton.LocalBounds, StandardColors.Default, false, HorizontalAlignment.Center);
             }
+        }
+
+        protected override void DisposeControl() {
+            _markerPackPkg.AutoUpdate.SettingChanged -= AutoUpdateOnSettingChanged;
+
+            base.DisposeControl();
         }
 
     }

@@ -27,7 +27,7 @@ namespace BhModule.Community.Pathing.LocalHttp {
         }
 
         protected async Task Respond(object obj, HttpListenerContext context, int httpStatusCode = 200, string contentType = "application/json") {
-            await Respond(JsonConvert.SerializeObject(obj), context, httpStatusCode, contentType);
+            await Respond(JsonConvert.SerializeObject(obj, Formatting.Indented), context, httpStatusCode, contentType);
         }
 
         protected async Task RespondOk(HttpListenerContext context) {

@@ -247,6 +247,7 @@
     <Compile Include="LocalHttp\RouteAttribute.cs" />
     <Compile Include="LocalHttp\RouteFactory.cs" />
     <Compile Include="LocalHttp\Routes\API\Edit\History.cs" />
+    <Compile Include="LocalHttp\Routes\API\Edit\Selected.cs" />
     <Compile Include="LocalHttp\Routes\API\Pack\Register.cs" />
     <Compile Include="LocalHttp\Routes\API\Pack\Reload.cs" />
     <Compile Include="LocalHttp\Routes\API\Status.cs" />

@@ -32,6 +32,8 @@ namespace BhModule.Community.Pathing {
 
         public bool IsLoading { get; private set; } = false;
 
+        public IRootPackState PackState => _packState;
+
         private int  _lastMap   = -1;
 
         public PackInitiator(string watchPath, ModuleSettings moduleSettings, IProgress<string> loadingIndicator) {

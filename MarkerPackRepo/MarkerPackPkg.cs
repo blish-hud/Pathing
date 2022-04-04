@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blish_HUD.Settings;
 
 namespace BhModule.Community.Pathing.MarkerPackRepo {
     public class MarkerPackPkg {
@@ -25,6 +26,8 @@ namespace BhModule.Community.Pathing.MarkerPackRepo {
         public bool     IsDownloading       { get; set; }
         public string   DownloadError       { get; set; }
         public int      DownloadProgress    { get; set; }
+
+        public  SettingEntry<bool> AutoUpdate { get; set; }
 
     }
 }
