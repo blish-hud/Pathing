@@ -1,6 +1,7 @@
 ﻿using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
+using Blish_HUD;
 using Blish_HUD.Controls;
 using TmfLib.Prototype;
 
@@ -16,6 +17,8 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
 
         public string CopyValue   { get; set; }
         public string CopyMessage { get; set; }
+
+        private double _lastTrigger = 0;
 
         public CopyModifier(string value, string message, StandardMarker marker, IPackState packState) : base(marker) {
             _packState = packState;
@@ -40,7 +43,12 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
                 return;
             }
 
-            Blish_HUD.ClipboardUtil.WindowsClipboardService.SetTextAsync(this.CopyValue).ContinueWith(t => {
+            // Provide a bit of a debounce
+            if (autoTriggered && GameService.Overlay.CurrentGameTime.TotalGameTime.TotalMilliseconds - _lastTrigger < _packState.UserResourceStates.Advanced.CopyAttributeRechargeMs) return;
+
+            _lastTrigger = GameService.Overlay.CurrentGameTime.TotalGameTime.TotalMilliseconds;
+
+            ClipboardUtil.WindowsClipboardService.SetTextAsync(this.CopyValue).ContinueWith(t => {
                   if (t.IsCompleted && t.Result) {
                       ScreenNotification.ShowNotification(string.Format(this.CopyMessage, this.CopyValue),
                                                           ScreenNotification.NotificationType.Info,

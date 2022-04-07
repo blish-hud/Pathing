@@ -13,7 +13,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Populate_EditTag(AttributeCollection collection, IPackResourceManager resourceManager) {
-            { if (collection.TryPopAttribute(ATTR_EDITTAG,     out var attribute)) this.EditTag = attribute.GetValueAsInt(); }
+            { if (collection.TryPopAttribute(ATTR_EDITTAG, out var attribute)) this.EditTag = attribute.GetValueAsInt(); }
         }
 
     }

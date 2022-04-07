@@ -30,7 +30,7 @@ namespace BhModule.Community.Pathing {
 
         internal static PathingModule Instance { get; private set; }
 
-        private ModuleSettings _moduleSettings;
+        public ModuleSettings ModuleSettings { get; private set; }
 
         private CornerIcon    _pathingIcon;
         private TabbedWindow2 _settingsWindow;
@@ -50,7 +50,7 @@ namespace BhModule.Community.Pathing {
         }
 
         protected override void DefineSettings(SettingCollection settings) {
-            _moduleSettings = new ModuleSettings(settings);
+            ModuleSettings = new ModuleSettings(settings);
         }
 
         private IEnumerable<ContextMenuStripItem> GetPathingMenuItems() {
@@ -111,9 +111,9 @@ namespace BhModule.Community.Pathing {
                 Emblem      = this.ContentsManager.GetTexture(@"png\controls\1615829.png")
             };
 
-            _packSettingsTab    = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(_moduleSettings.PackSettings),    Strings.Window_MainSettingsTab);
-            _mapSettingsTab     = new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(_moduleSettings.MapSettings),     Strings.Window_MapSettingsTab);
-            _keybindSettingsTab = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(_moduleSettings.KeyBindSettings), Strings.Window_KeyBindSettingsTab);
+            _packSettingsTab    = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(ModuleSettings.PackSettings),    Strings.Window_MainSettingsTab);
+            _mapSettingsTab     = new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(ModuleSettings.MapSettings),     Strings.Window_MapSettingsTab);
+            _keybindSettingsTab = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(ModuleSettings.KeyBindSettings), Strings.Window_KeyBindSettingsTab);
             _markerRepoTab      = new Tab(ContentsManager.GetTexture(@"png\156909.png"),        () => new PackRepoView(),                                Strings.Window_DownloadMarkerPacks);
 
             _settingsWindow.Tabs.Add(_packSettingsTab);
@@ -123,7 +123,7 @@ namespace BhModule.Community.Pathing {
 
             _pathingIcon.Click += delegate {
                 if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {
-                    _moduleSettings.GlobalPathablesEnabled.Value = !_moduleSettings.GlobalPathablesEnabled.Value;
+                    ModuleSettings.GlobalPathablesEnabled.Value = !ModuleSettings.GlobalPathablesEnabled.Value;
                 } else {
                     ShowPathingContextMenu();
                 }
@@ -164,7 +164,7 @@ namespace BhModule.Community.Pathing {
 #endif
             this.MarkerPackRepo = new MarkerPackRepo.MarkerPackRepo();
             this.MarkerPackRepo.Init();
-            this.PackInitiator  = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), _moduleSettings, GetModuleProgressHandler());
+            this.PackInitiator  = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), ModuleSettings, GetModuleProgressHandler());
             await this.PackInitiator.Init();
             sw.Stop();
             Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading Pathing module...");

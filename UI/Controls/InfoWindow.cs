@@ -134,7 +134,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         public override void PaintBeforeChildren(SpriteBatch spriteBatch, Rectangle bounds) {
             // Don't show on loading screens or during vistas.
-            if (!GameService.GameIntegration.Gw2Instance.IsInGame) return;
+            if (!GameService.GameIntegration.Gw2Instance.IsInGame || !PathingModule.Instance.ModuleSettings.PackAllowInfoText.Value) return;
 
             AlphaMaskEffect.SharedInstance.SetEffectState(_croppedMask);
 

@@ -11,5 +11,7 @@ namespace BhModule.Community.Pathing.State.UserResources {
 
         public string[] MarkerLoadPaths { get; set; } = Array.Empty<string>();
 
+        public double CopyAttributeRechargeMs = 8000d;
+
     }
 }
