@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BhModule.Community.Pathing.Behavior;
 using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
@@ -23,6 +24,8 @@ namespace BhModule.Community.Pathing.Entity {
         PathingCategory Category { get; }
 
         bool DebugRender { get; }
+
+        int? EditTag { get; }
 
         RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity);
 

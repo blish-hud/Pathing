@@ -33,6 +33,9 @@ namespace BhModule.Community.Pathing.Entity {
             Populate_IsWall(collection, resourceManager);
 
             Populate_Behaviors(collection, resourceManager);
+
+            // Editor Specific
+            Populate_EditTag(collection, resourceManager);
         }
 
         private void Initialize(ITrail trail) {

@@ -88,7 +88,9 @@ namespace BhModule.Community.Pathing.Content {
         public bool FileExists(string filePath) {
             ThrowIfNoInit();
 
-            return _entries.Contains(GetCaseSensitiveEntryUri(filePath));
+            return true;
+
+            //return _entries.Contains(GetCaseSensitiveEntryUri(filePath));
         }
 
         public Stream GetFileStream(string filePath) {

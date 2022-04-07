@@ -40,6 +40,9 @@ namespace BhModule.Community.Pathing.Entity {
             Populate_TacOMisc(collection, resourceManager);
 
             Populate_Behaviors(collection, resourceManager);
+
+            // Editor Specific
+            Populate_EditTag(collection, resourceManager);
         }
 
         public override void Update(GameTime gameTime) {

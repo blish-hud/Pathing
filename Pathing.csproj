@@ -136,6 +136,7 @@
     <Compile Include="Entity\StandardMarker[cull].cs">
       <DependentUpon>StandardMarker.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entity\StandardMarker[edittag].cs" />
     <Compile Include="Entity\StandardMarker[fadenear,fadefar].cs">
       <DependentUpon>StandardMarker.cs</DependentUpon>
     </Compile>
@@ -209,6 +210,7 @@
     <Compile Include="Entity\StandardTrail[cull].cs">
       <DependentUpon>StandardTrail.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entity\StandardTrail[edittag].cs" />
     <Compile Include="Entity\StandardTrail[fadenear,fadefar].cs">
       <DependentUpon>StandardTrail.cs</DependentUpon>
     </Compile>
@@ -383,6 +385,7 @@
     </Reference>
     <Reference Include="Flurl.Http, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Flurl.Http.2.4.2\lib\net46\Flurl.Http.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Gapotchenko.FX, Version=2021.1.5.4096, Culture=neutral, PublicKeyToken=a750ee378eaf756f, processorArchitecture=MSIL">
       <HintPath>packages\Gapotchenko.FX.2021.1.5\lib\net472\Gapotchenko.FX.dll</HintPath>

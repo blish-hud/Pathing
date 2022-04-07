@@ -9,7 +9,7 @@ namespace BhModule.Community.Pathing.LocalHttp.Routes.API.Edit {
 
         public override async Task HandleResponse(HttpListenerContext context) {
             if (context.Request.HttpMethod == "GET") {
-                var selected = PathingModule.Instance.PackInitiator.PackState.EditorStates.SelectedPathingEntities.Where(entity => entity is StandardMarker).Select(entity => (entity as StandardMarker).Guid);
+                var selected = PathingModule.Instance.PackInitiator.PackState.EditorStates.SelectedPathingEntities.Select(entity => entity.EditTag);
 
                 await Respond(selected, context);
             } else {
