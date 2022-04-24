@@ -56,7 +56,7 @@ namespace BhModule.Community.Pathing.Entity {
         }
         
         public override void Render(GraphicsDevice graphicsDevice, IWorld world, ICamera camera) {
-            if (IsFiltered(EntityRenderTarget.World) || _texture == null || _texture.IsDisposed) return;
+            if (IsFiltered(EntityRenderTarget.World) || _texture is not { HasTexture: true } || _texture.Texture.IsDisposed) return;
             
             if (!this.InGameVisibility) return;
 
@@ -67,7 +67,7 @@ namespace BhModule.Community.Pathing.Entity {
             float minRender = Math.Min(this.FadeNear, _packState.UserConfiguration.PackMaxViewDistance.Value - (this.FadeFar - this.FadeNear));
 
             graphicsDevice.RasterizerState = this.CullDirection;
-            var modelMatrix = Matrix.CreateScale(this.Size * 2f, this.Size * 2f, 1f);
+            var modelMatrix = Matrix.CreateScale(this.Size * 2f * _packState.UserConfiguration.PackMarkerScale.Value, this.Size * 2f * _packState.UserConfiguration.PackMarkerScale.Value, 1f);
 
             var position = this.Position + new Vector3(0, 0, this.HeightOffset);
 
@@ -92,7 +92,7 @@ namespace BhModule.Community.Pathing.Entity {
                 var bounds = BoundingRectangle.CreateFrom(_screenVerts.Select(s => new Point2(s.X, s.Y)).ToArray());
 
                 float pixelSizeY = bounds.HalfExtents.Y * 2 * _packState.SharedMarkerEffect.GraphicsDevice.Viewport.Height;
-                float limitY     = MathHelper.Clamp(pixelSizeY, this.MinSize * 4, this.MaxSize * 4);
+                float limitY     = MathHelper.Clamp(pixelSizeY, this.MinSize * _packState.UserConfiguration.PackMarkerScale.Value * 4, this.MaxSize * 4);
 
                 // Eww
                 modelMatrix *= Matrix.CreateTranslation(-position)

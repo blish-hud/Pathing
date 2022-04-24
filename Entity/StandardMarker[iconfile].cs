@@ -1,8 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.Utility;
-using Blish_HUD;
-using Microsoft.Xna.Framework.Graphics;
+using Blish_HUD.Content;
 using Newtonsoft.Json;
 using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
@@ -11,10 +10,10 @@ namespace BhModule.Community.Pathing.Entity {
 
         private const string ATTR_ICONFILE = "iconfile";
 
-        private Texture2D _texture;
+        private AsyncTexture2D _texture;
 
         [JsonIgnore]
-        public Texture2D Texture {
+        public AsyncTexture2D Texture {
             get => _texture;
             set {
                 _texture = value;
