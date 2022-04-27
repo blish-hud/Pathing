@@ -194,12 +194,17 @@ namespace BhModule.Community.Pathing {
                     _packs.Remove(pack);
                 } catch (Exception e) {
                     Logger.Warn(e, $"Loading pack '{pack.Name}' failed.");
-                    _packs.Remove(pack);
                 }
             }
 
             _loadingIndicator.Report("Finalizing marker collection...");
-            await _packState.LoadPackCollection(_sharedPackCollection);
+
+            try {
+                await _packState.LoadPackCollection(_sharedPackCollection);
+            } catch (Exception e) {
+                Logger.Warn(e, $"Finalizing packs failed.");
+                _packState?.Unload();
+            }
 
             foreach (var pack in _packs.ToArray()) {
                 pack.ReleaseLocks();

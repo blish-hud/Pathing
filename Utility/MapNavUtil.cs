@@ -25,6 +25,23 @@ namespace BhModule.Community.Pathing.Utility {
             }
         }
 
+        public static bool OpenFullscreenMap() {
+            if (GameService.Gw2Mumble.UI.IsMapOpen) {
+                return false;
+            }
+
+            // Consider pressing the open map icon in the UI.
+            Keyboard.Press(Blish_HUD.Controls.Extern.VirtualKeyShort.KEY_M);
+
+            return true;
+        }
+
+        public static void CloseFullscreenMap() {
+            if (GameService.Gw2Mumble.UI.IsMapOpen) {
+                Keyboard.Press(Blish_HUD.Controls.Extern.VirtualKeyShort.ESCAPE);
+            }
+        }
+
         public static async Task<bool> NavigateToPosition(double x, double y, double zoom) {
             var mapPos  = GameService.Gw2Mumble.UI.MapCenter;
             var mapZoom = GameService.Gw2Mumble.UI.MapScale;

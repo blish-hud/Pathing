@@ -51,7 +51,7 @@ namespace BhModule.Community.Pathing.Entity {
             this.Category = pointOfInterest.ParentPathingCategory ?? _packState.RootCategory;
         }
 
-        public abstract RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity);
+        public abstract RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, float opacity);
 
         public abstract void Render(GraphicsDevice graphicsDevice, IWorld world, ICamera camera);
 
@@ -145,17 +145,17 @@ namespace BhModule.Community.Pathing.Entity {
             return this.BehaviorFiltered;
         }
 
-        protected Vector2 GetScaledLocation(double x, double y, double scale, (double X, double Y) offsets) {
-            (double mapX, double mapY) = _packState.MapStates.EventCoordsToMapCoords(x, y, this.MapId);
+        protected Vector2 GetScaledLocation(double x, double y, double scale, double offsetX, double offsetY) {
+            _packState.MapStates.EventCoordsToMapCoords(x, y, out double mapX, out double mapY);
 
-            var scaledLocation = new Vector2((float)((mapX - GameService.Gw2Mumble.UI.MapCenter.X) / scale),
-                                             (float)((mapY - GameService.Gw2Mumble.UI.MapCenter.Y) / scale));
+            var scaledLocation = new Vector2((float)((mapX - _packState.CachedMumbleStates.MapCenterX) / scale),
+                                             (float)((mapY - _packState.CachedMumbleStates.MapCenterY) / scale));
 
-            if (!GameService.Gw2Mumble.UI.IsMapOpen && GameService.Gw2Mumble.UI.IsCompassRotationEnabled) {
-                scaledLocation = Vector2.Transform(scaledLocation, Matrix.CreateRotationZ((float)GameService.Gw2Mumble.UI.CompassRotation));
+            if (!_packState.CachedMumbleStates.IsMapOpen && _packState.CachedMumbleStates.IsCompassRotationEnabled) {
+                scaledLocation = Vector2.Transform(scaledLocation, Matrix.CreateRotationZ((float)_packState.CachedMumbleStates.CompassRotation));
             }
 
-            scaledLocation += new Vector2((float)offsets.X, (float)offsets.Y);
+            scaledLocation += new Vector2((float)offsetX, (float)offsetY);
 
             return scaledLocation;
         }

@@ -61,28 +61,42 @@ namespace BhModule.Community.Pathing.State {
                     _mapDetails[map.Id] = new MapDetails(map.ContinentRect, map.MapRect);
                 }
             }
+
+            await Reload();
         }
 
         private const double METERCONVERSION = 1d / 254d * 10000d;
 
-        public (double X, double Y) EventCoordsToMapCoords(double eventCoordsX, double eventCoordsY, int map = -1) {
-            if (map < 0) map = _rootPackState.CurrentMapId;
+        private MapDetails? _currentMapDetails = null;
 
+        public void EventCoordsToMapCoords(double eventCoordsX, double eventCoordsY, out double outX, out double outY) {
+            if (_currentMapDetails.HasValue) {
+                outX = _currentMapDetails.Value.ContinentRect.TopLeft.X + (eventCoordsX * METERCONVERSION - _currentMapDetails.Value.MapRect.TopLeft.X) / _currentMapDetails.Value.MapRect.Width * _currentMapDetails.Value.ContinentRect.Width;
+                outY = _currentMapDetails.Value.ContinentRect.TopLeft.Y + -(eventCoordsY * METERCONVERSION - _currentMapDetails.Value.MapRect.TopLeft.Y) / _currentMapDetails.Value.MapRect.Height * _currentMapDetails.Value.ContinentRect.Height;
+
+                return;
+            }
+
+            outX = 0;
+            outY = 0;
+        }
+
+        public override Task Reload() {
             lock (_mapDetails) {
-                if (_mapDetails.TryGetValue(map, out var mapDetails)) {
-                    return (mapDetails.ContinentRect.TopLeft.X + (eventCoordsX * METERCONVERSION - mapDetails.MapRect.TopLeft.X)  / mapDetails.MapRect.Width  * mapDetails.ContinentRect.Width,
-                            mapDetails.ContinentRect.TopLeft.Y + -(eventCoordsY * METERCONVERSION - mapDetails.MapRect.TopLeft.Y) / mapDetails.MapRect.Height * mapDetails.ContinentRect.Height);
+                if (_mapDetails.TryGetValue(_rootPackState.CurrentMapId, out var mapDetails)) {
+                    _currentMapDetails = mapDetails;
+                } else {
+                    _currentMapDetails = null;
                 }
             }
 
-            return (0, 0);
+            return Task.CompletedTask;
         }
-
-        public override async Task Reload() { }
 
         public override void Update(GameTime gameTime) { /* NOOP */ }
 
         public override Task Unload() {
+            _currentMapDetails = null;
             return Task.CompletedTask;
         }
 

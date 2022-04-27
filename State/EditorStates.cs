@@ -37,7 +37,7 @@ namespace BhModule.Community.Pathing.State {
 
             string diffDbPath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_USER), DIFFDB_FILE);
 
-            _editorDatabase = new LiteDatabase(diffDbPath);
+            _editorDatabase = new LiteDatabase($"Filename={diffDbPath};Connection=shared");
 
 
             return Task.FromResult(true);

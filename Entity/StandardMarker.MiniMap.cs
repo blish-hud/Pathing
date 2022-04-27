@@ -13,7 +13,7 @@ namespace BhModule.Community.Pathing.Entity {
         private static readonly Texture2D _aboveTexture = PathingModule.Instance.ContentsManager.GetTexture(@"png\1130638.png");
         private static readonly Texture2D _belowTexture = PathingModule.Instance.ContentsManager.GetTexture(@"png\1130639.png");
         
-        public override RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, (double X, double Y) offsets, double scale, float opacity) {
+        public override RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, float opacity) {
             if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return null;
 
             bool isMapOpen = GameService.Gw2Mumble.UI.IsMapOpen;
@@ -27,7 +27,7 @@ namespace BhModule.Community.Pathing.Entity {
             bool allowedOnMiniMap             = this.MiniMapVisibility && miniMapMarkerVisibilityLevel != MapVisibilityLevel.Never;
             if (!isMapOpen && !allowedOnMiniMap && miniMapMarkerVisibilityLevel != MapVisibilityLevel.Always) return null;
 
-            var location = GetScaledLocation(this.Position.X, this.Position.Y, scale, offsets);
+            var location = GetScaledLocation(this.Position.X, this.Position.Y, scale, offsetX, offsetY);
 
             if (!bounds.Contains(location)) return null;
 

@@ -119,6 +119,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         public override void Draw(SpriteBatch spriteBatch, Rectangle drawBounds, Rectangle scissor) {
+            if (PathingModule.Instance == null) return;
+
             // Don't show on loading screens or during vistas.  This is not a clean way to do this.
             if (!GameService.GameIntegration.Gw2Instance.IsInGame) return;
 
@@ -133,6 +135,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         public override void PaintBeforeChildren(SpriteBatch spriteBatch, Rectangle bounds) {
+            if (PathingModule.Instance == null) return;
+
             // Don't show on loading screens or during vistas.
             if (!GameService.GameIntegration.Gw2Instance.IsInGame || !PathingModule.Instance.ModuleSettings.PackAllowInfoText.Value) return;
 

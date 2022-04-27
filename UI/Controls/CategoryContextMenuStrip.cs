@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
+using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Input;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.UI.Controls {
@@ -11,6 +15,10 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private readonly IPackState      _packState;
         private readonly PathingCategory _pathingCategory;
+
+        private static readonly Texture2D _textureContinueMenu = Content.GetTexture("156057");
+
+        private readonly Color _backColor = Color.FromNonPremultiplied(37, 36, 37, 255);
 
         private bool _forceShowAll = false;
 
@@ -83,6 +91,26 @@ namespace BhModule.Community.Pathing.UI.Controls {
             }
 
             base.OnShown(e);
+
+            // Behold: the effort I'm willing to put towards making huge category listings visible.
+
+            if (this.Bottom > GameService.Graphics.SpriteScreen.Bottom) {
+                this.Bottom = GameService.Graphics.SpriteScreen.Bottom;
+            }
+
+            if (this.Top < 0) {
+                this.Top = 0;
+            }
+
+            if (this.Right > GameService.Graphics.SpriteScreen.Right) {
+                this.Right = GameService.Graphics.SpriteScreen.Right;
+            }
+
+            if (this.Left < 0) {
+                this.Left = 0;
+            }
+
+            // See that is it very little.
         }
 
         private void ShowAllSkippedCategories_LeftMouseButtonReleased(object sender, Blish_HUD.Input.MouseEventArgs e) {
@@ -103,6 +131,47 @@ namespace BhModule.Community.Pathing.UI.Controls {
             this.ClearChildren();
 
             base.OnHidden(e);
+        }
+
+        private const int SCROLLHINT_HEIGHT = 20;
+
+        protected override void OnMouseMoved(MouseEventArgs e) {
+            base.OnMouseMoved(e);
+
+            // The remaining effort I have for this silly issue.  Please be mindful of your category use in marker packs.
+            // Friends don't let friends create ridiculous and poorly structure category structures.
+
+            if (this.Bottom > GameService.Graphics.SpriteScreen.Bottom && GameService.Graphics.SpriteScreen.Bottom - e.MousePosition.Y < SCROLLHINT_HEIGHT) {
+                this.Bottom = GameService.Graphics.SpriteScreen.Bottom;
+            }
+
+            if (this.Top < 0 && e.MousePosition.Y < SCROLLHINT_HEIGHT) {
+                this.Top = 0;
+            }
+        }
+
+        public override void PaintAfterChildren(SpriteBatch spriteBatch, Rectangle bounds) {
+            if (this.Bottom > GameService.Graphics.SpriteScreen.Bottom) {
+                var scrollBounds = new Rectangle(4, GameService.Graphics.SpriteScreen.Bottom - SCROLLHINT_HEIGHT, this.Width - 8, SCROLLHINT_HEIGHT);
+
+                spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, scrollBounds,                                                                                                          _backColor);
+                spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(2, GameService.Graphics.SpriteScreen.Bottom                     - SCROLLHINT_HEIGHT, this.Width - 6, 1), Color.DarkGray);
+                spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(2, GameService.Graphics.SpriteScreen.Bottom - SCROLLHINT_HEIGHT + 1,                 this.Width - 6, 1), Color.LightGray);
+
+                spriteBatch.DrawOnCtrl(this, _textureContinueMenu, new Rectangle(this.Width / 2 - _textureContinueMenu.Width / 2, scrollBounds.Bottom - scrollBounds.Height / 2 - _textureContinueMenu.Height / 2, _textureContinueMenu.Width, _textureContinueMenu.Height));
+            }
+
+            if (this.Top < 0) {
+                var scrollBounds = new Rectangle(4, -this.Top, this.Width - 8, SCROLLHINT_HEIGHT);
+
+                spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, scrollBounds, _backColor);
+                spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(2, -this.Top + SCROLLHINT_HEIGHT                                            - 1,                 this.Width - 6, 1), Color.DarkGray);
+                spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(2, -this.Top                                                                + SCROLLHINT_HEIGHT, this.Width - 6, 1), Color.LightGray);
+
+                spriteBatch.DrawOnCtrl(this, _textureContinueMenu, new Rectangle(this.Width / 2 - _textureContinueMenu.Width / 2, scrollBounds.Bottom - scrollBounds.Height / 2 - _textureContinueMenu.Height / 2, _textureContinueMenu.Width, _textureContinueMenu.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.FlipVertically);
+            }
+
+            base.PaintAfterChildren(spriteBatch, bounds);
         }
 
     }

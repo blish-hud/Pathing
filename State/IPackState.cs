@@ -21,6 +21,7 @@ namespace BhModule.Community.Pathing.State {
         UserResourceStates UserResourceStates { get; }
         UiStates           UiStates           { get; }
         EditorStates       EditorStates       { get; }
+        CachedMumbleStates CachedMumbleStates { get; }
 
         SafeList<IPathingEntity> Entities { get; }
 

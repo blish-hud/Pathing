@@ -231,7 +231,7 @@ namespace BhModule.Community.Pathing.Entity {
                                         : _packState.UserConfiguration.MiniMapDrawOpacity.Value;
 
             foreach (var pathable in entities) {
-                var hint = pathable.RenderToMiniMap(spriteBatch, bounds, (offsetX, offsetY), scale, overrideOpacity * opacity);
+                var hint = pathable.RenderToMiniMap(spriteBatch, bounds, offsetX, offsetY, scale, overrideOpacity * opacity);
 
                 if (this.MouseOver && hint.HasValue && hint.Value.Contains(GameService.Input.Mouse.Position)) {
                     _activeEntity = pathable;

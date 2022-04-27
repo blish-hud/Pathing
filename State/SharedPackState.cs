@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Entity.Effects;
 using BhModule.Community.Pathing.State;
-using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
 using TmfLib;
@@ -33,6 +31,7 @@ namespace BhModule.Community.Pathing {
         public UserResourceStates UserResourceStates { get; private set; }
         public UiStates           UiStates           { get; private set; }
         public EditorStates       EditorStates       { get; private set; }
+        public CachedMumbleStates CachedMumbleStates { get; private set; }
 
         public  SafeList<IPathingEntity> Entities { get; private set; } = new();
 
@@ -73,7 +72,8 @@ namespace BhModule.Community.Pathing {
                 await (this.MapStates          = new MapStates(this)).Start(),
                 await (this.UserResourceStates = new UserResourceStates(this)).Start(),
                 await (this.UiStates           = new UiStates(this)).Start(),
-                await (this.EditorStates       = new EditorStates(this)).Start()
+                await (this.EditorStates       = new EditorStates(this)).Start(),
+                await (this.CachedMumbleStates = new CachedMumbleStates(this)).Start(),
             };
 
             _initialized = true;
@@ -106,18 +106,20 @@ namespace BhModule.Community.Pathing {
         }
 
         private static async Task PreloadTextures(IPointOfInterest pointOfInterest) {
-            string texture = pointOfInterest.Type switch {
-                PointOfInterestType.Marker => pointOfInterest.GetAggregatedAttributeValue("iconfile"),
-                PointOfInterestType.Trail => pointOfInterest.GetAggregatedAttributeValue("texture")
+            (string texture, bool shouldSample) = pointOfInterest.Type switch {
+                PointOfInterestType.Marker => (pointOfInterest.GetAggregatedAttributeValue("iconfile"), false),
+                PointOfInterestType.Trail => (pointOfInterest.GetAggregatedAttributeValue("texture"), true)
             };
 
             if (texture != null) {
-                await TextureResourceManager.GetTextureResourceManager(pointOfInterest.ResourceManager).PreloadTexture(texture);
+                await TextureResourceManager.GetTextureResourceManager(pointOfInterest.ResourceManager).PreloadTexture(texture, shouldSample);
             }
         }
 
-        private async Task InitPointsOfInterest(IList<PointOfInterest> pois) {
-            var poiBag = new List<IPathingEntity>(pois.Count);
+        private async Task InitPointsOfInterest(IEnumerable<PointOfInterest> pointsOfInterest) {
+            var pois = pointsOfInterest.ToArray();
+
+            var poiBag = new List<IPathingEntity>(pois.Length);
 
             // Avoid locking things up too much on lower-spec systems.
             foreach (var poi in pois) {

@@ -7,10 +7,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.LocalHttp;
 using BhModule.Community.Pathing.UI.Views;
+using BhModule.Community.Pathing.Utility;
 using Blish_HUD.Controls;
+using Blish_HUD.Entities;
 using Blish_HUD.Settings.UI.Views;
 using Microsoft.Xna.Framework.Input;
 using Blish_HUD.Graphics.UI;
@@ -178,11 +182,25 @@ namespace BhModule.Community.Pathing {
             this.PackInitiator?.Update(gameTime);
         }
 
+        private void UnloadPathingElements() {
+            var entities = GameService.Graphics.World.Entities as IEntity[];
+
+            foreach (var entity in entities) {
+                if (entity is IPathingEntity) {
+                    GameService.Graphics.World.RemoveEntity(entity);
+                }
+            }
+        }
+
         protected override void Unload() {
             _apiHost?.Close();
             this.PackInitiator?.Unload();
             _pathingIcon?.Dispose();
             _settingsWindow?.Dispose();
+
+            // Help to ensure that all pathing entities
+            // are removed regardless of our current state.
+            UnloadPathingElements();
 
             Instance = null;
         }

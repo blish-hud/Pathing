@@ -23,6 +23,7 @@ namespace BhModule.Community.Pathing.State {
         public UserResourceStates UserResourceStates => _referencePackState.UserResourceStates;
         public UiStates           UiStates           => _referencePackState.UiStates;
         public EditorStates       EditorStates       => _referencePackState.EditorStates;
+        public CachedMumbleStates CachedMumbleStates => _referencePackState.CachedMumbleStates;
 
         public SafeList<IPathingEntity> Entities => _referencePackState.Entities;
 

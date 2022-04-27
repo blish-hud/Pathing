@@ -102,7 +102,7 @@ namespace BhModule.Community.Pathing.Utility {
             return SplitAttributeValue(attribute).Select(InternalGetValueAsBool);
         }
 
-        public static async Task<Texture2D> GetValueAsTextureAsync(this IAttribute attribute, TextureResourceManager resourceManager) {
+        public static async Task<(Texture2D Texture, Color Sample)> GetValueAsTextureAsync(this IAttribute attribute, TextureResourceManager resourceManager) {
             return await resourceManager.LoadTextureAsync(attribute.GetValueAsString());
         }
 

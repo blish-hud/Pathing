@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.UI.Controls;
@@ -11,7 +10,7 @@ namespace BhModule.Community.Pathing.State {
     public class UiStates : ManagedState {
 
         // Map
-        private FlatMap    _map;
+        public FlatMap Map { get; private set;}
 
         // Info
         private InfoWindow       _info;
@@ -30,17 +29,17 @@ namespace BhModule.Community.Pathing.State {
             GameService.Gw2Mumble.CurrentMap.MapChanged += CurrentMapChanged;
             GameService.Gw2Mumble.UI.IsMapOpenChanged   += MapOpenedChanged;
 
-            if (_map != null) return;
+            if (this.Map != null) return;
             
-            _map = new FlatMap(_rootPackState) {
+            this.Map = new FlatMap(_rootPackState) {
                 Parent  = GameService.Graphics.SpriteScreen
             };
         }
 
         private void UpdateMapState() {
-            if (_map == null) return;
+            if (this.Map == null) return;
 
-            _map.Visible = !(GameService.Gw2Mumble.UI.IsMapOpen
+            Map.Visible = !(GameService.Gw2Mumble.UI.IsMapOpen
                                  ? _rootPackState.UserResourceStates.Ignore.Map
                                  : _rootPackState.UserResourceStates.Ignore.Compass).Contains(GameService.Gw2Mumble.CurrentMap.Id);
         }
