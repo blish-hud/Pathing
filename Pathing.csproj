@@ -281,6 +281,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\SmallInteract.cs" />
     <Compile Include="UI\Tooltips\AchievementPresenter.cs" />
     <Compile Include="UI\Tooltips\AchievementTooltipView.cs" />
     <Compile Include="UI\Tooltips\DescriptionTooltipView.cs" />

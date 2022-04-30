@@ -25,7 +25,7 @@ namespace BhModule.Community.Pathing.Entity {
             { if (collection.TryGetSubset(ScheduleFilter.PRIMARY_ATTR_NAME,       out var attributes)) AddBehavior(ScheduleFilter.BuildFromAttributes(attributes)); }
 
             // TacO Behaviors
-            { if (collection.TryGetSubset(AchievementFilter.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(AchievementFilter.BuildFromAttributes(attributes, _packState)); }
+            { if (collection.TryGetSubset(AchievementFilter.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(AchievementFilter.BuildFromAttributes(attributes, this, _packState)); }
         }
 
     }

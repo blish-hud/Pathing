@@ -57,6 +57,7 @@ namespace BhModule.Community.Pathing.Utility {
             markerPackPkg.DownloadError    = null;
             markerPackPkg.DownloadProgress = 0;
 
+            string finalPath                   = Path.Combine(DataDirUtil.MarkerDir, markerPackPkg.FileName);
             string tempPackDownloadDestination = Path.GetTempFileName();
 
             try {
@@ -65,14 +66,16 @@ namespace BhModule.Community.Pathing.Utility {
 
                 using (var webClient = new WebClient()) {
                     webClient.Headers.Add("user-agent", DOWNLOAD_UA);
-                    webClient.DownloadProgressChanged += (s, e) => {
-                        markerPackPkg.DownloadProgress = e.ProgressPercentage;
-                    };
+                    webClient.DownloadProgressChanged += (s, e) => { markerPackPkg.DownloadProgress = e.ProgressPercentage; };
                     await webClient.DownloadFileTaskAsync(markerPackPkg.Download, tempPackDownloadDestination);
                 }
             } catch (Exception ex) {
                 markerPackPkg.DownloadError = "Marker pack download failed.";
-                Logger.Error(ex, $"Failed to download marker pack {markerPackPkg.Name} from {markerPackPkg.Download} to {tempPackDownloadDestination}.");
+                if (ex is WebException we) {
+                    Logger.Warn(ex, $"Failed to download marker pack {markerPackPkg.Name} from {markerPackPkg.Download} to {tempPackDownloadDestination}.");
+                } else {
+                    Logger.Error(ex, $"Failed to download marker pack {markerPackPkg.Name} from {markerPackPkg.Download} to {tempPackDownloadDestination}.");
+                }
                 progress.Report(null);
                 funcOnComplete(markerPackPkg, false);
                 return;
@@ -80,8 +83,6 @@ namespace BhModule.Community.Pathing.Utility {
 
             // TODO: Localize 'Finalizing new pack download...'
             progress.Report("Finalizing new pack download...");
-
-            string finalPath = Path.Combine(DataDirUtil.MarkerDir, markerPackPkg.FileName);
 
             try {
                 bool needsInit = true;

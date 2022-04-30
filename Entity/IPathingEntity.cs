@@ -15,6 +15,8 @@ namespace BhModule.Community.Pathing.Entity {
         /// </summary>
         IList<IBehavior> Behaviors { get; }
 
+        bool BehaviorFiltered { get; }
+
         float TriggerRange { get; set; }
 
         float DistanceToPlayer { get; set; }
@@ -26,6 +28,8 @@ namespace BhModule.Community.Pathing.Entity {
         bool DebugRender { get; }
 
         int? EditTag { get; }
+
+        bool IsFiltered(EntityRenderTarget renderTarget);
 
         RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, float opacity);
 

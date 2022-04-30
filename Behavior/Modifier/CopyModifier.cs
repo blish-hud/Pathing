@@ -6,7 +6,7 @@ using Blish_HUD.Controls;
 using TmfLib.Prototype;
 
 namespace BhModule.Community.Pathing.Behavior.Modifier {
-    public class CopyModifier : Behavior<StandardMarker>, ICanInteract {
+    public class CopyModifier : Behavior<StandardMarker>, ICanInteract, ICanFocus {
 
         public const  string PRIMARY_ATTR_NAME = "copy";
         private const string ATTR_MESSAGE      = PRIMARY_ATTR_NAME + "-message";
@@ -56,6 +56,16 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
                                                           2);
                   }
             });
+        }
+
+
+        public void Focus() {
+            // TODO: Translate "Copy Text {0}"
+            _packState.UiStates.Interact.ShowInteract(_pathingEntity, $"Copy '{this.CopyValue}' to clipboard {{0}}");
+        }
+
+        public void Unfocus() {
+            _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
         }
 
     }

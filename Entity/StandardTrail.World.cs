@@ -69,8 +69,8 @@ namespace BhModule.Community.Pathing.Entity {
                 curPoint = nextPoint;
             }
 
-            var fleftPoint  = curPoint + (offset * TRAIL_WIDTH);
-            var frightPoint = curPoint + (offset * -TRAIL_WIDTH);
+            var fleftPoint  = curPoint + (offset * TRAIL_WIDTH  * this.TrailScale);
+            var frightPoint = curPoint + (offset * -TRAIL_WIDTH * this.TrailScale);
 
             verts[pointsArr.Length * 2 - 1] = new VertexPositionColorTexture(fleftPoint,  Color.White, new Vector2(0f, pastDistance / (TRAIL_WIDTH * 2) - 1));
             verts[pointsArr.Length * 2 - 2] = new VertexPositionColorTexture(frightPoint, Color.White, new Vector2(1f, pastDistance / (TRAIL_WIDTH * 2) - 1));

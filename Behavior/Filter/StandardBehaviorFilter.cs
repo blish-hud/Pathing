@@ -4,16 +4,17 @@ using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using TmfLib.Prototype;
+using Humanizer;
 
 namespace BhModule.Community.Pathing.Behavior.Filter {
-    public class StandardBehaviorFilter : Behavior<StandardMarker>, ICanFilter, ICanInteract {
+    public class StandardBehaviorFilter : Behavior<StandardMarker>, ICanFilter, ICanInteract, ICanFocus {
 
         public const string PRIMARY_ATTR_NAME = "behavior";
 
         private readonly StandardPathableBehavior _behaviorMode;
         private readonly IPackState               _packState;
 
-        public StandardBehaviorFilter(StandardPathableBehavior behaviorMode, IPackState packState, StandardMarker marker) : base(marker) {
+        public StandardBehaviorFilter(StandardPathableBehavior behaviorMode, StandardMarker marker, IPackState packState) : base(marker) {
             _behaviorMode = behaviorMode;
             _packState    = packState;
         }
@@ -30,13 +31,14 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             }
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, IPackState packState, StandardMarker marker) {
-            //return new StandardBehaviorFilter(attributes[PRIMARY_ATTR_NAME].GetValueAsEnum<StandardPathableBehavior>(), packState, marker);
-            return new StandardBehaviorFilter((StandardPathableBehavior)attributes[PRIMARY_ATTR_NAME].GetValueAsInt(0), packState, marker);
+        public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
+            return new StandardBehaviorFilter((StandardPathableBehavior)attributes[PRIMARY_ATTR_NAME].GetValueAsInt(0), marker, packState);
         }
 
         public void Interact(bool autoTriggered) {
             switch (_behaviorMode) {
+                case StandardPathableBehavior.AlwaysVisible:
+                    return;
                 case StandardPathableBehavior.ReappearOnMapChange:         // TacO Behavior 1
                 case StandardPathableBehavior.OnlyVisibleBeforeActivation: // TacO Behavior 3
                 case StandardPathableBehavior.OncePerInstance:             // TacO Behavior 6
@@ -65,6 +67,55 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
                     _packState.BehaviorStates.AddFilteredBehavior(_pathingEntity.Guid, now.Date.AddDays(daysUntilMonday).Add(sevenThirtyAm));
                     break;
             }
+
+            _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
+        }
+
+        public void Focus() {
+            string interactText = null;
+
+            // TODO: Add localization for behavior interact text.
+            switch (_behaviorMode) {
+                case StandardPathableBehavior.AlwaysVisible:
+                    return;
+                case StandardPathableBehavior.ReappearOnMapChange:
+                    interactText = "Hide marker until map change {0}";
+                    break;
+                case StandardPathableBehavior.ReappearOnDailyReset:
+                    interactText = $"Hide marker until daily reset ({(DateTime.UtcNow.Date.AddDays(1) - DateTime.UtcNow).Humanize(2, minUnit: Humanizer.Localisation.TimeUnit.Second)}) {{0}}";
+                    break;
+                case StandardPathableBehavior.OnlyVisibleBeforeActivation:
+                    interactText = "Hide marker permanently {0}";
+                    break;
+                case StandardPathableBehavior.ReappearAfterTimer:
+                    interactText = $"Hide marker for {TimeSpan.FromSeconds(_pathingEntity.ResetLength).Humanize(4)} {{0}}";
+                    break;
+                case StandardPathableBehavior.ReappearOnMapReset:
+                    interactText = "Hide marker until map reset {0}";
+                    break;
+                case StandardPathableBehavior.OncePerInstance:
+                    interactText = "Hide marker permanently on this instance {0}";
+                    break;
+                case StandardPathableBehavior.OnceDailyPerCharacter:
+                    interactText = "Hide marker for this character until daily reset {0}";
+                    break;
+                case StandardPathableBehavior.ReappearOnWeeklyReset:
+                    interactText = "Hide marker until weekly reset {0}";
+                    break;
+                default:
+                    interactText = "Interact with behavior {0}";
+                    break;
+            }
+
+            _packState.UiStates.Interact.ShowInteract(_pathingEntity, interactText);
+        }
+
+        public void Unfocus() {
+            _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
+        }
+
+        public override void Unload() {
+            _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
         }
 
     }

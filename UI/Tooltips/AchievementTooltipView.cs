@@ -7,6 +7,7 @@ using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace BhModule.Community.Pathing.UI.Tooltips {
     public class AchievementTooltipView : View, ITooltipView {
@@ -75,7 +76,7 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
                 Padding             = new Thickness(0, 8, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment   = VerticalAlignment.Middle,
-                TextColor           = Control.StandardColors.DisabledText,
+                TextColor           = Color.FromNonPremultiplied(204, 204, 204, 255),
                 ShowShadow          = true,
                 WrapText            = true,
                 Parent              = buildPanel

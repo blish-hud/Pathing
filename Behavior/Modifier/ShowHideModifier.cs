@@ -10,13 +10,13 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
         public const string SHOW_PRIMARY_ATTR_NAME = "show";
         public const string HIDE_PRIMARY_ATTR_NAME = "hide";
 
-        private readonly IPackState _packstate;
+        private readonly IPackState _packState;
 
         public PathingCategory Category       { get; set; }
         public bool            ShowOnInteract { get; set; }
 
         public ShowHideModifier(PathingCategory category, bool showOnInteract, StandardMarker marker, IPackState packState) : base(marker) {
-            _packstate = packState;
+            _packState = packState;
 
             this.Category       = category;
             this.ShowOnInteract = showOnInteract;
@@ -47,13 +47,21 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
                 return;
             }
 
-            _packstate.CategoryStates.SetInactive(this.Category,
+            _packState.CategoryStates.SetInactive(this.Category,
                                                   !this.ShowOnInteract);
         }
 
-        public void Focus() { /* NOOP */ }
+        public void Focus() {
+            _packState.UiStates.Interact.ShowInteract(_pathingEntity, $"{(this.ShowOnInteract ? "Show" : "Hide")} '{this.Category.Namespace}' category {{0}}");
+        }
 
-        public void Unfocus() { /* NOOP */ }
+        public void Unfocus() {
+            _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
+        }
+
+        public override void Unload() {
+            _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
+        }
 
     }
 }

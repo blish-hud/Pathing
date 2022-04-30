@@ -11,7 +11,11 @@ namespace BhModule.Community.Pathing.State.UserResources {
 
         public string[] MarkerLoadPaths { get; set; } = Array.Empty<string>();
 
-        public double CopyAttributeRechargeMs = 8000d;
+        public double CopyAttributeRechargeMs { get; set; } = 8000d;
+
+        public float InteractGearXOffset   { get; set; } = 0.62f;
+        public float InteractGearYOffset   { get; set; } = 0.58f;
+        public bool  InteractGearAnimation { get; set; } = true;
 
     }
 }
