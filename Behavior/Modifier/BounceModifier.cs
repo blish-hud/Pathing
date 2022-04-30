@@ -51,7 +51,6 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
         }
 
         public void Focus() {
-
             if (!_packState.UserConfiguration.PackAllowMarkersToAnimate.Value) return;
 
             _bounceAnimation?.CancelAndComplete();
