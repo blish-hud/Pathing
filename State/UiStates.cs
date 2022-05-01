@@ -53,7 +53,7 @@ namespace BhModule.Community.Pathing.State {
         private void InitInfo() {
             if (_info != null) return;
             
-            _info = new InfoWindow() {
+            _info = new InfoWindow(_rootPackState) {
                 Parent  = GameService.Graphics.SpriteScreen,
                 Visible = false
             };

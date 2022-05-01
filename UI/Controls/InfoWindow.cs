@@ -1,4 +1,5 @@
 ﻿using System;
+using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Effects;
 using Blish_HUD;
 using Blish_HUD.Controls;
@@ -16,18 +17,22 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private static readonly Texture2D _windowMask;
         private static readonly Texture2D _windowClose;
 
-        private bool   _showing        = false;
-        private double _fadeCompletion = 0;
-
         static InfoWindow() {
             _windowTexture    = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156475+156476.png");
             _windowMask       = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156477.png");
             _windowClose      = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\156106.png");
         }
 
-        public InfoWindow() {
+        private bool   _showing        = false;
+        private double _fadeCompletion = 0;
+
+        private readonly IPackState _packState;
+
+        public InfoWindow(IPackState packState) {
+            _packState = packState;
+
             this.Size             = new Point(512, 512);
-            this.Location         = new Point(300, 200);
+            this.Location         = new Point(_packState.UserResourceStates.Advanced.InfoWindowXOffsetPixels, _packState.UserResourceStates.Advanced.InfoWindowYOffsetPixels);
             this.HeightSizingMode = SizingMode.AutoSize;
             this.AutoSizePadding  = new Point(40, 70);
             this.SpriteBatchParameters = new SpriteBatchParameters(SpriteSortMode.Immediate,
