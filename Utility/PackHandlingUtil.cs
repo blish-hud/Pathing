@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BhModule.Community.Pathing.MarkerPackRepo;
 using Blish_HUD;
 using TmfLib;
+using TmfLib.Writer;
 
 namespace BhModule.Community.Pathing.Utility {
     public static class PackHandlingUtil {
@@ -47,6 +48,32 @@ namespace BhModule.Community.Pathing.Utility {
             }
 
             markerPackPkg.IsDownloading = false;
+        }
+
+        private static async Task<string> OptimizePack(string downloadedPack) {
+            string dir  = Path.GetDirectoryName(downloadedPack);
+            string file = $"optimized-{Path.GetFileName(downloadedPack)}";
+
+            try {
+                var pack           = Pack.FromArchivedMarkerPack(downloadedPack);
+                var packCollection = await pack.LoadAllAsync();
+
+                var packWriter = new PackWriter(new PackWriterSettings() {
+                                                    PackOutputMethod = PackWriterSettings.OutputMethod.Archive
+                                                });
+
+                await packWriter.WriteAsync(pack, packCollection, dir, file);
+
+                pack.ReleaseLocks();
+            } catch (Exception e) {
+                // Optimization failed - lets not interrupt the process.
+                Logger.Error(e, "Failed to optimize marker pack.");
+                return downloadedPack;
+            }
+
+            File.Delete(downloadedPack);
+
+            return Path.Combine(dir, file);
         }
 
         private static async Task BeginPackDownload(MarkerPackPkg markerPackPkg, IProgress<string> progress, Action<MarkerPackPkg, bool> funcOnComplete) {
@@ -98,6 +125,10 @@ namespace BhModule.Community.Pathing.Utility {
 
                     packArchive.Dispose();
                 }
+
+                // TODO: Localize 'Optimizing the pack...'
+                progress.Report("Optimizing the pack...");
+                tempPackDownloadDestination = await OptimizePack(tempPackDownloadDestination);
 
                 if (File.Exists(finalPath)) {
                     // The pack was already downloaded - make sure we're not currently loading!

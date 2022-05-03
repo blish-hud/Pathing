@@ -230,7 +230,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             
             // Download % / Up to Date
             if (_markerPackPkg.IsDownloading) {
-                spriteBatch.DrawStringOnCtrl(this, $"{_markerPackPkg.DownloadProgress}%", GameService.Content.DefaultFont14, _downloadButton.LocalBounds, StandardColors.Default, false, HorizontalAlignment.Center);
+                spriteBatch.DrawStringOnCtrl(this, $"{Math.Min(_markerPackPkg.DownloadProgress, 99)}%", GameService.Content.DefaultFont14, _downloadButton.LocalBounds, StandardColors.Default, false, HorizontalAlignment.Center);
             } else if (_isUpToDate) {
                 spriteBatch.DrawStringOnCtrl(this, "Up to Date", GameService.Content.DefaultFont14, _downloadButton.LocalBounds, StandardColors.Default, false, HorizontalAlignment.Center);
             }
