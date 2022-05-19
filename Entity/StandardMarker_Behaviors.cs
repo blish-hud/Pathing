@@ -30,6 +30,7 @@ namespace BhModule.Community.Pathing.Entity {
             { if (collection.TryGetSubset(SpecializationFilter.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(SpecializationFilter.BuildFromAttributes(attributes)); }
             { if (collection.TryGetSubset(MapTypeFilter.PRIMARY_ATTR_NAME,        out var attributes)) AddBehavior(MapTypeFilter.BuildFromAttributes(attributes)); }
             { if (collection.TryGetSubset(ScheduleFilter.PRIMARY_ATTR_NAME,       out var attributes)) AddBehavior(ScheduleFilter.BuildFromAttributes(attributes)); }
+            { if (collection.TryGetSubset(RaidFilter.PRIMARY_ATTR_NAME,           out var attributes)) AddBehavior(RaidFilter.BuildFromAttributes(attributes, this, _packState)); }
 
             // TacO Behaviors
             { if (collection.TryGetSubset(StandardBehaviorFilter.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(StandardBehaviorFilter.BuildFromAttributes(attributes, this, _packState)); }
@@ -40,6 +41,7 @@ namespace BhModule.Community.Pathing.Entity {
             { if (collection.TryGetSubset(BounceModifier.PRIMARY_ATTR_NAME,        out var attributes)) AddBehavior(BounceModifier.BuildFromAttributes(attributes, this, _packState)); }
             { if (collection.TryGetSubset(CopyModifier.PRIMARY_ATTR_NAME,          out var attributes)) AddBehavior(CopyModifier.BuildFromAttributes(attributes, this, _packState)); }
             { if (collection.TryGetSubset(ToggleModifier.PRIMARY_ATTR_NAME,        out var attributes)) AddBehavior(ToggleModifier.BuildFromAttributes(attributes, this, _packState)); }
+            { if (collection.TryGetSubset(ResetGuidModifier.PRIMARY_ATTR_NAME,     out var attributes)) AddBehavior(ResetGuidModifier.BuildFromAttributes(attributes, this, _packState)); }
             { if (collection.TryGetSubset(ShowHideModifier.SHOW_PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(ShowHideModifier.BuildFromAttributes(attributes, this, _packState)); }
             { if (collection.TryGetSubset(ShowHideModifier.HIDE_PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(ShowHideModifier.BuildFromAttributes(attributes, this, _packState)); }
         }

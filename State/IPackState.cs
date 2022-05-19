@@ -16,6 +16,7 @@ namespace BhModule.Community.Pathing.State {
 
         BehaviorStates     BehaviorStates     { get; }
         AchievementStates  AchievementStates  { get; }
+        RaidStates         RaidStates         { get; }
         CategoryStates     CategoryStates     { get; }
         MapStates          MapStates          { get; }
         UserResourceStates UserResourceStates { get; }

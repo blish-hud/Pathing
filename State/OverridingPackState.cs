@@ -18,6 +18,7 @@ namespace BhModule.Community.Pathing.State {
 
         public BehaviorStates     BehaviorStates     => _referencePackState.BehaviorStates;
         public AchievementStates  AchievementStates  => _referencePackState.AchievementStates;
+        public RaidStates         RaidStates         => _referencePackState.RaidStates;
         public CategoryStates     CategoryStates     => _referencePackState.CategoryStates;
         public MapStates          MapStates          => _referencePackState.MapStates;
         public UserResourceStates UserResourceStates => _referencePackState.UserResourceStates;

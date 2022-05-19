@@ -24,7 +24,7 @@ namespace BhModule.Community.Pathing.Entity {
             Populate_MinMaxSize(collection, resourceManager);
             Populate_IconSize(collection, resourceManager);
             Populate_IconFile(collection, resourceManager);
-            // Populate_Title(collection, resourceManager);
+            Populate_Title(collection, resourceManager);
             Populate_Tint(collection, resourceManager);
             Populate_Rotation(collection, resourceManager);
             Populate_HeightOffset(collection, resourceManager);

@@ -60,6 +60,37 @@ namespace BhModule.Community.Pathing.State {
             return mapIndex + GameService.Gw2Mumble.Info.ShardId;
         }
 
+        public void ClearHiddenBehavior(Guid guid) {
+            lock (_hiddenUntilMapChange) {
+                if (_hiddenUntilMapChange.Remove(guid)) {
+                    return;
+                }
+            }
+
+            lock (_hiddenUntilTimer) {
+                if (_hiddenUntilTimer.Contains(guid)) {
+                    _hiddenUntilTimer.Remove(guid);
+
+                    for (int i = 0; i < _timerMetadata.Count; i++) {
+                        if (_timerMetadata[i].guid == guid) {
+                            _timerMetadata.RemoveAt(i);
+                            _stateDirty = true;
+                            return;
+                        }
+                    }
+                }
+            }
+
+            lock (_hiddenInShard) {
+                foreach (var shard in _hiddenInShard) {
+                    if (shard.Value.Contains(guid)) {
+                        shard.Value.Remove(guid);
+                        return;
+                    }
+                }
+            }
+        }
+
         public bool IsBehaviorHidden(StandardPathableBehavior behavior, Guid guid) {
             return behavior switch {
                 // TacO

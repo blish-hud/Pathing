@@ -63,11 +63,13 @@
   <ItemGroup>
     <Compile Include="Behavior\AchievementStatus.cs" />
     <Compile Include="Behavior\Behavior.cs" />
+    <Compile Include="Behavior\Filter\RaidFilter.cs" />
     <Compile Include="Behavior\Filter\AchievementFilter.cs" />
     <Compile Include="Behavior\Filter\MapTypeFilter.cs" />
     <Compile Include="Behavior\Filter\ScheduleFilter.cs" />
     <Compile Include="Behavior\ICanFilter.cs" />
     <Compile Include="Behavior\Modifier\BounceModifier.cs" />
+    <Compile Include="Behavior\Modifier\ResetGuidModifier.cs" />
     <Compile Include="Behavior\Modifier\CopyModifier.cs" />
     <Compile Include="Behavior\Modifier\InfoModifier.cs" />
     <Compile Include="Behavior\Modifier\ShowHideModifier.cs" />
@@ -266,6 +268,7 @@
     <Compile Include="State\CachedMumbleStates.cs" />
     <Compile Include="State\EditorStates.cs" />
     <Compile Include="State\PackLoadOption.cs" />
+    <Compile Include="State\RaidStates.cs" />
     <Compile Include="State\UiStates.cs" />
     <Compile Include="State\UserResources\AdvancedDefaults.cs" />
     <Compile Include="State\UserResources\Converters\ColorConverter.cs" />
@@ -281,6 +284,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\ScreenDraw.cs" />
     <Compile Include="UI\Controls\SmallInteract.cs" />
     <Compile Include="UI\Tooltips\AchievementPresenter.cs" />
     <Compile Include="UI\Tooltips\AchievementTooltipView.cs" />

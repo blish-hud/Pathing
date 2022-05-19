@@ -20,12 +20,30 @@ namespace BhModule.Community.Pathing.State {
         private Label            _infoLabel;
         private SafeList<string> _infoList;
 
+        private ScreenDraw _screenDraw;
+
         public UiStates(IRootPackState rootPackState) : base(rootPackState) { /* NOOP */ }
 
         public override async Task Reload() {
             await Unload();
 
             await Initialize();
+        }
+
+        protected override Task<bool> Initialize() {
+            InitInfo();
+            InitMap();
+            InitInteract();
+            //InitScreenDraw();
+
+            return Task.FromResult(true);
+        }
+
+        private void InitScreenDraw() {
+            _screenDraw = new ScreenDraw() {
+                Parent = GameService.Graphics.SpriteScreen,
+                ZIndex = this.Map.ZIndex - 1
+            };
         }
 
         private void InitMap() {
@@ -105,14 +123,6 @@ namespace BhModule.Community.Pathing.State {
             };
         }
 
-        protected override Task<bool> Initialize() {
-            InitInfo();
-            InitMap();
-            InitInteract();
-
-            return Task.FromResult(true);
-        }
-
         public override Task Unload() {
             GameService.Gw2Mumble.CurrentMap.MapChanged -= CurrentMapChanged;
             GameService.Gw2Mumble.UI.IsMapOpenChanged   -= MapOpenedChanged;
@@ -123,6 +133,8 @@ namespace BhModule.Community.Pathing.State {
             _infoList.Clear();
 
             this.Interact?.Dispose();
+
+            _screenDraw?.Dispose();
 
             return Task.CompletedTask;
         }

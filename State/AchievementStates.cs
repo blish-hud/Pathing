@@ -46,6 +46,8 @@ namespace BhModule.Community.Pathing.State {
         }
 
         public override Task Unload() {
+            PathingModule.Instance.Gw2ApiManager.SubtokenUpdated -= Gw2ApiManager_SubtokenUpdated;
+
             return Task.CompletedTask;
         }
 

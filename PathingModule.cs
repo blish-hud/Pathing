@@ -107,12 +107,14 @@ namespace BhModule.Community.Pathing {
                                                 new Rectangle(35, 36, 900,      640),
                                                 new Rectangle(95, 42, 783 + 38, 592)
                                                ) {
-                Title       = Strings.General_UiName,
-                Parent      = GameService.Graphics.SpriteScreen,
-                Location    = new Point(100, 100),
+                Title         = Strings.General_UiName,
+                Parent        = GameService.Graphics.SpriteScreen,
+                Location      = new Point(100, 100),
                 // Fixes an issue in v0.11.2 where the window is clipped for some reason if window scale is != 100%
-                ClipsBounds = Program.OverlayVersion == new SemVer.Version(0, 11, 2) && GameService.Graphics.GetDpiScaleRatio() != 1f,
-                Emblem      = this.ContentsManager.GetTexture(@"png\controls\1615829.png")
+                ClipsBounds   = Program.OverlayVersion == new SemVer.Version(0, 11, 2) && GameService.Graphics.GetDpiScaleRatio() != 1f,
+                Emblem        = this.ContentsManager.GetTexture(@"png\controls\1615829.png"),
+                Id            = $"{this.Namespace}_SettingsWindow",
+                SavesPosition = true,
             };
 
             _packSettingsTab    = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(ModuleSettings.PackSettings),    Strings.Window_MainSettingsTab);
