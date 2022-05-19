@@ -30,7 +30,7 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
 
         public bool IsFiltered() {
             return _triggered 
-                || this.Raids.Any() && _packState.RaidStates.AreRaidsComplete(this.Raids);
+                || this.Raids.Any() && !_packState.RaidStates.AreRaidsComplete(this.Raids);
         }
 
     }
