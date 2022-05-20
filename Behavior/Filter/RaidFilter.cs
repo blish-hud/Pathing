@@ -12,8 +12,6 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
 
         private readonly IPackState _packState;
 
-        private bool _triggered = false;
-
         public List<string> Raids { get; set; }
 
         public RaidFilter(IEnumerable<string> raids, IPathingEntity pathingEntity, IPackState packState) : base(pathingEntity) {
@@ -29,8 +27,7 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
         }
 
         public bool IsFiltered() {
-            return _triggered 
-                || (_triggered = this.Raids.Any() && !_packState.RaidStates.AreRaidsComplete(this.Raids));
+            return this.Raids.Any() && !_packState.RaidStates.AreRaidsComplete(this.Raids);
         }
 
     }

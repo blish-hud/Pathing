@@ -63,6 +63,7 @@ namespace BhModule.Community.Pathing.Entity {
         public override void Interact(bool autoTriggered) {
             foreach (var behavior in this.Behaviors) {
                 if (behavior is ICanInteract interactable) {
+                    Logger.Debug($"{(autoTriggered ? "Automatically" : "Manually")} interacted with marker '{this.Guid.ToBase64String()}': {behavior.GetType().Name}");
                     interactable.Interact(autoTriggered);
                 }
             }
