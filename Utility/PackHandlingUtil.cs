@@ -55,7 +55,14 @@ namespace BhModule.Community.Pathing.Utility {
             string file = $"optimized-{Path.GetFileName(downloadedPack)}";
 
             try {
-                var pack           = Pack.FromArchivedMarkerPack(downloadedPack);
+                var pack = Pack.FromArchivedMarkerPack(downloadedPack);
+
+                if (pack.ManifestedPack) {
+                    // Pack is already optimized.  We can skip doing it again.
+                    pack.ReleaseLocks();
+                    return downloadedPack;
+                }
+
                 var packCollection = await pack.LoadAllAsync();
 
                 var packWriter = new PackWriter(new PackWriterSettings() {
