@@ -274,7 +274,6 @@
     <Compile Include="State\UserResources\Converters\ColorConverter.cs" />
     <Compile Include="State\UserResources\IgnoreDefaults.cs" />
     <Compile Include="State\UserResources\Population\MarkerPopulationDefaults.cs" />
-    <Compile Include="PackLoader.cs" />
     <Compile Include="State\MapStates.cs" />
     <Compile Include="State\UserResourceStates.cs" />
     <Compile Include="State\UserResources\StaticValues.cs" />

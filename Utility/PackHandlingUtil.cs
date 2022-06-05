@@ -85,7 +85,7 @@ namespace BhModule.Community.Pathing.Utility {
 
         private static async Task BeginPackDownload(MarkerPackPkg markerPackPkg, IProgress<string> progress, Action<MarkerPackPkg, bool> funcOnComplete) {
             // TODO: Localize 'Updating pack '{0}'...'
-            Logger.Info($"Updating pack '{markerPackPkg.Name}'...");
+            Logger.Info($"Downloading pack '{markerPackPkg.Name}'...");
             progress.Report($"Downloading pack '{markerPackPkg.Name}'...");
             markerPackPkg.IsDownloading    = true;
             markerPackPkg.DownloadError    = null;
@@ -133,9 +133,13 @@ namespace BhModule.Community.Pathing.Utility {
                     packArchive.Dispose();
                 }
 
-                // TODO: Localize 'Optimizing the pack...'
-                progress.Report("Optimizing the pack...");
-                tempPackDownloadDestination = await OptimizePack(tempPackDownloadDestination);
+                if (PathingModule.Instance != null && PathingModule.Instance.PackInitiator.PackState.UserResourceStates.Advanced.OptimizeMarkerPacks) {
+                    // TODO: Localize 'Optimizing the pack...'
+                    progress.Report("Optimizing the pack...");
+                    tempPackDownloadDestination = await OptimizePack(tempPackDownloadDestination);
+                } else {
+                    Logger.Info("Skipping pack optimization - it's disabled or instance is null.");
+                }
 
                 if (File.Exists(finalPath)) {
                     // The pack was already downloaded - make sure we're not currently loading!

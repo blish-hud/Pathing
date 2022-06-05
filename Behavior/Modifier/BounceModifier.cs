@@ -80,7 +80,7 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
 
             _bounceAnimation = GameService.Animation.Tweener.Tween(_pathingEntity,
                                                                    new { HeightOffset = _originalVerticalOffset },
-                                                                   _pathingEntity.HeightOffset / 2f)
+                                                                   this.BounceDuration)
                                           .Ease(Ease.BounceOut);
         }
 

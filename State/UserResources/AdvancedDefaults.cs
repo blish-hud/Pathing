@@ -10,7 +10,8 @@ namespace BhModule.Community.Pathing.State.UserResources {
         public const string FILENAME = "advanced.yaml";
 
         // Marker Packs
-        public string[] MarkerLoadPaths { get; set; } = Array.Empty<string>();
+        public string[] MarkerLoadPaths     { get; set; } = Array.Empty<string>();
+        public bool     OptimizeMarkerPacks { get; set; } = true;
 
         // Copy Attribute
         public double CopyAttributeRechargeMs { get; set; } = 8000d;

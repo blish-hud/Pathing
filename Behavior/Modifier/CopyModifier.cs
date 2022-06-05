@@ -8,10 +8,10 @@ using TmfLib.Prototype;
 namespace BhModule.Community.Pathing.Behavior.Modifier {
     public class CopyModifier : Behavior<StandardMarker>, ICanInteract, ICanFocus {
 
-        public const  string PRIMARY_ATTR_NAME = "copy";
-        private const string ATTR_MESSAGE      = PRIMARY_ATTR_NAME + "-message";
+        public const string PRIMARY_ATTR_NAME = "copy";
+        public const string ATTR_MESSAGE      = PRIMARY_ATTR_NAME + "-message";
 
-        private const string DEFAULT_COPYMESSAGE = "'{0}' copied to clipboard.";
+        public const string DEFAULT_COPYMESSAGE = "'{0}' copied to clipboard.";
 
         private readonly IPackState _packState;
 

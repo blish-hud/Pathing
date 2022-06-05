@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Behavior.Filter;
+using BhModule.Community.Pathing.Behavior.Modifier;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Tooltips;
 using BhModule.Community.Pathing.Utility;
@@ -37,6 +38,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
             _contexts     = new List<(Texture2D, string, Action)>();
             _forceShowAll = forceShowAll;
 
+            pathingCategory.ExplicitAttributes.AddOrUpdateAttribute("copy", "testing 123!");
+
             BuildCategoryMenu();
             DetectAndBuildContexts();
         }
@@ -52,10 +55,10 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 this.Submenu = new CategoryContextMenuStrip(_packState, _pathingCategory, _forceShowAll);
             }
 
-            if (!_pathingCategory.IsSeparator) {
+            /*if (!_pathingCategory.IsSeparator) {*/
                 this.CanCheck = true;
                 this.Checked  = !_packState.CategoryStates.GetCategoryInactive(_pathingCategory);
-            }
+            /*}*/
         }
 
         private void AddAchievementContext(int achievementId) {
@@ -93,15 +96,48 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         protected override void OnCheckedChanged(CheckChangedEvent e) {
-            if (this.Enabled) {
+            if (this.Enabled && !_pathingCategory.IsSeparator) {
                 _packState.CategoryStates.SetInactive(_pathingCategory, !e.Checked);
             }
 
             base.OnCheckedChanged(e);
         }
 
+        private bool TryGetCopyDetails(out string copyValue, out string copyMessage) {
+            copyValue   = string.Empty;
+            copyMessage = CopyModifier.DEFAULT_COPYMESSAGE;
+
+            if (_pathingCategory.ExplicitAttributes.TryGetAttribute(CopyModifier.PRIMARY_ATTR_NAME, out var copyValueAttr)) {
+                copyValue = copyValueAttr.GetValueAsString();
+
+                if (_packState.UserConfiguration.PackMarkerConsentToClipboard.Value == MarkerClipboardConsentLevel.Never) {
+                    // The player has disabled clipboard access.
+                    return false;
+                }
+
+
+                if (_pathingCategory.ExplicitAttributes.TryGetAttribute(CopyModifier.ATTR_MESSAGE, out var copyMessageAttr)) {
+                    copyMessage = copyMessageAttr.GetValueAsString();
+                }
+
+                copyMessage = string.Format(copyMessage, copyValue);
+                return true;
+            }
+
+            return false;
+        }
+
         protected override void OnClick(MouseEventArgs e) {
-            if (base.CanCheck) {
+            if (_pathingCategory.IsSeparator && TryGetCopyDetails(out string copyValue, out string copyMessage)) {
+                ClipboardUtil.WindowsClipboardService.SetTextAsync(copyValue).ContinueWith(t => {
+                    if (t.IsCompleted && t.Result) {
+                        ScreenNotification.ShowNotification(string.Format(copyMessage, copyValue),
+                                                            ScreenNotification.NotificationType.Info,
+                                                            null,
+                                                            2);
+                    }
+                });
+            } else if (!_pathingCategory.IsSeparator) {
                 // If CTRL is held down when clicked, uncheck all adjacent menu items except for this one.
                 if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {
                     foreach (var childMenuItem in this.Parent?.Children.Where(child => child is CategoryContextMenuStripItem).Cast<CategoryContextMenuStripItem>() ?? Enumerable.Empty<CategoryContextMenuStripItem>()) {
@@ -129,7 +165,11 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds) {
+            // Eww - this is a work around to let us hide the checkbox.
+            // We are using the checkbox to get around a bug that prevents clicks from firing.
+            this.CanCheck = !_pathingCategory.IsSeparator;
             base.Paint(spriteBatch, bounds);
+            this.CanCheck = true;
 
             int rightOffset = 18;
 
