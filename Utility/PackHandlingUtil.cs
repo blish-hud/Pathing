@@ -84,7 +84,7 @@ namespace BhModule.Community.Pathing.Utility {
         }
 
         private static async Task BeginPackDownload(MarkerPackPkg markerPackPkg, IProgress<string> progress, Action<MarkerPackPkg, bool> funcOnComplete) {
-            // TODO: Localize 'Updating pack '{0}'...'
+            // TODO: Localize 'Downloading pack '{0}'...'
             Logger.Info($"Downloading pack '{markerPackPkg.Name}'...");
             progress.Report($"Downloading pack '{markerPackPkg.Name}'...");
             markerPackPkg.IsDownloading    = true;
