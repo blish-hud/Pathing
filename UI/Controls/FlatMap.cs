@@ -143,7 +143,7 @@ namespace BhModule.Community.Pathing.Entity {
                 // We can detect the map closing earlier than the game reports it by monitoring the z position of the camera.
                 // This only works while unmounted, though.  This is good as it makes the transition less janky looking.
                 // First, we check that we're not mounted.
-                if (GameService.Gw2Mumble.PlayerCharacter.CurrentMount == MountType.None) {
+                if (GameService.Gw2Mumble.PlayerCharacter.CurrentMount == MountType.None && _packState.UserResourceStates.Advanced.MapTriggerHideFromCamera) {
                     if (GameService.Overlay.CurrentGameTime?.TotalGameTime.TotalSeconds - _lastMapViewChanged < 1.2f) {
                         // It takes about a second for the camera to animate out when the map is opened, so we want to get the final Z position.
                         _lastCameraPos = GameService.Gw2Mumble.PlayerCamera.Position.Z;
