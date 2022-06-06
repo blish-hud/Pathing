@@ -30,11 +30,6 @@ namespace BhModule.Community.Pathing.State {
         public IgnoreDefaults Ignore { get; set; }
 
         /// <summary>
-        /// <inheritdoc cref="StaticValues"/>
-        /// </summary>
-        public StaticValues Static { get; set; }
-
-        /// <summary>
         /// <inheritdoc cref="TextureDefaults"/>
         /// </summary>
         public TextureDefaults Textures { get; set; }
@@ -78,7 +73,6 @@ namespace BhModule.Community.Pathing.State {
             await ExportDefaultState(Path.Combine(userResourceDir, AdvancedDefaults.FILENAME),   yamlSerializer, new AdvancedDefaults());
             await ExportDefaultState(Path.Combine(userResourceDir, PopulationDefaults.FILENAME), yamlSerializer, new PopulationDefaults());
             await ExportDefaultState(Path.Combine(userResourceDir, IgnoreDefaults.FILENAME),     yamlSerializer, new IgnoreDefaults());
-            await ExportDefaultState(Path.Combine(userResourceDir, StaticValues.FILENAME),       yamlSerializer, new StaticValues());
         }
 
         private async Task<T> LoadState<T>(string statePath, IDeserializer yamlDeserializer, Func<T> returnOnError) where T : class {
@@ -106,13 +100,12 @@ namespace BhModule.Community.Pathing.State {
             this.Advanced   = await LoadState(Path.Combine(userResourceDir, AdvancedDefaults.FILENAME),   yamlDeserializer, () => new AdvancedDefaults());
             this.Population = await LoadState(Path.Combine(userResourceDir, PopulationDefaults.FILENAME), yamlDeserializer, () => new PopulationDefaults());
             this.Ignore     = await LoadState(Path.Combine(userResourceDir, IgnoreDefaults.FILENAME),     yamlDeserializer, () => new IgnoreDefaults());
-            this.Static     = await LoadState(Path.Combine(userResourceDir, StaticValues.FILENAME),       yamlDeserializer, () => new StaticValues());
         }
 
         public override Task Unload() {
+            this.Advanced   = null;
             this.Population = null;
             this.Ignore     = null;
-            this.Static     = null;
 
             return Task.CompletedTask;
         }

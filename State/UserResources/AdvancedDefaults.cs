@@ -26,7 +26,8 @@ namespace BhModule.Community.Pathing.State.UserResources {
         public int InfoWindowYOffsetPixels { get; set; } = 200;
 
         // Map
-        public bool MapTriggerHideFromCamera { get; set; } = true;
+        public bool  MapTriggerHideFromCamera    { get; set; } = true;
+        public float MapTrailDouglasPeuckerError { get; set; } = 0.2f;
 
     }
 }
