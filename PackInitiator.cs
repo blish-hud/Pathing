@@ -132,6 +132,15 @@ namespace BhModule.Community.Pathing {
             }
         }
 
+        public void UnloadPackByName(string packName) {
+            foreach (var pack in _packs.ToArray()) {
+                if (string.Equals(packName, pack.Name, StringComparison.OrdinalIgnoreCase)) {
+                    _packs.Remove(pack);
+                    break;
+                }
+            }
+        }
+
         private async Task UnloadStateAndCollection() {
             _sharedPackCollection?.Unload();
             await _packState.Unload();

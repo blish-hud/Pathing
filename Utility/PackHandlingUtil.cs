@@ -153,13 +153,21 @@ namespace BhModule.Community.Pathing.Utility {
                     File.Delete(finalPath);
                 }
 
-                File.Move(tempPackDownloadDestination, finalPath);
-
-                if (needsInit) {
-                    var newPack = Pack.FromArchivedMarkerPack(finalPath);
-                    await PathingModule.Instance.PackInitiator.LoadPack(newPack);
-                    newPack.ReleaseLocks();
+                try {
+                    File.Move(tempPackDownloadDestination, finalPath);
+                } catch (IOException) {
+                    Logger.Warn("Failed to move temp marker pack from {startPath} to {endPath} so instead we'll attempt to copy it.", tempPackDownloadDestination, finalPath);
+                    File.Copy(tempPackDownloadDestination, finalPath);
                 }
+
+                var newPack = Pack.FromArchivedMarkerPack(finalPath);
+
+                if (!needsInit) {
+                    PathingModule.Instance.PackInitiator.UnloadPackByName(newPack.Name);
+                }
+
+                await PathingModule.Instance.PackInitiator.LoadPack(newPack);
+                newPack.ReleaseLocks();
             } catch (InvalidDataException ex) {
                 markerPackPkg.DownloadError = "Marker pack download is corrupt.";
                 Logger.Warn(ex, $"Failed downloading marker pack {markerPackPkg.Name} from {tempPackDownloadDestination} (it appears to be corrupt).");
