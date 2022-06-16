@@ -30,7 +30,7 @@ namespace BhModule.Community.Pathing {
         
         private readonly PackReaderSettings _packReaderSettings;
 
-        public bool IsLoading { get; private set; } = false;
+        public bool IsLoading { get; private set; }
 
         public IRootPackState PackState => _packState;
 
@@ -178,7 +178,8 @@ namespace BhModule.Community.Pathing {
         private async Task LoadMapFromEachPack(int mapId) {
             this.IsLoading = true;
 
-            var loadTimer = Stopwatch.StartNew();
+            var loadTimer   = Stopwatch.StartNew();
+            var packTimings = new List<(Pack Pack, long LoadDuration)>();
 
             // TODO: Localize the loading messages.
             _loadingIndicator.Report("Loading marker packs...");
@@ -187,8 +188,12 @@ namespace BhModule.Community.Pathing {
 
             foreach (var pack in _packs.ToArray()) {
                 try {
+                    var packTimer = Stopwatch.StartNew();
+
                     _loadingIndicator.Report($"Loading {pack.Name}...");
                     await pack.LoadMapAsync(mapId, _sharedPackCollection, _packReaderSettings);
+
+                    packTimings.Add((pack, packTimer.ElapsedMilliseconds));
                 } catch (FileNotFoundException e) {
                     Logger.Warn("Pack file '{packPath}' failed to load because it could not be found.", e.FileName);
                     _packs.Remove(pack);
@@ -209,13 +214,12 @@ namespace BhModule.Community.Pathing {
             foreach (var pack in _packs.ToArray()) {
                 pack.ReleaseLocks();
             }
-
+            
             _loadingIndicator.Report(null);
 
             this.IsLoading = false;
 
-            loadTimer.Stop();
-            Logger.Info($"Finished loading packs {string.Join(", ", _packs.Select(pack => pack.Name))} in {loadTimer.ElapsedMilliseconds} ms for map {mapId}.");
+            Logger.Info($"Finished loading packs {string.Join(", ", packTimings.Select(p => $"{(p.Pack.ManifestedPack ? "+" : "-")}{p.Pack.Name}[{p.LoadDuration}ms]"))} in {loadTimer.ElapsedMilliseconds}ms for map {mapId}.");
         }
 
         private void OnMapChanged(object sender, ValueEventArgs<int> e) {
