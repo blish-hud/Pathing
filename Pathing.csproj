@@ -265,6 +265,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="State\AchievementStates.cs" />
+    <Compile Include="State\ApiStates.cs" />
     <Compile Include="State\CachedMumbleStates.cs" />
     <Compile Include="State\EditorStates.cs" />
     <Compile Include="State\PackLoadOption.cs" />

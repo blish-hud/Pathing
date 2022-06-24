@@ -92,12 +92,9 @@ namespace BhModule.Community.Pathing.Utility {
             markerPackPkg.DownloadProgress = 0;
 
             string finalPath                   = Path.Combine(DataDirUtil.MarkerDir, markerPackPkg.FileName);
-            string tempPackDownloadDestination = Path.GetTempFileName();
+            string tempPackDownloadDestination = Path.Combine(Path.GetTempPath(),    Guid.NewGuid().ToString());
 
             try {
-                // This is stupid, but GetTempFileName actually generates a file for us which causes DownloadFileAsync to fail since the file already exists.
-                File.Delete(tempPackDownloadDestination);
-
                 using (var webClient = new WebClient()) {
                     webClient.Headers.Add("user-agent", DOWNLOAD_UA);
                     webClient.DownloadProgressChanged += (s, e) => { markerPackPkg.DownloadProgress = e.ProgressPercentage; };
