@@ -12,8 +12,12 @@ namespace BhModule.Community.Pathing.Entity {
         
         public override float DrawOrder => Vector3.DistanceSquared(this.Position, GameService.Gw2Mumble.PlayerCamera.Position);
 
+        public TextureResourceManager TextureResourceManager { get; }
+
         public StandardMarker(IPackState packState, IPointOfInterest pointOfInterest) : base(packState, pointOfInterest) {
-            Populate(pointOfInterest.GetAggregatedAttributes(), TextureResourceManager.GetTextureResourceManager(pointOfInterest.ResourceManager));
+            this.TextureResourceManager = TextureResourceManager.GetTextureResourceManager(pointOfInterest.ResourceManager);
+
+            Populate(pointOfInterest.GetAggregatedAttributes(), this.TextureResourceManager);
         }
 
         private void Populate(AttributeCollection collection, TextureResourceManager resourceManager) {

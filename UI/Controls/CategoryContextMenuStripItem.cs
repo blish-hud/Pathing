@@ -38,8 +38,6 @@ namespace BhModule.Community.Pathing.UI.Controls {
             _contexts     = new List<(Texture2D, string, Action)>();
             _forceShowAll = forceShowAll;
 
-            pathingCategory.ExplicitAttributes.AddOrUpdateAttribute("copy", "testing 123!");
-
             BuildCategoryMenu();
             DetectAndBuildContexts();
         }

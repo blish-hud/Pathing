@@ -22,6 +22,7 @@ namespace BhModule.Community.Pathing {
             InitGlobalSettings(settings);
             InitPackSettings(settings);
             InitMapSettings(settings);
+            InitScriptSettings(settings);
             InitKeyBindSettings(settings);
         }
 
@@ -128,6 +129,24 @@ namespace BhModule.Community.Pathing {
             this.MapDrawOpacity.SetRange(0f, 1f);
             this.MiniMapDrawOpacity.SetRange(0f, 1f);
             this.MapTrailWidth.SetRange(0.5f, 4.5f);
+        }
+
+        #endregion
+
+        #region Script Settings
+
+        private const string SCRIPT_SETTINGS = "script-settings";
+
+        public SettingCollection ScriptSettings { get; private set; }
+
+        public SettingEntry<bool> ScriptsEnabled        { get; private set; }
+        public SettingEntry<bool> ScriptsConsoleEnabled { get; private set; }
+
+        private void InitScriptSettings(SettingCollection settings) {
+            this.ScriptSettings = settings.AddSubCollection(SCRIPT_SETTINGS);
+
+            this.ScriptsEnabled        = this.ScriptSettings.DefineSetting(nameof(this.ScriptsEnabled),        true,  () => "Enable Lua Scripts",    () => "If enabled, marker packs may load Lua scripts to provide custom functionality.");
+            this.ScriptsConsoleEnabled = this.ScriptSettings.DefineSetting(nameof(this.ScriptsConsoleEnabled), false, () => "Enable Script Console", () => "If enabled, the Script Console can be accessed from the Pathing module menu to debug scripts.");
         }
 
         #endregion

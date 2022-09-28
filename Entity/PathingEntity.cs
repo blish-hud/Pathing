@@ -15,6 +15,10 @@ namespace BhModule.Community.Pathing.Entity {
 
         protected const float FADEIN_DURATION = 800;
 
+        [Description("A unique identifier used to track the state of certain behaviors between launch sessions.")]
+        [Category("Behavior")]
+        public Guid Guid { get; set; }
+
         [Browsable(false)]
         public IList<IBehavior> Behaviors { get; } = new SafeList<IBehavior>();
 

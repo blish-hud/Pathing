@@ -16,11 +16,9 @@ namespace BhModule.Community.Pathing.Entity {
         public AsyncTexture2D Texture {
             get => _texture;
             set {
+                if (_texture == null) this.FadeIn();
+
                 _texture = value;
-
-                if (_texture == null) return;
-
-                this.FadeIn();
             }
         }
 
@@ -31,7 +29,7 @@ namespace BhModule.Community.Pathing.Entity {
         private void Populate_IconFile(AttributeCollection collection, TextureResourceManager resourceManager) {
             {
                 if (collection.TryPopAttribute(ATTR_ICONFILE, out var attribute)) {
-                    attribute.GetValueAsTextureAsync(resourceManager).ContinueWith((textureTaskResult) => {
+                    attribute.GetValueAsTextureAsync(resourceManager).ContinueWith(textureTaskResult => {
                         if (!textureTaskResult.IsFaulted && textureTaskResult.Result.Texture != null) {
                             this.Texture = textureTaskResult.Result.Texture;
                         } else {
@@ -40,7 +38,7 @@ namespace BhModule.Community.Pathing.Entity {
                     });
                 } else {
                     this.Texture = _packState.UserResourceStates.Textures.DefaultMarkerTexture;
-                    Logger.Warn($"Marker '{this.Guid.ToBase64String()}' is missing '{ATTR_ICONFILE}' attribute.");
+                    Logger.Debug($"Marker '{this.Guid.ToBase64String()}' is missing '{ATTR_ICONFILE}' attribute.");
                 }
             }
         }

@@ -21,6 +21,8 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         private void Populate(AttributeCollection collection, TextureResourceManager resourceManager) {
+            Populate_Guid(collection, resourceManager);
+
             Populate_Alpha(collection, resourceManager);
             Populate_AnimationSpeed(collection, resourceManager);
             Populate_Tint(collection, resourceManager);

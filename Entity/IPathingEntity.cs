@@ -10,6 +10,8 @@ using TmfLib.Pathable;
 namespace BhModule.Community.Pathing.Entity {
     public interface IPathingEntity : IEntity {
 
+        Guid Guid { get; }
+
         /// <summary>
         /// Filters or modifiers which add functionality to the <see cref="IPathingEntity"/>.
         /// </summary>

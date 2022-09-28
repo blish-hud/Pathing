@@ -5,7 +5,7 @@ using TmfLib;
 using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
 namespace BhModule.Community.Pathing.Entity {
-    public partial class StandardMarker {
+    public partial class StandardTrail {
 
         private const string ATTR_GUID = "guid";
 

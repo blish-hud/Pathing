@@ -57,6 +57,17 @@ namespace BhModule.Community.Pathing.State {
             }
         }
 
+        private void CleanTwinStates(SafeList<PathingCategory> categories, SafeList<PathingCategory> invertedCategories) {
+            var twins = categories.ToArray().Intersect(invertedCategories.ToArray());
+
+            foreach (var twin in twins) {
+                // We'll remove from both since we honestly have no idea at this time which it should be in.
+                // It'll sort itself out the next time the user toggles it.
+                categories.Remove(twin);
+                invertedCategories.Remove(twin);
+            }
+        }
+
         private async Task LoadStates() {
             var rootCategory = _rootPackState.RootCategory;
 
@@ -67,6 +78,10 @@ namespace BhModule.Community.Pathing.State {
 
             await LoadCategoryState(STATE_FILE,         _rawInactiveCategories, rootCategory);
             await LoadCategoryState(INVERTEDSTATE_FILE, _rawInvertedCategories, rootCategory);
+
+            // Avoids an edge case where a category ends up in both files (a pack is updated with defaultToggle).
+            // REF: https://discord.com/channels/531175899588984842/534492173362528287/1010130170625138729
+            CleanTwinStates(_rawInactiveCategories, _rawInvertedCategories);
 
             _calculationDirty = true;
         }

@@ -7,12 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.LocalHttp;
+using BhModule.Community.Pathing.Scripting;
+using BhModule.Community.Pathing.Scripting.Console;
 using BhModule.Community.Pathing.UI.Views;
-using BhModule.Community.Pathing.Utility;
 using Blish_HUD.Controls;
 using Blish_HUD.Entities;
 using Blish_HUD.Settings.UI.Views;
@@ -34,6 +34,7 @@ namespace BhModule.Community.Pathing {
 
         internal static PathingModule Instance { get; private set; }
 
+        public ScriptEngine   ScriptEngine   { get; private set; }
         public ModuleSettings ModuleSettings { get; private set; }
 
         private CornerIcon    _pathingIcon;
@@ -44,9 +45,11 @@ namespace BhModule.Community.Pathing {
         private Tab _packSettingsTab;
         private Tab _mapSettingsTab;
         private Tab _keybindSettingsTab;
+        private Tab _scriptSettingsTab;
         private Tab _markerRepoTab;
 
-        private HttpHost _apiHost;
+        private HttpHost      _apiHost;
+        private ConsoleWindow _scriptConsoleWindow;
 
         [ImportingConstructor]
         public PathingModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
@@ -58,6 +61,7 @@ namespace BhModule.Community.Pathing {
         }
 
         private IEnumerable<ContextMenuStripItem> GetPathingMenuItems() {
+            // Pack initiator gets to inject some menu items, first:
             if (this.PackInitiator != null) {
                 foreach (var menuItem in this.PackInitiator.GetPackMenuItems()) {
                     menuItem.Enabled = menuItem.Enabled && !_packsLoading;
@@ -76,6 +80,18 @@ namespace BhModule.Community.Pathing {
                 _settingsWindow.Show();
             };
 
+            yield return downloadMarkers;
+
+            // Script Console - we only show if it's enabled or if the user is holding down shift.
+            if (this.ModuleSettings.ScriptsConsoleEnabled.Value || GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {
+                var scriptConsole = new ContextMenuStripItem() {
+                    Text = "Script Console" // TODO: Localize "Script Console"
+                };
+
+                scriptConsole.Click += (_, _) => ShowScriptWindow();
+                yield return scriptConsole;
+            }
+
             // Open Settings
             var openSettings = new ContextMenuStripItem() {
                 Text = "Pathing Module Settings" // TODO: Localize "Pathing Module Settings"
@@ -91,7 +107,6 @@ namespace BhModule.Community.Pathing {
                 _settingsWindow.ToggleWindow();
             };
 
-            yield return downloadMarkers;
             yield return openSettings;
         }
 
@@ -119,11 +134,13 @@ namespace BhModule.Community.Pathing {
 
             _packSettingsTab    = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(ModuleSettings.PackSettings),    Strings.Window_MainSettingsTab);
             _mapSettingsTab     = new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(ModuleSettings.MapSettings),     Strings.Window_MapSettingsTab);
+            _scriptSettingsTab  = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(ModuleSettings.ScriptSettings),  "Script Options");
             _keybindSettingsTab = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(ModuleSettings.KeyBindSettings), Strings.Window_KeyBindSettingsTab);
-            _markerRepoTab      = new Tab(ContentsManager.GetTexture(@"png\156909.png"),        () => new PackRepoView(),                                Strings.Window_DownloadMarkerPacks);
+            _markerRepoTab      = new Tab(ContentsManager.GetTexture(@"png\156909.png"),        () => new PackRepoView(),                               Strings.Window_DownloadMarkerPacks);
 
             _settingsWindow.Tabs.Add(_packSettingsTab);
             _settingsWindow.Tabs.Add(_mapSettingsTab);
+            _settingsWindow.Tabs.Add(_scriptSettingsTab);
             _settingsWindow.Tabs.Add(_keybindSettingsTab);
             _settingsWindow.Tabs.Add(_markerRepoTab);
 
@@ -140,6 +157,14 @@ namespace BhModule.Community.Pathing {
                     ShowPathingContextMenu();
                 }
             };
+        }
+
+        private void ShowScriptWindow() {
+            _scriptConsoleWindow ??= new ConsoleWindow(this);
+            _scriptConsoleWindow.Show();
+            _scriptConsoleWindow.BringToFront();
+
+            _scriptConsoleWindow.FormClosed += (_,_) => _scriptConsoleWindow = null;
         }
 
         private void ShowPathingContextMenu() {
@@ -168,9 +193,10 @@ namespace BhModule.Community.Pathing {
             _apiHost = new HttpHost(19903);
             _apiHost.Start();
 #endif
+            this.ScriptEngine   = new ScriptEngine();
             this.MarkerPackRepo = new MarkerPackRepo.MarkerPackRepo();
             this.MarkerPackRepo.Init();
-            this.PackInitiator  = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), ModuleSettings, GetModuleProgressHandler());
+            this.PackInitiator  = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), this, GetModuleProgressHandler());
             await this.PackInitiator.Init();
             sw.Stop();
             Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading Pathing module...");
@@ -181,6 +207,7 @@ namespace BhModule.Community.Pathing {
         }
 
         protected override void Update(GameTime gameTime) {
+            this.ScriptEngine?.Update(gameTime);
             this.PackInitiator?.Update(gameTime);
         }
 
@@ -195,10 +222,12 @@ namespace BhModule.Community.Pathing {
         }
 
         protected override void Unload() {
+            this.ScriptEngine?.Unload();
             _apiHost?.Close();
             this.PackInitiator?.Unload();
             _pathingIcon?.Dispose();
             _settingsWindow?.Dispose();
+            _scriptConsoleWindow?.Dispose();
 
             // Help to ensure that all pathing entities
             // are removed regardless of our current state.

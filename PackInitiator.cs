@@ -19,7 +19,7 @@ namespace BhModule.Community.Pathing {
         private static readonly Logger Logger = Logger.GetLogger<PackInitiator>();
 
         private readonly string            _watchPath;
-        private readonly ModuleSettings    _moduleSettings;
+        private readonly PathingModule     _module;
         private readonly IProgress<string> _loadingIndicator;
 
         private readonly IRootPackState _packState;
@@ -36,15 +36,15 @@ namespace BhModule.Community.Pathing {
 
         private int  _lastMap   = -1;
 
-        public PackInitiator(string watchPath, ModuleSettings moduleSettings, IProgress<string> loadingIndicator) {
+        public PackInitiator(string watchPath, PathingModule module, IProgress<string> loadingIndicator) {
             _watchPath        = watchPath;
-            _moduleSettings   = moduleSettings;
+            _module           = module;
             _loadingIndicator = loadingIndicator;
 
             _packReaderSettings = new PackReaderSettings();
             _packReaderSettings.VenderPrefixes.Add("bh-"); // Support Blish HUD specific categories/markers/trails/attributes.
 
-            _packState = new SharedPackState(moduleSettings);
+            _packState = new SharedPackState(module.ModuleSettings);
         }
 
         public void ReloadPacks() {
@@ -65,15 +65,20 @@ namespace BhModule.Community.Pathing {
             var allMarkers = new ContextMenuStripItem() {
                 Text = "All Markers", // TODO: Localize "All Markers"
                 CanCheck = true,
-                Checked = _moduleSettings.GlobalPathablesEnabled.Value,
+                Checked = _module.ModuleSettings.GlobalPathablesEnabled.Value,
                 Submenu = isAnyMarkers
                     ? new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories, false)
                     : null
             };
 
             allMarkers.CheckedChanged += (_, e) => {
-                _moduleSettings.GlobalPathablesEnabled.Value = e.Checked;
+                _module.ModuleSettings.GlobalPathablesEnabled.Value = e.Checked;
             };
+
+            // Scripts
+            if (PathingModule.Instance.ScriptEngine.Global.Menu.Menus.Any()) {
+                yield return PathingModule.Instance.ScriptEngine.Global.Menu.BuildMenu();
+            }
 
             // Reload Markers
             var reloadMarkers = new ContextMenuStripItem() {
@@ -187,7 +192,10 @@ namespace BhModule.Community.Pathing {
         private async Task LoadMapFromEachPack(int mapId) {
             this.IsLoading = true;
 
-            var loadTimer   = Stopwatch.StartNew();
+            var loadTimer = Stopwatch.StartNew();
+
+            PathingModule.Instance.ScriptEngine.Reset();
+
             var packTimings = new List<(Pack Pack, long LoadDuration)>();
 
             // TODO: Localize the loading messages.
@@ -195,7 +203,9 @@ namespace BhModule.Community.Pathing {
 
             await PrepareState(mapId);
 
-            foreach (var pack in _packs.ToArray()) {
+            var packs = _packs.ToArray();
+
+            foreach (var pack in packs) {
                 try {
                     var packTimer = Stopwatch.StartNew();
 
@@ -220,7 +230,16 @@ namespace BhModule.Community.Pathing {
                 _packState?.Unload();
             }
 
-            foreach (var pack in _packs.ToArray()) {
+            // We only load scripts if they're enabled.
+            if (PathingModule.Instance.ModuleSettings.ScriptsEnabled.Value) {
+                _loadingIndicator.Report("Loading scripts...");
+
+                foreach (var pack in packs) {
+                    await PathingModule.Instance.ScriptEngine.LoadScript("pack.lua", pack.ResourceManager);
+                }
+            }
+
+            foreach (var pack in packs) {
                 pack.ReleaseLocks();
             }
             

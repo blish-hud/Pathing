@@ -2,7 +2,6 @@
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Tooltips;
 using BhModule.Community.Pathing.Utility;
-using Microsoft.Xna.Framework;
 using TmfLib.Prototype;
 
 namespace BhModule.Community.Pathing.Behavior.Filter {
