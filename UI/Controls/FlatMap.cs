@@ -197,7 +197,11 @@ namespace BhModule.Community.Pathing.Entity {
 
             _tooltipView.Title       = tooltipTitle;
             _tooltipView.Description = tooltipDescription;
-            this.Tooltip             = _activeTooltip;
+
+            // Only show tooltips if the're enabled by the user.
+            if (_packState.UserConfiguration.MapShowTooltip.Value) {
+                this.Tooltip = _activeTooltip;
+            }
         }
 
         protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds) {

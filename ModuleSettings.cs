@@ -109,6 +109,7 @@ namespace BhModule.Community.Pathing {
         public SettingEntry<bool>               MapShowAboveBelowIndicators           { get; private set; }
         public SettingEntry<bool>               MapFadeVerticallyDistantTrailSegments { get; private set; }
         public SettingEntry<float>              MapTrailWidth                         { get; private set; }
+        public SettingEntry<bool>               MapShowTooltip                        { get; private set; }
 
         private void InitMapSettings(SettingCollection settings) {
             this.MapSettings = settings.AddSubCollection(MAP_SETTINGS);
@@ -124,6 +125,7 @@ namespace BhModule.Community.Pathing {
             this.MiniMapDrawOpacity                    = this.MapSettings.DefineSetting(nameof(this.MiniMapDrawOpacity),                    1f,                         () => "Opacity on the Minimap",                    () => "");
             this.MapShowAboveBelowIndicators           = this.MapSettings.DefineSetting(nameof(this.MapShowAboveBelowIndicators),           true,                       () => Strings.Setting_MapShowAboveBelowIndicators, () => "");
             this.MapFadeVerticallyDistantTrailSegments = this.MapSettings.DefineSetting(nameof(this.MapFadeVerticallyDistantTrailSegments), true,                       () => "Fade Trail Segments Which Are High Above or Below", () => "");
+            this.MapShowTooltip                        = this.MapSettings.DefineSetting(nameof(this.MapShowTooltip),                        true,                       () => "Show Tooltips on Map", () => "If enabled, tooltips will be shown on the map when the cursor is over a marker.");
             this.MapTrailWidth                         = this.MapSettings.DefineSetting(nameof(this.MapTrailWidth),                         2f,                         () => "Trail Width on Maps", () => "The thickness of trails shown on the map.");
 
             this.MapDrawOpacity.SetRange(0f, 1f);
