@@ -42,7 +42,7 @@ namespace BhModule.Community.Pathing.Entity {
             var drawRect = new RectangleF(location - new Vector2(this.MapDisplaySize / 2f * drawScale, this.MapDisplaySize / 2f * drawScale),
                                           new Vector2(this.MapDisplaySize * drawScale, this.MapDisplaySize * drawScale));
 
-            spriteBatch.Draw(this.Texture, drawRect, this.Tint * opacity);
+            spriteBatch.Draw(this.Texture, drawRect, this.Tint * this.Alpha * opacity);
 
             // Draw above or below indicator, if applicable.
             // We skip if zoomed out too far or if feature is disabled by the user.

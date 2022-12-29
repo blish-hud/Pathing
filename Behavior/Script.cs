@@ -7,7 +7,7 @@ using Neo.IronLua;
 using TmfLib.Prototype;
 
 namespace BhModule.Community.Pathing.Behavior {
-    internal class Script : Behavior<StandardMarker>, ICanFocus, ICanInteract, ICanFilter {
+    internal class Script : Behavior<IPathingEntity>, ICanFocus, ICanInteract, ICanFilter {
 
         public const  string PRIMARY_ATTR_NAME = "script";
         private const string ATTR_TICK         = PRIMARY_ATTR_NAME + "-tick";
@@ -26,7 +26,7 @@ namespace BhModule.Community.Pathing.Behavior {
 
         private double _nextTick = 0;
 
-        public Script(string tickFunc, string focusFunc, string triggerFunc, string filterFunc, string onceFunc, StandardMarker marker) : base(marker) {
+        public Script(string tickFunc, string focusFunc, string triggerFunc, string filterFunc, string onceFunc, IPathingEntity entity) : base(entity) {
             this.TickFunc    = SplitFunc(tickFunc);
             this.FocusFunc   = SplitFunc(focusFunc);
             this.TriggerFunc = SplitFunc(triggerFunc);
@@ -34,13 +34,13 @@ namespace BhModule.Community.Pathing.Behavior {
             this.OnceFunc    = SplitFunc(onceFunc);
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker) {
+        public static IBehavior BuildFromAttributes(AttributeCollection attributes, IPathingEntity entity) {
             return new Script(attributes.TryGetAttribute(ATTR_TICK,    out var tickAttr) ? tickAttr.GetValueAsString() : null,
                               attributes.TryGetAttribute(ATTR_FOCUS,   out var focusAttr) ? focusAttr.GetValueAsString() : null,
                               attributes.TryGetAttribute(ATTR_TRIGGER, out var triggerAttr) ? triggerAttr.GetValueAsString() : null,
                               attributes.TryGetAttribute(ATTR_FILTER,  out var filterAttr) ? filterAttr.GetValueAsString() : null,
                               attributes.TryGetAttribute(ATTR_ONCE,    out var onceAttr) ? onceAttr.GetValueAsString() : null,
-                                      marker);
+                              entity);
         }
 
         public void Focus() {
