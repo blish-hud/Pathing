@@ -134,7 +134,7 @@ namespace BhModule.Community.Pathing {
 
             _packSettingsTab    = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(ModuleSettings.PackSettings),    Strings.Window_MainSettingsTab);
             _mapSettingsTab     = new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(ModuleSettings.MapSettings),     Strings.Window_MapSettingsTab);
-            _scriptSettingsTab  = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(ModuleSettings.ScriptSettings),  "Script Options");
+            _scriptSettingsTab  = new Tab(ContentsManager.GetTexture(@"png\156701.png"),        () => new SettingsView(ModuleSettings.ScriptSettings),  "Script Options");
             _keybindSettingsTab = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(ModuleSettings.KeyBindSettings), Strings.Window_KeyBindSettingsTab);
             _markerRepoTab      = new Tab(ContentsManager.GetTexture(@"png\156909.png"),        () => new PackRepoView(),                               Strings.Window_DownloadMarkerPacks);
 

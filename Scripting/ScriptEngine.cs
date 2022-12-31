@@ -85,6 +85,7 @@ public class ScriptEngine {
         PushMessage($"Loaded new environment.", -1);
     }
 
+    /// <param name="logLevel">0 = info, 1 = warn, 2 = error</param>
     public void PushMessage(string message, int logLevel = 0, DateTime? timestamp = null, string source = null) {
         timestamp ??= DateTime.UtcNow;
 
@@ -137,7 +138,9 @@ public class ScriptEngine {
             PublishException(lre);
         } catch (Exception ex) {
             success = false;
-            // PublishException(ex);
+            PushMessage(ex.Message, 2);
+
+            // PublishException(ex); can't do this because it's not a LuaException
         }
 
         _currentFrameDuration += runClock.Elapsed;
@@ -146,9 +149,7 @@ public class ScriptEngine {
     }
 
     public LuaResult CallFunction(string funcName, params object[] args) {
-        return WrapScriptCall(() => this.Global.ContainsMember(funcName)
-                                        ? this.Global.CallMemberDirect(funcName, args, false, false, true, true)
-                                        : LuaResult.Empty).Result;
+        return WrapScriptCall(() => this.Global.CallMemberDirect(funcName, args, true, false, true, true)).Result;
     }
 
     public LuaResult CallFunction(string funcName, IEnumerable<object> args) {

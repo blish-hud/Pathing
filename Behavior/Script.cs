@@ -2,12 +2,15 @@
 using System.Linq;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Utility;
+using Blish_HUD;
 using Microsoft.Xna.Framework;
 using Neo.IronLua;
 using TmfLib.Prototype;
 
 namespace BhModule.Community.Pathing.Behavior {
     internal class Script : Behavior<IPathingEntity>, ICanFocus, ICanInteract, ICanFilter {
+
+        private static readonly Logger Logger = Logger.GetLogger<Script>();
 
         public const  string PRIMARY_ATTR_NAME = "script";
         private const string ATTR_TICK         = PRIMARY_ATTR_NAME + "-tick";
@@ -110,29 +113,44 @@ namespace BhModule.Community.Pathing.Behavior {
         }
 
         private (string Name, object[] Args) SplitFunc(string func) {
-            if (func == null) {
-                return (null, null);
+            if (!string.IsNullOrWhiteSpace(func)) {
+                try {
+                    if (func.Contains("(")) {
+                        // This technically could allow for some pretty jank, but valid, syntax.  For the sake of simplicity, though...
+                        string[] parts = func.Split('(');
+
+                        func = parts[0];
+
+                        string argStr = parts[1].Trim(' ', ')');
+
+                        if (argStr.Length > 0) {
+                            object[] args = argStr.Split(',').Select(GetValueFromString).ToArray(); // This is WRONG: a string could contain a comma.
+
+                            return (func, args);
+                        }
+                    }
+
+                    // Only func is provided.  No args.
+                    return (func, Array.Empty<object>());
+                } catch (Exception ex) {
+                    Logger.Warn($"Pathable '{_pathingEntity.Guid.ToBase64String()}' has an invalid script attribute value of '{func}'.");
+                }
             }
 
-            if (!func.Contains("(")) {
-                // Only func is provided.  No args.
-                return (func, Array.Empty<object>());
-            }
-
-            // This technically could allow for some pretty jank, but valid, syntax.  For the sake of simplicity, though...
-
-            string[] parts = func.Split('(');
-
-            string   funcName = parts[0];
-            object[] args     = parts[1].TrimEnd(')').Split(',').Select(GetValueFromString).ToArray(); // This is WRONG: a string could contain a comma.
-
-            return (funcName, args);
+            return (null, null);
         }
 
+        private int _skipFirst = 200;
+
         public override void Update(GameTime gameTime) {
+            if (PathingModule.Instance.PackInitiator.IsLoading) {
+                // Avoid calling Lua scripts until all packs are done loading.
+                return;
+            }
+
             if (this.OnceFunc.Name != null) {
+                PathingModule.Instance.ScriptEngine.CallFunction(this.OnceFunc.Name, new object[] { _pathingEntity }.Concat(this.OnceFunc.Args));
                 this.OnceFunc = (null, null);
-                PathingModule.Instance.ScriptEngine.CallFunction(this.TickFunc.Name, new object[] { _pathingEntity }.Concat(this.OnceFunc.Args));
             }
 
             if (this.TickFunc.Name != null && gameTime.TotalGameTime.TotalMilliseconds > _nextTick) {

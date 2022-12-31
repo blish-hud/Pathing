@@ -316,6 +316,7 @@
     <Compile Include="UI\Controls\SmallInteract.cs" />
     <Compile Include="UI\Tooltips\AchievementPresenter.cs" />
     <Compile Include="UI\Tooltips\AchievementTooltipView.cs" />
+    <Compile Include="UI\Tooltips\BasicTooltipView.cs" />
     <Compile Include="UI\Tooltips\DescriptionTooltipView.cs" />
     <Compile Include="UI\Controls\BlueButton.cs" />
     <Compile Include="UI\Controls\FlatMap.cs" />

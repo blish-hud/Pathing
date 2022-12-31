@@ -7,6 +7,7 @@ using Blish_HUD.Controls;
 using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using BasicTooltipView = BhModule.Community.Pathing.UI.Tooltips.BasicTooltipView;
 
 namespace BhModule.Community.Pathing.UI.Controls {
     public class SmallInteract : Control {
@@ -59,6 +60,12 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
             this.Tooltip = new Tooltip(tooltipView);
             this.Visible = true;
+        }
+
+        protected override void OnClick(MouseEventArgs e) {
+            base.OnClick(e);
+
+            _activePathingEntity?.Interact(false);
         }
 
         public void DisconnectInteract(IPathingEntity pathingEntity) {
