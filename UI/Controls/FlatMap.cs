@@ -148,7 +148,7 @@ namespace BhModule.Community.Pathing.Entity {
                         // It takes about a second for the camera to animate out when the map is opened, so we want to get the final Z position.
                         _lastCameraPos = GameService.Gw2Mumble.PlayerCamera.Position.Z;
                     } else if (Math.Abs(_lastCameraPos - GameService.Gw2Mumble.PlayerCamera.Position.Z) > 0.25f) {
-                        // If it triggers to quickly, the player was likely jumping and we want to avoid accidentally triggering.
+                        // If it triggers too quickly, the player was likely jumping and we want to avoid accidentally triggering.
                         // This gives us about a 0.3 second buffer for there to be an issue for us to activate the failsafe.
                         if (GameService.Overlay.CurrentGameTime?.TotalGameTime.TotalSeconds - _lastMapViewChanged < 1.5f) {
                             _mapFallTriggered = true;

@@ -3,5 +3,7 @@
 
         bool IsFiltered();
 
+        string FilterReason();
+
     }
 }

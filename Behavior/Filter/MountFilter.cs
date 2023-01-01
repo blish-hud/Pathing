@@ -42,6 +42,10 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             _isFiltered = this.AllowedMounts.All(m => m != GameService.Gw2Mumble.PlayerCharacter.CurrentMount);
         }
 
+        public string FilterReason() {
+            return $"Hidden because you're not on the mount: {string.Join(", ", AllowedMounts.Select(mount => mount.ToString()))}.";
+        }
+
         public static IBehavior BuildFromAttributes(AttributeCollection attributes) {
             return attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)
                        ? new MountFilter(attribute.GetValueAsEnums<MountType>())

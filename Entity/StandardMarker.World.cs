@@ -36,6 +36,10 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         private float GetOpacity() {
+            if (this.BehaviorFiltered) {
+                return 0.5f;
+            }
+
             float fade = 1f - MathHelper.Clamp((this.DistanceToPlayer - WorldUtil.GameToWorldCoord(this.FadeNear)) / (WorldUtil.GameToWorldCoord(this.FadeFar) - WorldUtil.GameToWorldCoord(this.FadeNear)), 0f, 1f);
 
             return this.Alpha
@@ -110,7 +114,7 @@ namespace BhModule.Community.Pathing.Entity {
                                                          GetOpacity(),
                                                          minRender,
                                                          maxRender,
-                                                         this.CanFade && _packState.UserConfiguration.PackFadeMarkersBetweenCharacterAndCamera.Value,
+                                                         this.CanFade && _packState.UserConfiguration.PackFadeMarkersBetweenCharacterAndCamera.Value && !this.BehaviorFiltered,
                                                          this.Tint,
                                                          this.DebugRender);
 

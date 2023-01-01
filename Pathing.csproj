@@ -121,6 +121,7 @@
     <Compile Include="Entity\EntityRenderTarget.cs" />
     <Compile Include="Entity\ICanPick.cs" />
     <Compile Include="Entity\IHasMapInfo.cs" />
+    <Compile Include="Entity\StandardMarker.HorizontalCompass.cs" />
     <Compile Include="Entity\StandardMarker.MiniMap.cs">
       <DependentUpon>StandardMarker.cs</DependentUpon>
     </Compile>
@@ -312,6 +313,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\HorizontalCompass.cs" />
     <Compile Include="UI\Controls\ScreenDraw.cs" />
     <Compile Include="UI\Controls\SmallInteract.cs" />
     <Compile Include="UI\Tooltips\AchievementPresenter.cs" />

@@ -26,6 +26,10 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
                                   packState);
         }
 
+        public string FilterReason() {
+            return $"Hidden because you've completed: {string.Join(", ", this.Raids)}.";
+        }
+
         public bool IsFiltered() {
             return this.Raids.Any() && !_packState.RaidStates.AreRaidsComplete(this.Raids);
         }

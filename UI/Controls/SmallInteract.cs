@@ -30,6 +30,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private double _showStart = 0;
 
+        private Color _tint = Color.White;
+
         private IPathingEntity _activePathingEntity;
 
         public SmallInteract(IRootPackState packState) {
@@ -47,10 +49,12 @@ namespace BhModule.Community.Pathing.UI.Controls {
             ShowInteract(pathingEntity, new BasicTooltipView(string.Format(interactMessage, $"[{Blish_HUD.Common.Gw2.KeyBindings.Interact.GetBindingDisplayText()}]")));
         }
 
-        public void ShowInteract(IPathingEntity pathingEntity, ITooltipView tooltipView) {
-            if (pathingEntity.BehaviorFiltered) {
-                return;
-            }
+        public void ShowInteract(IPathingEntity pathingEntity, string interactMessage, Color tint) {
+            ShowInteract(pathingEntity, new BasicTooltipView(string.Format(interactMessage, $"[{Blish_HUD.Common.Gw2.KeyBindings.Interact.GetBindingDisplayText()}]")), tint);
+        }
+
+        public void ShowInteract(IPathingEntity pathingEntity, ITooltipView tooltipView, Color tint) {
+            _tint = tint;
 
             _activePathingEntity = pathingEntity;
 
@@ -60,6 +64,14 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
             this.Tooltip = new Tooltip(tooltipView);
             this.Visible = true;
+        }
+
+        public void ShowInteract(IPathingEntity pathingEntity, ITooltipView tooltipView) {
+            if (pathingEntity.BehaviorFiltered) {
+                return;
+            }
+
+            ShowInteract(pathingEntity, tooltipView, Color.FromNonPremultiplied(255, 142, 50, 255));
         }
 
         protected override void OnClick(MouseEventArgs e) {
@@ -99,7 +111,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             double tCTS        = Math.Max(GameService.Overlay.CurrentGameTime.TotalGameTime.TotalSeconds - _subtleTimer, SUBTLE_DAMPER);
             float  opacity     = (this.MouseOver ? baseOpacity : 0.3f) + (float)Math.Min((tCTS / SUBTLE_DELAY - SUBTLE_DAMPER) * 0.6f, 0.6f);
 
-            spriteBatch.DrawOnCtrl(this, _interact1, bounds.OffsetBy(DRAW_WIDTH / 2, DRAW_HEIGHT / 2), null, Color.White * opacity, Math.Min((float)(GameService.Overlay.CurrentGameTime.TotalGameTime.TotalSeconds - _showStart) * 20f, MathHelper.TwoPi), new Vector2(DRAW_WIDTH / 2, DRAW_HEIGHT / 2));
+            spriteBatch.DrawOnCtrl(this, _interact1, bounds.OffsetBy(DRAW_WIDTH / 2, DRAW_HEIGHT / 2), null, _tint * opacity, Math.Min((float)(GameService.Overlay.CurrentGameTime.TotalGameTime.TotalSeconds - _showStart) * 20f, MathHelper.TwoPi), new Vector2(DRAW_WIDTH / 2, DRAW_HEIGHT / 2));
         }
 
     }

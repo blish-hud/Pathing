@@ -146,7 +146,7 @@ namespace BhModule.Community.Pathing.Entity {
             // If category is disabled.
             if (_packState.CategoryStates.GetNamespaceInactive(this.Category.Namespace)) return true;
 
-            return this.BehaviorFiltered;
+            return this.BehaviorFiltered && !_packState.UserConfiguration.PackShowHiddenMarkersReducedOpacity.Value;
         }
 
         protected Vector2 GetScaledLocation(double x, double y, double scale, double offsetX, double offsetY) {

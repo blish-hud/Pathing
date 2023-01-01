@@ -37,6 +37,10 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             _isFiltered = this.AllowedMapTypes.All(m => m != GameService.Gw2Mumble.CurrentMap.Type);
         }
 
+        public string FilterReason() {
+            return $"Hidden because you're not on the map type: {string.Join(", ", AllowedMapTypes.Select(mapType => mapType.ToString()))}.";
+        }
+
         public static IBehavior BuildFromAttributes(AttributeCollection attributes) {
             return attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)
                        ? new MapTypeFilter(attribute.GetValueAsEnums<MapType>())

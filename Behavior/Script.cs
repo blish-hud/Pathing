@@ -140,7 +140,9 @@ namespace BhModule.Community.Pathing.Behavior {
             return (null, null);
         }
 
-        private int _skipFirst = 200;
+        public string FilterReason() {
+            return $"Hidden by a script.";
+        }
 
         public override void Update(GameTime gameTime) {
             if (PathingModule.Instance.PackInitiator.IsLoading) {

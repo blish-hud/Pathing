@@ -12,6 +12,9 @@ namespace BhModule.Community.Pathing.State {
         // Map
         public FlatMap Map { get; private set; }
 
+        // Horizontal Compass
+        public HorizontalCompass HorizontalCompass { get; private set; }
+
         // Interact
         public SmallInteract Interact { get; private set; }
 
@@ -33,6 +36,7 @@ namespace BhModule.Community.Pathing.State {
         protected override Task<bool> Initialize() {
             InitInfo();
             InitMap();
+            //InitHorizontalCompass();
             InitInteract();
             //InitScreenDraw();
 
@@ -54,6 +58,14 @@ namespace BhModule.Community.Pathing.State {
             
             this.Map = new FlatMap(_rootPackState) {
                 Parent  = GameService.Graphics.SpriteScreen
+            };
+        }
+
+        private void InitHorizontalCompass() {
+            if (this.HorizontalCompass != null) return;
+
+            this.HorizontalCompass = new HorizontalCompass(_rootPackState) {
+                Parent = GameService.Graphics.SpriteScreen
             };
         }
 

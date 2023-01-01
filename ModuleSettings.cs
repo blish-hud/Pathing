@@ -63,6 +63,7 @@ namespace BhModule.Community.Pathing {
         public SettingEntry<bool>                        PackAllowMarkersToAnimate                { get; private set; }
         public SettingEntry<bool>                        PackEnableSmartCategoryFilter            { get; private set; }
         public SettingEntry<bool>                        PackShowWhenCategoriesAreFiltered        { get; private set; }
+        public SettingEntry<bool>                        PackShowHiddenMarkersReducedOpacity      { get; private set; }
 
         private void InitPackSettings(SettingCollection settings) {
             this.PackSettings = settings.AddSubCollection(PACK_SETTINGS);
@@ -84,6 +85,7 @@ namespace BhModule.Community.Pathing {
             this.PackAllowMarkersToAnimate                = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAnimate),                true, () => Strings.Setting_PackAllowMarkersToAnimate, () => "Allows animations such as 'bounce' and trail movements.");
             this.PackEnableSmartCategoryFilter            = this.PackSettings.DefineSetting(nameof(this.PackEnableSmartCategoryFilter),            true, () => "Enable Smart Categories", () => "If a category doesn't contain markers or trails relevant to the current map, the category is hidden.");
             this.PackShowWhenCategoriesAreFiltered        = this.PackSettings.DefineSetting(nameof(this.PackShowWhenCategoriesAreFiltered),        true, () => "Indicate when categories are hidden", () => "Shows a note at the bottom of the menu indicating if categories have been hidden.  Clicking the note will show the hidden categories temporarily.");
+            this.PackShowHiddenMarkersReducedOpacity      = this.PackSettings.DefineSetting(nameof(this.PackShowHiddenMarkersReducedOpacity),      false, () => "Show Ghost Markers", () => "Shows hidden markers with a reduced opacity allowing you to unhide them.");
 
             this.PackMaxOpacityOverride.SetRange(0f, 1f);
             this.PackMaxViewDistance.SetRange(25f, 50000f);

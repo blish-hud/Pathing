@@ -36,6 +36,10 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             return _triggered || _packState.AchievementStates.IsAchievementHidden(this.AchievementId, this.AchievementBit);
         }
 
+        public string FilterReason() {
+            return "Hidden because you've completed the achievement associated with this marker.";
+        }
+
         public void Interact(bool autoTriggered) {
             _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
             _triggered = true;

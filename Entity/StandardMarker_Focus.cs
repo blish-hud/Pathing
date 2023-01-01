@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Behavior;
+using BhModule.Community.Pathing.UI.Tooltips;
 using BhModule.Community.Pathing.Utility;
+using Microsoft.Xna.Framework;
 using TmfLib;
 using AttributeCollection = TmfLib.Prototype.AttributeCollection;
 
@@ -54,13 +57,40 @@ namespace BhModule.Community.Pathing.Entity {
             if (this.AutoTrigger) {
                 this.Interact(true);
             }
+
+            if (this.BehaviorFiltered && _packState.UserConfiguration.PackShowHiddenMarkersReducedOpacity.Value) {
+                // Allow users to see that they have a hidden marker and can unhide it.
+                foreach (var behavior in this.Behaviors) {
+                    if (behavior is ICanFilter filter && filter.IsFiltered()) {
+                        _packState.UiStates.Interact.ShowInteract(this, $"{filter.FilterReason()}\n\nPress {{0}} or click this gear to unhide the marker.", Color.LightBlue);
+                    }
+                }
+            }
         }
 
         public override void Unfocus() {
             this.Focused = false;
+            _packState.UiStates.Interact.DisconnectInteract(this);
         }
 
         public override void Interact(bool autoTriggered) {
+            if (!autoTriggered && this.BehaviorFiltered && _packState.UserConfiguration.PackShowHiddenMarkersReducedOpacity.Value) {
+                // Allow users to clear hidden markers.
+                foreach (var behavior in this.Behaviors.ToList()) {
+                    if (behavior is ICanFilter filter) {
+                        this.Behaviors.Remove(behavior);
+                    }
+                }
+
+                // This is the only behavior type that is stored that we can easily clear.
+                _packState.BehaviorStates.ClearHiddenBehavior(this.Guid);
+
+                Unfocus();
+                return;
+            } else if (this.BehaviorFiltered) {
+                return;
+            }
+
             foreach (var behavior in this.Behaviors) {
                 if (behavior is ICanInteract interactable) {
                     Logger.Debug($"{(autoTriggered ? "Automatically" : "Manually")} interacted with marker '{this.Guid.ToBase64String()}': {behavior.GetType().Name}");

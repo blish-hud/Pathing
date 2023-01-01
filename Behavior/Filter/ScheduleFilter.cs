@@ -54,7 +54,10 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             } else {
                 _isFiltered = true;
             }
-            
+        }
+
+        public string FilterReason() {
+            return $"Hidden because it is only scheduled to show at certain times of day.";
         }
 
         public void Unload() { /* NOOP */ }
