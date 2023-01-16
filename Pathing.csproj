@@ -280,6 +280,7 @@
       <DependentUpon>InputDiag.cs</DependentUpon>
     </Compile>
     <Compile Include="Scripting\Console\WatchTreeNode.cs" />
+    <Compile Include="Scripting\Extensions\GuidExtensions.cs" />
     <Compile Include="Scripting\Extensions\PathingCategoryScriptExtensions.cs" />
     <Compile Include="Scripting\Extensions\StandardMarkerScriptExtensions.cs" />
     <Compile Include="Scripting\Lib\Debug.cs" />

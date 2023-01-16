@@ -27,8 +27,7 @@ public class World {
 
     public IPathingEntity PathableByGuid(string guid) {
         if (!_guidCache.TryGetValue(guid, out var g)) {
-            // TODO: Revise this so that we don't have to create an attribute to do this.
-            _guidCache.Add(guid, g = new Attribute(string.Empty, guid).GetValueAsGuid());
+            _guidCache.Add(guid, g = AttributeParsingUtil.InternalGetValueAsGuid(guid));
         }
 
         foreach (var pathable in PathingModule.Instance.PackInitiator.PackState.Entities) {
@@ -38,6 +37,22 @@ public class World {
         }
 
         return null;
+    }
+
+    public LuaTable PathablesByGuid(string guid) {
+        var nTable = new LuaTable();
+
+        if (!_guidCache.TryGetValue(guid, out var g)) {
+            _guidCache.Add(guid, g = AttributeParsingUtil.InternalGetValueAsGuid(guid));
+        }
+
+        foreach (var pathable in PathingModule.Instance.PackInitiator.PackState.Entities) {
+            if (pathable.Guid == g) {
+                nTable.Add(pathable);
+            }
+        }
+
+        return nTable;
     }
 
     // Markers

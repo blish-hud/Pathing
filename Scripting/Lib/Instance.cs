@@ -1,11 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using BhModule.Community.Pathing.Entity;
+using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
 using Neo.IronLua;
 using TmfLib;
 using TmfLib.Pathable;
 using TmfLib.Prototype;
+using Attribute = TmfLib.Prototype.Attribute;
 
 namespace BhModule.Community.Pathing.Scripting.Lib {
     public class Instance {
@@ -44,6 +47,12 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
             }
 
             return marker;
+        }
+
+        // Guid
+
+        public Guid Guid(string base64) {
+            return AttributeParsingUtil.InternalGetValueAsGuid(base64);
         }
 
     }

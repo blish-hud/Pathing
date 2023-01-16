@@ -71,6 +71,7 @@ public class ScriptEngine {
     public ScriptEngine() {
         LuaType.RegisterTypeExtension(typeof(StandardMarkerScriptExtensions));
         LuaType.RegisterTypeExtension(typeof(PathingCategoryScriptExtensions));
+        LuaType.RegisterTypeExtension(typeof(GuidExtensions));
     }
 
     private void BuildEnv() {
