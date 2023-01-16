@@ -76,7 +76,7 @@ namespace BhModule.Community.Pathing.Entity {
         public override void Interact(bool autoTriggered) {
             if (!autoTriggered && this.BehaviorFiltered && _packState.UserConfiguration.PackShowHiddenMarkersReducedOpacity.Value) {
                 // Allow users to clear hidden markers.
-                foreach (var behavior in this.Behaviors.ToList()) {
+                foreach (var behavior in this.Behaviors.ToArray()) {
                     if (behavior is ICanFilter filter) {
                         this.Behaviors.Remove(behavior);
                     }
