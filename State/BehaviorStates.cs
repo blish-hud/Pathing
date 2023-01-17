@@ -201,7 +201,15 @@ namespace BhModule.Community.Pathing.State {
 
                     try {
                         var markerGuid   = Guid.ParseExact(lineParts[0], "D");
-                        var markerExpire = DateTime.Parse(lineParts[1]);
+
+                        var markerExpire = DateTime.MinValue;
+
+                        // Migrate from Pathing < v1.1.5.  New dates are 8601 and prepended with `t`.
+                        if (!lineParts[1].StartsWith("t")) {
+                            markerExpire = DateTime.Parse(lineParts[1]);
+                        }
+
+                        markerExpire = DateTime.Parse(lineParts[1].TrimStart('t'));
 
                         _hiddenUntilTimer.Add(markerGuid);
                         _timerMetadata.Add((markerExpire, markerGuid));
@@ -222,7 +230,7 @@ namespace BhModule.Community.Pathing.State {
             string timerStatesPath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), STATE_FILE);
 
             try {
-                await FileUtil.WriteLinesAsync(timerStatesPath, timerMetadata.Select(metadata => $"{metadata.guid},{metadata.timerExpiration}"));
+                await FileUtil.WriteLinesAsync(timerStatesPath, timerMetadata.Select(metadata => $"{metadata.guid},t{metadata.timerExpiration:s}"));
             } catch (Exception e) {
                 Logger.Warn(e, $"Failed to write {STATE_FILE} ({timerStatesPath}).");
             }
