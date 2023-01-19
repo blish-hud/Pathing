@@ -46,7 +46,9 @@ namespace BhModule.Community.Pathing.Entity {
             { if (collection.TryGetSubset(ShowHideModifier.HIDE_PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(ShowHideModifier.BuildFromAttributes(attributes, this, _packState)); }
 
             // 👻
-            { if (collection.TryGetSubset(Script.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(Script.BuildFromAttributes(attributes, this)); }
+            if (_packState.UserConfiguration.ScriptsEnabled.Value) {
+                { if (collection.TryGetSubset(Script.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(Script.BuildFromAttributes(attributes, this)); }
+            }
         }
 
     }
