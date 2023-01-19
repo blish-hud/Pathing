@@ -76,8 +76,8 @@ namespace BhModule.Community.Pathing {
             };
 
             // Scripts
-            if (PathingModule.Instance.ScriptEngine.Global.Menu.Menus.Any()) {
-                yield return PathingModule.Instance.ScriptEngine.Global.Menu.BuildMenu();
+            if (_module.ScriptEngine.Global.Menu.Menus.Any()) {
+                yield return _module.ScriptEngine.Global.Menu.BuildMenu();
             }
 
             // Reload Markers
