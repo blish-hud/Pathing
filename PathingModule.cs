@@ -181,6 +181,10 @@ namespace BhModule.Community.Pathing {
                 _pathingIcon.LoadingMessage = loadingMessage;
                 _packsLoading               = !string.IsNullOrWhiteSpace(loadingMessage);
             }
+
+            if (!_packsLoading) {
+                _pathingIcon.BasicTooltipText = Strings.General_UiName;
+            }
         }
 
         public IProgress<string> GetModuleProgressHandler() {

@@ -76,13 +76,13 @@ public class ScriptEngine {
         LuaType.RegisterTypeExtension(typeof(StandardMarkerScriptExtensions));
         LuaType.RegisterTypeExtension(typeof(PathingCategoryScriptExtensions));
         LuaType.RegisterTypeExtension(typeof(GuidExtensions));
-
-        PathingCategoryScriptExtensions.SetPackInitiator(this.Module.PackInitiator);
     }
 
     private void BuildEnv() {
         _lua?.Dispose();
         _lua = new Lua(LuaIntegerType.Int32, LuaFloatType.Float);
+
+        PathingCategoryScriptExtensions.SetPackInitiator(this.Module.PackInitiator);
 
         _stackTraceDebugger = new TraceLineDebugger();
         
