@@ -44,7 +44,7 @@ namespace BhModule.Community.Pathing {
             _packReaderSettings = new PackReaderSettings();
             _packReaderSettings.VenderPrefixes.Add("bh-"); // Support Blish HUD specific categories/markers/trails/attributes.
 
-            _packState = new SharedPackState(module.ModuleSettings);
+            _packState = new SharedPackState(_module);
         }
 
         public void ReloadPacks() {
@@ -65,14 +65,14 @@ namespace BhModule.Community.Pathing {
             var allMarkers = new ContextMenuStripItem() {
                 Text = "All Markers", // TODO: Localize "All Markers"
                 CanCheck = true,
-                Checked = _module.ModuleSettings.GlobalPathablesEnabled.Value,
+                Checked = _module.Settings.GlobalPathablesEnabled.Value,
                 Submenu = isAnyMarkers
                     ? new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories, false)
                     : null
             };
 
             allMarkers.CheckedChanged += (_, e) => {
-                _module.ModuleSettings.GlobalPathablesEnabled.Value = e.Checked;
+                _module.Settings.GlobalPathablesEnabled.Value = e.Checked;
             };
 
             // Scripts
@@ -194,7 +194,7 @@ namespace BhModule.Community.Pathing {
 
             var loadTimer = Stopwatch.StartNew();
 
-            PathingModule.Instance.ScriptEngine.Reset();
+            _packState.Module.ScriptEngine.Reset();
 
             var packTimings = new List<(Pack Pack, long LoadDuration)>();
 
@@ -231,11 +231,11 @@ namespace BhModule.Community.Pathing {
             }
 
             // We only load scripts if they're enabled.
-            if (PathingModule.Instance.ModuleSettings.ScriptsEnabled.Value) {
+            if (_packState.Module.Settings.ScriptsEnabled.Value) {
                 _loadingIndicator.Report("Loading scripts...");
 
                 foreach (var pack in packs) {
-                    await PathingModule.Instance.ScriptEngine.LoadScript("pack.lua", pack.ResourceManager);
+                    await _packState.Module.ScriptEngine.LoadScript("pack.lua", pack.ResourceManager);
                 }
             }
 

@@ -13,12 +13,18 @@ public class World {
 
     private readonly Dictionary<string, Guid> _guidCache = new(StringComparer.InvariantCultureIgnoreCase);
 
+    private readonly PathingGlobal _global;
+
+    internal World(PathingGlobal global) {
+        _global = global;
+    }
+
     // Categories
 
-    public PathingCategory RootCategory => PathingModule.Instance.PackInitiator.PackState.RootCategory;
+    public PathingCategory RootCategory => _global.ScriptEngine.Module.PackInitiator.PackState.RootCategory;
 
     public PathingCategory CategoryByType(string id) {
-        return PathingModule.Instance.PackInitiator.PackState.RootCategory.TryGetCategoryFromNamespace(id, out var category)
+        return _global.ScriptEngine.Module.PackInitiator.PackState.RootCategory.TryGetCategoryFromNamespace(id, out var category)
                    ? category 
                    : null;
     }
@@ -30,7 +36,7 @@ public class World {
             _guidCache.Add(guid, g = AttributeParsingUtil.InternalGetValueAsGuid(guid));
         }
 
-        foreach (var pathable in PathingModule.Instance.PackInitiator.PackState.Entities) {
+        foreach (var pathable in _global.ScriptEngine.Module.PackInitiator.PackState.Entities) {
             if (pathable.Guid == g) {
                 return pathable;
             }
@@ -46,7 +52,7 @@ public class World {
             _guidCache.Add(guid, g = AttributeParsingUtil.InternalGetValueAsGuid(guid));
         }
 
-        foreach (var pathable in PathingModule.Instance.PackInitiator.PackState.Entities) {
+        foreach (var pathable in _global.ScriptEngine.Module.PackInitiator.PackState.Entities) {
             if (pathable.Guid == g) {
                 nTable.Add(pathable);
             }
@@ -64,13 +70,13 @@ public class World {
     }
 
     public StandardMarker GetClosestMarker() {
-        return PathingModule.Instance.PackInitiator.PackState.Entities.ToArray().OfType<StandardMarker>().OrderBy(marker => marker.DistanceToPlayer).FirstOrDefault();
+        return _global.ScriptEngine.Module.PackInitiator.PackState.Entities.ToArray().OfType<StandardMarker>().OrderBy(marker => marker.DistanceToPlayer).FirstOrDefault();
     }
 
     public LuaTable GetClosestMarkers(int quantity) {
         var nTable = new LuaTable();
 
-        foreach (var marker in PathingModule.Instance.PackInitiator.PackState.Entities.ToArray().OfType<StandardMarker>().OrderBy(marker => marker.DistanceToPlayer).Take(quantity)) {
+        foreach (var marker in _global.ScriptEngine.Module.PackInitiator.PackState.Entities.ToArray().OfType<StandardMarker>().OrderBy(marker => marker.DistanceToPlayer).Take(quantity)) {
             nTable.Add(marker);
         }
 

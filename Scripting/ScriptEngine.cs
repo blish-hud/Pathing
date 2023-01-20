@@ -41,7 +41,9 @@ public class ScriptEngine {
     }
 
     private static readonly Logger Logger = Logger.GetLogger<ScriptEngine>();
-    
+
+    internal PathingModule Module { get; }
+
     private Lua _lua;
 
     public PathingGlobal Global { get; private set; }
@@ -68,10 +70,14 @@ public class ScriptEngine {
 
     public readonly SafeList<ScriptMessage> OutputMessages = new();
 
-    public ScriptEngine() {
+    public ScriptEngine(PathingModule module) {
+        this.Module = module;
+
         LuaType.RegisterTypeExtension(typeof(StandardMarkerScriptExtensions));
         LuaType.RegisterTypeExtension(typeof(PathingCategoryScriptExtensions));
         LuaType.RegisterTypeExtension(typeof(GuidExtensions));
+
+        PathingCategoryScriptExtensions.SetPackInitiator(this.Module.PackInitiator);
     }
 
     private void BuildEnv() {
@@ -227,6 +233,7 @@ public class ScriptEngine {
     public void Unload() {
         Scripts.Clear();
         _lua.Dispose();
+        PathingCategoryScriptExtensions.SetPackInitiator(null);
     }
 
 }

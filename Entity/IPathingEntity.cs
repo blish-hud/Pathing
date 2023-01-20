@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using BhModule.Community.Pathing.Behavior;
 using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
@@ -15,7 +14,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// <summary>
         /// Filters or modifiers which add functionality to the <see cref="IPathingEntity"/>.
         /// </summary>
-        IList<IBehavior> Behaviors { get; }
+        SafeList<IBehavior> Behaviors { get; }
 
         bool BehaviorFiltered { get; }
 

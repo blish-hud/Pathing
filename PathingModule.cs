@@ -34,8 +34,10 @@ namespace BhModule.Community.Pathing {
 
         internal static PathingModule Instance { get; private set; }
 
-        public ScriptEngine   ScriptEngine   { get; private set; }
-        public ModuleSettings ModuleSettings { get; private set; }
+        public ScriptEngine                  ScriptEngine   { get; private set; }
+        public ModuleSettings                Settings       { get; private set; }
+        public PackInitiator                 PackInitiator  { get; private set; }
+        public MarkerPackRepo.MarkerPackRepo MarkerPackRepo { get; private set; }
 
         private CornerIcon    _pathingIcon;
         private TabbedWindow2 _settingsWindow;
@@ -57,7 +59,7 @@ namespace BhModule.Community.Pathing {
         }
 
         protected override void DefineSettings(SettingCollection settings) {
-            ModuleSettings = new ModuleSettings(settings);
+            this.Settings = new ModuleSettings(settings);
         }
 
         private IEnumerable<ContextMenuStripItem> GetPathingMenuItems() {
@@ -83,7 +85,7 @@ namespace BhModule.Community.Pathing {
             yield return downloadMarkers;
 
             // Script Console - we only show if it's enabled or if the user is holding down shift.
-            if (this.ModuleSettings.ScriptsConsoleEnabled.Value || GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {
+            if (this.Settings.ScriptsConsoleEnabled.Value || GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {
                 var scriptConsole = new ContextMenuStripItem() {
                     Text = "Script Console" // TODO: Localize "Script Console"
                 };
@@ -132,11 +134,11 @@ namespace BhModule.Community.Pathing {
                 SavesPosition = true,
             };
 
-            _packSettingsTab    = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(ModuleSettings.PackSettings),    Strings.Window_MainSettingsTab);
-            _mapSettingsTab     = new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(ModuleSettings.MapSettings),     Strings.Window_MapSettingsTab);
-            _scriptSettingsTab  = new Tab(ContentsManager.GetTexture(@"png\156701.png"),        () => new SettingsView(ModuleSettings.ScriptSettings),  "Script Options");
-            _keybindSettingsTab = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(ModuleSettings.KeyBindSettings), Strings.Window_KeyBindSettingsTab);
-            _markerRepoTab      = new Tab(ContentsManager.GetTexture(@"png\156909.png"),        () => new PackRepoView(),                               Strings.Window_DownloadMarkerPacks);
+            _packSettingsTab    = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(this.Settings.PackSettings),    Strings.Window_MainSettingsTab);
+            _mapSettingsTab     = new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(this.Settings.MapSettings),     Strings.Window_MapSettingsTab);
+            _scriptSettingsTab  = new Tab(ContentsManager.GetTexture(@"png\156701.png"),        () => new SettingsView(this.Settings.ScriptSettings),  "Script Options");
+            _keybindSettingsTab = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(this.Settings.KeyBindSettings), Strings.Window_KeyBindSettingsTab);
+            _markerRepoTab      = new Tab(ContentsManager.GetTexture(@"png\156909.png"),        () => new PackRepoView(this),                          Strings.Window_DownloadMarkerPacks);
 
             _settingsWindow.Tabs.Add(_packSettingsTab);
             _settingsWindow.Tabs.Add(_mapSettingsTab);
@@ -146,7 +148,7 @@ namespace BhModule.Community.Pathing {
 
             _pathingIcon.Click += delegate {
                 if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {
-                    ModuleSettings.GlobalPathablesEnabled.Value = !ModuleSettings.GlobalPathablesEnabled.Value;
+                    this.Settings.GlobalPathablesEnabled.Value = !this.Settings.GlobalPathablesEnabled.Value;
                 } else {
                     ShowPathingContextMenu();
                 }
@@ -174,12 +176,11 @@ namespace BhModule.Community.Pathing {
             pathingContextMenuStrip.Show(_pathingIcon);
         }
 
-        public PackInitiator                 PackInitiator  { get; private set; }
-        public MarkerPackRepo.MarkerPackRepo MarkerPackRepo { get; private set; }
-
         private void UpdateModuleLoading(string loadingMessage) {
-            _pathingIcon.LoadingMessage = loadingMessage;
-            _packsLoading               = !string.IsNullOrWhiteSpace(loadingMessage);
+            if (this.RunState == ModuleRunState.Loaded) {
+                _pathingIcon.LoadingMessage = loadingMessage;
+                _packsLoading               = !string.IsNullOrWhiteSpace(loadingMessage);
+            }
         }
 
         public IProgress<string> GetModuleProgressHandler() {
@@ -193,8 +194,8 @@ namespace BhModule.Community.Pathing {
             _apiHost = new HttpHost(19903);
             _apiHost.Start();
 #endif
-            this.ScriptEngine   = new ScriptEngine();
-            this.MarkerPackRepo = new MarkerPackRepo.MarkerPackRepo();
+            this.ScriptEngine   = new ScriptEngine(this);
+            this.MarkerPackRepo = new MarkerPackRepo.MarkerPackRepo(this);
             this.MarkerPackRepo.Init();
             this.PackInitiator  = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), this, GetModuleProgressHandler());
             await this.PackInitiator.Init();

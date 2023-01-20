@@ -13,6 +13,12 @@ using Attribute = TmfLib.Prototype.Attribute;
 namespace BhModule.Community.Pathing.Scripting.Lib {
     public class Instance {
 
+        private readonly PathingGlobal _global;
+
+        internal Instance(PathingGlobal global) {
+            _global = global;
+        }
+
         // Vector3
 
         public Vector3 Vector3(float x, float y, float z) {
@@ -37,9 +43,9 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
                                           attributes != null 
                                               ? AttributeCollectionFromLuaTable(attributes) 
                                               : new AttributeCollection(),
-                                          PathingModule.Instance.PackInitiator.PackState.RootCategory);
+                                          _global.ScriptEngine.Module.PackInitiator.PackState.RootCategory);
 
-            var marker = PathingModule.Instance.PackInitiator.PackState.InitPointOfInterest(poi) as StandardMarker;
+            var marker = _global.ScriptEngine.Module.PackInitiator.PackState.InitPointOfInterest(poi) as StandardMarker;
 
             if (marker.MapId < 0) {
                 // Map ID can be assumed since we only show current map icons anyways, but UI filtering doesn't know that.

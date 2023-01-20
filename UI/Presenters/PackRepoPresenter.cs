@@ -9,7 +9,11 @@ namespace BhModule.Community.Pathing.UI.Presenter {
 
     public class PackRepoPresenter : Presenter<PackRepoView, MarkerPackRepo.MarkerPackRepo> {
 
-        public PackRepoPresenter(PackRepoView view, MarkerPackRepo.MarkerPackRepo model) : base(view, model) { }
+        private readonly PathingModule _module;
+
+        public PackRepoPresenter(PackRepoView view, PathingModule module) : base(view, module.MarkerPackRepo) {
+            _module = module;
+        }
 
         protected override Task<bool> Load(IProgress<string> progress) {
             return Task.FromResult(true);
@@ -19,7 +23,7 @@ namespace BhModule.Community.Pathing.UI.Presenter {
             this.View.RepoFlowPanel.ClearChildren();
 
             foreach (var markerPackPkg in this.Model.MarkerPackages.OrderByDescending(markerPkg => markerPkg.LastUpdate)) {
-                var nHero = new MarkerPackHero(markerPackPkg) {
+                var nHero = new MarkerPackHero(_module, markerPackPkg) {
                     Parent = this.View.RepoFlowPanel,
                     Width  = this.View.RepoFlowPanel.Width - 60
                 };

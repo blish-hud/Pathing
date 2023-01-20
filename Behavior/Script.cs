@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using BhModule.Community.Pathing.Entity;
+using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
@@ -29,44 +30,49 @@ namespace BhModule.Community.Pathing.Behavior {
 
         private double _nextTick = 0;
 
-        public Script(string tickFunc, string focusFunc, string triggerFunc, string filterFunc, string onceFunc, IPathingEntity entity) : base(entity) {
+        private readonly IPackState _packState;
+
+        public Script(string tickFunc, string focusFunc, string triggerFunc, string filterFunc, string onceFunc, IPathingEntity entity, IPackState packState) : base(entity) {
             this.TickFunc    = SplitFunc(tickFunc);
             this.FocusFunc   = SplitFunc(focusFunc);
             this.TriggerFunc = SplitFunc(triggerFunc);
             this.FilterFunc  = SplitFunc(filterFunc);
             this.OnceFunc    = SplitFunc(onceFunc);
+
+            _packState = packState;
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, IPathingEntity entity) {
+        public static IBehavior BuildFromAttributes(AttributeCollection attributes, IPathingEntity entity, IPackState packState) {
             return new Script(attributes.TryGetAttribute(ATTR_TICK,    out var tickAttr) ? tickAttr.GetValueAsString() : null,
                               attributes.TryGetAttribute(ATTR_FOCUS,   out var focusAttr) ? focusAttr.GetValueAsString() : null,
                               attributes.TryGetAttribute(ATTR_TRIGGER, out var triggerAttr) ? triggerAttr.GetValueAsString() : null,
                               attributes.TryGetAttribute(ATTR_FILTER,  out var filterAttr) ? filterAttr.GetValueAsString() : null,
                               attributes.TryGetAttribute(ATTR_ONCE,    out var onceAttr) ? onceAttr.GetValueAsString() : null,
-                              entity);
+                              entity,
+                              packState);
         }
 
         public void Focus() {
             if (this.FocusFunc.Name != null) {
-                PathingModule.Instance.ScriptEngine.CallFunction(this.FocusFunc.Name, new object[] { _pathingEntity, true }.Concat(this.FocusFunc.Args));
+                _packState.Module.ScriptEngine.CallFunction(this.FocusFunc.Name, new object[] { _pathingEntity, true }.Concat(this.FocusFunc.Args));
             }
         }
 
         public void Unfocus() {
             if (this.FocusFunc.Name != null) {
-                PathingModule.Instance.ScriptEngine.CallFunction(this.FocusFunc.Name, new object[] { _pathingEntity, false }.Concat(this.FocusFunc.Args));
+                _packState.Module.ScriptEngine.CallFunction(this.FocusFunc.Name, new object[] { _pathingEntity, false }.Concat(this.FocusFunc.Args));
             }
         }
 
         public void Interact(bool autoTriggered) {
             if (this.TriggerFunc.Name != null) {
-                PathingModule.Instance.ScriptEngine.CallFunction(this.TriggerFunc.Name, new object[] { _pathingEntity, autoTriggered }.Concat(this.TriggerFunc.Args));
+                _packState.Module.ScriptEngine.CallFunction(this.TriggerFunc.Name, new object[] { _pathingEntity, autoTriggered }.Concat(this.TriggerFunc.Args));
             }
         }
 
         public bool IsFiltered() {
             if (this.FilterFunc.Name != null) {
-                var filterCall = PathingModule.Instance.ScriptEngine.CallFunction(this.FilterFunc.Name, new object[] { _pathingEntity }.Concat(this.FilterFunc.Args));
+                var filterCall = _packState.Module.ScriptEngine.CallFunction(this.FilterFunc.Name, new object[] { _pathingEntity }.Concat(this.FilterFunc.Args));
 
                 if (filterCall != LuaResult.Empty) {
                     return filterCall.ToBoolean();
@@ -133,7 +139,7 @@ namespace BhModule.Community.Pathing.Behavior {
                     // Only func is provided.  No args.
                     return (func, Array.Empty<object>());
                 } catch (Exception ex) {
-                    Logger.Warn($"Pathable '{_pathingEntity.Guid.ToBase64String()}' has an invalid script attribute value of '{func}'.");
+                    Logger.Warn(ex, $"Pathable '{_pathingEntity.Guid.ToBase64String()}' has an invalid script attribute value of '{func}'.");
                 }
             }
 
@@ -145,20 +151,20 @@ namespace BhModule.Community.Pathing.Behavior {
         }
 
         public override void Update(GameTime gameTime) {
-            if (PathingModule.Instance.PackInitiator.IsLoading) {
+            if (_packState.Module.PackInitiator.IsLoading) {
                 // Avoid calling Lua scripts until all packs are done loading.
                 return;
             }
 
             if (this.OnceFunc.Name != null) {
-                PathingModule.Instance.ScriptEngine.CallFunction(this.OnceFunc.Name, new object[] { _pathingEntity }.Concat(this.OnceFunc.Args));
+                _packState.Module.ScriptEngine.CallFunction(this.OnceFunc.Name, new object[] { _pathingEntity }.Concat(this.OnceFunc.Args));
                 this.OnceFunc = (null, null);
             }
 
             if (this.TickFunc.Name != null && gameTime.TotalGameTime.TotalMilliseconds > _nextTick) {
                 _nextTick = gameTime.TotalGameTime.TotalMilliseconds + TICK_FREQUENCY;
 
-                PathingModule.Instance.ScriptEngine.CallFunction(this.TickFunc.Name, new object[] { _pathingEntity, gameTime }.Concat(this.TickFunc.Args));
+                _packState.Module.ScriptEngine.CallFunction(this.TickFunc.Name, new object[] { _pathingEntity, gameTime }.Concat(this.TickFunc.Args));
             }
         }
 

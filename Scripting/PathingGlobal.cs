@@ -21,13 +21,16 @@ public class PathingGlobal : LuaTable {
     public PathingGlobal(Lua lua) {
 		_sandboxedGlobal = new LuaGlobal(lua);
 
-        this.Debug = new(this);
-        this.Event = new(this);
-        this.User  = new(this);
+        this.Debug = new Debug(this);
+        this.Event = new Event(this);
+        this.User  = new User(this);
+
+        this.World = new World(this);
+        this.I     = new(this);
     }
 
     [LuaMember(nameof(World))]
-    public World World { get; } = new();
+    public World World { get; }
 
     private bool _packsWarning = false;
     [LuaMember("Packs")]
@@ -49,7 +52,7 @@ public class PathingGlobal : LuaTable {
     public Debug Debug { get; }
 
     [LuaMember(nameof(I))]
-    public Instance I { get; } = new();
+    public Instance I { get; }
 
     [LuaMember(nameof(Menu))]
     public Menu Menu { get; } = new("Scripts", null, false, false);

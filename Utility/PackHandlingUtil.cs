@@ -17,12 +17,12 @@ namespace BhModule.Community.Pathing.Utility {
         // At least one pack will deny us from downloading it without a more typical UA set.
         private const string DOWNLOAD_UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
 
-        public static void DownloadPack(MarkerPackPkg markerPackPkg, Action<MarkerPackPkg, bool> funcOnComplete) {
-            var beginThread = new Thread(async () => await BeginPackDownload(markerPackPkg, PathingModule.Instance.GetModuleProgressHandler(), funcOnComplete)) { IsBackground = true };
+        public static void DownloadPack(PathingModule module, MarkerPackPkg markerPackPkg, Action<MarkerPackPkg, bool> funcOnComplete) {
+            var beginThread = new Thread(async () => await BeginPackDownload(module, markerPackPkg, module.GetModuleProgressHandler(), funcOnComplete)) { IsBackground = true };
             beginThread.Start();
         }
 
-        public static void DeletePack(MarkerPackPkg markerPackPkg) {
+        public static void DeletePack(PathingModule module, MarkerPackPkg markerPackPkg) {
             markerPackPkg.IsDownloading = true;
             markerPackPkg.DownloadError = null;
 
@@ -30,7 +30,7 @@ namespace BhModule.Community.Pathing.Utility {
 
             try {
                 if (File.Exists(mpPath)) {
-                    while (PathingModule.Instance.PackInitiator.IsLoading) {
+                    while (module.PackInitiator.IsLoading) {
                         // We're currently loading the packs.  Wait a second and check again.
                         Thread.Sleep(1000);
                     }
@@ -83,7 +83,7 @@ namespace BhModule.Community.Pathing.Utility {
             return Path.Combine(dir, file);
         }
 
-        private static async Task BeginPackDownload(MarkerPackPkg markerPackPkg, IProgress<string> progress, Action<MarkerPackPkg, bool> funcOnComplete) {
+        private static async Task BeginPackDownload(PathingModule module, MarkerPackPkg markerPackPkg, IProgress<string> progress, Action<MarkerPackPkg, bool> funcOnComplete) {
             // TODO: Localize 'Downloading pack '{0}'...'
             Logger.Info($"Downloading pack '{markerPackPkg.Name}'...");
             progress.Report($"Downloading pack '{markerPackPkg.Name}'...");
@@ -130,7 +130,7 @@ namespace BhModule.Community.Pathing.Utility {
                     packArchive.Dispose();
                 }
 
-                if (PathingModule.Instance != null && PathingModule.Instance.PackInitiator.PackState.UserResourceStates.Advanced.OptimizeMarkerPacks) {
+                if (module.RunState == Blish_HUD.Modules.ModuleRunState.Loaded && module.PackInitiator.PackState.UserResourceStates.Advanced.OptimizeMarkerPacks) {
                     // TODO: Localize 'Optimizing the pack...'
                     progress.Report("Optimizing the pack...");
                     tempPackDownloadDestination = await OptimizePack(tempPackDownloadDestination);
@@ -142,7 +142,7 @@ namespace BhModule.Community.Pathing.Utility {
                     // The pack was already downloaded - make sure we're not currently loading!
                     needsInit = false;
 
-                    while (PathingModule.Instance.PackInitiator.IsLoading) {
+                    while (module.PackInitiator.IsLoading) {
                         // We're currently loading the packs.  Wait a second and check again.
                         Thread.Sleep(1000);
                     }
@@ -160,10 +160,10 @@ namespace BhModule.Community.Pathing.Utility {
                 var newPack = Pack.FromArchivedMarkerPack(finalPath);
 
                 if (!needsInit) {
-                    PathingModule.Instance.PackInitiator.UnloadPackByName(newPack.Name);
+                    module.PackInitiator.UnloadPackByName(newPack.Name);
                 }
 
-                await PathingModule.Instance.PackInitiator.LoadPack(newPack);
+                await module.PackInitiator.LoadPack(newPack);
                 newPack.ReleaseLocks();
             } catch (InvalidDataException ex) {
                 markerPackPkg.DownloadError = "Marker pack download is corrupt.";

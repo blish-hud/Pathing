@@ -5,16 +5,22 @@ using TmfLib.Pathable;
 namespace BhModule.Community.Pathing.Scripting.Extensions {
     internal static class PathingCategoryScriptExtensions {
 
+        private static PackInitiator _packInitiator;
+
+        internal static void SetPackInitiator(PackInitiator packInitiator) {
+            _packInitiator = packInitiator;
+        }
+
         public static bool IsVisible(this PathingCategory category) {
-            return !PathingModule.Instance.PackInitiator.PackState.CategoryStates.GetCategoryInactive(category);
+            return !_packInitiator.PackState.CategoryStates.GetCategoryInactive(category);
         }
 
         public static void Show(this PathingCategory category) {
-            PathingModule.Instance.PackInitiator.PackState.CategoryStates.SetInactive(category, false);
+            _packInitiator.PackState.CategoryStates.SetInactive(category, false);
         }
 
         public static void Hide(this PathingCategory category) {
-            PathingModule.Instance.PackInitiator.PackState.CategoryStates.SetInactive(category, true);
+            _packInitiator.PackState.CategoryStates.SetInactive(category, true);
         }
 
         public static LuaTable GetMarkers(this PathingCategory category) {
@@ -24,7 +30,7 @@ namespace BhModule.Community.Pathing.Scripting.Extensions {
         public static LuaTable GetMarkers(this PathingCategory category, bool getAll) {
             var markers = new LuaTable();
 
-            foreach (var pathable in PathingModule.Instance.PackInitiator.PackState.Entities) {
+            foreach (var pathable in _packInitiator.PackState.Entities) {
                 if (pathable is StandardMarker marker) {
                     if (pathable.Category == category) {
                         markers.Add(marker);

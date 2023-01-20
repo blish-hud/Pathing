@@ -32,6 +32,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         #endregion
 
+        private readonly PathingModule _module;
         private readonly MarkerPackPkg _markerPackPkg;
 
         private readonly BlueButton _downloadButton;
@@ -45,7 +46,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private double _hoverTick;
         private bool   _isUpToDate;
 
-        public MarkerPackHero(MarkerPackPkg markerPackPkg) {
+        public MarkerPackHero(PathingModule module, MarkerPackPkg markerPackPkg) {
+            _module        = module;
             _markerPackPkg = markerPackPkg;
 
             if (markerPackPkg.LastUpdate != default) {
@@ -108,7 +110,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         private void DeleteButtonOnClick(object sender, MouseEventArgs e) {
-            Utility.PackHandlingUtil.DeletePack(_markerPackPkg);
+            Utility.PackHandlingUtil.DeletePack(_module, _markerPackPkg);
         }
 
         private void KeepUpdatedCheckboxOnChecked(object sender, CheckChangedEvent e) {
@@ -117,7 +119,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private void DownloadButtonOnClick(object sender, MouseEventArgs e) {
             _downloadButton.Enabled = false;
-            Utility.PackHandlingUtil.DownloadPack(_markerPackPkg, OnComplete);
+            Utility.PackHandlingUtil.DownloadPack(_module, _markerPackPkg, OnComplete);
         }
 
         private static void OnComplete(MarkerPackPkg markerPackPkg, bool success) {
@@ -140,7 +142,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 _deleteButton.Visible = true;
                 _deleteButton.Enabled = true;
 
-                if (PathingModule.Instance.PackInitiator.IsLoading) {
+                if (_module.PackInitiator.IsLoading) {
                     downloadText    = "Loading...";
                 } else if (_markerPackPkg.LastUpdate > _markerPackPkg.CurrentDownloadDate) {
                     downloadText    = "Update";

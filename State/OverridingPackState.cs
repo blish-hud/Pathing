@@ -7,6 +7,7 @@ namespace BhModule.Community.Pathing.State {
 
         private readonly IPackState _referencePackState;
 
+        public PathingModule  Module            => _referencePackState.Module;
         public ModuleSettings UserConfiguration => _referencePackState.UserConfiguration;
 
         public int CurrentMapId => _referencePackState.CurrentMapId;

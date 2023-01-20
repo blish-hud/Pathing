@@ -8,8 +8,8 @@ namespace BhModule.Community.Pathing.UI.Views {
 
         public FlowPanel RepoFlowPanel { get; private set; }
 
-        public PackRepoView() {
-            this.WithPresenter(new PackRepoPresenter(this, PathingModule.Instance.MarkerPackRepo));
+        public PackRepoView(PathingModule module) {
+            this.WithPresenter(new PackRepoPresenter(this, module));
         }
 
         protected override void Build(Container buildPanel) {

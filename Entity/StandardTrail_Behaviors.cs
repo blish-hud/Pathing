@@ -30,7 +30,7 @@ namespace BhModule.Community.Pathing.Entity {
 
             // 👻
             if (_packState.UserConfiguration.ScriptsEnabled.Value) {
-                { if (collection.TryGetSubset(Script.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(Script.BuildFromAttributes(attributes, this)); }
+                { if (collection.TryGetSubset(Script.PRIMARY_ATTR_NAME, out var attributes)) AddBehavior(Script.BuildFromAttributes(attributes, this, _packState)); }
             }
         }
 
