@@ -177,13 +177,14 @@ namespace BhModule.Community.Pathing {
         }
 
         private void UpdateModuleLoading(string loadingMessage) {
-            if (this.RunState == ModuleRunState.Loaded) {
+                _pathingIcon.LoadingMessage = loadingMessage;
+            if (this.RunState == ModuleRunState.Loaded && _pathingIcon != null) {
                 _pathingIcon.LoadingMessage = loadingMessage;
                 _packsLoading               = !string.IsNullOrWhiteSpace(loadingMessage);
-            }
 
-            if (!_packsLoading) {
-                _pathingIcon.BasicTooltipText = Strings.General_UiName;
+                if (!_packsLoading) {
+                    _pathingIcon.BasicTooltipText = Strings.General_UiName;
+                }
             }
         }
 
