@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using BhModule.Community.Pathing.Scripting.Extensions;
 using Blish_HUD;
 using Blish_HUD.Debug;
+using Humanizer;
 using Microsoft.Xna.Framework;
 using Neo.IronLua;
 using TmfLib;
@@ -185,6 +186,7 @@ public class ScriptEngine {
                 var newScript = new ScriptState(chunk);
                 newScript.Run(this.Global, new PackContext(this, resourceManager));
                 this.Scripts.Add(newScript);
+                PushMessage($"{newScript.Name}.lua loaded in {newScript.LoadTime.Humanize(2)}.", newScript.LoadTime.Milliseconds > 500 ? 1 : 0, source: "system");
 
                 return chunk;
             }
@@ -232,7 +234,7 @@ public class ScriptEngine {
 
     public void Unload() {
         Scripts.Clear();
-        _lua.Dispose();
+        _lua?.Dispose();
         PathingCategoryScriptExtensions.SetPackInitiator(null);
     }
 
