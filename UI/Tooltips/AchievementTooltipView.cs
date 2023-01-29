@@ -13,6 +13,7 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
     public class AchievementTooltipView : View, ITooltipView {
 
         private Achievement _achievement;
+        private int _achievementBit;
         public Achievement Achievement {
             get => _achievement;
             set {
@@ -41,8 +42,9 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
 
         public AchievementTooltipView() { /* NOOP */ }
 
-        public AchievementTooltipView(int achievementId) {
+        public AchievementTooltipView(int achievementId, int achievementBit) {
             this.WithPresenter(new AchievementPresenter(this, achievementId));
+            this._achievementBit = achievementBit;
         }
 
         protected override void Build(Container buildPanel) {
@@ -104,6 +106,15 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
             _achievementNameLabel.Text        = _achievement.Name;
             _achievementDescriptionLabel.Text = CleanMessage(_achievement.Description);
             _achievementRequirementLabel.Text = CleanMessage(_achievement.Requirement);
+           
+            if (_achievementBit != -1)
+            {
+                var bit = _achievement.Bits[_achievementBit];
+                if (bit.Type == AchievementBitType.Text)
+                {
+                    _achievementRequirementLabel.Text = CleanMessage(((AchievementTextBit) bit).Text);
+                }
+            }
 
             _achievementNameLabel.Height       = string.IsNullOrEmpty(_achievement.Description) ? _categoryIconImage.Height : _categoryIconImage.Height / 2;
             _achievementDescriptionLabel.Width = Math.Max(_achievementNameLabel.Width, 200);
