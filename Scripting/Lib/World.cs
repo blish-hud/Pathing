@@ -73,10 +73,32 @@ public class World {
         return _global.ScriptEngine.Module.PackInitiator.PackState.Entities.ToArray().OfType<StandardMarker>().OrderBy(marker => marker.DistanceToPlayer).FirstOrDefault();
     }
 
+    public StandardMarker GetClosestMarker(PathingCategory category) {
+        return _global.ScriptEngine.Module.PackInitiator.PackState.Entities.ToArray()
+                      .OfType<StandardMarker>()
+                      .Where(marker => marker.Category == category)
+                      .OrderBy(marker => marker.DistanceToPlayer)
+                      .FirstOrDefault();
+    }
+
     public LuaTable GetClosestMarkers(int quantity) {
         var nTable = new LuaTable();
 
         foreach (var marker in _global.ScriptEngine.Module.PackInitiator.PackState.Entities.ToArray().OfType<StandardMarker>().OrderBy(marker => marker.DistanceToPlayer).Take(quantity)) {
+            nTable.Add(marker);
+        }
+
+        return nTable;
+    }
+
+    public LuaTable GetClosestMarkers(PathingCategory category, int quantity) {
+        var nTable = new LuaTable();
+
+        foreach (var marker in _global.ScriptEngine.Module.PackInitiator.PackState.Entities.ToArray()
+                                      .OfType<StandardMarker>()
+                                      .Where(marker => marker.Category == category)
+                                      .OrderBy(marker => marker.DistanceToPlayer)
+                                      .Take(quantity)) {
             nTable.Add(marker);
         }
 
