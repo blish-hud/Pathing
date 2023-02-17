@@ -83,16 +83,25 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private void DetectAndBuildContexts() {
             if (_pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_ID, out var achievementAttr)) {
 
+                var achievementBit = -1;
+                if (_pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_BIT, out var achievementBitAttr))
+                {
+                    if (InvariantUtil.TryParseInt(achievementBitAttr, out int achievementBitParsed))
+                    {
+                        achievementBit = achievementBitParsed;
+                    }
+                }
+
                 // TODO: Add as a context so that multiple characteristics can be accounted for.
 
                 if (!InvariantUtil.TryParseInt(achievementAttr, out int achievementId)) return;
 
                 if (achievementId < 0) return;
 
-                this.Tooltip = new Tooltip(new AchievementTooltipView(achievementId));
+                this.Tooltip = new Tooltip(new AchievementTooltipView(achievementId, achievementBit));
 
                 if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
-                    this.Enabled = !_packState.AchievementStates.IsAchievementHidden(achievementId, -1);
+                    this.Enabled = !_packState.AchievementStates.IsAchievementHidden(achievementId, achievementBit);
 
                     if (!this.Enabled) {
                         this.Checked = false;
