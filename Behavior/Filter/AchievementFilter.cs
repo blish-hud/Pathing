@@ -46,7 +46,7 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
         }
 
         public void Focus() {
-            _packState.UiStates.Interact.ShowInteract(_pathingEntity, new AchievementTooltipView(this.AchievementId));
+            _packState.UiStates.Interact.ShowInteract(_pathingEntity, new AchievementTooltipView(this.AchievementId, -1));
         }
 
         public void Unfocus() {

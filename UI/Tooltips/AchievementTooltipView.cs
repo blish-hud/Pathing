@@ -12,8 +12,8 @@ using Color = Microsoft.Xna.Framework.Color;
 namespace BhModule.Community.Pathing.UI.Tooltips {
     public class AchievementTooltipView : View, ITooltipView {
 
-        private Achievement _achievement;
-        private int _achievementBit;
+        private          Achievement _achievement;
+        private readonly int         _achievementBit;
         public Achievement Achievement {
             get => _achievement;
             set {
@@ -43,8 +43,9 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
         public AchievementTooltipView() { /* NOOP */ }
 
         public AchievementTooltipView(int achievementId, int achievementBit) {
+            _achievementBit = achievementBit;
+
             this.WithPresenter(new AchievementPresenter(this, achievementId));
-            this._achievementBit = achievementBit;
         }
 
         protected override void Build(Container buildPanel) {
@@ -107,11 +108,9 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
             _achievementDescriptionLabel.Text = CleanMessage(_achievement.Description);
             _achievementRequirementLabel.Text = CleanMessage(_achievement.Requirement);
            
-            if (_achievementBit != -1)
-            {
+            if (_achievementBit != -1 && _achievement.Bits != null) {
                 var bit = _achievement.Bits[_achievementBit];
-                if (bit.Type == AchievementBitType.Text)
-                {
+                if (bit.Type == AchievementBitType.Text) {
                     _achievementRequirementLabel.Text = CleanMessage(((AchievementTextBit) bit).Text);
                 }
             }
