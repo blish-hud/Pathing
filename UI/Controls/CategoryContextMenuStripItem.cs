@@ -59,6 +59,16 @@ namespace BhModule.Community.Pathing.UI.Controls {
             /*}*/
         }
 
+        protected override void OnMouseEntered(MouseEventArgs e) {
+            base.OnMouseEntered(e);
+
+            // We still show these despite the control being disabled.
+            // Divergent behavior from core.
+            if (!this.Enabled) {
+                this.Submenu?.Show(this);
+            }
+        }
+
         private void AddAchievementContext(int achievementId) {
             if (achievementId < 0) return;
 

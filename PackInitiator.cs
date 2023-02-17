@@ -76,7 +76,7 @@ namespace BhModule.Community.Pathing {
             };
 
             // Scripts
-            if (_module.Settings.ScriptsEnabled.Value && _module.ScriptEngine.Global.Menu.Menus.Any()) {
+            if (_module.Settings.ScriptsEnabled.Value && _module.ScriptEngine.Global != null && _module.ScriptEngine.Global.Menu.Menus.Any()) {
                 yield return _module.ScriptEngine.Global.Menu.BuildMenu();
             }
 
