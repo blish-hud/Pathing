@@ -5,6 +5,12 @@ using Microsoft.Xna.Framework;
 namespace BhModule.Community.Pathing.Scripting.Extensions {
     internal static class StandardMarkerScriptExtensions {
 
+        private static PackInitiator _packInitiator;
+
+        internal static void SetPackInitiator(PackInitiator packInitiator) {
+            _packInitiator = packInitiator;
+        }
+
         // Position
 
         public static void SetPos(this StandardMarker marker, float x, float y, float z) {
@@ -47,6 +53,13 @@ namespace BhModule.Community.Pathing.Scripting.Extensions {
 
         public static void SetRotZ(this StandardMarker marker, float z) {
             SetRot(marker, marker.RotationXyz.GetValueOrDefault(Vector3.Zero).X, marker.RotationXyz.GetValueOrDefault(Vector3.Zero).Y, z);
+        }
+
+        // Remove
+
+        public static void Remove(this StandardMarker marker) {
+            marker.Unload();
+            _packInitiator.PackState.RemovePathingEntity(marker);
         }
 
         // Texture

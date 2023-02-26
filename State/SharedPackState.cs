@@ -130,6 +130,11 @@ namespace BhModule.Community.Pathing {
             return entity;
         }
 
+        public void RemovePathingEntity(IPathingEntity entity) {
+            this.Entities.Remove(entity);
+            GameService.Graphics.World.RemoveEntity(entity);
+        }
+
         private async Task InitPointsOfInterest(IEnumerable<PointOfInterest> pointsOfInterest) {
             var pois = pointsOfInterest.ToArray();
 

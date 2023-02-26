@@ -83,6 +83,7 @@ public class ScriptEngine {
         _lua?.Dispose();
         _lua = new Lua(LuaIntegerType.Int32, LuaFloatType.Float);
 
+        StandardMarkerScriptExtensions.SetPackInitiator(this.Module.PackInitiator);
         PathingCategoryScriptExtensions.SetPackInitiator(this.Module.PackInitiator);
 
         _stackTraceDebugger = new TraceLineDebugger();
@@ -235,6 +236,7 @@ public class ScriptEngine {
     public void Unload() {
         Scripts.Clear();
         _lua?.Dispose();
+        StandardMarkerScriptExtensions.SetPackInitiator(null);
         PathingCategoryScriptExtensions.SetPackInitiator(null);
     }
 

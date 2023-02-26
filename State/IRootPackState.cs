@@ -16,5 +16,7 @@ namespace BhModule.Community.Pathing.State {
 
         IPathingEntity InitPointOfInterest(PointOfInterest pointOfInterest);
 
+        void RemovePathingEntity(IPathingEntity entity);
+
     }
 }

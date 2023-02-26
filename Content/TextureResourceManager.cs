@@ -50,6 +50,10 @@ namespace BhModule.Community.Pathing.Content {
             return await _packResourceManager.LoadResourceStreamAsync(resourcePath);
         }
 
+        public async Task<IEnumerable<string>> GetResources(string extension = "") {
+            return await _packResourceManager.GetResources(extension);
+        }
+
         private static void LoadTexture(TaskCompletionSource<(Texture2D Texture, Color Sample)> textureTcs, Stream textureStream, bool shouldSample) {
             GameService.Graphics.QueueMainThreadRender((graphicsDevice) => {
                 if (textureStream == null) {
