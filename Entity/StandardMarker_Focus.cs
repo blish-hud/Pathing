@@ -12,6 +12,7 @@ namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
 
         private const string ATTR_TRIGGERRANGE = "triggerrange";
+        private const string ATTR_INFORANGE    = "inforange";
 
         [Description("This attribute is used by multiple other attributes to define a distance from the marker in which those attributes will activate their functionality or behavior.")]
         [Category("Behavior")]
@@ -40,13 +41,21 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         /// <summary>
-        /// triggerrange
+        /// triggerrange, inforange
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Populate_Triggers(AttributeCollection collection, IPackResourceManager resourceManager) {
             this.TriggerRange = _packState.UserResourceStates.Population.MarkerPopulationDefaults.TriggerRange;
 
             { if (collection.TryPopAttribute(ATTR_TRIGGERRANGE, out var attribute)) this.TriggerRange = attribute.GetValueAsFloat(_packState.UserResourceStates.Population.MarkerPopulationDefaults.TriggerRange); }
+
+            // We treat inforange as an alias for triggerrange.
+            // We want to make sure we only set this value if it is actually specified and triggerrange is still the default.
+            if (this.TriggerRange == _packState.UserResourceStates.Population.MarkerPopulationDefaults.TriggerRange) {
+                if (collection.TryPopAttribute(ATTR_INFORANGE, out var rangeAttr)) {
+                    this.TriggerRange = rangeAttr.GetValueAsFloat(_packState.UserResourceStates.Population.MarkerPopulationDefaults.TriggerRange);
+                }
+            }
         }
 
         public override void Focus() {
