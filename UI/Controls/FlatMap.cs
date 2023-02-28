@@ -47,7 +47,7 @@ namespace BhModule.Community.Pathing.Entity {
                 newMenu.AddMenuItem("Delete Marker").Click                  += delegate { ScreenNotification.ShowNotification("Not yet supported", ScreenNotification.NotificationType.Warning, null, 5); };
             }
 
-            newMenu.Hidden += delegate { _activeContextMenu.Dispose(); _activeContextMenu = null; };
+            newMenu.Hidden += delegate { _activeContextMenu?.Dispose(); _activeContextMenu = null; };
 
             _activeContextMenu = newMenu;
 
