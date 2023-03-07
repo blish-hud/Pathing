@@ -32,7 +32,7 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
 
                     if (!eventCall.Success) {
                         // We don't allow failed listeners to remain registered.
-                        _global.ScriptEngine.PushMessage("Tick delegate was unregistered because it threw an exception.", -1);
+                        _global.ScriptEngine.PushMessage($"Tick delegate `{listener.Method.Name}` was unregistered because it threw an exception.", -1);
                         _tickListeners.Remove(listener);
                     }
                 }
