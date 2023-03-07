@@ -17,29 +17,7 @@ namespace BhModule.Community.Pathing.Scripting;
 
 public class ScriptEngine {
 
-    public struct ScriptMessage {
-
-        public DateTime Timestamp { get; }
-        public string   Message   { get; }
-
-        /// <summary>
-        /// The source script that triggered the message.
-        /// </summary>
-        public string Source { get; }
-
-        /// <summary>
-        /// 0 = info, 1 = warn, 2 = error
-        /// </summary>
-        public int LogLevel { get; }
-
-        public ScriptMessage(string message, string source, DateTime timestamp, int logLevel = 0) {
-            this.Message   = message;
-            this.Source    = source;
-            this.Timestamp = timestamp;
-            this.LogLevel  = logLevel;
-        }
-
-    }
+    
 
     private static readonly Logger Logger = Logger.GetLogger<ScriptEngine>();
 
@@ -91,14 +69,13 @@ public class ScriptEngine {
         this.Global = _lua.CreateEnvironment<PathingGlobal>();
         this.Global.ScriptEngine = this;
 
-        PushMessage($"Loaded new environment.", -1);
+        PushMessage($"Loaded new environment.", ScriptMessageLogLevel.System);
     }
 
-    /// <param name="logLevel">0 = info, 1 = warn, 2 = error</param>
-    public void PushMessage(string message, int logLevel = 0, DateTime? timestamp = null, string source = null) {
+    public void PushMessage(string message, ScriptMessageLogLevel logLevel = ScriptMessageLogLevel.Info, DateTime? timestamp = null, string source = null) {
         timestamp ??= DateTime.UtcNow;
 
-        if (logLevel == -1) {
+        if (logLevel == ScriptMessageLogLevel.System && source == null) {
             source = "system";
         }
 
@@ -123,10 +100,10 @@ public class ScriptEngine {
 
         switch (ex) {
             case LuaParseException lpe:
-                PushMessage(message, 2, source: source);
+                PushMessage(message, ScriptMessageLogLevel.Error, source: source);
                 break;
             case LuaRuntimeException lre:
-                PushMessage(message, 2, source: source);
+                PushMessage(message, ScriptMessageLogLevel.Error, source: source);
                 break;
         }
     }
@@ -147,7 +124,7 @@ public class ScriptEngine {
             PublishException(lre);
         } catch (Exception ex) {
             success = false;
-            PushMessage(ex.Message, 2);
+            PushMessage(ex.Message, ScriptMessageLogLevel.Error);
 
             // PublishException(ex); can't do this because it's not a LuaException
         }
@@ -187,7 +164,7 @@ public class ScriptEngine {
                 var newScript = new ScriptState(chunk);
                 newScript.Run(this.Global, new PackContext(this, resourceManager));
                 this.Scripts.Add(newScript);
-                PushMessage($"{newScript.Name}.lua loaded in {newScript.LoadTime.Humanize(2)}.", newScript.LoadTime.Milliseconds > 500 ? 1 : 0, source: "system");
+                PushMessage($"{newScript.Name}.lua loaded in {newScript.LoadTime.Humanize(2)}.", newScript.LoadTime.Milliseconds > 500 ? ScriptMessageLogLevel.Warn : ScriptMessageLogLevel.Info, source: "system");
 
                 return chunk;
             }
@@ -197,7 +174,7 @@ public class ScriptEngine {
             Logger.Warn(ex, $"Failed to load script '{scriptName}'.");
         }
 
-        PushMessage($"Failed to load {scriptName}.", 2, source: "system");
+        PushMessage($"Failed to load {scriptName}.", ScriptMessageLogLevel.Error);
 
         return null;
     }

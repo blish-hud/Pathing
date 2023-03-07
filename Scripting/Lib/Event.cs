@@ -32,7 +32,7 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
 
                     if (!eventCall.Success) {
                         // We don't allow failed listeners to remain registered.
-                        _global.ScriptEngine.PushMessage($"Tick delegate `{listener.Method.Name}` was unregistered because it threw an exception.", -1);
+                        _global.ScriptEngine.PushMessage($"Tick callback `{listener.Method.Name}` was unregistered because it threw an exception.", ScriptMessageLogLevel.System);
                         _tickListeners.Remove(listener);
                     }
                 }
@@ -40,4 +40,14 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
         }
 
     }
+
+    public class EventCallback {
+
+        internal EventCallback(Event e, Func<GameTime, LuaResult> callback) {
+
+        }
+
+
+    }
+
 }

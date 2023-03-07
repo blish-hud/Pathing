@@ -287,6 +287,8 @@
     <Compile Include="Scripting\Lib\Event.cs" />
     <Compile Include="Scripting\Lib\Instance.cs" />
     <Compile Include="Scripting\Lib\Menu.cs" />
+    <Compile Include="Scripting\ScriptMessage.cs" />
+    <Compile Include="Scripting\ScriptMessageLogLevel.cs" />
     <Compile Include="Scripting\_Types\PackContext.cs" />
     <Compile Include="Scripting\Lib\Std\LuaLibraryOS.cs" />
     <Compile Include="Scripting\Lib\User.cs" />

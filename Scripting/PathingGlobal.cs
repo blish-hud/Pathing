@@ -37,7 +37,7 @@ public class PathingGlobal : LuaTable {
     public World Packs {
         get {
             if (!_packsWarning) {
-                this.ScriptEngine.PushMessage("`Packs` is deprecated.  Use `World` instead.", -1);
+                this.ScriptEngine.PushMessage("`Packs` is deprecated.  Use `World` instead.", ScriptMessageLogLevel.System);
                 _packsWarning = true;
             }
 

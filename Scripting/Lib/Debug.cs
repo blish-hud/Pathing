@@ -19,17 +19,17 @@ public class Debug {
     }
 
     public void Print(string message) {
-        _global.ScriptEngine.PushMessage(message);
+        _global.ScriptEngine.PushMessage(message, ScriptMessageLogLevel.Info);
     }
 
     public void Info(string message) => Print(message);
 
     public void Warn(string message) {
-        _global.ScriptEngine.PushMessage(message, 1);
+        _global.ScriptEngine.PushMessage(message, ScriptMessageLogLevel.Warn);
     }
 
     public void Error(string message) {
-        _global.ScriptEngine.PushMessage(message, 2);
+        _global.ScriptEngine.PushMessage(message, ScriptMessageLogLevel.Error);
     }
 
     public void Watch(string key, object value) {

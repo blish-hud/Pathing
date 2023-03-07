@@ -19,11 +19,11 @@ namespace BhModule.Community.Pathing.Scripting.Console {
 
         private int _lastLogMessage = 0;
 
-        private readonly Dictionary<int, Color> _logLevelColors = new() {
-            { -1, Color.SlateGray }, // System
-            { 0, Color.Black },      // Info
-            { 1, Color.Orange },     // Warn
-            { 2, Color.IndianRed }   // Error
+        private readonly Dictionary<ScriptMessageLogLevel, Color> _logLevelColors = new() {
+            { ScriptMessageLogLevel.System, Color.SlateGray },
+            { ScriptMessageLogLevel.Info, Color.Black },
+            { ScriptMessageLogLevel.Warn, Color.Orange },
+            { ScriptMessageLogLevel.Error, Color.IndianRed }
         };
 
         private WatchTreeNode CreateOrUpdateNode(string objectName) {
@@ -72,7 +72,7 @@ namespace BhModule.Community.Pathing.Scripting.Console {
 
                 string metaLine = $"[{newMessage.Timestamp} | {newMessage.Source}] ";
 
-                AppendScriptConsoleOutput(metaLine, _logLevelColors[-1]);
+                AppendScriptConsoleOutput(metaLine, _logLevelColors[ScriptMessageLogLevel.System]);
                 AppendScriptConsoleOutput($"{newMessage.Message.Replace(Environment.NewLine, Environment.NewLine + new string(' ', metaLine.Length))}", _logLevelColors[newMessage.LogLevel], true);
             }
         }
