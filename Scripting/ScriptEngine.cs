@@ -17,8 +17,6 @@ namespace BhModule.Community.Pathing.Scripting;
 
 public class ScriptEngine {
 
-    
-
     private static readonly Logger Logger = Logger.GetLogger<ScriptEngine>();
 
     internal PathingModule Module { get; }
