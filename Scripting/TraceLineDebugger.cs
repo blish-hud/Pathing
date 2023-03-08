@@ -1,5 +1,6 @@
 ﻿using Neo.IronLua;
 using System.Linq.Expressions;
+using Blish_HUD;
 
 namespace BhModule.Community.Pathing.Scripting {
     public class TraceLineDebugger : LuaTraceLineDebugger {
@@ -16,7 +17,7 @@ namespace BhModule.Community.Pathing.Scripting {
             this.LastFrameSource = e.SourceName;
             this.LastFrameScope  = e.ScopeName;
             this.LastFrameLine   = e.SourceLine;
-            
+
             base.OnExceptionUnwind(e);
         }
 
@@ -29,10 +30,6 @@ namespace BhModule.Community.Pathing.Scripting {
         }
 
         protected override void OnFrameExit() {
-            this.LastFrameSource = null;
-            this.LastFrameScope = null;
-            this.LastFrameLine = 0;
-
             base.OnFrameExit();
         }
 
