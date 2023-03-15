@@ -14,9 +14,29 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
         }
 
         public bool SetClipboard(string value) {
-            Blish_HUD.ClipboardUtil.WindowsClipboardService.SetTextAsync(value);
 
-            return true; // TODO: Indicate if the value was set or not.
+            // TODO: Check if user has copy to clipboard enabled
+            //IPackState _packState = idk how to get pack state here :)
+            //if (_packState.UserConfiguration.PackMarkerConsentToClipboard.Value != MarkerClipboardConsentLevel.Always) return false;
+
+            Task<bool> copyTask = Blish_HUD.ClipboardUtil.WindowsClipboardService.SetTextAsync(value).ContinueWith(t => {
+                if (t.IsCompleted && t.Result)
+                {
+                    ScreenNotification.ShowNotification($"Copied {value} to clipboard",
+                                                        ScreenNotification.NotificationType.Info,
+                                                        null,
+                                                        2);
+
+                    return true;
+                }
+
+                return false;
+
+            });
+
+            copyTask.Wait();
+
+            return copyTask.Result;
         }
 
     }
