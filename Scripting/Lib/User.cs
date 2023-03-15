@@ -13,7 +13,7 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
             _global = global;
         }
 
-        public async Task<bool> SetClipboard(string value) {
+        public bool SetClipboard(string value) {
 
             // TODO: Check if user has copy to clipboard enabled
             //IPackState _packState = idk how to get pack state here :)
