@@ -1,4 +1,6 @@
-﻿using Blish_HUD.Input;
+﻿using System;
+using Blish_HUD;
+using Blish_HUD.Input;
 using Blish_HUD.Settings;
 using Microsoft.Xna.Framework.Input;
 
@@ -182,16 +184,34 @@ namespace BhModule.Community.Pathing {
             this.KeyBindToggleWorldPathables.Value.Enabled = true;
             this.KeyBindToggleMapPathables.Value.Enabled   = true;
 
-            this.KeyBindTogglePathables.Value.Activated += async delegate {
-                this.GlobalPathablesEnabled.Value = !this.GlobalPathablesEnabled.Value; 
+            this.KeyBindTogglePathables.Value.Activated      += ToggleGlobalPathablesEnabled;
+            this.KeyBindToggleWorldPathables.Value.Activated += TogglePackWorldPathablesEnabled;
+            this.KeyBindToggleMapPathables.Value.Activated   += ToggleMapPathablesEnabled;
+        }
 
-                //await MapNavUtil.NavigateToPosition(20806.8, 16337.3, 1);
-            };
-            this.KeyBindToggleWorldPathables.Value.Activated += delegate { this.PackWorldPathablesEnabled.Value = !this.PackWorldPathablesEnabled.Value; };
-            this.KeyBindToggleMapPathables.Value.Activated   += delegate { this.MapPathablesEnabled.Value       = !this.MapPathablesEnabled.Value; };
+        private void ToggleGlobalPathablesEnabled(object sender, EventArgs e) {
+            this.GlobalPathablesEnabled.Value = !this.GlobalPathablesEnabled.Value;
+        }
+
+        private void TogglePackWorldPathablesEnabled(object sender, EventArgs e) {
+            this.PackWorldPathablesEnabled.Value = !this.PackWorldPathablesEnabled.Value;
+        }
+
+        private void ToggleMapPathablesEnabled(object sender, EventArgs e) {
+            this.MapPathablesEnabled.Value = !this.MapPathablesEnabled.Value;
         }
 
         #endregion
+
+        public void Unload() {
+            this.KeyBindTogglePathables.Value.Enabled      = false;
+            this.KeyBindToggleWorldPathables.Value.Enabled = false;
+            this.KeyBindToggleMapPathables.Value.Enabled   = false;
+
+            this.KeyBindTogglePathables.Value.Activated      -= ToggleGlobalPathablesEnabled;
+            this.KeyBindToggleWorldPathables.Value.Activated -= TogglePackWorldPathablesEnabled;
+            this.KeyBindToggleMapPathables.Value.Activated   -= ToggleMapPathablesEnabled;
+        }
 
     }
 }

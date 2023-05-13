@@ -230,6 +230,7 @@ namespace BhModule.Community.Pathing {
         protected override void Unload() {
             this.ScriptEngine?.Unload();
             _apiHost?.Close();
+            this.Settings?.Unload();
             this.PackInitiator?.Unload();
             _pathingIcon?.Dispose();
             _settingsWindow?.Dispose();
