@@ -36,6 +36,7 @@ namespace BhModule.Community.Pathing {
         public UiStates           UiStates           { get; private set; }
         public EditorStates       EditorStates       { get; private set; }
         public CachedMumbleStates CachedMumbleStates { get; private set; }
+        public KvStates           KvStates           { get; private set; }
 
         public  SafeList<IPathingEntity> Entities { get; private set; } = new();
 
@@ -79,6 +80,7 @@ namespace BhModule.Community.Pathing {
                 await (this.UiStates           = new UiStates(this)).Start(),
                 await (this.EditorStates       = new EditorStates(this)).Start(),
                 await (this.CachedMumbleStates = new CachedMumbleStates(this)).Start(),
+                await (this.KvStates           = new KvStates(this)).Start(),
             };
 
             _initialized = true;

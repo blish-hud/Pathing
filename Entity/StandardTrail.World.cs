@@ -15,7 +15,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         private VertexBuffer[] _sectionBuffers;
 
-        private VertexBuffer PostProcessTrailSection(IEnumerable<Vector3> points) {
+        private VertexBuffer PostProcessTrailSection(GraphicsDevice graphicsDevice, IEnumerable<Vector3> points) {
             // Optional trail post-processing
 
             // TODO: Implement additional post processing options
@@ -34,11 +34,11 @@ namespace BhModule.Community.Pathing.Entity {
             }
 
             return distance > 0
-                       ? BuildTrailSection(pointsArr, distance)
+                       ? BuildTrailSection(graphicsDevice, pointsArr, distance)
                        : null;
         }
 
-        private VertexBuffer BuildTrailSection(IEnumerable<Vector3> points, float distance) {
+        private VertexBuffer BuildTrailSection(GraphicsDevice graphicsDevice, IEnumerable<Vector3> points, float distance) {
             Vector3[] pointsArr = points as Vector3[] ?? points.ToArray();
 
             var verts = new VertexPositionColorTexture[pointsArr.Length * 2];
@@ -75,7 +75,7 @@ namespace BhModule.Community.Pathing.Entity {
             verts[pointsArr.Length * 2 - 1] = new VertexPositionColorTexture(fleftPoint,  Color.White, new Vector2(0f, pastDistance / (TRAIL_WIDTH * 2) - 1));
             verts[pointsArr.Length * 2 - 2] = new VertexPositionColorTexture(frightPoint, Color.White, new Vector2(1f, pastDistance / (TRAIL_WIDTH * 2) - 1));
 
-            var sectionBuffer = new VertexBuffer(GameService.Graphics.GraphicsDevice, VertexPositionColorTexture.VertexDeclaration, verts.Length, BufferUsage.WriteOnly);
+            var sectionBuffer = new VertexBuffer(graphicsDevice, VertexPositionColorTexture.VertexDeclaration, verts.Length, BufferUsage.WriteOnly);
             sectionBuffer.SetData(verts);
 
             return sectionBuffer;
@@ -84,12 +84,14 @@ namespace BhModule.Community.Pathing.Entity {
         private void BuildBuffers(ITrail trail) {
             var buffers = new List<VertexBuffer>();
 
-            foreach (var section in trail.TrailSections) {
-                // TODO: Fix cursed Vector3 type conversion
-                var processedBuffer = PostProcessTrailSection(section.TrailPoints.Select(v => new Vector3(v.X, v.Y, v.Z)));
+            using (var gdctx = GameService.Graphics.LendGraphicsDeviceContext()) {
+                foreach (var section in trail.TrailSections) {
+                    // TODO: Fix cursed Vector3 type conversion
+                    var processedBuffer = PostProcessTrailSection(gdctx.GraphicsDevice, section.TrailPoints.Select(v => new Vector3(v.X, v.Y, v.Z)));
 
-                if (processedBuffer != null) {
-                    buffers.Add(processedBuffer);
+                    if (processedBuffer != null) {
+                        buffers.Add(processedBuffer);
+                    }
                 }
             }
 

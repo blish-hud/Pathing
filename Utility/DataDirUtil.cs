@@ -13,6 +13,11 @@ namespace BhModule.Community.Pathing.Utility {
         /// </summary>
         public const string COMMON_USER  = "user";
 
+        /// <summary>
+        /// Where script KV information is kept.
+        /// </summary>
+        public const string COMMON_KV = "kv";
+
         private const string MARKER_DIR = "markers";
         private const string DATA_DIR   = "data";
 

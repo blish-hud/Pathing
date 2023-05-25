@@ -25,10 +25,10 @@ namespace BhModule.Community.Pathing.Editor.Entity {
         public TranslateAxisHandle(Color axisColor, Matrix axisTransform) {
             _axisTransform = axisTransform;
 
-            _effect = new BasicEffect(GameService.Graphics.GraphicsDevice) {
-                VertexColorEnabled = true,
-                Alpha              = 0.4f
-            };
+            //_effect = new BasicEffect(GameService.Graphics.GraphicsDevice) {
+            //    VertexColorEnabled = true,
+            //    Alpha              = 0.4f
+            //};
 
             var verts = new VertexPositionColor[_faceIndexes.Length * 3];
 
@@ -40,8 +40,8 @@ namespace BhModule.Community.Pathing.Editor.Entity {
                 }
             }
 
-            _buffer = new VertexBuffer(GameService.Graphics.GraphicsDevice, VertexPositionColor.VertexDeclaration, verts.Length, BufferUsage.WriteOnly);
-            _buffer.SetData(verts);
+            //_buffer = new VertexBuffer(GameService.Graphics.GraphicsDevice, VertexPositionColor.VertexDeclaration, verts.Length, BufferUsage.WriteOnly);
+            //_buffer.SetData(verts);
         }
 
         public bool RayIntersects(Ray ray) {
@@ -58,7 +58,7 @@ namespace BhModule.Community.Pathing.Editor.Entity {
 
         public void Update(GameTime gameTime) {
             if (_handleActive) {
-                _mouseOffset = PickingUtil.CalculateRay(GameService.Input.Mouse.Position, GameService.Gw2Mumble.PlayerCamera.View, GameService.Gw2Mumble.PlayerCamera.Projection).Position.Z;
+                //_mouseOffset = PickingUtil.CalculateRay(GameService.Input.Mouse.Position, GameService.Gw2Mumble.PlayerCamera.View, GameService.Gw2Mumble.PlayerCamera.Projection).Position.Z;
             } else {
                 _mouseIndex  = 0;
                 _mouseOffset = 0;

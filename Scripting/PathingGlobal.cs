@@ -25,12 +25,16 @@ public class PathingGlobal : LuaTable {
         this.Event = new Event(this);
         this.User  = new User(this);
 
-        this.World = new World(this);
-        this.I     = new(this);
+        this.World   = new World(this);
+        this.Storage = new Storage(this);
+        this.I       = new(this);
     }
 
     [LuaMember(nameof(World))]
     public World World { get; }
+
+    [LuaMember(nameof(Storage))]
+    public Storage Storage { get; }
 
     private bool _packsWarning = false;
     [LuaMember("Packs")]

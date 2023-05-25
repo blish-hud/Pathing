@@ -22,7 +22,9 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         private static void CreateSharedVertexBuffer() {
-            _sharedVertexBuffer = new DynamicVertexBuffer(GameService.Graphics.GraphicsDevice, typeof(VertexPositionTexture), 4, BufferUsage.WriteOnly);
+            using (var gdctx = GameService.Graphics.LendGraphicsDeviceContext()) {
+                _sharedVertexBuffer = new DynamicVertexBuffer(gdctx.GraphicsDevice, typeof(VertexPositionTexture), 4, BufferUsage.WriteOnly);
+            }
 
             var verts = new VertexPositionTexture[_faceVerts.Length];
 

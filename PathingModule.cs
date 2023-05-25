@@ -127,8 +127,6 @@ namespace BhModule.Community.Pathing {
                 Title         = Strings.General_UiName,
                 Parent        = GameService.Graphics.SpriteScreen,
                 Location      = new Point(100, 100),
-                // Fixes an issue in v0.11.2 where the window is clipped for some reason if window scale is != 100%
-                ClipsBounds   = Program.OverlayVersion == new SemVer.Version(0, 11, 2) && GameService.Graphics.GetDpiScaleRatio() != 1f,
                 Emblem        = this.ContentsManager.GetTexture(@"png\controls\1615829.png"),
                 Id            = $"{this.Namespace}_SettingsWindow",
                 SavesPosition = true,

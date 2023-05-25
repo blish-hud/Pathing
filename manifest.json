@@ -7,7 +7,7 @@
 
   "description": "Display markers and trails in-game.  Supports both .zip and .taco format markers.\n\nCheck out our guide: https://link.blishhud.com/pathingsetup",
   "dependencies": {
-    "bh.blishhud": ">=0.11.2"
+    "bh.blishhud": ">=1.0.0"
   },
   "url": "https://github.com/Blish-HUD/Pathing",
   "contributors": [

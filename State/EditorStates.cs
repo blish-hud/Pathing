@@ -54,40 +54,40 @@ namespace BhModule.Community.Pathing.State {
 
             if (!GameService.Input.Keyboard.ActiveModifiers.HasFlag(EDITOR_MODIFIERKEY)) return;
 
-            var mouseRay = PickingUtil.CalculateRay(e.MousePosition,
-                                                    GameService.Gw2Mumble.PlayerCamera.View,
-                                                    GameService.Gw2Mumble.PlayerCamera.Projection);
+            //var mouseRay = PickingUtil.CalculateRay(e.MousePosition,
+            //                                        GameService.Gw2Mumble.PlayerCamera.View,
+            //                                        GameService.Gw2Mumble.PlayerCamera.Projection);
 
             ICanPick pickedEntity = null;
 
-            foreach (var entity in GameService.Graphics.World.Entities.OrderBy(entity => entity.DrawOrder)) {
-                if (entity is ICanPick pickEntity) {
-                    if (pickEntity.RayIntersects(mouseRay)) {
-                        pickedEntity = pickEntity;
+            //foreach (var entity in GameService.Graphics.World.Entities.OrderBy(entity => entity.DrawOrder)) {
+            //    if (entity is ICanPick pickEntity) {
+            //        if (pickEntity.RayIntersects(mouseRay)) {
+            //            pickedEntity = pickEntity;
 
-                        switch (entity) {
-                            case IPathingEntity pathable:
-                                if (this.SelectedPathingEntities.Contains(pathable)) {
-                                    this.SelectedPathingEntities.Remove(pathable);
-                                } else if (_multiSelect) {
-                                        this.SelectedPathingEntities.Add(pathable);
-                                } else {
-                                    this.SelectedPathingEntities.SetRange(new[] { pathable });
-                                }
+            //            switch (entity) {
+            //                case IPathingEntity pathable:
+            //                    if (this.SelectedPathingEntities.Contains(pathable)) {
+            //                        this.SelectedPathingEntities.Remove(pathable);
+            //                    } else if (_multiSelect) {
+            //                            this.SelectedPathingEntities.Add(pathable);
+            //                    } else {
+            //                        this.SelectedPathingEntities.SetRange(new[] { pathable });
+            //                    }
 
-                                //Editor.MarkerEditWindow.SetPathingEntity(this, marker);
-                                break;
-                            case IAxisHandle handle:
-                                handle.HandleActivated(mouseRay);
-                                break;
-                            default:
-                                continue;
-                        }
+            //                    //Editor.MarkerEditWindow.SetPathingEntity(this, marker);
+            //                    break;
+            //                case IAxisHandle handle:
+            //                    handle.HandleActivated(mouseRay);
+            //                    break;
+            //                default:
+            //                    continue;
+            //            }
 
-                        break;
-                    }
-                }
-            }
+            //            break;
+            //        }
+            //    }
+            //}
 
             if (pickedEntity == null) {
                 this.SelectedPathingEntities.Clear();
