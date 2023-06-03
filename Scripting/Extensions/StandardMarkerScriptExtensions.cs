@@ -79,7 +79,7 @@ namespace BhModule.Community.Pathing.Scripting.Extensions {
             });
         }
 
-        public static void SetTExture(this StandardMarker marker, int textureId) {
+        public static void SetTexture(this StandardMarker marker, int textureId) {
             // Should match what is in Instance.cs > Texture
             marker.Texture = AsyncTexture2D.FromAssetId(textureId) ?? ContentService.Textures.Error;
         }
