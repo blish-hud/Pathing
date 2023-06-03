@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Humanizer;
 
@@ -45,35 +46,40 @@ namespace BhModule.Community.Pathing.Scripting.Console {
         }
 
         private void tOutputPoll_Tick(object sender, EventArgs e) {
-            // Update reload button enabled.
-            btnReloadPacks.Enabled = !_module.PackInitiator.IsLoading;
+            try {
+                // Update reload button enabled.
+                btnReloadPacks.Enabled = !_module.PackInitiator.IsLoading;
 
-            // Update frametime.
-            tsslScriptFrameTime.Text = _module.ScriptEngine.FrameExecutionTime.Humanize();
-            tsslScriptFrameTime.ForeColor = _module.ScriptEngine.FrameExecutionTime.TotalMilliseconds switch {
-                > 3 => Color.IndianRed,
-                > 1 => Color.Orange,
-                _ => Color.Black
-            };
+                // Update frametime.
+                tsslScriptFrameTime.Text = _module.ScriptEngine.FrameExecutionTime.Humanize();
+                tsslScriptFrameTime.ForeColor = _module.ScriptEngine.FrameExecutionTime.TotalMilliseconds switch {
+                    > 3 => Color.IndianRed,
+                    > 1 => Color.Orange,
+                    _ => Color.Black
+                };
 
-            // Update watch window.
-            foreach (var watchValue in _module.ScriptEngine.Global.Debug.WatchValues) {
-                var node = CreateOrUpdateNode(watchValue.Key);
-                node.Refresh(watchValue.Value);
-            }
+                // Update watch window.
+                var watchValues = _module.ScriptEngine.Global.Debug.WatchValues.ToArray();
+                foreach (var watchValue in watchValues) {
+                    var node = CreateOrUpdateNode(watchValue.Key);
+                    node.Refresh(watchValue.Value);
+                }
 
-            // Update script output.
-            if (_lastLogMessage > _module.ScriptEngine.OutputMessages.Count) {
-                _lastLogMessage = 0;
-            }
+                // Update script output.
+                if (_lastLogMessage > _module.ScriptEngine.OutputMessages.Count) {
+                    _lastLogMessage = 0;
+                }
 
-            for (; _lastLogMessage < _module.ScriptEngine.OutputMessages.Count; _lastLogMessage++) {
-                var newMessage = _module.ScriptEngine.OutputMessages[_lastLogMessage];
+                for (; _lastLogMessage < _module.ScriptEngine.OutputMessages.Count; _lastLogMessage++) {
+                    var newMessage = _module.ScriptEngine.OutputMessages[_lastLogMessage];
 
-                string metaLine = $"[{newMessage.Timestamp} | {newMessage.Source}] ";
+                    string metaLine = $"[{newMessage.Timestamp} | {newMessage.Source}] ";
 
-                AppendScriptConsoleOutput(metaLine, _logLevelColors[ScriptMessageLogLevel.System]);
-                AppendScriptConsoleOutput($"{newMessage.Message.Replace(Environment.NewLine, Environment.NewLine + new string(' ', metaLine.Length))}", _logLevelColors[newMessage.LogLevel], true);
+                    AppendScriptConsoleOutput(metaLine, _logLevelColors[ScriptMessageLogLevel.System]);
+                    AppendScriptConsoleOutput($"{newMessage.Message.Replace(Environment.NewLine, Environment.NewLine + new string(' ', metaLine.Length))}", _logLevelColors[newMessage.LogLevel], true);
+                }
+            } catch (Exception) {
+                /* Silently ignore */
             }
         }
 

@@ -1,5 +1,7 @@
 ﻿using BhModule.Community.Pathing.Behavior;
 using BhModule.Community.Pathing.Entity;
+using Blish_HUD;
+using Blish_HUD.Content;
 using Microsoft.Xna.Framework;
 
 namespace BhModule.Community.Pathing.Scripting.Extensions {
@@ -75,6 +77,11 @@ namespace BhModule.Community.Pathing.Scripting.Extensions {
                     // TODO: Probably should report this with a logger.
                 }
             });
+        }
+
+        public static void SetTExture(this StandardMarker marker, int textureId) {
+            // Should match what is in Instance.cs > Texture
+            marker.Texture = AsyncTexture2D.FromAssetId(textureId) ?? ContentService.Textures.Error;
         }
 
         // Behavior

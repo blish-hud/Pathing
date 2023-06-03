@@ -41,13 +41,4 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
 
     }
 
-    public class EventCallback {
-
-        internal EventCallback(Event e, Func<GameTime, LuaResult> callback) {
-
-        }
-
-
-    }
-
 }

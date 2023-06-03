@@ -87,12 +87,15 @@ namespace BhModule.Community.Pathing {
             this.PackAllowMarkersToAnimate                = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAnimate),                true, () => Strings.Setting_PackAllowMarkersToAnimate, () => "Allows animations such as 'bounce' and trail movements.");
             this.PackEnableSmartCategoryFilter            = this.PackSettings.DefineSetting(nameof(this.PackEnableSmartCategoryFilter),            true, () => "Enable Smart Categories", () => "If a category doesn't contain markers or trails relevant to the current map, the category is hidden.");
             this.PackShowWhenCategoriesAreFiltered        = this.PackSettings.DefineSetting(nameof(this.PackShowWhenCategoriesAreFiltered),        true, () => "Indicate when categories are hidden", () => "Shows a note at the bottom of the menu indicating if categories have been hidden.  Clicking the note will show the hidden categories temporarily.");
-            this.PackShowHiddenMarkersReducedOpacity      = this.PackSettings.DefineSetting(nameof(this.PackShowHiddenMarkersReducedOpacity),      false, () => "Show Ghost Markers", () => "Shows hidden markers with a reduced opacity allowing you to unhide them.");
+            this.PackShowHiddenMarkersReducedOpacity      = this.PackSettings.DefineSetting(nameof(this.PackShowHiddenMarkersReducedOpacity),      false, () => "Temporarily Show Ghost Markers", () => "Shows hidden markers with a reduced opacity allowing you to unhide them.  This setting automatically disables on startup.");
 
             this.PackMaxOpacityOverride.SetRange(0f, 1f);
             this.PackMaxViewDistance.SetRange(25f, 50000f);
             this.PackMaxTrailAnimationSpeed.SetRange(0f, 10f);
             this.PackMarkerScale.SetRange(0.1f, 4f);
+
+            // Reset this one back to false.
+            this.PackShowHiddenMarkersReducedOpacity.Value = false;
         }
 
         #endregion

@@ -3,6 +3,7 @@ using System.Linq;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
+using Blish_HUD.Content;
 using Microsoft.Xna.Framework;
 using Neo.IronLua;
 using TmfLib;
@@ -59,6 +60,12 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
 
         public Guid Guid(string base64) {
             return AttributeParsingUtil.InternalGetValueAsGuid(base64);
+        }
+
+        // Texture
+
+        public AsyncTexture2D Texture(int textureId) {
+            return AsyncTexture2D.FromAssetId(textureId) ?? ContentService.Textures.Error;
         }
 
     }
