@@ -28,7 +28,12 @@ public class PathingGlobal : LuaTable {
         this.World   = new World(this);
         this.Storage = new Storage(this);
         this.I       = new(this);
+
+        this.PathingVersion = this.ScriptEngine.Module.Version.Clean();
     }
+
+    [LuaMember("PathingVersion")]
+    public string PathingVersion { get; }
 
     [LuaMember(nameof(World))]
     public World World { get; }
