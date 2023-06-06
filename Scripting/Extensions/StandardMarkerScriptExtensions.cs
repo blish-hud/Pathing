@@ -4,6 +4,7 @@ using BhModule.Community.Pathing.Scripting.Lib;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace BhModule.Community.Pathing.Scripting.Extensions {
     internal static class StandardMarkerScriptExtensions {
@@ -80,7 +81,7 @@ namespace BhModule.Community.Pathing.Scripting.Extensions {
 
         public static IBehavior GetBehavior(this StandardMarker marker, string behaviorName) {
             foreach (var behavior in marker.Behaviors) {
-                if (string.Equals(behavior.GetType().Name, behaviorName, System.StringComparison.InvariantCultureIgnoreCase)) {
+                if (string.Equals(behavior.GetType().Name, behaviorName, StringComparison.InvariantCultureIgnoreCase)) {
                     return behavior;
                 }
             }

@@ -51,6 +51,7 @@ public class ScriptEngine {
         this.Module = module;
 
         LuaType.RegisterTypeExtension(typeof(StandardMarkerScriptExtensions));
+        LuaType.RegisterTypeExtension(typeof(StandardTrailScriptExtensions));
         LuaType.RegisterTypeExtension(typeof(PathingCategoryScriptExtensions));
         LuaType.RegisterTypeExtension(typeof(GuidExtensions));
     }
@@ -60,6 +61,7 @@ public class ScriptEngine {
         _lua = new Lua(LuaIntegerType.Int32, LuaFloatType.Float);
 
         StandardMarkerScriptExtensions.SetPackInitiator(this.Module.PackInitiator);
+        StandardTrailScriptExtensions.SetPackInitiator(this.Module.PackInitiator);
         PathingCategoryScriptExtensions.SetPackInitiator(this.Module.PackInitiator);
 
         _stackTraceDebugger = new TraceLineDebugger();
@@ -212,6 +214,7 @@ public class ScriptEngine {
         Scripts.Clear();
         _lua?.Dispose();
         StandardMarkerScriptExtensions.SetPackInitiator(null);
+        StandardTrailScriptExtensions.SetPackInitiator(null);
         PathingCategoryScriptExtensions.SetPackInitiator(null);
     }
 

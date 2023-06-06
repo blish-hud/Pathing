@@ -283,6 +283,7 @@
     <Compile Include="Scripting\Extensions\GuidExtensions.cs" />
     <Compile Include="Scripting\Extensions\PathingCategoryScriptExtensions.cs" />
     <Compile Include="Scripting\Extensions\StandardMarkerScriptExtensions.cs" />
+    <Compile Include="Scripting\Extensions\StandardTrailScriptExtensions.cs" />
     <Compile Include="Scripting\Lib\Debug.cs" />
     <Compile Include="Scripting\Lib\Event.cs" />
     <Compile Include="Scripting\Lib\Instance.cs" />
