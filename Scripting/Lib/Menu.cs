@@ -11,15 +11,17 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
         public Func<Menu, LuaResult> OnClick  { get; }
         public bool                  CanCheck { get; set; }
         public bool                  Checked  { get; set; }
+        public string                Tooltip { get; set; }
 
         private readonly List<Menu> _menus = new();
         public IReadOnlyCollection<Menu> Menus => _menus.AsReadOnly();
 
-        public Menu(string name, Func<Menu, LuaResult> onClick, bool canCheck = false, bool @checked = false) {
+        public Menu(string name, Func<Menu, LuaResult> onClick, bool canCheck = false, bool @checked = false, string tooltip = null) {
             this.Name     = name;
             this.OnClick  = onClick;
             this.CanCheck = canCheck;
             this.Checked  = @checked;
+            this.Tooltip  = tooltip;
         }
 
         public Menu Add(string name, Func<Menu, LuaResult> onClick) {
@@ -46,9 +48,10 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
 
         internal ContextMenuStripItem BuildMenu() {
             var menu = new ContextMenuStripItem() {
-                Text     = this.Name,
-                CanCheck = this.CanCheck,
-                Checked  = this.Checked
+                Text             = this.Name,
+                CanCheck         = this.CanCheck,
+                Checked          = this.Checked,
+                BasicTooltipText = this.Tooltip
             };
 
             menu.Click += (_, _) => {
