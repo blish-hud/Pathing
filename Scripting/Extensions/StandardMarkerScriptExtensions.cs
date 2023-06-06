@@ -1,5 +1,6 @@
 ﻿using BhModule.Community.Pathing.Behavior;
 using BhModule.Community.Pathing.Entity;
+using BhModule.Community.Pathing.Scripting.Lib;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Microsoft.Xna.Framework;
@@ -67,16 +68,7 @@ namespace BhModule.Community.Pathing.Scripting.Extensions {
         // Texture
 
         public static void SetTexture(this StandardMarker marker, string texturePath) {
-            // If it's a texture from a different map (or no map at all), we must ensure it's preloaded.
-            // We don't need to await this method because the texture dictionary is updated before the first yield.
-            marker.TextureResourceManager.PreloadTexture(texturePath, false);
-            marker.TextureResourceManager.LoadTextureAsync(texturePath).ContinueWith(textureTaskResult => {
-                if (!textureTaskResult.IsFaulted && textureTaskResult.Result.Texture != null) {
-                    marker.Texture = textureTaskResult.Result.Texture;
-                } else {
-                    // TODO: Probably should report this with a logger.
-                }
-            });
+            marker.Texture = Instance.Texture(marker.TextureResourceManager, texturePath);
         }
 
         public static void SetTexture(this StandardMarker marker, int textureId) {

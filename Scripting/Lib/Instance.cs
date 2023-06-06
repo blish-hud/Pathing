@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
@@ -64,8 +65,30 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
 
         // Texture
 
+        internal static AsyncTexture2D Texture(TextureResourceManager textureManager, string texturePath) {
+            var outTexture = new AsyncTexture2D();
+            // If it's a texture from a different map (or no map at all), we must ensure it's preloaded.
+            // We don't need to await this method because the texture dictionary is updated before the first yield.
+            textureManager.PreloadTexture(texturePath, false);
+            textureManager.LoadTextureAsync(texturePath).ContinueWith(textureTaskResult => {
+                if (!textureTaskResult.IsFaulted && textureTaskResult.Result.Texture != null) {
+                    outTexture.SwapTexture(textureTaskResult.Result.Texture);
+                } else {
+                    // TODO: Probably should report this with a logger.
+                }
+            });
+
+            return outTexture;
+        }
+
         public AsyncTexture2D Texture(int textureId) {
             return AsyncTexture2D.FromAssetId(textureId) ?? ContentService.Textures.Error;
+        }
+
+        public AsyncTexture2D Texture(PackContext pack, string texturePath) {
+            var textureManager = TextureResourceManager.GetTextureResourceManager(pack.ResourceManager);
+
+            return Texture(textureManager, texturePath);
         }
 
     }
