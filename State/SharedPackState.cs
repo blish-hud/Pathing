@@ -158,7 +158,7 @@ namespace BhModule.Community.Pathing {
         
         private void OnInteractPressed(object sender, EventArgs e) {
             // TODO: OnInteractPressed needs a better place.
-            foreach (var entity in this.Entities) {
+            foreach (var entity in this.Entities.ToArray()) {
                 if (entity is StandardMarker {Focused: true} marker) {
                     marker.Interact(false);
                 }
