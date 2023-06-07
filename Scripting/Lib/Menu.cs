@@ -29,6 +29,10 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
         }
 
         public Menu Add(string name, Func<Menu, LuaResult> onClick, bool canCheck, bool @checked) {
+            return Add(name, onClick, canCheck, @checked, null);
+        }
+
+        public Menu Add(string name, Func<Menu, LuaResult> onClick, bool canCheck, bool @checked, string tooltip) {
             foreach (var menu in _menus) {
                 if (string.Equals(menu.Name, name, StringComparison.OrdinalIgnoreCase)) {
                     // Menu with this name already exists - just return it.
@@ -36,7 +40,7 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
                 }
             }
 
-            var newMenu = new Menu(name, onClick, canCheck, @checked);
+            var newMenu = new Menu(name, onClick, canCheck, @checked, tooltip);
             _menus.Add(newMenu);
 
             return newMenu;
