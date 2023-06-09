@@ -192,7 +192,7 @@ namespace BhModule.Community.Pathing.State {
             try {
                 recordedTimerMetadata = await FileUtil.ReadLinesAsync(timerStatesPath);
             } catch (Exception e) {
-                Logger.Error(e, $"Failed to read {STATE_FILE} ({timerStatesPath}).");
+                Logger.Warn(e, $"Failed to read {STATE_FILE} ({timerStatesPath}).");
             }
 
             lock (_hiddenUntilTimer) {

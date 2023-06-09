@@ -45,7 +45,7 @@ namespace BhModule.Community.Pathing.State {
             try {
                 recordedCategories = await FileUtil.ReadLinesAsync(categoryStatePath);
             } catch (Exception e) {
-                Logger.Error(e, $"Failed to read {STATE_FILE} ({categoryStatePath}).");
+                Logger.Warn(e, $"Failed to read {STATE_FILE} ({categoryStatePath}).");
             }
 
             rawCategoriesList.Clear();
