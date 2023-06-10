@@ -36,7 +36,7 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
         // Marker
 
         private AttributeCollection AttributeCollectionFromLuaTable(LuaTable luaTable) {
-            return new AttributeCollection(luaTable.Members.Select(member => new Attribute(member.Key, member.Value.ToString())));
+            return new AttributeCollection(luaTable.Members.Select(member => new Attribute(member.Key, string.Format(CultureInfo.InvariantCulture, "{0}", member.Value))));
         }
 
         public StandardMarker Marker(IPackResourceManager resourceManager, LuaTable attributes = null) {
