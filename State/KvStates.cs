@@ -14,6 +14,8 @@ namespace BhModule.Community.Pathing.State {
 
         private FasterKV<string, string> _kvStore;
 
+        private bool _dirty = false;
+
         private double _lastCheckpointCheck = INTERVAL_CHECKPOINT;
 
         public KvStates(IRootPackState rootPackState) : base(rootPackState) { /* NOOP */ }
@@ -42,13 +44,20 @@ namespace BhModule.Community.Pathing.State {
             return _kvStore.NewSession(new SimpleFunctions<string, string>());
         }
 
+        public void Invalidate() {
+            _dirty = true;
+        }
+
         public override async Task Reload() {
             await Unload();
             await Initialize();
         }
 
         private async Task FlushCheckpoint(GameTime gameTime) {
-            await _kvStore.TakeHybridLogCheckpointAsync(CheckpointType.FoldOver, true);
+            if (_dirty) {
+                _dirty = false;
+                await _kvStore.TakeHybridLogCheckpointAsync(CheckpointType.FoldOver, true);
+            }
         }
 
         public override void Update(GameTime gameTime) {

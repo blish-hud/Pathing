@@ -37,6 +37,9 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
             using var session = _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.GetSession();
 
             session.Upsert(ref key, ref value);
+
+            _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.Invalidate();
+
             return value;
         }
 
@@ -68,6 +71,8 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
             using var session = _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.GetSession();
 
             session.Delete(ref key);
+
+            _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.Invalidate();
         }
 
         public void DeleteValue(string name) {

@@ -48,6 +48,10 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
 
             _lastTrigger = GameService.Overlay.CurrentGameTime.TotalGameTime.TotalMilliseconds;
 
+            if (string.IsNullOrEmpty(this.CopyValue)) {
+                return;
+            }
+
             ClipboardUtil.WindowsClipboardService.SetTextAsync(this.CopyValue).ContinueWith(t => {
                   if (t.IsCompleted && t.Result) {
                       ScreenNotification.ShowNotification(string.Format(this.CopyMessage, this.CopyValue),
@@ -65,6 +69,10 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
         }
 
         public void Unfocus() {
+            _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
+        }
+
+        public override void Unload() {
             _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
         }
 

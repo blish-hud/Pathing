@@ -48,5 +48,9 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
             _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
         }
 
+        public override void Unload() {
+            _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
+        }
+
     }
 }
