@@ -108,14 +108,7 @@ namespace BhModule.Community.Pathing.Utility {
 
         public static Color GetValueAsColor(this IAttribute attribute, Color @default = default) {
             string attrValue = attribute.GetValueAsString().ToLowerInvariant();
-
-            return attrValue switch {
-                "white" => Color.White,
-                "yellow" => Color.FromNonPremultiplied(255, 255, 0,  255),
-                "red" => Color.FromNonPremultiplied(242,    13,  19, 255),
-                "green" => Color.FromNonPremultiplied(85,   221, 85, 255),
-                _ => ColorUtil.TryParseHex(attrValue, out var color) ? color : @default
-            };
+            return ColorUtil.TryParseHex(attrValue, out var color) ? color : @default;
         }
 
         public static CronExpression GetValueAsCronExpression(this IAttribute attribute) {
