@@ -164,7 +164,7 @@ public class ScriptEngine {
                 var newScript = new ScriptState(chunk);
                 newScript.Run(this.Global, new PackContext(this, resourceManager));
                 this.Scripts.Add(newScript);
-                PushMessage($"{newScript.Name}.lua loaded in {newScript.LoadTime.Humanize(2)}.", newScript.LoadTime.Milliseconds > 500 ? ScriptMessageLogLevel.Warn : ScriptMessageLogLevel.Info, source: "system");
+                PushMessage($"{newScript.Name}.lua loaded in {newScript.LoadTime.Humanize(2)}.", newScript.LoadTime.TotalMilliseconds > 500 ? ScriptMessageLogLevel.Warn : ScriptMessageLogLevel.Info, source: "system");
 
                 return chunk;
             }
