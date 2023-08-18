@@ -49,7 +49,7 @@ namespace BhModule.Community.Pathing.State {
                 } else if (ex is TooManyRequestsException) {
                     Logger.Warn(ex, "After multiple attempts no map data could be loaded due to being rate limited by the API.");
                 } else {
-                    Logger.Error(ex, "Final attempt to pull map data from the Gw2 API failed.  This session won't have map data.");
+                    Logger.Warn(ex, "Final attempt to pull map data from the Gw2 API failed.  This session won't have map data.");
                 }
             }
 

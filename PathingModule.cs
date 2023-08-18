@@ -18,6 +18,7 @@ using Blish_HUD.Entities;
 using Blish_HUD.Settings.UI.Views;
 using Microsoft.Xna.Framework.Input;
 using Blish_HUD.Graphics.UI;
+using Blish_HUD.GameIntegration;
 
 namespace BhModule.Community.Pathing {
     [Export(typeof(Module))]
@@ -113,6 +114,14 @@ namespace BhModule.Community.Pathing {
         }
 
         protected override void Initialize() {
+            if (DateTime.UtcNow.Date > new DateTime(2023, 8, 21, 0, 0, 0, DateTimeKind.Utc)) {
+                // SOTO Fix ( L O L )
+                try {
+                    var tacoActive = typeof(TacOIntegration).GetProperty(nameof(TacOIntegration.TacOIsRunning)).GetSetMethod(true);
+                    tacoActive?.Invoke(GameService.GameIntegration.TacO, new object[] { true });
+                } catch { /* NOOP */ }
+            }
+
             _pathingIcon = new CornerIcon() {
                 IconName = Strings.General_UiName,
                 Icon     = ContentsManager.GetTexture(@"png\pathing-icon.png"),
