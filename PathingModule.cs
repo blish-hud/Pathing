@@ -114,7 +114,7 @@ namespace BhModule.Community.Pathing {
         }
 
         protected override void Initialize() {
-            if (DateTime.UtcNow.Date > new DateTime(2023, 8, 21, 0, 0, 0, DateTimeKind.Utc)) {
+            if (DateTime.UtcNow.Date >= new DateTime(2023, 8, 22, 0, 0, 0, DateTimeKind.Utc) && Program.OverlayVersion < new SemVer.Version(1, 1, 0)) {
                 // SOTO Fix
                 try {
                     var tacoActive = typeof(TacOIntegration).GetProperty(nameof(TacOIntegration.TacOIsRunning)).GetSetMethod(true);
