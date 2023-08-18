@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Blish_HUD;
 using Blish_HUD.Controls;
 using Neo.IronLua;
 
 namespace BhModule.Community.Pathing.Scripting.Lib {
     public class Menu {
+
+        private static Logger Logger = Logger.GetLogger<Menu>();
 
         public string                Name     { get; }
         public Func<Menu, LuaResult> OnClick  { get; }
@@ -60,7 +63,12 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
 
             menu.Click += (_, _) => {
                 this.Checked = menu.Checked;
-                this.OnClick?.Invoke(this);
+
+                try {
+                    this.OnClick?.Invoke(this);
+                } catch (Exception ex) {
+                    Logger.Warn(ex, "Failed to invoke menu delegate.");
+                }
             };
 
             if (_menus.Any()) {
