@@ -36,6 +36,20 @@ namespace BhModule.Community.Pathing.UI.Views {
                 Parent = buildPanel,
             };
 
+            if (DateTime.UtcNow.Date < new DateTime(2023, 8, 25, 0, 0, 0, DateTimeKind.Utc)) {
+                var warnLbl = new Label() {
+                    Text = "The Guild Wars 2 API is unavailable until some time on August 24th.\nUntil that time, some features such as minimap markers/trails will not work.",
+                    Width = buildPanel.Width - 40,
+                    Height = 120,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Parent = buildPanel,
+                    TextColor = Color.Yellow,
+                    Left = 20,
+                    Top = 150
+                };
+            }
+
             _bttnOpenSettings.Location   = new Point(Math.Max(buildPanel.Width / 2 - _bttnOpenSettings.Width / 2, 20), Math.Max(buildPanel.Height / 2 - _bttnOpenSettings.Height, 20) - _bttnOpenSettings.Height - 10);
             _bttnOpenSetupGuide.Location = new Point(_bttnOpenSettings.Left,                                           _bttnOpenSettings.Bottom                                       + 10);
 

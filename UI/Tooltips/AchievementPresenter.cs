@@ -44,7 +44,7 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
                 if (attempt > 0) {
                     return await AttemptLoadAchievementCategory(progress, --attempt);
                 } else {
-                    Logger.Error(ex, "Failed to load achievement details.");
+                    Logger.Warn(ex, "Failed to load achievement details.");
                     return false;
                 }
             }
