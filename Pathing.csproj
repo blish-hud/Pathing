@@ -344,7 +344,6 @@
     <Compile Include="UI\Effects\AlphaMaskEffect.cs" />
     <Compile Include="UI\Presenters\PackRepoPresenter.cs" />
     <Compile Include="UI\Presenters\SettingsHintPresenter.cs" />
-    <Compile Include="UI\Views\ApiDownView.cs" />
     <Compile Include="UI\Views\IndividualPackSettingsView.cs" />
     <Compile Include="UI\Views\PackRepoView.cs" />
     <Compile Include="UI\Views\SettingsHintView.cs" />
