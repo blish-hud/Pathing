@@ -16,8 +16,8 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
         public bool                  Checked  { get; set; }
         public string                Tooltip { get; set; }
 
-        private readonly List<Menu> _menus = new();
-        public IReadOnlyCollection<Menu> Menus => _menus.AsReadOnly();
+        private readonly SafeList<Menu> _menus = new();
+        public IReadOnlyCollection<Menu> Menus => _menus.ToList().AsReadOnly();
 
         public Menu(string name, Func<Menu, LuaResult> onClick, bool canCheck = false, bool @checked = false, string tooltip = null) {
             this.Name     = name;
@@ -71,10 +71,12 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
                 }
             };
 
-            if (_menus.Any()) {
+            var menus = _menus.ToArray();
+
+            if (menus.Any()) {
                 var subMenu = new ContextMenuStrip();
 
-                foreach (var item in _menus) {
+                foreach (var item in menus) {
                     subMenu.AddMenuItem(item.BuildMenu());
                 }
 
