@@ -300,7 +300,6 @@
     <Compile Include="Scripting\ScriptState.cs" />
     <Compile Include="Scripting\TraceLineDebugger.cs" />
     <Compile Include="State\AchievementStates.cs" />
-    <Compile Include="State\ApiStates.cs" />
     <Compile Include="State\CachedMumbleStates.cs" />
     <Compile Include="State\EditorStates.cs" />
     <Compile Include="State\KvStates.cs" />
