@@ -50,11 +50,11 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 var textSize = GameService.Content.DefaultFont14.MeasureString(text);
 
                 while (textSize.Width > _packState.UserResourceStates.Advanced.CategoryNameTruncateWidth) {
-                    if (text.Length == 0) {
+                    if (text.Length <= 1) {
                         text = _pathingCategory.DisplayName;
                         break;
                     }
-                    text     = text.Substring(0, text.Length - 1);
+                    text     = text.Substring(0, text.Length - 2);
                     textSize = GameService.Content.DefaultFont14.MeasureString(text + "...");
                 }
 

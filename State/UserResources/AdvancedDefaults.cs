@@ -47,7 +47,7 @@ namespace BhModule.Community.Pathing.State.UserResources {
 
         // Category DisplayName Truncation
         [YamlMember(Description = "The width in pixels that category names will be truncated to if 'Truncate Long Category Names' is enabled.")]
-        public int CategoryNameTruncateWidth { get; set; } = 250;
+        public int CategoryNameTruncateWidth { get; set; } = 225;
 
     }
 }

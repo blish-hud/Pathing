@@ -53,12 +53,15 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
         }
 
         protected override async Task<bool> Load(IProgress<string> progress) {
-            if (!await AttemptLoadAchievement(progress) && _achievement != null) {
-                progress.Report("Failed to load achievement details.");
-                return false;
-            }
+            Task.Run(async () => {
+                if (!await AttemptLoadAchievement(progress) && _achievement != null) {
+                    progress.Report("Failed to load achievement details.");
+                    return;
+                }
 
-            await AttemptLoadAchievementCategory(progress);
+                await AttemptLoadAchievementCategory(progress);
+                UpdateView();
+            });
 
             return true;
         }
