@@ -45,5 +45,9 @@ namespace BhModule.Community.Pathing.State.UserResources {
         [YamlMember(Description = "The Douglas Peucker error used by the trails shown on the minimap.")]
         public float MapTrailDouglasPeuckerError { get; set; } = 0.2f;
 
+        // Category DisplayName Truncation
+        [YamlMember(Description = "The width in pixels that category names will be truncated to if 'Truncate Long Category Names' is enabled.")]
+        public int CategoryNameTruncateWidth { get; set; } = 250;
+
     }
 }

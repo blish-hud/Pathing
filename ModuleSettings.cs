@@ -65,6 +65,7 @@ namespace BhModule.Community.Pathing {
         public SettingEntry<bool>                        PackAllowMarkersToAnimate                { get; private set; }
         public SettingEntry<bool>                        PackEnableSmartCategoryFilter            { get; private set; }
         public SettingEntry<bool>                        PackShowWhenCategoriesAreFiltered        { get; private set; }
+        public SettingEntry<bool>                        PackTruncateLongCategoryNames            { get; private set; }
         public SettingEntry<bool>                        PackShowHiddenMarkersReducedOpacity      { get; private set; }
 
         private void InitPackSettings(SettingCollection settings) {
@@ -86,7 +87,8 @@ namespace BhModule.Community.Pathing {
             this.PackAllowInteractIcon                    = this.PackSettings.DefineSetting(nameof(this.PackAllowInteractIcon),                    true, () => "Allow Markers to Show Interact Gear On-Screen", () => "If enabled, interactable markers will show a small gear icon on-screen to show what the interaction will do.");
             this.PackAllowMarkersToAnimate                = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAnimate),                true, () => Strings.Setting_PackAllowMarkersToAnimate, () => "Allows animations such as 'bounce' and trail movements.");
             this.PackEnableSmartCategoryFilter            = this.PackSettings.DefineSetting(nameof(this.PackEnableSmartCategoryFilter),            true, () => "Enable Smart Categories", () => "If a category doesn't contain markers or trails relevant to the current map, the category is hidden.");
-            this.PackShowWhenCategoriesAreFiltered        = this.PackSettings.DefineSetting(nameof(this.PackShowWhenCategoriesAreFiltered),        true, () => "Indicate when categories are hidden", () => "Shows a note at the bottom of the menu indicating if categories have been hidden.  Clicking the note will show the hidden categories temporarily.");
+            this.PackShowWhenCategoriesAreFiltered        = this.PackSettings.DefineSetting(nameof(this.PackShowWhenCategoriesAreFiltered),        true, () => "Indicate When Categories Are Hidden", () => "Shows a note at the bottom of the menu indicating if categories have been hidden.  Clicking the note will show the hidden categories temporarily.");
+            this.PackTruncateLongCategoryNames            = this.PackSettings.DefineSetting(nameof(this.PackTruncateLongCategoryNames),            false, () => "Truncate Long Category Names", () => "Shortens long category names so that more nested menus can be shown on screen.");
             this.PackShowHiddenMarkersReducedOpacity      = this.PackSettings.DefineSetting(nameof(this.PackShowHiddenMarkersReducedOpacity),      false, () => "Temporarily Show Ghost Markers", () => "Shows hidden markers with a reduced opacity allowing you to unhide them.  This setting automatically disables on startup.");
 
             this.PackMaxOpacityOverride.SetRange(0f, 1f);

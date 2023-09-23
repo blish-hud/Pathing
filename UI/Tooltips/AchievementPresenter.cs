@@ -10,7 +10,7 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
 
         private static readonly Logger Logger = Logger.GetLogger<AchievementPresenter>();
 
-        private const int LOAD_ATTEMPTS = 3;
+        private const int LOAD_ATTEMPTS = 1;
 
         private AchievementCategory _achievementCategories;
         private Achievement         _achievement;

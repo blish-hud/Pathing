@@ -43,7 +43,23 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         private void BuildCategoryMenu() {
-            this.Text = _pathingCategory.DisplayName;
+            if (!_packState.UserConfiguration.PackTruncateLongCategoryNames.Value) {
+                this.Text = _pathingCategory.DisplayName;
+            } else {
+                var text = _pathingCategory.DisplayName;
+                var textSize = GameService.Content.DefaultFont14.MeasureString(text);
+
+                while (textSize.Width > _packState.UserResourceStates.Advanced.CategoryNameTruncateWidth) {
+                    if (text.Length == 0) {
+                        text = _pathingCategory.DisplayName;
+                        break;
+                    }
+                    text     = text.Substring(0, text.Length - 1);
+                    textSize = GameService.Content.DefaultFont14.MeasureString(text + "...");
+                }
+
+                this.Text = text == _pathingCategory.DisplayName ? text : text.Trim() + "...";
+            }
 
             if (_packState.CategoryStates == null) return;
 
