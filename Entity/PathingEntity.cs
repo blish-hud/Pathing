@@ -144,7 +144,9 @@ namespace BhModule.Community.Pathing.Entity {
             }
 
             // If category is disabled.
-            if (_packState.CategoryStates.GetNamespaceInactive(this.Category.Namespace)) return true;
+            if (this.Category != null) {
+                if (_packState.CategoryStates.GetNamespaceInactive(this.Category.Namespace)) return true;
+            }
 
             return this.BehaviorFiltered && !_packState.UserConfiguration.PackShowHiddenMarkersReducedOpacity.Value;
         }
