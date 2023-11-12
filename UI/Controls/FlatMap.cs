@@ -43,8 +43,6 @@ namespace BhModule.Community.Pathing.Entity {
 
             if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {
                 newMenu.AddMenuItem("Copy Parent Category Namespace").Click += async delegate { await ClipboardUtil.WindowsClipboardService.SetTextAsync(pathingEntry.Category.Namespace); };
-                newMenu.AddMenuItem("Edit Marker").Click                    += delegate { Editor.MarkerEditWindow.SetPathingEntity(_packState, pathingEntry); };
-                newMenu.AddMenuItem("Delete Marker").Click                  += delegate { ScreenNotification.ShowNotification("Not yet supported", ScreenNotification.NotificationType.Warning, null, 5); };
             }
 
             newMenu.Hidden += delegate { _activeContextMenu?.Dispose(); _activeContextMenu = null; };
@@ -173,7 +171,11 @@ namespace BhModule.Community.Pathing.Entity {
                 if (pathable.Category == null) {
                     tooltipTitle = "Unassigned Category";
                 } else {
-                    tooltipTitle = string.Join("\n > ", pathable.Category?.GetParentsDesc().Select(category => category.DisplayName.Trim()));
+                    try {
+                        tooltipTitle = string.Join("\n > ", pathable.Category?.GetParentsDesc().Select(category => category.DisplayName.Trim()));
+                    } catch (Exception) {
+                        tooltipTitle = "Failed to retrieve tooltip.";
+                    }
                 }
 
                 tooltipDescription = null;
