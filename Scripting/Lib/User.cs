@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BhModule.Community.Pathing.Behavior.Modifier;
+using Blish_HUD;
+using Blish_HUD.Controls;
 
 namespace BhModule.Community.Pathing.Scripting.Lib {
     public class User {
@@ -14,9 +12,26 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
         }
 
         public bool SetClipboard(string value) {
-            Blish_HUD.ClipboardUtil.WindowsClipboardService.SetTextAsync(value);
+            return SetClipboard(value, string.Format(CopyModifier.DEFAULT_COPYMESSAGE, value));
+        }
 
-            return true; // TODO: Indicate if the value was set or not.
+        public bool SetClipboard(string value, string message) {
+            if (_global.ScriptEngine.Module.Settings.PackMarkerConsentToClipboard.Value == MarkerClipboardConsentLevel.Never) {
+                // The player has disabled clipboard access.
+                return false;
+            }
+
+            ClipboardUtil.WindowsClipboardService.SetTextAsync(value).ContinueWith(t => {
+                if (t.IsCompleted && t.Result) {
+                    ScreenNotification.ShowNotification(message,
+                                                        ScreenNotification.NotificationType.Info,
+                                                        null,
+                                                        2);
+                }
+            });
+
+            // TODO: Evaluate our options for handling async methods that get called from Lua.  Currenly we just fire it and let it go.
+            return true;
         }
 
     }
