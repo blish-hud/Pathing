@@ -318,8 +318,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\DonateHero.cs" />
     <Compile Include="UI\Controls\HorizontalCompass.cs" />
     <Compile Include="UI\Controls\ScreenDraw.cs" />
+    <Compile Include="UI\Controls\SettingHero.cs" />
     <Compile Include="UI\Controls\SmallInteract.cs" />
     <Compile Include="UI\Tooltips\AchievementPresenter.cs" />
     <Compile Include="UI\Tooltips\AchievementTooltipView.cs" />

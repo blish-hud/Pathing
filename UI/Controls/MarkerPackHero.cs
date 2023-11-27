@@ -60,8 +60,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 Text             = "Keep Updated",
                 BasicTooltipText = "If checked, new pack versions will be automatically downloaded on launch.",
                 Parent           = this,
-                Checked          = markerPackPkg.AutoUpdate.Value,
-                Enabled          = markerPackPkg.CurrentDownloadDate != default
+                Checked          = markerPackPkg.AutoUpdate.Value
             };
 
             _downloadButton = new BlueButton() {

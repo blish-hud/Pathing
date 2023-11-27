@@ -1,76 +1,71 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.Remoting.Channels;
+using BhModule.Community.Pathing.UI.Controls;
 using BhModule.Community.Pathing.UI.Presenters;
+using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
+using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 
 namespace BhModule.Community.Pathing.UI.Views {
     public class SettingsHintView : View {
 
-        /* Basic hint view for now.
-         * Plan to update the visuals here to potentially include a list of loaded packs, etc.
-         */
-
         public event EventHandler<EventArgs> OpenSettingsClicked;
+
+        public event EventHandler<EventArgs> OpenMarkerPacksClicked;
 
         private StandardButton _bttnOpenSettings;
         private StandardButton _bttnOpenSetupGuide;
 
         public SettingsHintView() { /* NOOP */  }
 
-        public SettingsHintView((Action OpenSettings, PackInitiator packInitiator) model) {
+        public SettingsHintView((Action OpenSettings, Action OpenMarkerPacks, PackInitiator packInitiator) model) {
             this.WithPresenter(new SettingsHintPresenter(this, model));
         }
 
         protected override void Build(Container buildPanel) {
-            _bttnOpenSettings = new StandardButton() {
-                Text   = "Open Settings",
-                Width  = 192,
-                Parent = buildPanel,
+            var settingsHero = new SettingHero() {
+                Icon = AsyncTexture2D.FromAssetId(156027),
+                Text = "Open  Settings",
+                Size = new Point(buildPanel.Width / 3, buildPanel.Height - 48),
+                Parent = buildPanel
             };
 
-            _bttnOpenSetupGuide = new StandardButton() {
-                Text   = "Open Setup Guide",
-                Width  = _bttnOpenSettings.Width,
-                Parent = buildPanel,
+            settingsHero.Click += delegate (object sender, MouseEventArgs e) {
+                this.OpenSettingsClicked?.Invoke(this, e);
             };
 
-            if (DateTime.UtcNow.Date < new DateTime(2023, 8, 25, 0, 0, 0, DateTimeKind.Utc)) {
-                var warnLbl = new Label() {
-                    Text = "The Guild Wars 2 API is unavailable until some time on August 24th.\nUntil that time, some features such as minimap markers/trails will not work.",
-                    Width = buildPanel.Width - 40,
-                    Height = 120,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    Parent = buildPanel,
-                    TextColor = Color.Yellow,
-                    Left = 20,
-                    Top = 150
-                };
-            }
+            var downloadMpHero = new SettingHero() {
+                Icon = AsyncTexture2D.FromAssetId(543438),
+                Text = "Download  Marker  Packs",
+                Size = new Point(buildPanel.Width / 3, buildPanel.Height - 48),
+                Left = buildPanel.Width / 3,
+                Parent = buildPanel
+            };
 
-            _bttnOpenSettings.Location   = new Point(Math.Max(buildPanel.Width / 2 - _bttnOpenSettings.Width / 2, 20), Math.Max(buildPanel.Height / 2 - _bttnOpenSettings.Height, 20) - _bttnOpenSettings.Height - 10);
-            _bttnOpenSetupGuide.Location = new Point(_bttnOpenSettings.Left,                                           _bttnOpenSettings.Bottom                                       + 10);
+            downloadMpHero.Click += delegate (object sender, MouseEventArgs e) {
+                this.OpenMarkerPacksClicked?.Invoke(this, e);
+            };
 
-            _bttnOpenSettings.Click   += _bttnOpenSettings_Click;
-            _bttnOpenSetupGuide.Click += BttnOpenSetupGuideClick;
-        }
+            var guideHero = new SettingHero() {
+                Icon = AsyncTexture2D.FromAssetId(2604584),
+                Text = "Open  Setup  Guide",
+                Size = new Point(buildPanel.Width / 3, buildPanel.Height - 48),
+                Left = buildPanel.Width / 3 * 2,
+                Parent = buildPanel
+            };
 
-        private void _bttnOpenSettings_Click(object sender, Blish_HUD.Input.MouseEventArgs e) {
-            this.OpenSettingsClicked?.Invoke(this, e);
-        }
+            guideHero.Click += delegate {
+                Process.Start("https://link.blishhud.com/pathingsetup");
+            };
 
-        private void BttnOpenSetupGuideClick(object sender, Blish_HUD.Input.MouseEventArgs e) {
-            Process.Start("https://link.blishhud.com/pathingsetup");
-        }
-
-        protected override void Unload() {
-            if (_bttnOpenSettings != null)
-                _bttnOpenSettings.Click -= _bttnOpenSettings_Click;
-
-            if (_bttnOpenSetupGuide != null)
-                _bttnOpenSetupGuide.Click -= BttnOpenSetupGuideClick;
+            var donateHero = new DonateHero() {
+                Size = new Point(buildPanel.Width, 48),
+                Bottom = buildPanel.Height,
+                Parent = buildPanel
+            };
         }
     }
 }

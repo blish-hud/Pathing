@@ -216,7 +216,14 @@ namespace BhModule.Community.Pathing {
         }
 
         public override IView GetSettingsView() {
-            return new SettingsHintView((_settingsWindow.Show, this.PackInitiator));
+            return new SettingsHintView((() => {
+                _settingsWindow.SelectedTab = _packSettingsTab;
+                _settingsWindow.Show();
+            }, 
+            () => {
+                _settingsWindow.SelectedTab = _markerRepoTab;
+                _settingsWindow.Show();
+            }, this.PackInitiator));
         }
 
         protected override void Update(GameTime gameTime) {
