@@ -103,6 +103,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds) {
+            if (!GameService.GameIntegration.Gw2Instance.IsInGame) return;
             if (!_packState.UserConfiguration.PackAllowInteractIcon.Value) return;
 
             if (_activePathingEntity == null || _activePathingEntity.IsFiltered(EntityRenderTarget.World)) return;
