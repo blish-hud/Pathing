@@ -1,47 +1,89 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Utility;
-using FASTER.core;
+using Blish_HUD;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace BhModule.Community.Pathing.State {
     public class KvStates : ManagedState {
 
+        private static readonly Logger Logger = Logger.GetLogger<KvStates>();
+
+        private const string KVFILE = "kv.json";
         private const double INTERVAL_CHECKPOINT = 5000; // 5 seconds
 
         private string _kvDir;
-
-        private FasterKV<string, string> _kvStore;
+        private string _kvFile;
 
         private bool _dirty = false;
 
         private double _lastCheckpointCheck = INTERVAL_CHECKPOINT;
 
+        private ConcurrentDictionary<string, string> _kvStore;
+
         public KvStates(IRootPackState rootPackState) : base(rootPackState) { /* NOOP */ }
 
         protected async override Task<bool> Initialize() {
             _kvDir = DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_KV);
+            _kvFile = Path.Combine(_kvDir, KVFILE);
 
-            var defLog = Devices.CreateLogDevice(Path.Combine(_kvDir, "bkv.db"));
-            var objLog = Devices.CreateLogDevice(Path.Combine(_kvDir, "okv.db"));
-
-            _kvStore = new FasterKV<string, string>(new FasterKVSettings<string, string>(_kvDir) {
-                LogDevice       = defLog,
-                ObjectLogDevice = objLog
-            });
-
-            try {
-                await _kvStore.RecoverAsync();
-            } catch (Exception ex) {
-
-            }
+            LoadKv();
 
             return true;
         }
 
-        public ClientSession<string, string, string, string, Empty, IFunctions<string, string, string, string, Empty>> GetSession() {
-            return _kvStore.NewSession(new SimpleFunctions<string, string>());
+        private void LoadKv() {
+            try {
+                if (File.Exists(_kvFile)) {
+                    _kvStore = JsonConvert.DeserializeObject<ConcurrentDictionary<string, string>>(File.ReadAllText(_kvFile)) ?? new();
+                } else {
+                    _kvStore = new();
+                }
+            } catch (Exception ex) {
+                _kvStore = new();
+                Logger.Warn(ex, $"Failed to load {KVFILE}.  Settings will not be restored!");
+            }
+        }
+
+        private async Task FlushKv(GameTime gameTime) {
+            if (_dirty) {
+                _dirty = false;
+
+                File.WriteAllText(_kvFile, JsonConvert.SerializeObject(_kvStore, Formatting.Indented));
+            }
+        }
+
+        public string UpsertValue(string key, string value) {
+            bool updated = false;
+
+            _kvStore.AddOrUpdate(key, value, (_, existingVal) => {
+                if (existingVal != value) {
+                    updated = true;
+                    return value;
+                }
+
+                return existingVal;
+            });
+
+            if (updated) {
+                Invalidate();
+            }
+
+            return value;
+        }
+
+        public string ReadValue(string name) {
+            _kvStore.TryGetValue(name, out string value);
+            return value;
+        }
+
+        public void DeleteValue(string key) {
+            if (_kvStore.TryRemove(key, out _)) {
+                Invalidate();
+            }
         }
 
         public void Invalidate() {
@@ -53,20 +95,12 @@ namespace BhModule.Community.Pathing.State {
             await Initialize();
         }
 
-        private async Task FlushCheckpoint(GameTime gameTime) {
-            if (_dirty) {
-                _dirty = false;
-                await _kvStore.TakeHybridLogCheckpointAsync(CheckpointType.FoldOver, true);
-            }
-        }
-
         public override void Update(GameTime gameTime) {
-            UpdateCadenceUtil.UpdateAsyncWithCadence(FlushCheckpoint, gameTime, INTERVAL_CHECKPOINT, ref _lastCheckpointCheck);
+            UpdateCadenceUtil.UpdateAsyncWithCadence(FlushKv, gameTime, INTERVAL_CHECKPOINT, ref _lastCheckpointCheck);
         }
 
         public override async Task Unload() {
-            await _kvStore.CompleteCheckpointAsync();
-            _kvStore.Dispose();
+            await FlushKv(null);
         }
 
     }

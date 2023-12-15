@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace BhModule.Community.Pathing.Scripting.Lib {
     public class Storage {
@@ -34,13 +33,7 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
         public string UpsertValue(string ns, string name, string value) {
             string key = ValidateKey(ns, name);
 
-            using var session = _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.GetSession();
-
-            session.Upsert(ref key, ref value);
-
-            _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.Invalidate();
-
-            return value;
+            return _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.UpsertValue(key, value);
         }
 
         public string UpsertValue(string name, string value) {
@@ -52,11 +45,7 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
         public string ReadValue(string ns, string name) {
             string key = ValidateKey(ns, name);
 
-            using var session = _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.GetSession();
-
-            string output = null;
-            var read = session.Read(ref key, ref output);
-            return output;
+            return _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.ReadValue(key);
         }
 
         public string ReadValue(string name) {
@@ -68,11 +57,7 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
         public void DeleteValue(string ns, string name) {
             string key = ValidateKey(ns, name);
 
-            using var session = _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.GetSession();
-
-            session.Delete(ref key);
-
-            _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.Invalidate();
+            _global.ScriptEngine.Module.PackInitiator.PackState.KvStates.DeleteValue(key);
         }
 
         public void DeleteValue(string name) {

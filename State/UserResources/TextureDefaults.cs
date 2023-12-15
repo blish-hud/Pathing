@@ -49,11 +49,15 @@ namespace BhModule.Community.Pathing.State.UserResources {
             }
 
             GameService.Graphics.QueueMainThreadRender((graphicsDevice) => {
-                var rawTrail    = File.Open(trailOut,  FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                var markerTrail = File.Open(markerOut, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                try {
+                    var rawTrail = File.Open(trailOut, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    var markerTrail = File.Open(markerOut, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-                this.DefaultTrailTexture.SwapTexture(TextureUtil.FromStreamPremultiplied(graphicsDevice,  rawTrail));
-                this.DefaultMarkerTexture.SwapTexture(TextureUtil.FromStreamPremultiplied(graphicsDevice, markerTrail));
+                    this.DefaultTrailTexture.SwapTexture(TextureUtil.FromStreamPremultiplied(graphicsDevice, rawTrail));
+                    this.DefaultMarkerTexture.SwapTexture(TextureUtil.FromStreamPremultiplied(graphicsDevice, markerTrail));
+                } catch (Exception ex) {
+                    Logger.Warn(ex, "Failed to load default textures from file.");
+                }
             });
         }
 
