@@ -35,6 +35,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private readonly PathingModule _module;
         private readonly MarkerPackPkg _markerPackPkg;
 
+        public MarkerPackPkg MarkerPackPkg => _markerPackPkg;
+
         private readonly BlueButton _downloadButton;
         private readonly BlueButton _infoButton;
         private readonly BlueButton _deleteButton;

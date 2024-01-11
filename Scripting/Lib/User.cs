@@ -11,6 +11,8 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
             _global = global;
         }
 
+        #region Clipboard
+
         public bool SetClipboard(string value) {
             return SetClipboard(value, string.Format(CopyModifier.DEFAULT_COPYMESSAGE, value));
         }
@@ -33,6 +35,22 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
             // TODO: Evaluate our options for handling async methods that get called from Lua.  Currenly we just fire it and let it go.
             return true;
         }
+
+        #endregion
+
+        #region Info
+
+        public string ShowInfo(string message) {
+            _global.ScriptEngine.Module.PackInitiator.PackState.UiStates.AddInfoString(message);
+
+            return message;
+        }
+
+        public void HideInfo(string key) {
+            _global.ScriptEngine.Module.PackInitiator.PackState.UiStates.RemoveInfoString(key);
+        }
+
+        #endregion
 
     }
 }
