@@ -122,6 +122,12 @@ namespace BhModule.Community.Pathing.Entity {
 
             _modelMatrix = modelMatrix;
 
+            var prevBlendState = graphicsDevice.BlendState;
+
+            if (this.Occlude) {
+                graphicsDevice.BlendState = BlendState.Opaque;
+            }
+
             graphicsDevice.SetVertexBuffer(_sharedVertexBuffer);
 
             foreach (var pass in _packState.SharedMarkerEffect.CurrentTechnique.Passes) {
@@ -129,6 +135,8 @@ namespace BhModule.Community.Pathing.Entity {
 
                 graphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
             }
+
+            graphicsDevice.BlendState = prevBlendState;
         }
 
     }

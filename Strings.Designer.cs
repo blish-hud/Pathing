@@ -61,7 +61,7 @@ namespace BhModule.Community.Pathing {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Markers &amp; Trails.
+        ///   Looks up a localized string similar to Pathing.
         /// </summary>
         internal static string General_UiName {
             get {

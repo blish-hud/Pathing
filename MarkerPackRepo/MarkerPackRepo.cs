@@ -31,8 +31,8 @@ namespace BhModule.Community.Pathing.MarkerPackRepo {
 
         public void Init() {
             var beginThread = new Thread(async () => {
-                // Wait 3 seconds before we start downloading marker packs.
-                await Task.Delay(3000);
+                // Wait 5 seconds before we start downloading marker packs.
+                await Task.Delay(5000);
 
                 // Only update marker packs if we are currently loaded.
                 if (_module.RunState != Blish_HUD.Modules.ModuleRunState.Unloading && _module.RunState != Blish_HUD.Modules.ModuleRunState.Unloaded) {
@@ -83,7 +83,7 @@ namespace BhModule.Community.Pathing.MarkerPackRepo {
                     pack.CurrentDownloadDate = File.GetLastWriteTimeUtc(associatedLocalPack);
 
                     if (pack.AutoUpdate.Value && pack.CurrentDownloadDate != default && pack.LastUpdate > pack.CurrentDownloadDate) {
-                        PackHandlingUtil.DownloadPack(_module, pack, OnUpdateComplete);
+                        PackHandlingUtil.DownloadPack(_module, pack, OnUpdateComplete, true);
                     }
                 }
             }

@@ -17,8 +17,8 @@ namespace BhModule.Community.Pathing.Utility {
         // At least one pack will deny us from downloading it without a more typical UA set.
         private const string DOWNLOAD_UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
 
-        public static void DownloadPack(PathingModule module, MarkerPackPkg markerPackPkg, Action<MarkerPackPkg, bool> funcOnComplete) {
-            var beginThread = new Thread(async () => await BeginPackDownload(module, markerPackPkg, module.GetModuleProgressHandler(), funcOnComplete)) { IsBackground = true };
+        public static void DownloadPack(PathingModule module, MarkerPackPkg markerPackPkg, Action<MarkerPackPkg, bool> funcOnComplete, bool skipReload = false) {
+            var beginThread = new Thread(async () => await BeginPackDownload(module, markerPackPkg, module.GetModuleProgressHandler(), funcOnComplete, skipReload)) { IsBackground = true };
             beginThread.Start();
         }
 
@@ -40,6 +40,10 @@ namespace BhModule.Community.Pathing.Utility {
                 } else {
                     Logger.Warn("Attempted to delete pack '{packPath}' that doesn't exist.", mpPath);
                 }
+
+                module.PackInitiator.UnloadPackByName(Path.GetFileNameWithoutExtension(markerPackPkg.FileName));
+
+                module.PackInitiator.ReloadPacks();
 
                 markerPackPkg.CurrentDownloadDate = default;
             } catch (Exception ex) {
@@ -83,7 +87,7 @@ namespace BhModule.Community.Pathing.Utility {
             return Path.Combine(dir, file);
         }
 
-        private static async Task BeginPackDownload(PathingModule module, MarkerPackPkg markerPackPkg, IProgress<string> progress, Action<MarkerPackPkg, bool> funcOnComplete) {
+        private static async Task BeginPackDownload(PathingModule module, MarkerPackPkg markerPackPkg, IProgress<string> progress, Action<MarkerPackPkg, bool> funcOnComplete, bool skipReload = false) {
             // TODO: Localize 'Downloading pack '{0}'...'
             Logger.Info($"Downloading pack '{markerPackPkg.Name}'...");
             progress.Report($"Downloading pack '{markerPackPkg.Name}'...");
@@ -165,6 +169,11 @@ namespace BhModule.Community.Pathing.Utility {
 
                 await module.PackInitiator.LoadPack(newPack);
                 newPack.ReleaseLocks();
+
+                if (!skipReload) {
+                    // We skip refreshing when mass-updating packs.
+                    module.PackInitiator.ReloadPacks();
+                }
             } catch (InvalidDataException ex) {
                 markerPackPkg.DownloadError = "Marker pack download is corrupt.";
                 Logger.Warn(ex, $"Failed downloading marker pack {markerPackPkg.Name} from {tempPackDownloadDestination} (it appears to be corrupt).");

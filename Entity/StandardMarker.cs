@@ -27,6 +27,7 @@ namespace BhModule.Community.Pathing.Entity {
             Populate_Triggers(collection, resourceManager);
             Populate_MinMaxSize(collection, resourceManager);
             Populate_IconSize(collection, resourceManager);
+            Populate_Occlude(collection, resourceManager);
             Populate_IconFile(collection, resourceManager);
             Populate_Title(collection, resourceManager);
             Populate_Tint(collection, resourceManager);

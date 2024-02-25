@@ -19,6 +19,7 @@ using Blish_HUD.Settings.UI.Views;
 using Microsoft.Xna.Framework.Input;
 using Blish_HUD.Graphics.UI;
 using Blish_HUD.GameIntegration;
+using Blish_HUD.Content;
 
 namespace BhModule.Community.Pathing {
     [Export(typeof(Module))]
@@ -143,9 +144,9 @@ namespace BhModule.Community.Pathing {
 
             _packSettingsTab    = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(this.Settings.PackSettings),    Strings.Window_MainSettingsTab);
             _mapSettingsTab     = new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(this.Settings.MapSettings),     Strings.Window_MapSettingsTab);
-            _scriptSettingsTab  = new Tab(ContentsManager.GetTexture(@"png\156701.png"),        () => new SettingsView(this.Settings.ScriptSettings),  "Script Options");
+            _scriptSettingsTab  = new Tab(AsyncTexture2D.FromAssetId(156701),                   () => new SettingsView(this.Settings.ScriptSettings),  "Script Options");
             _keybindSettingsTab = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(this.Settings.KeyBindSettings), Strings.Window_KeyBindSettingsTab);
-            _markerRepoTab      = new Tab(ContentsManager.GetTexture(@"png\156909.png"),        () => new PackRepoView(this),                          Strings.Window_DownloadMarkerPacks);
+            _markerRepoTab      = new Tab(AsyncTexture2D.FromAssetId(156909),                   () => new PackRepoView(this),                          Strings.Window_DownloadMarkerPacks);
 
             _settingsWindow.Tabs.Add(_packSettingsTab);
             _settingsWindow.Tabs.Add(_mapSettingsTab);
@@ -184,7 +185,7 @@ namespace BhModule.Community.Pathing {
         }
 
         private void UpdateModuleLoading(string loadingMessage) {
-                _pathingIcon.LoadingMessage = loadingMessage;
+            _pathingIcon.LoadingMessage = loadingMessage;
             if (this.RunState == ModuleRunState.Loaded && _pathingIcon != null) {
                 _pathingIcon.LoadingMessage = loadingMessage;
                 _packsLoading               = !string.IsNullOrWhiteSpace(loadingMessage);

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.Utility;
+using Blish_HUD;
 using Blish_HUD.Content;
 using Newtonsoft.Json;
 using AttributeCollection = TmfLib.Prototype.AttributeCollection;
@@ -36,6 +37,9 @@ namespace BhModule.Community.Pathing.Entity {
                             Logger.Warn("Marker failed to load texture '{markerTexture}'", attribute);
                         }
                     });
+                } else if (this.Occlude) {
+                    // An expected scenario where no texture is expected.
+                    this.Texture = ContentService.Textures.TransparentPixel;
                 } else {
                     this.Texture = _packState.UserResourceStates.Textures.DefaultMarkerTexture;
                     Logger.Debug($"Marker '{this.Guid.ToBase64String()}' is missing '{ATTR_ICONFILE}' attribute.");
