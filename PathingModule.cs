@@ -126,7 +126,7 @@ namespace BhModule.Community.Pathing {
             _pathingIcon = new CornerIcon() {
                 IconName = Strings.General_UiName,
                 Icon     = ContentsManager.GetTexture(@"png\pathing-icon.png"),
-                Priority = Strings.General_UiName.GetHashCode()
+                Priority = "Markers & Trails".GetHashCode()
             };
 
             _settingsWindow = new TabbedWindow2(
