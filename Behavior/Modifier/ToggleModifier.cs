@@ -7,7 +7,8 @@ using TmfLib.Prototype;
 namespace BhModule.Community.Pathing.Behavior.Modifier {
     public class ToggleModifier : Behavior<StandardMarker>, ICanInteract, ICanFocus {
 
-        public const  string PRIMARY_ATTR_NAME = "toggle";
+        public const string PRIMARY_ATTR_NAME = "toggle";
+        public const string ALT_ATTR_NAME     = "togglecategory";
 
         private readonly IPackState _packState;
 
@@ -20,11 +21,24 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
         }
         
         public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
-            return attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)
-                       ? new ToggleModifier(packState.RootCategory.GetOrAddCategoryFromNamespace(attribute.GetValueAsString()),
+            IAttribute toggleAttr = null;
+
+            if (attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)) {
+                toggleAttr = attribute;
+            }
+
+            // TacO for some reason named it "ToggleCategory" 🙄
+            if (attributes.TryGetAttribute(ALT_ATTR_NAME, out var altAttribute)) {
+                toggleAttr = altAttribute;
+            }
+
+            if (toggleAttr != null) {
+                return new ToggleModifier(packState.RootCategory.GetOrAddCategoryFromNamespace(toggleAttr.GetValueAsString()),
                                             marker,
-                                            packState)
-                       : null;
+                                            packState);
+            }
+
+            return null;
         }
 
         public void Interact(bool autoTriggered) {
