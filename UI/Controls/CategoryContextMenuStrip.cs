@@ -34,7 +34,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private (IEnumerable<PathingCategory> SubCategories, int Skipped) GetSubCategories(bool forceShowAll = false) {
             // We only show subcategories with a non-empty DisplayName (explicitly setting it to "" will hide it) and
             // was loaded by one of the packs (since those still around from unloaded packs will remain).
-            var subCategories = _pathingCategory.Where(cat => cat.LoadedFromPack && cat.DisplayName != "");
+            var subCategories = _pathingCategory.Where(cat => cat.LoadedFromPack && cat.DisplayName != "" && !cat.IsHidden);
 
             if (!_packState.UserConfiguration.PackEnableSmartCategoryFilter.Value || forceShowAll) {
                 return (subCategories, 0);
