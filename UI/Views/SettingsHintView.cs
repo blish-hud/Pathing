@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Runtime.Remoting.Channels;
 using BhModule.Community.Pathing.UI.Controls;
 using BhModule.Community.Pathing.UI.Presenters;
+using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
@@ -15,9 +15,6 @@ namespace BhModule.Community.Pathing.UI.Views {
         public event EventHandler<EventArgs> OpenSettingsClicked;
 
         public event EventHandler<EventArgs> OpenMarkerPacksClicked;
-
-        private StandardButton _bttnOpenSettings;
-        private StandardButton _bttnOpenSetupGuide;
 
         public SettingsHintView() { /* NOOP */  }
 
@@ -58,7 +55,9 @@ namespace BhModule.Community.Pathing.UI.Views {
             };
 
             guideHero.Click += delegate {
-                Process.Start("https://link.blishhud.com/pathingsetup");
+                try {
+                    Process.Start("https://link.blishhud.com/pathingsetup");
+                } catch (Exception ex) { /* NOOP */ }
             };
 
             var donateHero = new DonateHero() {
