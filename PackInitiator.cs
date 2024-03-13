@@ -235,7 +235,7 @@ namespace BhModule.Community.Pathing {
                 _loadingIndicator.Report("Loading scripts...");
 
                 foreach (var pack in packs) {
-                    await _packState.Module.ScriptEngine.LoadScript("pack.lua", pack.ResourceManager);
+                    await _packState.Module.ScriptEngine.LoadScript("pack.lua", pack.ResourceManager, pack.Name);
                 }
             }
 

@@ -142,7 +142,7 @@ public class ScriptEngine {
         return CallFunction(funcName, args.ToArray());
     }
 
-    public async Task<LuaChunk> LoadScript(string scriptName, IPackResourceManager resourceManager) {
+    public async Task<LuaChunk> LoadScript(string scriptName, IPackResourceManager resourceManager, string scriptPackSource = null) {
         if (!resourceManager.ResourceExists(scriptName)) {
             if (scriptName != "pack.lua") {
                 Logger.Warn($"Attempted to load script '{scriptName}', but it could not be found.");
@@ -164,7 +164,7 @@ public class ScriptEngine {
                 var newScript = new ScriptState(chunk);
                 newScript.Run(this.Global, new PackContext(this, resourceManager));
                 this.Scripts.Add(newScript);
-                PushMessage($"{newScript.Name}.lua loaded in {newScript.LoadTime.Humanize(2)}.", newScript.LoadTime.TotalMilliseconds > 500 ? ScriptMessageLogLevel.Warn : ScriptMessageLogLevel.Info, source: "system");
+                PushMessage($"{scriptPackSource ?? ""}/{newScript.Name}.lua loaded in {newScript.LoadTime.Humanize(2)}.", newScript.LoadTime.TotalMilliseconds > 500 ? ScriptMessageLogLevel.Warn : ScriptMessageLogLevel.Info, source: "system");
 
                 return chunk;
             }
@@ -174,7 +174,7 @@ public class ScriptEngine {
             Logger.Warn(ex, $"Failed to load script '{scriptName}'.");
         }
 
-        PushMessage($"Failed to load {scriptName}.", ScriptMessageLogLevel.Error);
+        PushMessage($"Failed to load {scriptPackSource ?? ""}/{scriptName}.", ScriptMessageLogLevel.Error);
 
         return null;
     }
