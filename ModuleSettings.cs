@@ -67,6 +67,7 @@ namespace BhModule.Community.Pathing {
         public SettingEntry<bool>                        PackShowWhenCategoriesAreFiltered        { get; private set; }
         public SettingEntry<bool>                        PackTruncateLongCategoryNames            { get; private set; }
         public SettingEntry<bool>                        PackShowHiddenMarkersReducedOpacity      { get; private set; }
+        public SettingEntry<bool>                        PackShowTooltipsOnAchievements           { get; private set; }
 
         private void InitPackSettings(SettingCollection settings) {
             this.PackSettings = settings.AddSubCollection(PACK_SETTINGS);
@@ -90,6 +91,7 @@ namespace BhModule.Community.Pathing {
             this.PackShowWhenCategoriesAreFiltered        = this.PackSettings.DefineSetting(nameof(this.PackShowWhenCategoriesAreFiltered),        true, () => "Indicate When Categories Are Hidden", () => "Shows a note at the bottom of the menu indicating if categories have been hidden.  Clicking the note will show the hidden categories temporarily.");
             this.PackTruncateLongCategoryNames            = this.PackSettings.DefineSetting(nameof(this.PackTruncateLongCategoryNames),            false, () => "Truncate Long Category Names", () => "Shortens long category names so that more nested menus can be shown on screen.");
             this.PackShowHiddenMarkersReducedOpacity      = this.PackSettings.DefineSetting(nameof(this.PackShowHiddenMarkersReducedOpacity),      false, () => "Temporarily Show Ghost Markers", () => "Shows hidden markers with a reduced opacity allowing you to unhide them.  This setting automatically disables on startup.");
+            this.PackShowTooltipsOnAchievements           = this.PackSettings.DefineSetting(nameof(this.PackShowTooltipsOnAchievements),           false, () => "Show Tooltips for Achievements", () => "Warning: This can cause performance issues when browsing categories.");
 
             this.PackMaxOpacityOverride.SetRange(0f, 1f);
             this.PackMaxViewDistance.SetRange(25f, 50000f);

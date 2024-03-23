@@ -114,7 +114,9 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
                 if (achievementId < 0) return;
 
-                this.Tooltip = new Tooltip(new AchievementTooltipView(achievementId, achievementBit));
+                if (_packState.UserConfiguration.PackShowTooltipsOnAchievements.Value) {
+                    this.Tooltip = new Tooltip(new AchievementTooltipView(achievementId, achievementBit));
+                }
 
                 if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
                     this.Enabled = !_packState.AchievementStates.IsAchievementHidden(achievementId, achievementBit);

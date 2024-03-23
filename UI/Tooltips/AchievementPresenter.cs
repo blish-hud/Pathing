@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Graphics.UI;
@@ -37,23 +38,13 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
         private async Task<bool> AttemptLoadAchievementCategory(IProgress<string> progress, int attempt = LOAD_ATTEMPTS) {
             progress.Report("Loading achievement group details...");
 
-            try {
-                var categories = await GameService.Gw2WebApi.AnonymousConnection.Client.V2.Achievements.Categories.AllAsync();
-                _achievementCategories = categories.FirstOrDefault(category => category.Achievements.Contains(this.Model));
-            } catch (Exception ex) {
-                if (attempt > 0) {
-                    return await AttemptLoadAchievementCategory(progress, --attempt);
-                } else {
-                    Logger.Warn(ex, "Failed to load achievement details.");
-                    return false;
-                }
-            }
+            _achievementCategories = PathingModule.Instance.PackInitiator.PackState.AchievementStates.GetAchievementCategory(this.Model);
 
-            return true;
+            return _achievement != null;
         }
 
         protected override async Task<bool> Load(IProgress<string> progress) {
-            Task.Run(async () => {
+            var backgroundThread = new Thread(async () => {
                 if (!await AttemptLoadAchievement(progress) && _achievement != null) {
                     progress.Report("Failed to load achievement details.");
                     return;
@@ -61,7 +52,8 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
 
                 await AttemptLoadAchievementCategory(progress);
                 UpdateView();
-            });
+            }) { IsBackground = true };
+            backgroundThread.Start();
 
             return true;
         }

@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Behavior;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
+using Gw2Sharp.WebApi.V2;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
+using static Microsoft.Scripting.PerfTrack;
 
 namespace BhModule.Community.Pathing.State {
     public class AchievementStates : ManagedState {
@@ -19,6 +22,8 @@ namespace BhModule.Community.Pathing.State {
 
         private readonly ConcurrentDictionary<int, AchievementStatus> _achievementStates = new();
 
+        private IApiV2ObjectList<AchievementCategory> _achievementCategories;
+
         public AchievementStates(IRootPackState rootPackState) : base(rootPackState) { }
 
         public override Task Reload() {
@@ -29,10 +34,13 @@ namespace BhModule.Community.Pathing.State {
             UpdateCadenceUtil.UpdateAsyncWithCadence(UpdateAchievements, gameTime, INTERVAL_CHECKACHIEVEMENTS, ref _lastAchievementCheck);
         }
 
-        protected override Task<bool> Initialize() {
+        protected override async Task<bool> Initialize() {
             PathingModule.Instance.Gw2ApiManager.SubtokenUpdated += Gw2ApiManager_SubtokenUpdated;
 
-            return Task.FromResult(true);
+            _achievementCategories = await GameService.Gw2WebApi.AnonymousConnection.Client.V2.Achievements.Categories.AllAsync();
+
+            return true;
+            //return Task.FromResult(true);
         }
 
         private void Gw2ApiManager_SubtokenUpdated(object sender, ValueEventArgs<IEnumerable<TokenPermission>> e) {
@@ -62,6 +70,12 @@ namespace BhModule.Community.Pathing.State {
 
             // If the achievement is partially done and this bit has been completed, we hide it.
             return achievement.AchievementBits.Contains(achievementBit);
+        }
+
+        public AchievementCategory GetAchievementCategory(int achievementId) {
+            if (_achievementCategories == null) return null;
+
+            return _achievementCategories.FirstOrDefault(category => category.Achievements.Contains(achievementId));
         }
 
         private async Task UpdateAchievements(GameTime gameTime) {
