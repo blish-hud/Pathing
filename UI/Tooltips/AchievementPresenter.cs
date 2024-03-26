@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Graphics.UI;
@@ -44,7 +42,7 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
         }
 
         protected override async Task<bool> Load(IProgress<string> progress) {
-            var backgroundThread = new Thread(async () => {
+            Task.Run(async () => {
                 if (!await AttemptLoadAchievement(progress) && _achievement != null) {
                     progress.Report("Failed to load achievement details.");
                     return;
@@ -52,8 +50,7 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
 
                 await AttemptLoadAchievementCategory(progress);
                 UpdateView();
-            }) { IsBackground = true };
-            backgroundThread.Start();
+            });
 
             return true;
         }

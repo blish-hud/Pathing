@@ -97,29 +97,33 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
 
         private void UpdateCategoryView() {
             if (_achievementCategory == null) return;
+            if (_categoryIconImage == null) return;
 
             _categoryIconImage.Texture = GameService.Content.GetRenderServiceTexture(_achievementCategory.Icon);
         }
 
         private void UpdateAchievementView() {
             if (_achievement == null) return;
+            if (_achievementNameLabel == null) return;
 
-            _achievementNameLabel.Text        = _achievement.Name;
-            _achievementDescriptionLabel.Text = CleanMessage(_achievement.Description);
-            _achievementRequirementLabel.Text = CleanMessage(_achievement.Requirement);
-           
-            if (_achievementBit != -1 && _achievement.Bits != null) {
-                var bit = _achievement.Bits[_achievementBit];
-                if (bit.Type == AchievementBitType.Text) {
-                    _achievementRequirementLabel.Text = CleanMessage(((AchievementTextBit) bit).Text);
+            try {
+                _achievementNameLabel.Text = _achievement.Name;
+                _achievementDescriptionLabel.Text = CleanMessage(_achievement.Description);
+                _achievementRequirementLabel.Text = CleanMessage(_achievement.Requirement);
+
+                if (_achievementBit != -1 && _achievement.Bits != null) {
+                    var bit = _achievement.Bits[_achievementBit];
+                    if (bit.Type == AchievementBitType.Text) {
+                        _achievementRequirementLabel.Text = CleanMessage(((AchievementTextBit)bit).Text);
+                    }
                 }
-            }
 
-            _achievementNameLabel.Height       = string.IsNullOrEmpty(_achievement.Description) ? _categoryIconImage.Height : _categoryIconImage.Height / 2;
-            _achievementDescriptionLabel.Width = Math.Max(_achievementNameLabel.Width, 200);
-            _achievementRequirementLabel.Width = new[] { _achievementNameLabel.Right + 8, _achievementDescriptionLabel.Right + 8, 300 }.Max();
+                _achievementNameLabel.Height = string.IsNullOrEmpty(_achievement.Description) ? _categoryIconImage.Height : _categoryIconImage.Height / 2;
+                _achievementDescriptionLabel.Width = Math.Max(_achievementNameLabel.Width, 200);
+                _achievementRequirementLabel.Width = new[] { _achievementNameLabel.Right + 8, _achievementDescriptionLabel.Right + 8, 300 }.Max();
 
-            _achievementRequirementLabel.Top = Math.Max(_achievementDescriptionLabel.Bottom + 8, _categoryIconImage.Bottom + 8);
+                _achievementRequirementLabel.Top = Math.Max(_achievementDescriptionLabel.Bottom + 8, _categoryIconImage.Bottom + 8);
+            } catch (Exception) { /* NOOP */ }
         }
 
         static string CleanMessage(string message) {
