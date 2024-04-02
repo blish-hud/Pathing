@@ -34,7 +34,6 @@ namespace BhModule.Community.Pathing {
         public MapStates          MapStates          { get; private set; }
         public UserResourceStates UserResourceStates { get; private set; }
         public UiStates           UiStates           { get; private set; }
-        public EditorStates       EditorStates       { get; private set; }
         public CachedMumbleStates CachedMumbleStates { get; private set; }
         public KvStates           KvStates           { get; private set; }
 
@@ -78,7 +77,6 @@ namespace BhModule.Community.Pathing {
                 await (this.MapStates          = new MapStates(this)).Start(),
                 await (this.UserResourceStates = new UserResourceStates(this)).Start(),
                 await (this.UiStates           = new UiStates(this)).Start(),
-                await (this.EditorStates       = new EditorStates(this)).Start(),
                 await (this.CachedMumbleStates = new CachedMumbleStates(this)).Start(),
                 await (this.KvStates           = new KvStates(this)).Start(),
             };

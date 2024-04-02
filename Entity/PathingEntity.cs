@@ -27,7 +27,7 @@ namespace BhModule.Community.Pathing.Entity {
         public abstract float TriggerRange { get; set; }
 
         [Browsable(false)]
-        public bool DebugRender => this.EditTag != null && _packState.EditorStates.SelectedPathingEntities.Contains(this);
+        public bool DebugRender => this.EditTag != null;
 
         [Description("Indicates the distance the entity is from the player.")]
         [Category("State Debug")]

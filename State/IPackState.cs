@@ -22,7 +22,6 @@ namespace BhModule.Community.Pathing.State {
         MapStates          MapStates          { get; }
         UserResourceStates UserResourceStates { get; }
         UiStates           UiStates           { get; }
-        EditorStates       EditorStates       { get; }
         CachedMumbleStates CachedMumbleStates { get; }
         KvStates           KvStates           { get; }
 

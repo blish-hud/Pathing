@@ -78,45 +78,6 @@
     <Compile Include="Behavior\StandardPathableBehavior.cs" />
     <Compile Include="Content\TextureResourceManager.cs" />
     <Compile Include="Content\WebReader.cs" />
-    <Compile Include="Editor\CategoryNode.cs" />
-    <Compile Include="Editor\CategoryTree.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Editor\EntityChange.cs" />
-    <Compile Include="Editor\Entity\IAxisHandle.cs" />
-    <Compile Include="Editor\Entity\TranslateAxisHandle.cs" />
-    <Compile Include="Editor\Entity\TranslateTool.cs" />
-    <Compile Include="Editor\MarkerEditWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editor\MarkerEditWindow.Designer.cs">
-      <DependentUpon>MarkerEditWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editor\NativeControls\ToolPanel.cs" />
-    <Compile Include="Editor\Panels\BehaviorPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editor\Panels\BehaviorPanel.Designer.cs">
-      <DependentUpon>BehaviorPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editor\Panels\IAttributeToolPanel.cs" />
-    <Compile Include="Editor\Panels\Vector3PositionToolPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editor\Panels\Vector3PositionToolPanel.Designer.cs">
-      <DependentUpon>Vector3PositionToolPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editor\Panels\Vector3RotationPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editor\Panels\Vector3RotationPanel.Designer.cs">
-      <DependentUpon>Vector3RotationPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editor\PathableNode.cs" />
-    <Compile Include="Editor\PathingCategoryEditWrapper.cs" />
-    <Compile Include="Editor\TypeConverters\ColorConverter.cs" />
-    <Compile Include="Editor\TypeEditors\Vector3Editor.cs" />
-    <Compile Include="Editor\TypeEditors\ColorEditor.cs" />
     <Compile Include="Entity\BillboardVerticalConstraint.cs" />
     <Compile Include="Entity\EntityRenderTarget.cs" />
     <Compile Include="Entity\ICanPick.cs" />
@@ -250,17 +211,6 @@
     <Compile Include="Entity\StandardTrail_TacOMisc.cs">
       <DependentUpon>StandardTrail.cs</DependentUpon>
     </Compile>
-    <Compile Include="LocalHttp\HttpHost.cs" />
-    <Compile Include="LocalHttp\Route.cs" />
-    <Compile Include="LocalHttp\RouteAttribute.cs" />
-    <Compile Include="LocalHttp\RouteFactory.cs" />
-    <Compile Include="LocalHttp\Routes\API\Edit\History.cs" />
-    <Compile Include="LocalHttp\Routes\API\Edit\Selected.cs" />
-    <Compile Include="LocalHttp\Routes\API\Pack\Register.cs" />
-    <Compile Include="LocalHttp\Routes\API\Pack\Reload.cs" />
-    <Compile Include="LocalHttp\Routes\API\Status.cs" />
-    <Compile Include="LocalHttp\Routes\HttpStatus405.cs" />
-    <Compile Include="LocalHttp\Routes\HttpStatus404.cs" />
     <Compile Include="MarkerPackRepo\MarkerPackPkg.cs" />
     <Compile Include="MarkerPackRepo\MarkerPackRepo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -302,7 +252,6 @@
     <Compile Include="Scripting\TraceLineDebugger.cs" />
     <Compile Include="State\AchievementStates.cs" />
     <Compile Include="State\CachedMumbleStates.cs" />
-    <Compile Include="State\EditorStates.cs" />
     <Compile Include="State\KvStates.cs" />
     <Compile Include="State\PackLoadOption.cs" />
     <Compile Include="State\RaidStates.cs" />
@@ -452,9 +401,6 @@
     </Reference>
     <Reference Include="Humanizer, Version=2.6.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>packages\Humanizer.Core.2.6.2\lib\netstandard2.0\Humanizer.dll</HintPath>
-    </Reference>
-    <Reference Include="LiteDB, Version=5.0.15.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
-      <HintPath>packages\LiteDB.5.0.15\lib\net45\LiteDB.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -712,8 +658,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Editor\Panels\Behaviors\" />
-    <Folder Include="Editor\ToolPanels\" />
     <Folder Include="ref\" />
   </ItemGroup>
   <ItemGroup>
@@ -736,55 +680,6 @@
     <None Include="Resources\look_64px.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Editor\MarkerEditWindow.de.resx">
-      <DependentUpon>MarkerEditWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\MarkerEditWindow.es.resx">
-      <DependentUpon>MarkerEditWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\MarkerEditWindow.fr.resx">
-      <DependentUpon>MarkerEditWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\MarkerEditWindow.resx">
-      <DependentUpon>MarkerEditWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\BehaviorPanel.de.resx">
-      <DependentUpon>BehaviorPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\BehaviorPanel.es.resx">
-      <DependentUpon>BehaviorPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\BehaviorPanel.fr.resx">
-      <DependentUpon>BehaviorPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\BehaviorPanel.resx">
-      <DependentUpon>BehaviorPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\Vector3PositionToolPanel.de.resx">
-      <DependentUpon>Vector3PositionToolPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\Vector3PositionToolPanel.es.resx">
-      <DependentUpon>Vector3PositionToolPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\Vector3PositionToolPanel.fr.resx">
-      <DependentUpon>Vector3PositionToolPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\Vector3PositionToolPanel.resx">
-      <DependentUpon>Vector3PositionToolPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\Vector3RotationPanel.de.resx">
-      <DependentUpon>Vector3RotationPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\Vector3RotationPanel.es.resx">
-      <DependentUpon>Vector3RotationPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\Vector3RotationPanel.fr.resx">
-      <DependentUpon>Vector3RotationPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Panels\Vector3RotationPanel.resx">
-      <DependentUpon>Vector3RotationPanel.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.de.resx" />
     <EmbeddedResource Include="Properties\Resources.es.resx" />
     <EmbeddedResource Include="Properties\Resources.fr.resx" />

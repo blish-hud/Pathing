@@ -9,7 +9,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.Entity;
-using BhModule.Community.Pathing.LocalHttp;
 using BhModule.Community.Pathing.Scripting;
 using BhModule.Community.Pathing.Scripting.Console;
 using BhModule.Community.Pathing.UI.Views;
@@ -52,7 +51,6 @@ namespace BhModule.Community.Pathing {
         private Tab _scriptSettingsTab;
         private Tab _markerRepoTab;
 
-        private HttpHost      _apiHost;
         private ConsoleWindow _scriptConsoleWindow;
 
         [ImportingConstructor]
@@ -203,10 +201,6 @@ namespace BhModule.Community.Pathing {
 
         protected override async Task LoadAsync() {
             var sw = Stopwatch.StartNew();
-#if SHOWINDEV
-            _apiHost = new HttpHost(19903);
-            _apiHost.Start();
-#endif
             this.ScriptEngine   = new ScriptEngine(this);
             this.MarkerPackRepo = new MarkerPackRepo.MarkerPackRepo(this);
             this.MarkerPackRepo.Init();
@@ -244,7 +238,6 @@ namespace BhModule.Community.Pathing {
 
         protected override void Unload() {
             this.ScriptEngine?.Unload();
-            _apiHost?.Close();
             this.Settings?.Unload();
             this.PackInitiator?.Unload();
             _pathingIcon?.Dispose();

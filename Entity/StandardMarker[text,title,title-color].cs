@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Drawing.Design;
 using System.Runtime.CompilerServices;
-using BhModule.Community.Pathing.Editor.TypeConverters;
-using BhModule.Community.Pathing.Editor.TypeEditors;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
@@ -15,14 +13,8 @@ namespace BhModule.Community.Pathing.Entity {
         private const string ATTR_TITLE      = "title";
         private const string ATTR_TITLECOLOR = "title-color";
 
-        [DisplayName("Title")]
-        [Category("Appearance")]
         public string BillboardText { get; set; }
 
-        [DisplayName("Title-Color")]
-        [Category("Appearance")]
-        [Editor(typeof(ColorEditor), typeof(UITypeEditor))]
-        [TypeConverter(typeof(ColorConverter))]
         public Color BillboardTextColor { get; set; }
 
         /// <summary>
