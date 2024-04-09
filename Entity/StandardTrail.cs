@@ -52,9 +52,7 @@ namespace BhModule.Community.Pathing.Entity {
 
             BuildBuffers(trail);
 
-            if (true) {
-                this.FadeIn();
-            }
+            this.FadeIn();
         }
 
     }

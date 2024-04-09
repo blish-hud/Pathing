@@ -40,37 +40,41 @@ namespace BhModule.Community.Pathing.Entity {
 
         private VertexBuffer BuildTrailSection(GraphicsDevice graphicsDevice, IEnumerable<Vector3> points, float distance) {
             Vector3[] pointsArr = points as Vector3[] ?? points.ToArray();
-
             var verts = new VertexPositionColorTexture[pointsArr.Length * 2];
-
             float pastDistance = distance;
-
             var curPoint = pointsArr[0];
-
             var offset = Vector3.Zero;
+
+            Vector3 lastOffset = Vector3.Zero;
+            float flipOver = 1f;
+            float normalOffset = TRAIL_WIDTH * this.TrailScale;
+            Vector3 modDistance = Vector3.Zero;
 
             for (int i = 0; i < pointsArr.Length - 1; i++) {
                 var nextPoint     = pointsArr[i + 1];
                 var pathDirection = nextPoint - curPoint;
 
-                offset = Vector3.Cross(pathDirection, this.IsWall
-                                                          ? Vector3.Up        // Up      = 0, 1,  0
-                                                          : Vector3.Forward); // Forward = 0, 0, -1
+                offset = Vector3.Cross(pathDirection, this.IsWall 
+                                                        ? Vector3.Cross(pathDirection, Vector3.Forward) 
+                                                        : Vector3.Forward);
                 offset.Normalize();
 
-                var leftPoint  = curPoint + (offset * TRAIL_WIDTH  * this.TrailScale);
-                var rightPoint = curPoint + (offset * -TRAIL_WIDTH * this.TrailScale);
+                if (lastOffset != Vector3.Zero && Vector3.Dot(offset, lastOffset) < 0) {
+                    flipOver *= -1;
+                }
 
-                verts[i * 2 + 1] = new VertexPositionColorTexture(leftPoint,  Color.White, new Vector2(0f, pastDistance / (TRAIL_WIDTH * 2) - 1));
-                verts[i * 2]     = new VertexPositionColorTexture(rightPoint, Color.White, new Vector2(1f, pastDistance / (TRAIL_WIDTH * 2) - 1));
+                modDistance = offset * normalOffset * flipOver;
+
+                verts[i * 2 + 1] = new VertexPositionColorTexture(curPoint + modDistance,  Color.White, new Vector2(0f, pastDistance / (TRAIL_WIDTH * 2) - 1));
+                verts[i * 2]     = new VertexPositionColorTexture(curPoint - modDistance, Color.White, new Vector2(1f, pastDistance / (TRAIL_WIDTH * 2) - 1));
 
                 pastDistance -= Vector3.Distance(curPoint, nextPoint);
-
+                lastOffset = offset;
                 curPoint = nextPoint;
             }
 
-            var fleftPoint  = curPoint + (offset * TRAIL_WIDTH  * this.TrailScale);
-            var frightPoint = curPoint + (offset * -TRAIL_WIDTH * this.TrailScale);
+            var fleftPoint  = curPoint + modDistance;
+            var frightPoint = curPoint - modDistance;
 
             verts[pointsArr.Length * 2 - 1] = new VertexPositionColorTexture(fleftPoint,  Color.White, new Vector2(0f, pastDistance / (TRAIL_WIDTH * 2) - 1));
             verts[pointsArr.Length * 2 - 2] = new VertexPositionColorTexture(frightPoint, Color.White, new Vector2(1f, pastDistance / (TRAIL_WIDTH * 2) - 1));
@@ -139,7 +143,7 @@ namespace BhModule.Community.Pathing.Entity {
                                                         GetOpacity(),
                                                         0.25f,
                                                         this.CanFade && _packState.UserConfiguration.PackFadeTrailsAroundCharacter.Value,
-                                                        this.DebugRender ? Color.Red : this.Tint);
+                                                        this.Tint);
 
             for (int i = 0; i < _sectionBuffers.Length; i++) {
                 ref var vertexBuffer = ref _sectionBuffers[i];
