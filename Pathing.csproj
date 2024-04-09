@@ -372,9 +372,6 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="FASTER.core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=eb19722ac09e9af2, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.FASTER.Core.2.5.5\lib\netstandard2.0\FASTER.core.dll</HintPath>
-    </Reference>
     <Reference Include="Flurl, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Flurl.2.8.2\lib\net40\Flurl.dll</HintPath>
       <Private>False</Private>
