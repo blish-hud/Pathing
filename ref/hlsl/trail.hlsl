@@ -51,7 +51,7 @@ static const float MountRadOffset[] = {
 };
 
 float GetFadeRad() {
-	return RaceMaskRad[Race] + MountRadOffset[Mount] + 0.15;
+	return (RaceMaskRad[Race] + MountRadOffset[Mount] + 0.15) * PlayerFadeRadius;
 }
 
 Texture2D Texture : register(t0);

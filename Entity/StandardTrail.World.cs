@@ -141,7 +141,7 @@ namespace BhModule.Community.Pathing.Entity {
                                                         Math.Min(this.FadeNear,       _packState.UserConfiguration.PackMaxViewDistance.Value - (this.FadeFar - this.FadeNear)),
                                                         Math.Min(this.FadeFar,        _packState.UserConfiguration.PackMaxViewDistance.Value),
                                                         GetOpacity(),
-                                                        0.25f,
+                                                        _packState.UserResourceStates.Advanced.CharacterTrailFadeMultiplier,
                                                         this.CanFade && _packState.UserConfiguration.PackFadeTrailsAroundCharacter.Value,
                                                         this.Tint);
 
