@@ -37,10 +37,13 @@ namespace BhModule.Community.Pathing.State {
         protected override async Task<bool> Initialize() {
             PathingModule.Instance.Gw2ApiManager.SubtokenUpdated += Gw2ApiManager_SubtokenUpdated;
 
-            _achievementCategories = await GameService.Gw2WebApi.AnonymousConnection.Client.V2.Achievements.Categories.AllAsync();
+            try { 
+                _achievementCategories = await GameService.Gw2WebApi.AnonymousConnection.Client.V2.Achievements.Categories.AllAsync();
+            } catch (Exception ex) {
+                Logger.Warn(ex, "Failed to download achievement categories.");
+            }
 
             return true;
-            //return Task.FromResult(true);
         }
 
         private void Gw2ApiManager_SubtokenUpdated(object sender, ValueEventArgs<IEnumerable<TokenPermission>> e) {
