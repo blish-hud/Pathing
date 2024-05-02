@@ -56,12 +56,19 @@ namespace BhModule.Community.Pathing.Behavior {
             if (this.FocusFunc.Name != null) {
                 _packState.Module.ScriptEngine.CallFunction(this.FocusFunc.Name, new object[] { _pathingEntity, true }.Concat(this.FocusFunc.Args));
             }
+
+            if (this.TriggerFunc.Name != null) {
+                // TODO: Translate "Will trigger a script"
+                _packState.UiStates.Interact.ShowInteract(_pathingEntity, $"Will trigger a script {{0}}");
+            }
         }
 
         public void Unfocus() {
             if (this.FocusFunc.Name != null) {
                 _packState.Module.ScriptEngine.CallFunction(this.FocusFunc.Name, new object[] { _pathingEntity, false }.Concat(this.FocusFunc.Args));
             }
+
+            _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
         }
 
         public void Interact(bool autoTriggered) {
@@ -166,6 +173,10 @@ namespace BhModule.Community.Pathing.Behavior {
 
                 _packState.Module.ScriptEngine.CallFunction(this.TickFunc.Name, new object[] { _pathingEntity, gameTime }.Concat(this.TickFunc.Args));
             }
+        }
+
+        public override void Unload() {
+            _packState.UiStates.Interact.DisconnectInteract(_pathingEntity);
         }
 
     }
