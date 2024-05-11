@@ -9,6 +9,7 @@ using Flurl;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Humanizer;
+using Blish_HUD.Content;
 
 namespace BhModule.Community.Pathing.UI.Controls {
     public class MarkerPackHero : Container {
@@ -22,15 +23,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private const double FADE_DURATION = 150;
 
-        #region Load Static
-
-        private static readonly Texture2D _textureHeroBackground;
-
-        static MarkerPackHero() {
-            _textureHeroBackground = PathingModule.Instance.ContentsManager.GetTexture(@"png\controls\155209.png");
-        }
-
-        #endregion
+        private AsyncTexture2D _textureHeroBackground = AsyncTexture2D.FromAssetId(155209);
 
         private readonly PathingModule _module;
         private readonly MarkerPackPkg _markerPackPkg;
@@ -53,7 +46,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             _markerPackPkg = markerPackPkg;
 
             if (markerPackPkg.LastUpdate != default) {
-                _lastUpdateStr = $"Last update {markerPackPkg.LastUpdate.Humanize()}";
+                _lastUpdateStr = $"Updated {markerPackPkg.LastUpdate.Humanize()}";
             }
 
             this.SuspendLayout();
@@ -91,7 +84,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             };
 
             if (_markerPackPkg.TotalDownloads > 0) {
-                this.BasicTooltipText = $"Approx. {_markerPackPkg.TotalDownloads:n0} Downloads";
+                this.BasicTooltipText = $"Approx. {_markerPackPkg.TotalDownloads:n0} downloads per day";
             }
 
             _downloadButton.Click                   += DownloadButtonOnClick;

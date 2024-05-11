@@ -136,7 +136,7 @@ namespace BhModule.Community.Pathing {
         }
 
         private async Task InitPointsOfInterest(IEnumerable<PointOfInterest> pointsOfInterest) {
-            var pois = pointsOfInterest.ToArray();
+            var pois = pointsOfInterest as PointOfInterest[] ?? pointsOfInterest.ToArray();
 
             // Avoid locking things up too much on lower-spec systems.
             foreach (var poi in pois) {
