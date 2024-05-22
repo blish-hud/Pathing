@@ -268,10 +268,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\ContextMenuStripDivider.cs" />
     <Compile Include="UI\Controls\DonateHero.cs" />
     <Compile Include="UI\Controls\HorizontalCompass.cs" />
     <Compile Include="UI\Controls\ScreenDraw.cs" />
     <Compile Include="UI\Controls\SettingHero.cs" />
+    <Compile Include="UI\Controls\SimpleContextMenuStripItem.cs" />
     <Compile Include="UI\Controls\SmallInteract.cs" />
     <Compile Include="UI\Tooltips\AchievementPresenter.cs" />
     <Compile Include="UI\Tooltips\AchievementTooltipView.cs" />
@@ -317,6 +319,7 @@
     <Compile Include="Utility\SpriteBatchUtil.cs" />
     <Compile Include="Utility\UpdateCadenceUtil.cs" />
     <Compile Include="Utility\VectorExtensions.cs" />
+    <Compile Include="_Types\PackWrapper.cs" />
     <Compile Include="_Types\SafeList[T].cs" />
     <None Include="App.config" />
     <Compile Include="State\BehaviorStates.cs" />

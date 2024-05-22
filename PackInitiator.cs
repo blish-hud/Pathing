@@ -5,10 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.Behavior.Modifier;
+using BhModule.Community.Pathing.MarkerPackRepo;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Controls;
 using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Settings;
 using Microsoft.Xna.Framework;
 using TmfLib;
 using TmfLib.Reader;
@@ -24,22 +27,26 @@ namespace BhModule.Community.Pathing {
 
         private readonly IRootPackState _packState;
 
-        private readonly SafeList<Pack> _packs = new();
+        private readonly SafeList<PackWrapper> _packs = new();
 
         private SharedPackCollection _sharedPackCollection;
         
         private readonly PackReaderSettings _packReaderSettings;
 
+        private SettingCollection _packToggleSettings;
+
         public bool IsLoading { get; private set; }
 
         public IRootPackState PackState => _packState;
 
-        private int  _lastMap   = -1;
+        private int _lastMap = -1;
 
         public PackInitiator(string watchPath, PathingModule module, IProgress<string> loadingIndicator) {
             _watchPath        = watchPath;
             _module           = module;
             _loadingIndicator = loadingIndicator;
+
+            _packToggleSettings = _module.SettingsManager.ModuleSettings.AddSubCollection("PackToggleSettings");
 
             _packReaderSettings = new PackReaderSettings();
             _packReaderSettings.VenderPrefixes.Add("bh-"); // Support Blish HUD specific categories/markers/trails/attributes.
@@ -53,6 +60,72 @@ namespace BhModule.Community.Pathing {
             _lastMap = -1;
 
             LoadMapFromEachPackInBackground(_packState.CurrentMapId);
+        }
+
+        private IEnumerable<ContextMenuStripItem> GetPackLoadSettings(PackWrapper pack) {
+            // Always Load
+            yield return new SimpleContextMenuStripItem("Always Load", (e) => pack.AlwaysLoad.Value = e, pack.AlwaysLoad.Value);
+
+            // Load Manually
+            if (pack.IsLoaded) {
+                yield return new ContextMenuStripItem() {
+                    Text = $"Loaded in {pack.LoadTime} milliseconds",
+                    Enabled = false
+                };
+            } else {
+                yield return new SimpleContextMenuStripItem("Load Marker Pack", () => {
+                    pack.ForceLoad = true;
+                    ReloadPacks();
+                });
+            }
+
+            // Delete Pack
+            yield return new SimpleContextMenuStripItem("Delete Pack", () => {
+                if (pack.Package != null) {
+                    Utility.PackHandlingUtil.DeletePack(_module, pack.Package);
+                }
+            }) {
+                Enabled = pack.Package != null
+            };
+        }
+
+        private IEnumerable<ContextMenuStripItem> GetPackToggles() {
+            var packs = _packs.ToArray();
+
+            foreach (var pack in packs.OrderBy(p => p.Package?.Name ?? p.Pack.Name)) {
+                if (pack.Pack.Name == "markers") {
+                    // Skip unpacked.
+                    continue;
+                }
+
+                string packName = pack.Package?.Name ?? pack.Pack.Name;
+
+                yield return new ContextMenuStripItem() {
+                    Text = packName,
+                    Submenu = new ContextMenuStrip(() => GetPackLoadSettings(pack))
+                };
+            }
+
+            yield return new ContextMenuStripDivider();
+
+            // Reload Markers
+            yield return new SimpleContextMenuStripItem("Reload Marker Packs", ReloadPacks) {
+                Enabled = !this.IsLoading && _packState.CurrentMapId > 0
+            };
+
+            // Unload Markers
+            yield return new SimpleContextMenuStripItem("Unload Marker Packs", async () => {
+                if (_packState.CurrentMapId < 0) return;
+                await UnloadStateAndCollection();
+            }) {
+                Enabled = !this.IsLoading && _packState.CurrentMapId > 0
+            };
+
+            // Download Marker Packs
+            yield return new SimpleContextMenuStripItem("Download Marker Packs", () => {
+                _module.SettingsWindow.SelectedTab = _module.MarkerRepoTab;
+                _module.SettingsWindow.Show();
+            }); ;
         }
 
         public IEnumerable<ContextMenuStripItem> GetPackMenuItems() {
@@ -75,36 +148,19 @@ namespace BhModule.Community.Pathing {
                 _module.Settings.GlobalPathablesEnabled.Value = e.Checked;
             };
 
+            // Manage Packs
+            var packs = new ContextMenuStripItem() {
+                Text = "Manage Marker Packs",
+                Submenu = new ContextMenuStrip(GetPackToggles)
+            };
+
             // Scripts
             if (_module.Settings.ScriptsEnabled.Value && _module.ScriptEngine.Global != null && _module.ScriptEngine.Global.Menu.Menus.Any()) {
                 yield return _module.ScriptEngine.Global.Menu.BuildMenu();
             }
-
-            // Reload Markers
-            var reloadMarkers = new ContextMenuStripItem() {
-                Text    = "Reload Markers", // TODO: Localize "Reload Markers"
-                Enabled = !this.IsLoading && _packState.CurrentMapId > 0
-            };
-
-            reloadMarkers.Click += (_, _) => {
-                ReloadPacks();
-            };
-
-            // Unload Markers
-            var unloadMarkers = new ContextMenuStripItem() {
-                Text    = "Unload Markers", // TODO: Localize "Unload Markers"
-                Enabled = !this.IsLoading && _packState.CurrentMapId > 0
-            };
-
-            unloadMarkers.Click += async (_, _) => {
-                if (_packState.CurrentMapId < 0) return;
-
-                await UnloadStateAndCollection();
-            };
             
             yield return allMarkers;
-            yield return reloadMarkers;
-            yield return unloadMarkers;
+            yield return packs;
         }
 
         public async Task Init() {
@@ -112,17 +168,25 @@ namespace BhModule.Community.Pathing {
             await LoadAllPacks();
         }
 
+        private PackWrapper GetPackWrapper(Pack pack) {
+            var alwaysLoad = _packToggleSettings.DefineSetting($"{pack.Name}_AlwaysLoad", true);
+            return new PackWrapper(_module, pack, alwaysLoad);
+        }
+
         public async Task LoadUnpackedPackFiles(string unpackedDir) {
-            var newPack = Pack.FromDirectoryMarkerPack(unpackedDir);
-            
-            _packs.Add(newPack);
+            try {
+                var newPack = Pack.FromDirectoryMarkerPack(unpackedDir);
+                _packs.Add(GetPackWrapper(newPack));
+            } catch (Exception ex) {
+                Logger.Warn(ex, $"Unpacked markers failed to load.");
+            }
         }
 
         public async Task LoadPackedPackFiles(IEnumerable<string> zipPackFiles) {
             foreach (string packArchive in zipPackFiles) {
                 try {
                     var newPack = Pack.FromArchivedMarkerPack(packArchive);
-                    _packs.Add(newPack);
+                    _packs.Add(GetPackWrapper(newPack));
                 } catch (InvalidDataException) {
                     Logger.Warn($"Pack {packArchive} appears to be corrupt.  Please remove it and download it again.");
                 } catch (Exception ex) {
@@ -133,13 +197,13 @@ namespace BhModule.Community.Pathing {
 
         public async Task LoadPack(Pack pack) {
             if (pack != null) {
-                _packs.Add(pack);
+                _packs.Add(GetPackWrapper(pack));
             }
         }
 
         public void UnloadPackByName(string packName) {
             foreach (var pack in _packs.ToArray()) {
-                if (string.Equals(packName, pack.Name, StringComparison.OrdinalIgnoreCase)) {
+                if (string.Equals(packName, pack.Pack.Name, StringComparison.OrdinalIgnoreCase)) {
                     _packs.Remove(pack);
                     break;
                 }
@@ -206,18 +270,27 @@ namespace BhModule.Community.Pathing {
             var packs = _packs.ToArray();
 
             foreach (var pack in packs) {
+                pack.IsLoaded = false;
+
+                if (!pack.AlwaysLoad.Value && !pack.ForceLoad) {
+                    // Skip loading.
+                    continue;
+                }
+
                 try {
                     var packTimer = Stopwatch.StartNew();
 
-                    _loadingIndicator.Report($"Loading {pack.Name}...");
-                    await pack.LoadMapAsync(mapId, _sharedPackCollection, _packReaderSettings);
+                    _loadingIndicator.Report($"Loading {pack.Pack.Name}...");
+                    await pack.Pack.LoadMapAsync(mapId, _sharedPackCollection, _packReaderSettings);
+                    pack.IsLoaded = true;
 
-                    packTimings.Add((pack, packTimer.ElapsedMilliseconds));
+                    pack.LoadTime = packTimer.ElapsedMilliseconds;
+                    packTimings.Add((pack.Pack, pack.LoadTime));
                 } catch (FileNotFoundException e) {
                     Logger.Warn("Pack file '{packPath}' failed to load because it could not be found.", e.FileName);
                     _packs.Remove(pack);
                 } catch (Exception e) {
-                    Logger.Warn(e, $"Loading pack '{pack.Name}' failed.");
+                    Logger.Warn(e, $"Loading pack '{pack.Pack.Name}' failed.");
                 }
             }
 
@@ -235,12 +308,19 @@ namespace BhModule.Community.Pathing {
                 _loadingIndicator.Report("Loading scripts...");
 
                 foreach (var pack in packs) {
-                    await _packState.Module.ScriptEngine.LoadScript("pack.lua", pack.ResourceManager, pack.Name);
+                    if (!pack.AlwaysLoad.Value && !pack.ForceLoad) {
+                        // Skip loading.
+                        continue;
+                    }
+
+                    var scriptTimer = Stopwatch.StartNew();
+                    await _packState.Module.ScriptEngine.LoadScript("pack.lua", pack.Pack.ResourceManager, pack.Pack.Name);
+                    pack.LoadTime += scriptTimer.ElapsedMilliseconds;
                 }
             }
 
             foreach (var pack in packs) {
-                pack.ReleaseLocks();
+                pack.Pack.ReleaseLocks();
             }
             
             _loadingIndicator.Report(null);
@@ -254,6 +334,11 @@ namespace BhModule.Community.Pathing {
             if (e.Value == _packState.CurrentMapId) return;
 
             _packState.CurrentMapId = e.Value;
+
+            foreach (var pack in _packs) {
+                // Reset the force load after map change.
+                pack.ForceLoad = false;
+            }
 
             LoadMapFromEachPackInBackground(e.Value);
         }

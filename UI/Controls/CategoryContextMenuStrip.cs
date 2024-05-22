@@ -92,6 +92,13 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 showAllSkippedCategories.LeftMouseButtonReleased += ShowAllSkippedCategories_LeftMouseButtonReleased;
             }
 
+            if (skipped == 0 && !subCategories.Any()) {
+                this.AddMenuItem(new ContextMenuStripItem() {
+                    Text = "No marker packs loaded...",
+                    Enabled = false,
+                });
+            }
+
             base.OnShown(e);
 
             // Behold: the effort I'm willing to put towards making huge category listings visible.
@@ -115,7 +122,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             // See that is it very little.
         }
 
-        private void ShowAllSkippedCategories_LeftMouseButtonReleased(object sender, Blish_HUD.Input.MouseEventArgs e) {
+        private void ShowAllSkippedCategories_LeftMouseButtonReleased(object sender, MouseEventArgs e) {
             this.ClearChildren();
 
             (IEnumerable<PathingCategory> subCategories, int skipped) = GetSubCategories(true);
