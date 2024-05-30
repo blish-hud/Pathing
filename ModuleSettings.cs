@@ -1,5 +1,4 @@
 ﻿using System;
-using Blish_HUD;
 using Blish_HUD.Input;
 using Blish_HUD.Settings;
 using Microsoft.Xna.Framework.Input;
@@ -20,7 +19,11 @@ namespace BhModule.Community.Pathing {
 
     public class ModuleSettings {
 
-        public ModuleSettings(SettingCollection settings) {
+        private readonly PathingModule _module;
+
+        public ModuleSettings(PathingModule module, SettingCollection settings) {
+            _module = module;
+
             InitGlobalSettings(settings);
             InitPackSettings(settings);
             InitMapSettings(settings);
@@ -170,9 +173,10 @@ namespace BhModule.Community.Pathing {
 
         public SettingCollection KeyBindSettings { get; private set; }
 
-        public SettingEntry<KeyBinding> KeyBindTogglePathables { get; private set; }
+        public SettingEntry<KeyBinding> KeyBindTogglePathables      { get; private set; }
         public SettingEntry<KeyBinding> KeyBindToggleWorldPathables { get; private set; }
         public SettingEntry<KeyBinding> KeyBindToggleMapPathables   { get; private set; }
+        public SettingEntry<KeyBinding> KeyBindReloadMarkerPacks    { get; private set; }
 
         private void InitKeyBindSettings(SettingCollection settings) {
             this.KeyBindSettings = settings.AddSubCollection(KEYBIND_SETTINGS);
@@ -182,18 +186,34 @@ namespace BhModule.Community.Pathing {
             this.KeyBindTogglePathables      = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindTogglePathables), new KeyBinding(ModifierKeys.Shift | ModifierKeys.Alt, Keys.OemPipe),              () => "Toggle Markers",          () => "");
             this.KeyBindToggleWorldPathables = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindToggleWorldPathables), new KeyBinding(ModifierKeys.Shift | ModifierKeys.Alt, Keys.OemOpenBrackets), () => "Toggle Markers in World", () => "");
             this.KeyBindToggleMapPathables   = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindToggleMapPathables), new KeyBinding(ModifierKeys.Shift | ModifierKeys.Alt, Keys.OemCloseBrackets),  () => "Toggle Markers on Map",   () => "");
+            this.KeyBindReloadMarkerPacks    = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindReloadMarkerPacks), new KeyBinding(ModifierKeys.Shift | ModifierKeys.Alt, Keys.R),                  () => "Reload Marker Packs",     () => "");
 
             HandleInternalKeyBinds();
         }
 
         private void HandleInternalKeyBinds() {
-            this.KeyBindTogglePathables.Value.Enabled      = true;
+            this.KeyBindTogglePathables.Value.BlockSequenceFromGw2 = true;
+            this.KeyBindTogglePathables.Value.Enabled = true;
+
+            this.KeyBindToggleWorldPathables.Value.BlockSequenceFromGw2 = true;
             this.KeyBindToggleWorldPathables.Value.Enabled = true;
-            this.KeyBindToggleMapPathables.Value.Enabled   = true;
+
+            this.KeyBindToggleMapPathables.Value.BlockSequenceFromGw2 = true;
+            this.KeyBindToggleMapPathables.Value.Enabled = true;
+
+            this.KeyBindReloadMarkerPacks.Value.BlockSequenceFromGw2 = true;
+            this.KeyBindReloadMarkerPacks.Value.Enabled = true;
 
             this.KeyBindTogglePathables.Value.Activated      += ToggleGlobalPathablesEnabled;
             this.KeyBindToggleWorldPathables.Value.Activated += TogglePackWorldPathablesEnabled;
             this.KeyBindToggleMapPathables.Value.Activated   += ToggleMapPathablesEnabled;
+            this.KeyBindReloadMarkerPacks.Value.Activated    += ReloadMarkerPacks;
+        }
+
+        private void ReloadMarkerPacks(object sender, EventArgs e) {
+            if (_module.PackInitiator != null) { 
+                _module.PackInitiator.ReloadPacks();
+            }
         }
 
         private void ToggleGlobalPathablesEnabled(object sender, EventArgs e) {
@@ -214,10 +234,12 @@ namespace BhModule.Community.Pathing {
             this.KeyBindTogglePathables.Value.Enabled      = false;
             this.KeyBindToggleWorldPathables.Value.Enabled = false;
             this.KeyBindToggleMapPathables.Value.Enabled   = false;
+            this.KeyBindReloadMarkerPacks.Value.Enabled    = false;
 
             this.KeyBindTogglePathables.Value.Activated      -= ToggleGlobalPathablesEnabled;
             this.KeyBindToggleWorldPathables.Value.Activated -= TogglePackWorldPathablesEnabled;
             this.KeyBindToggleMapPathables.Value.Activated   -= ToggleMapPathablesEnabled;
+            this.KeyBindReloadMarkerPacks.Value.Activated    -= ReloadMarkerPacks;
         }
 
     }

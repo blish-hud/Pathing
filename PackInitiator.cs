@@ -110,7 +110,8 @@ namespace BhModule.Community.Pathing {
 
             // Reload Markers
             yield return new SimpleContextMenuStripItem("Reload Marker Packs", ReloadPacks) {
-                Enabled = !this.IsLoading && _packState.CurrentMapId > 0
+                Enabled = !this.IsLoading && _packState.CurrentMapId > 0,
+                BasicTooltipText = _module.Settings.KeyBindReloadMarkerPacks.Value.PrimaryKey != Microsoft.Xna.Framework.Input.Keys.None ? $"Keybind: {_module.Settings.KeyBindReloadMarkerPacks.Value.GetBindingDisplayText()}" : null
             };
 
             // Unload Markers

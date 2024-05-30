@@ -13,7 +13,7 @@ namespace BhModule.Community.Pathing {
         private MarkerPackPkg _package = null;
         public MarkerPackPkg Package { get {
                 if (_package == null) {
-                    _package = _module.MarkerPackRepo.MarkerPackages.FirstOrDefault(p => p.FileName.ToLowerInvariant().StartsWith(this.Pack.Name.ToLowerInvariant()));
+                    _package = _module.MarkerPackRepo.MarkerPackages.FirstOrDefault(p => p.FileName.ToLowerInvariant().StartsWith(this.Pack.Name.ToLowerInvariant() + "."));
                 }
 
                 return _package;
@@ -33,7 +33,6 @@ namespace BhModule.Community.Pathing {
 
             this.Pack = pack;
             this.AlwaysLoad = alwaysLoad;
-
         }
 
     }

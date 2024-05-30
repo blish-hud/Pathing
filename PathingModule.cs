@@ -59,7 +59,7 @@ namespace BhModule.Community.Pathing {
         }
 
         protected override void DefineSettings(SettingCollection settings) {
-            this.Settings = new ModuleSettings(settings);
+            this.Settings = new ModuleSettings(this, settings);
         }
 
         private IEnumerable<ContextMenuStripItem> GetPathingMenuItems() {
