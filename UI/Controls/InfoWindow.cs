@@ -71,6 +71,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         public override void Show() {
+            if (PathingModule.Instance.Settings.PackInfoDisplayMode.Value == MarkerInfoDisplayMode.NeverDisplay) return;
             if (_showing) return;
 
             base.Show();
@@ -100,6 +101,10 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
             if (!_showing && fadeLerp <= 0f) {
                 this.Visible = false;
+            }
+
+            if (PathingModule.Instance.Settings.PackInfoDisplayMode.Value == MarkerInfoDisplayMode.NeverDisplay) {
+                Hide();
             }
 
             base.UpdateContainer(gameTime);
@@ -143,7 +148,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             if (PathingModule.Instance == null) return;
 
             // Don't show on loading screens or during vistas.
-            if (!GameService.GameIntegration.Gw2Instance.IsInGame || !PathingModule.Instance.Settings.PackAllowInfoText.Value) return;
+            if (!GameService.GameIntegration.Gw2Instance.IsInGame || PathingModule.Instance.Settings.PackInfoDisplayMode.Value == MarkerInfoDisplayMode.WithoutBackground) return;
 
             AlphaMaskEffect.SharedInstance.SetEffectState(_croppedMask);
 

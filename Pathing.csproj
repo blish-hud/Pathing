@@ -275,6 +275,7 @@
     <Compile Include="UI\Controls\SettingHero.cs" />
     <Compile Include="UI\Controls\SimpleContextMenuStripItem.cs" />
     <Compile Include="UI\Controls\SmallInteract.cs" />
+    <Compile Include="UI\Presenters\AdvancedCategoryPresenter.cs" />
     <Compile Include="UI\Tooltips\AchievementPresenter.cs" />
     <Compile Include="UI\Tooltips\AchievementTooltipView.cs" />
     <Compile Include="UI\Tooltips\BasicTooltipView.cs" />
@@ -297,6 +298,7 @@
     <Compile Include="UI\Effects\AlphaMaskEffect.cs" />
     <Compile Include="UI\Presenters\PackRepoPresenter.cs" />
     <Compile Include="UI\Presenters\SettingsHintPresenter.cs" />
+    <Compile Include="UI\Views\AdvancedCategoryView.cs" />
     <Compile Include="UI\Views\IndividualPackSettingsView.cs" />
     <Compile Include="UI\Views\PackRepoView.cs" />
     <Compile Include="UI\Views\SettingsHintView.cs" />

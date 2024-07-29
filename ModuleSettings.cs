@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Blish_HUD.Input;
 using Blish_HUD.Settings;
 using Microsoft.Xna.Framework.Input;
@@ -10,7 +11,14 @@ namespace BhModule.Community.Pathing {
         OnlyWhenInteractedWith,
         Never
     }
-    
+
+    public enum MarkerInfoDisplayMode {
+        Default = 0,
+        WithoutBackground = 1,
+        NeverDisplay = 100
+    }
+
+
     public enum MapVisibilityLevel {
         Default,
         Always,
@@ -63,6 +71,7 @@ namespace BhModule.Community.Pathing {
         public SettingEntry<bool>                        PackFadeMarkersBetweenCharacterAndCamera { get; private set; }
         public SettingEntry<bool>                        PackAllowMarkersToAutomaticallyHide      { get; private set; }
         public SettingEntry<MarkerClipboardConsentLevel> PackMarkerConsentToClipboard             { get; private set; }
+        public SettingEntry<MarkerInfoDisplayMode>       PackInfoDisplayMode                      { get; private set; }
         public SettingEntry<bool>                        PackAllowInfoText                        { get; private set; }
         public SettingEntry<bool>                        PackAllowInteractIcon                    { get; private set; }
         public SettingEntry<bool>                        PackAllowMarkersToAnimate                { get; private set; }
@@ -87,7 +96,8 @@ namespace BhModule.Community.Pathing {
             this.PackFadeMarkersBetweenCharacterAndCamera = this.PackSettings.DefineSetting(nameof(this.PackFadeMarkersBetweenCharacterAndCamera), true, () => Strings.Setting_PackFadeMarkersBetweenCharacterAndCamera, () => "If enabled, markers will be drawn with less opacity if they are directly between your character and the camera to avoid obscuring your vision.");
             this.PackAllowMarkersToAutomaticallyHide      = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAutomaticallyHide),      true, () => Strings.Setting_PackAllowMarkersToAutomaticallyHide, () => "If enabled, markers and trails may hide themselves as a result of interactions, API data, current festival, etc.  Disabling this feature forces all markers on the map to be shown.");
             this.PackMarkerConsentToClipboard             = this.PackSettings.DefineSetting(nameof(this.PackMarkerConsentToClipboard),             MarkerClipboardConsentLevel.Always, () => Strings.Setting_PackMarkerConsentToClipboard, () => string.Format(Strings.Setting_PackMarkerConsentToClipboardDescription, Blish_HUD.Common.Gw2.KeyBindings.Interact.GetBindingDisplayText()));
-            this.PackAllowInfoText                        = this.PackSettings.DefineSetting(nameof(this.PackAllowInfoText),                        true, () => "Allow Markers to Show Info Text On-Screen", () => "If enabled, certain markers will be able to show information when your character is nearby to the marker.");
+            //this.PackAllowInfoText                        = this.PackSettings.DefineSetting(nameof(this.PackAllowInfoText),                        true, () => "Allow Markers to Show Info Text On-Screen", () => "If enabled, certain markers will be able to show information when your character is nearby to the marker.");
+            this.PackInfoDisplayMode                      = this.PackSettings.DefineSetting(nameof(this.PackInfoDisplayMode),                      MarkerInfoDisplayMode.Default, () => "Marker Info Display Mode", () => "Default - Popups with extra info will show when you are near certain markers.\r\n\r\nWithout Background - Extra info will show when you are near certain markers, but there won't be a background behind the text.\r\n\r\nNever Display - Markers will not show popup info text on your screen.");
             this.PackAllowInteractIcon                    = this.PackSettings.DefineSetting(nameof(this.PackAllowInteractIcon),                    true, () => "Allow Markers to Show Interact Gear On-Screen", () => "If enabled, interactable markers will show a small gear icon on-screen to show what the interaction will do.");
             this.PackAllowMarkersToAnimate                = this.PackSettings.DefineSetting(nameof(this.PackAllowMarkersToAnimate),                true, () => Strings.Setting_PackAllowMarkersToAnimate, () => "Allows animations such as 'bounce' and trail movements.");
             this.PackEnableSmartCategoryFilter            = this.PackSettings.DefineSetting(nameof(this.PackEnableSmartCategoryFilter),            true, () => "Enable Smart Categories", () => "If a category doesn't contain markers or trails relevant to the current map, the category is hidden.");

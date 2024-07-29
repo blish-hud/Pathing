@@ -4,7 +4,9 @@ using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.UI.Controls;
 using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace BhModule.Community.Pathing.State {
     public class UiStates : ManagedState {
@@ -53,6 +55,7 @@ namespace BhModule.Community.Pathing.State {
         private void InitMap() {
             GameService.Gw2Mumble.CurrentMap.MapChanged += CurrentMapChanged;
             GameService.Gw2Mumble.UI.IsMapOpenChanged   += MapOpenedChanged;
+            GameService.Input.Keyboard.KeyReleased      += KeyboardKeyReleased;
 
             if (this.Map != null) return;
             
@@ -135,9 +138,17 @@ namespace BhModule.Community.Pathing.State {
             };
         }
 
+        private void KeyboardKeyReleased(object sender, KeyboardEventArgs e) {
+            if (e.Key == Keys.Escape) {
+                _infoList.Clear();
+                UpdateInfoText();
+            }
+        }
+
         public override Task Unload() {
             GameService.Gw2Mumble.CurrentMap.MapChanged -= CurrentMapChanged;
             GameService.Gw2Mumble.UI.IsMapOpenChanged   -= MapOpenedChanged;
+            GameService.Input.Keyboard.KeyReleased      -= KeyboardKeyReleased;
 
             _info?.Hide();
 
