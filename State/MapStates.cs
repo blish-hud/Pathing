@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Gw2Sharp.WebApi.Exceptions;
 using Gw2Sharp.WebApi.V2;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using Rectangle = Gw2Sharp.WebApi.V2.Models.Rectangle;
 
 namespace BhModule.Community.Pathing.State {
@@ -13,19 +16,36 @@ namespace BhModule.Community.Pathing.State {
 
         private static readonly Logger Logger = Logger.GetLogger<MapStates>();
 
-        public readonly struct MapDetails {
+        public struct MapDetails {
 
-            public Rectangle ContinentRect { get; }
-            public Rectangle MapRect       { get; }
+            public double ContinentRectTopLeftX { get; set; }
+            public double ContinentRectTopLeftY { get; set; }
+
+            public double MapRectTopLeftX { get; set; }
+            public double MapRectTopLeftY { get; set; }
+
+            public double MapRectWidth  { get; set; }
+            public double MapRectHeight { get; set; }
+
+            public double ContinentRectWidth  { get; set; }
+            public double ContinentRectHeight { get; set; }
+
+            public MapDetails() { }
 
             public MapDetails(Rectangle continentRect, Rectangle mapRect) {
-                this.ContinentRect = continentRect;
-                this.MapRect       = mapRect;
+                ContinentRectTopLeftX = continentRect.TopLeft.X;
+                ContinentRectTopLeftY = continentRect.TopLeft.Y;
+                MapRectTopLeftX       = mapRect.TopLeft.X;
+                MapRectTopLeftY       = mapRect.TopLeft.Y;
+                MapRectWidth          = mapRect.Width;
+                MapRectHeight         = mapRect.Height;
+                ContinentRectWidth    = continentRect.Width;
+                ContinentRectHeight   = continentRect.Height;
             }
 
         }
 
-        private readonly Dictionary<int, MapDetails> _mapDetails = new();
+        private Dictionary<int, MapDetails> _mapDetails = new();
 
         public MapStates(IRootPackState rootPackState) : base(rootPackState) { /* NOOP */ }
 
@@ -44,7 +64,7 @@ namespace BhModule.Community.Pathing.State {
                 if (remainingAttempts > 0) {
                     Logger.Warn(ex, "Failed to pull map data from the Gw2 API.  Trying again in 2 seconds.");
                     await Task.Yield();
-                    await Task.Delay(2000);
+                    await Task.Delay(500);
                     await LoadMapData(remainingAttempts - 1);
                 } else if (ex is TooManyRequestsException) {
                     Logger.Warn(ex, "After multiple attempts no map data could be loaded due to being rate limited by the API.");
@@ -53,14 +73,26 @@ namespace BhModule.Community.Pathing.State {
                 }
             }
 
-            if (maps == null)
-                return; // We failed to load any map data.
+            if (maps == null && !_mapDetails.Any()) {
+                try {
+                    using var fs            = _rootPackState.Module.ContentsManager.GetFileStream("fallback/mapDetails.json");
+                    using var sr            = new StreamReader(fs);
+                    string    rawMapDetails = await sr.ReadToEndAsync();
 
-            lock (_mapDetails) {
-                foreach (var map in maps) {
-                    _mapDetails[map.Id] = new MapDetails(map.ContinentRect, map.MapRect);
+                    _mapDetails = JsonConvert.DeserializeObject<Dictionary<int, MapDetails>>(rawMapDetails);
+                } catch (Exception ex) {
+                    Logger.Warn(ex, "Loadding fallback/mapDetails.json failed!");
+                }
+            } else if (maps != null) {
+                lock (_mapDetails) {
+                    foreach (var map in maps) {
+                        _mapDetails[map.Id] = new MapDetails(map.ContinentRect, map.MapRect);
+                    }
                 }
             }
+
+            // Used to prepare the fallback
+            //System.IO.File.WriteAllText("mapDetails.json", JsonConvert.SerializeObject(_mapDetails));
 
             await Reload();
         }
@@ -71,8 +103,8 @@ namespace BhModule.Community.Pathing.State {
 
         public void EventCoordsToMapCoords(double eventCoordsX, double eventCoordsY, out double outX, out double outY) {
             if (_currentMapDetails.HasValue) {
-                outX = _currentMapDetails.Value.ContinentRect.TopLeft.X + (eventCoordsX * METERCONVERSION - _currentMapDetails.Value.MapRect.TopLeft.X) / _currentMapDetails.Value.MapRect.Width * _currentMapDetails.Value.ContinentRect.Width;
-                outY = _currentMapDetails.Value.ContinentRect.TopLeft.Y + -(eventCoordsY * METERCONVERSION - _currentMapDetails.Value.MapRect.TopLeft.Y) / _currentMapDetails.Value.MapRect.Height * _currentMapDetails.Value.ContinentRect.Height;
+                outX = _currentMapDetails.Value.ContinentRectTopLeftX + (eventCoordsX * METERCONVERSION - _currentMapDetails.Value.MapRectTopLeftX) / _currentMapDetails.Value.MapRectWidth * _currentMapDetails.Value.ContinentRectWidth;
+                outY = _currentMapDetails.Value.ContinentRectTopLeftY + -(eventCoordsY * METERCONVERSION - _currentMapDetails.Value.MapRectTopLeftY) / _currentMapDetails.Value.MapRectHeight * _currentMapDetails.Value.ContinentRectHeight;
 
                 return;
             }
