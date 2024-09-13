@@ -31,12 +31,7 @@ namespace BhModule.Community.Pathing.Entity {
                     bool inBounds = false;
 
                     if (lastPointInBounds | (inBounds = bounds.Contains(nextPoint))) {
-                        float drawOpacity = opacity;
-
-                        if (_packState.UserConfiguration.MapFadeVerticallyDistantTrailSegments.Value) {
-                            float averageVert  = (trailSection[i].Z + trailSection[i + 1].Z) / 2f;
-                            drawOpacity *= MathHelper.Clamp(1f - Math.Abs(averageVert - GameService.Gw2Mumble.PlayerCharacter.Position.Z) * 0.005f, 0.15f, 1f);
-                        }
+                        float drawOpacity = HeightCorrectOpacity(trailSection[i], trailSection[i + 1], opacity);
 
                         float distance = Vector2.Distance(thisPoint, nextPoint);
                         float angle    = (float)Math.Atan2(nextPoint.Y - thisPoint.Y, nextPoint.X - thisPoint.X);
@@ -46,8 +41,19 @@ namespace BhModule.Community.Pathing.Entity {
                     lastPointInBounds = inBounds;
                 }
             }
+            
+            if (_packState.UserConfiguration.MapTrailGlowBeadCount.Value > 0) {
+                RenderGlow(spriteBatch, bounds, offsetX, offsetY, scale);
+            }
 
             return null;
+        }
+
+        private float HeightCorrectOpacity(Vector3 current, Vector3 next, float opacity) {
+            if (!_packState.UserConfiguration.MapFadeVerticallyDistantTrailSegments.Value) return opacity;
+
+            float averageVert  = (current.Z + next.Z) / 2f;
+            return opacity * MathHelper.Clamp(1f - Math.Abs(averageVert - GameService.Gw2Mumble.PlayerCharacter.Position.Z) * 0.005f, 0.15f, 1f);
         }
 
         private void DrawLine(SpriteBatch spriteBatch, Vector2 position, float angle, float distance, Color color, float thickness) {
