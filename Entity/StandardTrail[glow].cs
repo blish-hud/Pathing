@@ -8,6 +8,8 @@ namespace BhModule.Community.Pathing.Entity;
 
 #nullable enable
 public partial class StandardTrail {
+    private const float _glowLength = 1.5f;
+    
 
     private float? _distance = null;
     public float Distance {
@@ -58,13 +60,12 @@ public partial class StandardTrail {
     
     private float _glowSpeed     => _packState.UserConfiguration.MapTrailGlowSpeed.Value;
     private int   _glowBeadCount => _packState.UserConfiguration.MapTrailGlowBeadCount.Value;
-    private float _glowLength    => _packState.UserConfiguration.MapTrailGlowLength.Value;
     
      private void RenderGlow(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale) {
          
-         if (_glowPoints is null || _lastGlowResolution != this._glowLength) {
-             this._lastGlowResolution = this._glowLength;
-             this._glowPoints         = GenerateGlowPoints(this._glowLength);
+         if (_glowPoints is null || _lastGlowResolution != _glowLength) {
+             this._lastGlowResolution = _glowLength;
+             this._glowPoints         = GenerateGlowPoints(_glowLength);
              this._lastGlowBeadCount  = null; // regenerate bead spacing
          }
          if (_lastGlowBeadCount == null || _lastGlowBeadCount != this._glowBeadCount) {
@@ -83,6 +84,10 @@ public partial class StandardTrail {
              }
          }
      }
+
+     private float _glowBeadMapOpacity     = 1f;
+     private float _glowBeadMinimapOpacity = 1f;
+     private float _glowBeadOpacity => GameService.Gw2Mumble.UI.IsMapOpen ? _glowBeadMapOpacity : _glowBeadMinimapOpacity;
      
      private void RenderGlowBead(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, int frame) {
          var current = _glowPoints![frame];
@@ -97,11 +102,19 @@ public partial class StandardTrail {
              return;
          }
 
-         float distance = Vector2.Distance(currentScaled, nextScaled);
-         float angle    = (float) Math.Atan2(nextScaled.Y - currentScaled.Y, nextScaled.X - currentScaled.X);
-         float opacity  = HeightCorrectOpacity(current, next, _packState.UserConfiguration.MapTrailGlowOpacity.Value);
+         float distance    = Vector2.Distance(currentScaled, nextScaled);
+         float angle       = (float) Math.Atan2(nextScaled.Y - currentScaled.Y, nextScaled.X - currentScaled.X);
+         float opacity     = HeightCorrectOpacity(current, next, _glowBeadOpacity);
 
-         DrawLine(spriteBatch, currentScaled, angle, distance, TrailSampleColor * opacity, _packState.UserConfiguration.MapTrailWidth.Value);
+         DrawLine(spriteBatch, currentScaled, angle, distance, _glowBeadColor * opacity, _packState.UserConfiguration.MapTrailWidth.Value);
+     }
+
+     private void UpdateMapGlowOpacity(float newMapOpacity) {
+         _glowBeadMapOpacity = MathHelper.Clamp(newMapOpacity * _packState.UserResourceStates.Advanced.GlowTrailOpacityPercent, 0f, 1f);
+     }
+     
+     private void UpdateMiniMapGlowOpacity(float newMiniMapOpacity) {
+         _glowBeadMinimapOpacity = MathHelper.Clamp(newMiniMapOpacity * _packState.UserResourceStates.Advanced.GlowTrailOpacityPercent, 0f, 1f);
      }
 
 }

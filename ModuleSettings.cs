@@ -134,11 +134,8 @@ namespace BhModule.Community.Pathing {
         public SettingEntry<bool>               MapFadeVerticallyDistantTrailSegments { get; private set; }
         public SettingEntry<float>              MapTrailWidth                         { get; private set; }
         public SettingEntry<bool>               MapShowTooltip                        { get; private set; }
-        public SettingEntry<bool>               MapTrailGlow                          { get; private set; }
-        public SettingEntry<int>                MapTrailGlowSpeed                     { get; private set; }
-        public SettingEntry<float>              MapTrailGlowLength                    { get; private set; }
-        public SettingEntry<float>              MapTrailGlowOpacity                { get; private set; }
         public SettingEntry<int>                MapTrailGlowBeadCount                 { get; private set; }
+        public SettingEntry<int>                MapTrailGlowSpeed                     { get; private set; }
 
         private void InitMapSettings(SettingCollection settings) {
             this.MapSettings = settings.AddSubCollection(MAP_SETTINGS);
@@ -158,16 +155,12 @@ namespace BhModule.Community.Pathing {
             this.MapTrailWidth                         = this.MapSettings.DefineSetting(nameof(this.MapTrailWidth),                         2f,                         () => "Trail Width on Maps",                               () => "The thickness of trails shown on the map.");
             this.MapTrailGlowBeadCount                 = this.MapSettings.DefineSetting(nameof(this.MapTrailGlowBeadCount),                 0,                          () => "Trail Glow Bead Count",                             () => "Number of glow beads on the map");
             this.MapTrailGlowSpeed                     = this.MapSettings.DefineSetting(nameof(this.MapTrailGlowSpeed),                     20,                         () => "Trail Glow Speed",                                  () => "The speed at which the glow moves along the trail");
-            this.MapTrailGlowLength                    = this.MapSettings.DefineSetting(nameof(this.MapTrailGlowLength),                    1f,                         () => "Trail Glow Length",                                 () => "The maximum length of a glowing segment");
-            this.MapTrailGlowOpacity                   = this.MapSettings.DefineSetting(nameof(this.MapTrailGlowOpacity),                   0.3f,                       () => "Trail Glow Opacity",                                () => "");
             
             this.MapDrawOpacity.SetRange(0f, 1f);
             this.MiniMapDrawOpacity.SetRange(0f, 1f);
             this.MapTrailWidth.SetRange(0.5f, 4.5f);
             this.MapTrailGlowBeadCount.SetRange(0, 100);
             this.MapTrailGlowSpeed.SetRange(3, 50);
-            this.MapTrailGlowLength.SetRange(0.5f, 10f);
-            this.MapTrailGlowOpacity.SetRange(0f, 1f);
         }
 
         #endregion
