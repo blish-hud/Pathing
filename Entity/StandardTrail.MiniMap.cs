@@ -42,8 +42,8 @@ namespace BhModule.Community.Pathing.Entity {
                 }
             }
             
-            if (_packState.UserConfiguration.MapTrailGlowBeadCount.Value > 0) {
-                RenderGlow(spriteBatch, bounds, offsetX, offsetY, scale);
+            if (_packState.UserConfiguration.MapTrailGlowBeadSpacing.Value > 5) {
+                RenderGlow(spriteBatch, bounds, offsetX, offsetY, scale, isMapOpen);
             }
 
             return null;

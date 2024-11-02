@@ -8,7 +8,7 @@ namespace BhModule.Community.Pathing.Entity;
 
 #nullable enable
 public partial class StandardTrail {
-    private const float _glowLength = 1.5f;
+    public const float MaxGlowLength = 1.5f;
     
 
     private float? _distance = null;
@@ -53,24 +53,24 @@ public partial class StandardTrail {
         return points.ToArray();
     }
 
-    private float?     _lastGlowResolution = null;
-    private int?       _lastGlowBeadCount  = null;
-    private int        _glowBeadSpacing    = 0;
-    private Vector3[]? _glowPoints         = null;
+    private float?     _lastGlowResolution  = null;
+    private int?       _lastGlowBeadSpacing = null;
+    private int        _glowBeadCount       = 0;
+    private Vector3[]? _glowPoints          = null;
     
-    private float _glowSpeed     => _packState.UserConfiguration.MapTrailGlowSpeed.Value;
-    private int   _glowBeadCount => _packState.UserConfiguration.MapTrailGlowBeadCount.Value;
+    private float _glowSpeed       => _packState.UserConfiguration.MapTrailGlowSpeed.Value;
+    private int   _glowBeadSpacing => _packState.UserConfiguration.MapTrailGlowBeadSpacing.Value;
     
-     private void RenderGlow(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale) {
+     private void RenderGlow(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, bool mapOpen) {
          
-         if (_glowPoints is null || _lastGlowResolution != _glowLength) {
-             this._lastGlowResolution = _glowLength;
-             this._glowPoints         = GenerateGlowPoints(_glowLength);
-             this._lastGlowBeadCount  = null; // regenerate bead spacing
+         if (_glowPoints is null || _lastGlowResolution != MaxGlowLength) {
+             this._lastGlowResolution  = MaxGlowLength;
+             this._glowPoints          = GenerateGlowPoints(MaxGlowLength);
+             this._lastGlowBeadSpacing = null; // regenerate bead spacing
          }
-         if (_lastGlowBeadCount == null || _lastGlowBeadCount != this._glowBeadCount) {
-             this._lastGlowBeadCount = this._glowBeadCount;
-             this._glowBeadSpacing   = this._glowPoints.Length / this._glowBeadCount;
+         if (_lastGlowBeadSpacing == null || _lastGlowBeadSpacing != this._glowBeadSpacing) {
+             this._lastGlowBeadSpacing = this._glowBeadSpacing;
+             this._glowBeadCount       = this._glowPoints.Length / this._glowBeadSpacing;
          }
          
          int globalFrame = (int) Math.Floor((GameService.Overlay.CurrentGameTime.TotalGameTime.TotalSeconds * _glowSpeed) % this._glowBeadSpacing);
@@ -78,7 +78,7 @@ public partial class StandardTrail {
          for (int i = 0; i < _glowBeadCount; i++) {
              int relativeFrame = (i * this._glowBeadSpacing) + globalFrame;
              try {
-                 RenderGlowBead(spriteBatch, bounds, offsetX, offsetY, scale, relativeFrame);
+                 RenderGlowBead(spriteBatch, bounds, offsetX, offsetY, scale, relativeFrame, mapOpen);
              } catch (IndexOutOfRangeException) {
                  break; // since relativeFrame will increase with each iteration, if it goes over we know all future iterations will go over too.
              }
@@ -87,9 +87,8 @@ public partial class StandardTrail {
 
      private float _glowBeadMapOpacity     = 1f;
      private float _glowBeadMinimapOpacity = 1f;
-     private float _glowBeadOpacity => GameService.Gw2Mumble.UI.IsMapOpen ? _glowBeadMapOpacity : _glowBeadMinimapOpacity;
      
-     private void RenderGlowBead(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, int frame) {
+     private void RenderGlowBead(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, int frame, bool mapOpen) {
          var current = _glowPoints![frame];
          var next    = _glowPoints![frame + 1];
          var currentScaled  = GetScaledLocation(current.X, current.Y,     scale, offsetX, offsetY);
@@ -98,13 +97,13 @@ public partial class StandardTrail {
          if (!bounds.Contains(currentScaled) && !bounds.Contains(nextScaled)) {
              return;
          }
-         if (Vector3.Distance(current, next) > _glowLength + 1) {
+         if (Vector3.Distance(current, next) > MaxGlowLength + 1) {
              return;
          }
 
          float distance    = Vector2.Distance(currentScaled, nextScaled);
          float angle       = (float) Math.Atan2(nextScaled.Y - currentScaled.Y, nextScaled.X - currentScaled.X);
-         float opacity     = HeightCorrectOpacity(current, next, _glowBeadOpacity);
+         float opacity     = HeightCorrectOpacity(current, next, mapOpen ? _glowBeadMapOpacity : _glowBeadMinimapOpacity);
 
          DrawLine(spriteBatch, currentScaled, angle, distance, _glowBeadColor * opacity, _packState.UserConfiguration.MapTrailWidth.Value);
      }
