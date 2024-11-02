@@ -31,7 +31,8 @@ namespace BhModule.Community.Pathing.Entity {
             {
                 if (collection.TryPopAttribute(ATTR_ICONFILE, out var attribute)) {
                     attribute.GetValueAsTextureAsync(resourceManager).ContinueWith(textureTaskResult => {
-                        if (!textureTaskResult.IsFaulted && textureTaskResult.Result.Texture != null) {
+                        // We check that Texture is null in case a script has already executed and updated the Texture before this managed to finish.
+                        if (!textureTaskResult.IsFaulted && textureTaskResult.Result.Texture != null && this.Texture == null) {
                             this.Texture = textureTaskResult.Result.Texture;
                         } else {
                             Logger.Warn("Marker failed to load texture '{markerTexture}'", attribute);
