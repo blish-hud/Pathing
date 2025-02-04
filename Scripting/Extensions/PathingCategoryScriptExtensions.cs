@@ -53,5 +53,34 @@ namespace BhModule.Community.Pathing.Scripting.Extensions {
             return markers;
         }
 
+        public static LuaTable GetTrails(this PathingCategory category) {
+            return GetTrails(category, false);
+        }
+
+        public static LuaTable GetTrails(this PathingCategory category, bool getAll)  {
+            var trails = new LuaTable();
+
+            foreach (var pathable in _packInitiator.PackState.Entities) {
+                if (pathable is StandardTrail trail) {
+                    if (pathable.Category == category) {
+                        trails.Add(trail);
+                    } else if (getAll) {
+                        if (category.Root) {
+                            trails.Add(trail);
+                            continue;
+                        }
+
+                        foreach (var parentCategory in pathable.Category.GetParents()) {
+                            if (parentCategory == category) {
+                                trails.Add(trail);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return trails;
+        }
     }
 }
