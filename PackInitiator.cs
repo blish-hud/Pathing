@@ -14,6 +14,7 @@ using Blish_HUD.Controls;
 using Blish_HUD.Settings;
 using Microsoft.Xna.Framework;
 using TmfLib;
+using TmfLib.Pathable;
 using TmfLib.Reader;
 
 namespace BhModule.Community.Pathing {
@@ -127,6 +128,10 @@ namespace BhModule.Community.Pathing {
                 _module.SettingsWindow.SelectedTab = _module.MarkerRepoTab;
                 _module.SettingsWindow.Show();
             }); ;
+        }
+
+        public PathingCategory GetAllMarkersCategories() {
+            return _sharedPackCollection.Categories;
         }
 
         public IEnumerable<ContextMenuStripItem> GetPackMenuItems() {
