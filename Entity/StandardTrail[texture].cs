@@ -22,7 +22,21 @@ namespace BhModule.Community.Pathing.Entity {
             }
         }
 
-        public Color TrailSampleColor { get; set; } = Color.White;
+        private Color _trailSampleColor = Color.White;
+        private Color _glowBeadColor    = Color.Black;
+        public Color TrailSampleColor {
+            get => _trailSampleColor;
+            set {
+                _trailSampleColor = value;
+                // A way to theoretically change it to white or black based off of color brightness. Didn't get it to work well so I switched to color inversion.
+                // Leaving this here in case someone wants to fix it up since color inversion isn't the best.
+                // Note you'll also have to uncomment GlowTrailColorBiasPercentage in AdvancedDefaults too
+                //float luma        = 0.2126f * value.R + 0.7152f * value.G + 0.0722f * value.B; // result is 0-255
+                //var bias     = luma > 128 ? Color.Black : Color.White;
+                //_glowBeadColor    = Color.Lerp(value, bias, _packState.UserResourceStates.Advanced.GlowTrailColorBiasPercent);
+                _glowBeadColor = new Color(255 - value.R, 255 - value.G, 255 - value.B);
+            }
+        }
 
         /// <summary>
         /// texture

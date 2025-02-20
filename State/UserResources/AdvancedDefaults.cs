@@ -52,6 +52,12 @@ namespace BhModule.Community.Pathing.State.UserResources {
         // Trails
         [YamlMember(Description = "A multiplier which changes the fade radius around the character.")]
         public float CharacterTrailFadeMultiplier { get; set; } = 1f;
+        
+        // Glow
+        [YamlMember(Description = "The percentage of normal opacity that a glow bead is")]
+        public float GlowTrailOpacityPercent { get; set; } = 2f;
 
+        //[YamlMember(Description = "The percentage of color bias to apply to a glow bead")]
+        //public float GlowTrailColorBiasPercent { get; set; } = 0.5f;
     }
 }
