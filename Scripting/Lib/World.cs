@@ -105,6 +105,56 @@ public class World {
         return nTable;
     }
 
+    public StandardMarker GetMarkerWithinDistance(float distance)
+    {
+        return _global.ScriptEngine.Module.PackInitiator.PackState.Entities.ToArray()
+                      .OfType<StandardMarker>()
+                      .Where(marker => marker.DistanceToPlayer < distance)
+                      .OrderBy(marker => marker.DistanceToPlayer)
+                      .FirstOrDefault();
+    }
+
+    public StandardMarker GetMarkerWithinDistance(PathingCategory category, float distance)
+    {
+        return _global.ScriptEngine.Module.PackInitiator.PackState.Entities.ToArray()
+                      .OfType<StandardMarker>()
+                      .Where(marker => marker.Category == category && marker.DistanceToPlayer < distance)
+                      .OrderBy(marker => marker.DistanceToPlayer)
+                      .FirstOrDefault();
+    }
+
+    public LuaTable GetMarkersWithinDistance(int quantity, float distance)
+    {
+        var nTable = new LuaTable();
+
+        foreach (var marker in _global.ScriptEngine.Module.PackInitiator.PackState.Entities.ToArray()
+                                      .OfType<StandardMarker>()
+                                      .Where(marker => marker.DistanceToPlayer < distance)
+                                      .OrderBy(marker => marker.DistanceToPlayer)
+                                      .Take(quantity))
+        {
+            nTable.Add(marker);
+        }
+
+        return nTable;
+    }
+
+    public LuaTable GetMarkersWithinDistance(PathingCategory category, int quantity, float distance)
+    {
+        var nTable = new LuaTable();
+
+        foreach (var marker in _global.ScriptEngine.Module.PackInitiator.PackState.Entities.ToArray()
+                                      .OfType<StandardMarker>()
+                                      .Where(marker => marker.Category == category && marker.DistanceToPlayer < distance)
+                                      .OrderBy(marker => marker.DistanceToPlayer)
+                                      .Take(quantity))
+        {
+            nTable.Add(marker);
+        }
+
+        return nTable;
+    }
+
     // Trails
 
     public StandardTrail TrailByGuid(string guid) {
