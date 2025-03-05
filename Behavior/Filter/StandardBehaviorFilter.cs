@@ -32,7 +32,11 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
         }
 
         public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
-            var behaviorId = (StandardPathableBehavior)attributes[PRIMARY_ATTR_NAME].GetValueAsInt(0);
+            attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute);
+            
+            if(attribute == null) return null;
+
+            var behaviorId = (StandardPathableBehavior)attribute.GetValueAsInt(0);
 
             return behaviorId > 0
                 ? new StandardBehaviorFilter(behaviorId, marker, packState)

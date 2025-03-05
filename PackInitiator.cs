@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -41,6 +41,9 @@ namespace BhModule.Community.Pathing {
         public IRootPackState PackState => _packState;
 
         private int _lastMap = -1;
+
+        public event EventHandler<EventArgs> LoadMapFromEachPackStarted;
+        public event EventHandler<EventArgs> LoadMapFromEachPackFinished;
 
         public PackInitiator(string watchPath, PathingModule module, IProgress<string> loadingIndicator) {
             _watchPath        = watchPath;
@@ -131,7 +134,7 @@ namespace BhModule.Community.Pathing {
         }
 
         public PathingCategory GetAllMarkersCategories() {
-            return _sharedPackCollection.Categories;
+            return _sharedPackCollection?.Categories;
         }
 
         public IEnumerable<ContextMenuStripItem> GetPackMenuItems() {
@@ -261,6 +264,7 @@ namespace BhModule.Community.Pathing {
 
         private async Task LoadMapFromEachPack(int mapId) {
             this.IsLoading = true;
+            this.LoadMapFromEachPackStarted?.Invoke(this, EventArgs.Empty);
 
             var loadTimer = Stopwatch.StartNew();
 
@@ -287,7 +291,9 @@ namespace BhModule.Community.Pathing {
                     var packTimer = Stopwatch.StartNew();
 
                     _loadingIndicator.Report($"Loading {pack.Pack.Name}...");
+
                     await pack.Pack.LoadMapAsync(mapId, _sharedPackCollection, _packReaderSettings);
+
                     pack.IsLoaded = true;
 
                     pack.LoadTime = packTimer.ElapsedMilliseconds;
@@ -332,6 +338,8 @@ namespace BhModule.Community.Pathing {
             _loadingIndicator.Report(null);
 
             this.IsLoading = false;
+
+            this.LoadMapFromEachPackFinished?.Invoke(this, EventArgs.Empty);
 
             Logger.Info($"Finished loading packs {string.Join(", ", packTimings.Select(p => $"{(p.Pack.ManifestedPack ? "+" : "-")}{p.Pack.Name}[{p.LoadDuration}ms]"))} in {loadTimer.ElapsedMilliseconds}ms for map {mapId}.");
         }

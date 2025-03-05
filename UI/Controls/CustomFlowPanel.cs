@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using BhModule.Community.Pathing.UI.Extensions;
 using Blish_HUD.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,6 +12,7 @@ public class CustomFlowPanel : FlowPanel
     public Scrollbar Scrollbar => this.Parent?.Children.OfType<Scrollbar>().FirstOrDefault(s => s.AssociatedContainer == this);
 
     private float _targetScrollDistance = 0f;
+    private float _scrollTarget = 0f;
 
     public float ScrollDistance
     {
@@ -22,6 +24,10 @@ public class CustomFlowPanel : FlowPanel
 
             this.Scrollbar.ScrollDistance = MathHelper.Clamp(value, 0f, 1f);
         }
+    }
+
+    public void SetTargetScrollDistance(float distance) {
+        _scrollTarget = MathHelper.Clamp(distance, 0f, 1);
     }
 
     public void SaveScrollDistance(int height)
@@ -67,6 +73,8 @@ public class CustomFlowPanel : FlowPanel
 
     private void ChangedChild_Resized(object sender, ResizedEventArgs e) {
 
+        if (e.PreviousSize.Y == e.CurrentSize.Y) return;
+
         var otherChildrenSize = Children.Where(c => c != sender)
                                     .Sum(c => c.Height);
 
@@ -87,17 +95,42 @@ public class CustomFlowPanel : FlowPanel
             UpdateScrollDistance(_targetScrollDistance);
             _targetScrollDistance = 0f;
         }
+
+        if (_scrollTarget > 0f) {
+            ScrollDistance = _scrollTarget;
+            _scrollTarget  = 0f;
+        }
     }
 
-    public void ScrollToChild(Control child)
+    public void ScrollToChild(Control child, int paddingTop) {
+        var childPosition = this.ContainsChildPosition(child);
+
+        this.ScrollToChild(childPosition - paddingTop);
+    }
+
+    public void ScrollToChild(int childYPosition)
     {
-        if (!this.CanScroll || !this.Children.Contains(child) || this.Scrollbar == null)
+        if (childYPosition == -1) return;
+
+        var scrollbar = this.Parent?.Children
+                             .OfType<Scrollbar>()
+                             .FirstOrDefault(s => s.AssociatedContainer == this);
+
+        if (scrollbar == null)
             return;
 
-        if (child.Location.Y == 0)
-            this.Scrollbar.ScrollDistance = 0f;
+        if (childYPosition == 0)
+            scrollbar.ScrollDistance = 0f;
         else
-            this.Scrollbar.ScrollDistance = (float)child.Location.Y / (float)(this.Children.Where(c => c.Visible).Max(c => c.Bottom) - this.Scrollbar.Size.Y);
+        {
+            var panelHeight = (float)this.Children.Where(c => c.Visible).Max(c => c.Bottom);
+
+            var scrollPosition = (float)childYPosition / (panelHeight - scrollbar.Height);
+
+            scrollbar.ScrollDistance = scrollPosition;
+
+            this.SetTargetScrollDistance(scrollPosition);
+        }
     }
 
     protected override void DisposeControl()

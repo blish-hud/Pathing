@@ -2,6 +2,7 @@
 using System.Linq;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Tooltips;
+using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
@@ -39,6 +40,10 @@ namespace BhModule.Community.Pathing.Entity {
 
             newMenu.AddMenuItem("Hide Parent Category").Click += delegate {
                 _packState.CategoryStates.SetInactive(pathingEntry.Category.Namespace, true);
+            };
+
+            newMenu.AddMenuItem("Open Parent Category").Click += delegate {
+                    _packState.CategoryStates.TriggerOpenCategory(pathingEntry.Category);
             };
 
             if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {

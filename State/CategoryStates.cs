@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.UI.Controls.TreeView;
+using BhModule.Community.Pathing.UI.Events;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
@@ -192,6 +194,12 @@ namespace BhModule.Community.Pathing.State {
             } else {
                 return !GetCategoryInactive(category, _rawInvertedCategories);
             }
+        }
+
+        public event EventHandler<PathingCategoryEventArgs> TriggerOpenCategoryView;
+
+        public void TriggerOpenCategory(PathingCategory category) {
+            TriggerOpenCategoryView?.Invoke(this, new PathingCategoryEventArgs(category));
         }
 
         private void SetInactive(PathingCategory category, bool isInactive, SafeList<PathingCategory> rawCategoriesList) {

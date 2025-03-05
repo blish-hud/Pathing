@@ -11,21 +11,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Container = Blish_HUD.Controls.Container;
 
-namespace BhModule.Community.Pathing.UI.Controls.TreeView
+namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 {
     public abstract class TreeNodeBase : Container
     {
         public bool DevMode = false;
 
-        public TreeView TreeView { get; protected set; }
+        public TreeView.TreeView TreeView { get; protected set; }
 
         private AsyncTexture2D _textureArrow = AsyncTexture2D.FromAssetId(155909);
 
-        public    int       NodeIndex         { get; set; }
         protected int       NodeDepth         { get; set; }
         public    bool      Expanded          { get; set; }
         public    bool      Expandable        { get; set; } = true;
-        public    bool      ExpandedByDefault { get; set; } = false;
+        public    bool      Clickable        { get; set; } = false;
         public    bool      ShowBackground    { get; set; } = true;
         public    Color     BackgroundOpaqueColor = Color.Black;
         public    float     BackgroundOpacity     = 0.3f;
@@ -37,6 +36,9 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
 
         protected float ArrowOpacity = 1f;
 
+        public bool Highlighted { get; set; }
+
+        public Color  HighlightColor = Color.LightYellow;
         public string Name { get; set; }
 
         public event EventHandler<MouseEventArgs> OnPanelClick;
@@ -49,12 +51,6 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         {
             this.Visible         =  false; //Invisible until parent is set
             this.PropertyChanged += OnPropertyChanged;
-        }
-
-        public virtual void Initialize()
-        {
-            if (this.ExpandedByDefault)
-                Expand();
         }
 
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -70,7 +66,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
 
             switch (this.Parent)
             {
-                case TreeView treeView:
+                case TreeView.TreeView treeView:
                     this.TreeView = treeView;
                     this.Visible  = true;
                     break;
@@ -86,26 +82,41 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         {
 			if (!(e.ChangedChild is TreeNodeBase newChild)) return;
 
+            this.TreeView.AddNode(newChild);
             this.ChildBaseNodes.Add(newChild);
 
 			ReflowChildLayout(this.ChildBaseNodes);
+
+            base.OnChildAdded(e);
         }
 
 		protected override void OnChildRemoved(ChildChangedEventArgs e)
         {
-            if(e.ChangedChild is TreeNodeBase newChild)
-				this.ChildBaseNodes.Remove(newChild);
+            if (e.ChangedChild is TreeNodeBase removedChild) {
+                if(this.TreeView != null)
+                    this.TreeView.RemoveNode(removedChild);
+                
+                this.ChildBaseNodes.Remove(removedChild);
+            }
 
-	        base.OnChildRemoved(e);
+            ReflowChildLayout(this.ChildBaseNodes);
+
+            base.OnChildRemoved(e);
+        }
+
+        protected override void OnRightMouseButtonPressed(MouseEventArgs e) {
+            base.OnRightMouseButtonPressed(e);
+
+            //Hack to stop parent menus from being displayed
+            if (!this.MouseOverItemDetails && this.Menu is { Visible: true })
+                this.Menu.Hide();
         }
 
         protected override void OnMouseMoved(MouseEventArgs e)
         {
-            var height = this.PanelHeight;
+            this.MouseOverItemDetails = this.RelativeMousePosition.Y <= this.PanelHeight;
 
-            this.MouseOverItemDetails = this.RelativeMousePosition.Y <= height;
-
-            if (this.MouseOverItemDetails && this.ChildBaseNodes.Any() && this.Expandable)
+            if (this.MouseOverItemDetails && (this.ChildBaseNodes.Count > 0 && this.Expandable) || this.Clickable)
                 this.EffectBehind?.Enable();
             else
                 this.EffectBehind?.Disable();
@@ -114,14 +125,15 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         }
 
         //Reposition the child container items        
-        private int ReflowChildLayout(IEnumerable<TreeNodeBase> containerChildren)
-        {
+        private int ReflowChildLayout(IEnumerable<TreeNodeBase> containerChildren) {
             var lastBottom = this.PanelHeight;
 
             foreach (var child in containerChildren)
             {
                 child.Location = new Point(this.PaddingLeft, lastBottom);
-       
+
+                child.Width = this.Width - this.PaddingLeft;
+
                 lastBottom = child.Bottom;
             }
 
@@ -154,11 +166,11 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
 
             //Have to set before recalculating below
             this.Expanded = true;
-            
+
             ShowChildren();
 
             Animate(this.ContentRegion.Bottom);
-            RecalculateParentLayout();
+            RecalculateLayout();
         }
 
         public void Collapse()
@@ -171,7 +183,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
             HideChildren();
 
             Animate(this.PanelHeight);
-            RecalculateParentLayout();
+            RecalculateLayout();
         }
 
         private void Animate(int newHeight)
@@ -211,17 +223,20 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
                 parentContainer.RecalculateLayout();
             }
 
-            if (this.Parent is TreeView list)
+            if (this.Parent is TreeView.TreeView list)
             {
                 list.RecalculateLayout();
             }
         }
 
-        private void UpdateContentRegion()
-        {
-            int bottomChild = ReflowChildLayout(this.ChildBaseNodes);
+        public void UpdateContentRegion() {
+            var nodes = this.ChildBaseNodes
+                            .Where(n => n.Visible)
+                            .ToList();
 
-            this.ContentRegion = this.ChildBaseNodes.Any()
+            int bottomChild = ReflowChildLayout(nodes);
+
+            this.ContentRegion = nodes.Any()
                                      ? new Rectangle(0, 0, this.Width, bottomChild)
                                      : new Rectangle(0, 0, this.Width,      this.PanelHeight);
 
@@ -229,6 +244,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         }
 
         public void ClearChildNodes() {
+            if (this.ChildBaseNodes.Count <= 0) return;
+
             var controlsQueue = new Queue<Control>(this.ChildBaseNodes);
 
             while (controlsQueue.Count > 0)
@@ -240,25 +257,31 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
             }
         }
 
-        protected override void OnClick(MouseEventArgs e)
-        {
+        protected override void OnClick(MouseEventArgs e) {
+            if (!this.MouseOverItemDetails) return;
+
             if (e.EventType == MouseEventType.LeftMouseButtonReleased && 
-                this.MouseOverItemDetails                             && this.ChildBaseNodes.Any() &&
+                this.MouseOverItemDetails                             && 
+                this.ChildBaseNodes.Count > 0 &&
                 this.Expandable)
             {
                 this.OnPanelClick?.Invoke(this, e);
 
                 Toggle();
-                
-                //TODO: Play sound
-                //ServiceContainer.AudioService.PlayMenuClick();
+
+                Content.PlaySoundEffectByName($"tab-swap-{RandomUtil.GetRandom(1, 5)}");
             }
+
+            base.OnClick(e);
         }
 
         public override void PaintBeforeChildren(SpriteBatch spriteBatch, Rectangle bounds)
         {
-            if (this.ShowBackground)
-                spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, this.PanelRectangle, BackgroundOpaqueColor * BackgroundOpacity);
+            if (this.ShowBackground || this.Highlighted)
+                spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, this.PanelRectangle,  BackgroundOpaqueColor * BackgroundOpacity);
+                
+            if(this.Highlighted)
+                DrawFrame(spriteBatch);
 
             if (this.Expandable)
                 DrawArrow(spriteBatch);
@@ -278,6 +301,23 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
                 Color.White * ArrowOpacity,
                 this.ArrowRotation,
                 new Vector2((float)8, (float)16));
+        }
+
+
+        private void DrawFrame(SpriteBatch spriteBatch)
+        {
+            //Draw outline
+            var lineColor = HighlightColor * 0.5f;
+
+            var lineSize = 2;
+
+            //Horizontal
+            spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(this.PanelRectangle.X, 0,                           this.PanelRectangle.Width, lineSize), lineColor);
+            spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(this.PanelRectangle.X, this.PanelHeight - lineSize, this.PanelRectangle.Width,      lineSize), lineColor);
+
+            //Vertical
+            spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(0, 0, lineSize, this.PanelRectangle.Height + (lineSize * 2)), lineColor);
+            spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(this.PanelRectangle.Width                  - lineSize, 0, lineSize, this.PanelHeight), lineColor);
         }
 
         protected override void DisposeControl()

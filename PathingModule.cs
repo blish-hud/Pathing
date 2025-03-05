@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Scripting;
 using BhModule.Community.Pathing.Scripting.Console;
+using BhModule.Community.Pathing.UI.Controls.TreeView;
+using BhModule.Community.Pathing.UI.Events;
 using BhModule.Community.Pathing.UI.Views;
 using Blish_HUD.Controls;
 using Blish_HUD.Entities;
@@ -45,7 +47,8 @@ namespace BhModule.Community.Pathing {
 
         private bool _packsLoading = false;
 
-        public Tab MarkerTreeTab { get; private set; }
+        public CategoryTreeView CategoryTreeView { get; private set; }
+        public Tab CategoryTreeTab { get; private set; }
         public Tab PackSettingsTab { get; private set; }
         public Tab MapSettingsTab { get; private set; }
         public Tab KeybindSettingsTab { get; private set; }
@@ -129,14 +132,15 @@ namespace BhModule.Community.Pathing {
                 SavesPosition = true,
             };
 
-            MarkerTreeTab      = new Tab(AsyncTexture2D.FromAssetId(1654244),                  () => new MarkerTreeView(this),                        "Marker Tree View");
-            PackSettingsTab    = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(this.Settings.PackSettings),    Strings.Window_MainSettingsTab);
-            MapSettingsTab     = new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(this.Settings.MapSettings),     Strings.Window_MapSettingsTab);
-            ScriptSettingsTab  = new Tab(AsyncTexture2D.FromAssetId(156701),                   () => new SettingsView(this.Settings.ScriptSettings),  "Script Options");
-            KeybindSettingsTab = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(this.Settings.KeyBindSettings), Strings.Window_KeyBindSettingsTab);
-            MarkerRepoTab      = new Tab(AsyncTexture2D.FromAssetId(156909),                   () => new PackRepoView(this),                          Strings.Window_DownloadMarkerPacks);
+            this.CategoryTreeView = new CategoryTreeView(this);
+            this.CategoryTreeTab  = new Tab(AsyncTexture2D.FromAssetId(1654244),                  () => this.CategoryTreeView,                           "Marker Tree View");
+            PackSettingsTab       = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(this.Settings.PackSettings),    Strings.Window_MainSettingsTab);
+            MapSettingsTab        = new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(this.Settings.MapSettings),     Strings.Window_MapSettingsTab);
+            ScriptSettingsTab     = new Tab(AsyncTexture2D.FromAssetId(156701),                   () => new SettingsView(this.Settings.ScriptSettings),  "Script Options");
+            KeybindSettingsTab    = new Tab(ContentsManager.GetTexture(@"png\156734+155150.png"), () => new SettingsView(this.Settings.KeyBindSettings), Strings.Window_KeyBindSettingsTab);
+            MarkerRepoTab         = new Tab(AsyncTexture2D.FromAssetId(156909),                   () => new PackRepoView(this),                          Strings.Window_DownloadMarkerPacks);
 
-            SettingsWindow.Tabs.Add(MarkerTreeTab);
+            SettingsWindow.Tabs.Add(this.CategoryTreeTab);
             SettingsWindow.Tabs.Add(PackSettingsTab);
             SettingsWindow.Tabs.Add(MapSettingsTab);
             SettingsWindow.Tabs.Add(ScriptSettingsTab);
@@ -198,8 +202,21 @@ namespace BhModule.Community.Pathing {
             this.PackInitiator  = new PackInitiator(DirectoriesManager.GetFullDirectoryPath("markers"), this, GetModuleProgressHandler());
             await this.PackInitiator.Init();
 
+            this.PackInitiator.PackState.CategoryStates.TriggerOpenCategoryView += CategoryStatesOnTriggerOpenCategoryView;
+
             sw.Stop();
             Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading Pathing module...");
+        }
+
+        private void CategoryStatesOnTriggerOpenCategoryView(object sender, PathingCategoryEventArgs e) {
+            if (SettingsWindow.SelectedTab != this.CategoryTreeTab) {
+                this.CategoryTreeView.TargetCategory = e.Category;
+                SettingsWindow.SelectedTab    = this.CategoryTreeTab;
+            }
+            else {
+                this.CategoryTreeView.NavigateToCategory(e.Category);
+            }
+            SettingsWindow.Show();
         }
 
         public override IView GetSettingsView() {
