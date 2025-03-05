@@ -1,22 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using BhModule.Community.Pathing.Behavior.Modifier;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
+using BhModule.Community.Pathing.UI.Models;
 using BhModule.Community.Pathing.UI.Tooltips;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
-using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using TmfLib.Pathable;
+using Label = Blish_HUD.Controls.Label;
+using MouseEventArgs = Blish_HUD.Input.MouseEventArgs;
+using Panel = Blish_HUD.Controls.Panel;
 
 namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 {
     public class PathingCategoryNode : PathingNode
     {
+        private bool _active = true;
+
+        public bool Active
+        {
+            get => _active;
+            set
+            {
+                if (SetProperty(ref _active, value))
+                {
+                    UpdateChildrenActiveState();
+                    UpdateLabelActiveState();
+                }
+            }
+        }
+
         private readonly IPackState      _packState;
         public           PathingCategory PathingCategory { get; }
 
@@ -24,7 +45,9 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 
         private readonly bool _forceShowAll = false;
 
-        private readonly int _achievementId;
+        private int _achievementId;
+        private int _achievementBit;
+        private bool _achievementHidden;
 
         public bool IsSearchResult { get; init; }
 
@@ -51,12 +74,13 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 }
             }
 
-            if (this.PathingCategory.TryGetAchievementId(out var achievementId)) 
-                _achievementId = achievementId;
-            
-            if (this.Checkable) 
+            DetectAndBuildContexts();
+
+            if (this.Checkable) {
                 this.Checked = !_packState.CategoryStates.GetCategoryInactive(pathingCategory);
-            
+                UpdateActiveState(this.Checked);
+            }
+                
             this.CheckedChanged += CheckboxOnCheckedChanged;
         }
 
@@ -64,15 +88,28 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             //Set icon before base build
             IconPaddingTop = 4;
 
+            var iconTextures = new List<PathingTexture>(new List<PathingTexture>()
+            {
+                new PathingTexture() {
+                    Icon = AsyncTexture2D.FromAssetId(255302)
+                }
+            });
+            
             if (PathingCategory.IsSeparator) {
-                Icon           = AsyncTexture2D.FromAssetId(255302);
+                IconTextures   = iconTextures;
                 IconSize       = new Point(25, 25);
                 IconPaddingTop = 8;
+            } else {
+                IconTextures = GetEntityTextures().ToList();
             }
-            else
-                Icon        = GetIconFile();
+
+            //Tooltip has to be set before base build
+            BuildTooltip();
 
             base.Build();
+
+            //Update label based on active state after building the label
+            UpdateLabelActiveState();
 
             //Details
             BuildAchievementTexture();
@@ -80,6 +117,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             //Properties
             BuildEntityCount();
 
+            //Context menu
             if(this.Menu != null)
                 BuildContextMenu();
         }
@@ -87,15 +125,25 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         private void BuildAchievementTexture() {
             if (_achievementId <= 0) return;
 
-            this.PathingCategory.TryGetAchievementBit(out var achievementBit);
-
-            _ = new Image(AsyncTexture2D.FromAssetId(155062))
+            var achievementIconContainer = new Panel
             {
-                Parent  = _propertiesPanel,
-                Size    = new Point(this.Height - 5, this.Height - 5),
-                Top     = 2,
-                Tooltip = new Tooltip(new AchievementTooltipView(_achievementId, achievementBit)),
+                Parent = _propertiesPanel,
+                Size   = new Point(30, this.Height)
             };
+
+            var tooltipIcon = new Image(AsyncTexture2D.FromAssetId(155062))
+            {
+                Parent  = achievementIconContainer,
+                Size    = new Point(35, 35),
+                Top     = 2,
+                
+            };
+
+            if (_packState.UserConfiguration.PackShowTooltipsOnAchievements.Value) {
+                tooltipIcon.Tooltip = new Tooltip(new AchievementTooltipView(_achievementId, _achievementBit));
+            } else {
+                tooltipIcon.BasicTooltipText = "Achievement tooltips have been disabled in the settings: Pathing Module Settings > Marker Options > Show Tooltips for Achievements";
+            }
         }
 
         private void BuildEntityCount() {
@@ -109,7 +157,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                         Height           = this.PanelHeight,
                         AutoSizeWidth    = true,
                         Font             = GameService.Content.DefaultFont16,
-                        TextColor        = Color.Orange,
+                        TextColor        = StandardColors.Yellow,
                         StrokeText       = true,
                         BasicTooltipText = "No markers or trails have been loaded for this category, likely because there are none for the current map."
                     };
@@ -149,10 +197,18 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                     Height = this.PanelHeight,
                     AutoSizeWidth = true,
                     Font = GameService.Content.DefaultFont16,
-                    TextColor = Color.LightGreen,
+                    TextColor = Color.LightYellow,
                     StrokeText = true,
                     BasicTooltipText = this.BasicTooltipText
                 };
+            }
+        }
+
+        private void BuildTooltip() {
+            //Note: Tip name is not displayed at the moment
+            if (PathingCategory.ExplicitAttributes.TryGetAttribute("tip-description", out var descriptionAttr))
+            {
+                this.BasicTooltipText = descriptionAttr.Value;
             }
         }
 
@@ -211,6 +267,61 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             if (this.Enabled && !this.PathingCategory.IsSeparator)
             {
                 _packState.CategoryStates.SetInactive(this.PathingCategory, !e.Checked);
+            }
+
+            UpdateActiveState(e.Checked);
+
+            if (!ParentIsActive() && e.Checked)
+            {
+                ScreenNotification.ShowNotification("One or more of the parent categories are inactive.",
+                                                    ScreenNotification.NotificationType.Warning,
+                                                    null,
+                                                    2);
+            }
+        }
+
+        public void UpdateActiveState(bool active) {
+            Active = active && ParentIsActive();
+
+            //De-activated if achievement is completed
+            if (this.Active && this._achievementHidden && _packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
+                this.Active = false;
+            }
+        }
+
+        public bool ParentIsActive() {
+            if (this.Parent is PathingCategoryNode parentNode) {
+                return Checked && parentNode.ParentIsActive();
+            } 
+                
+            return this.PathingCategory.ParentIsActive(_packState);
+        }
+
+        private void UpdateChildrenActiveState()
+        {
+            foreach (var child in this.ChildBaseNodes
+                                      .OfType<PathingCategoryNode>()
+                                      .Where(n => n.Checkable))
+            {
+                child.UpdateActiveState(child.Checked);
+            }
+        }
+
+        protected override void OnParentChanged()
+        {
+            base.OnParentChanged();
+
+            if(Checkable)
+                UpdateActiveState(Checked);
+        }
+
+        public void UpdateLabelActiveState()
+        {
+            if (LabelControl != null)
+            {
+                LabelControl.TextColor  = this.Active ? this.TextColor : Color.LightGray * 0.7f;
+                LabelControl.StrokeText = this.Active;
+                LabelControl.ShowShadow = !this.Active;
             }
         }
 
@@ -273,14 +384,26 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             AddSubNodes(true);
         }
 
-        private AsyncTexture2D GetIconFile() {
-            return _entities.FirstOrDefault() switch {
-                null => null,
-                StandardMarker marker => marker.Texture,
-                StandardTrail trail => trail.Texture,
-                _ => null
-            };
+        private IEnumerable<PathingTexture> GetEntityTextures() {
+            var uniqueTextures = new HashSet<Texture2D>();
 
+            return _entities
+                  .Select(e => e switch {
+                       StandardMarker marker => new PathingTexture { Icon = marker.Texture, Tint = marker.Tint },
+                       StandardTrail trail => new PathingTexture { Icon   = trail.Texture, Tint  = trail.Tint },
+                       _ => null
+                   })
+                  .Where(pt => pt != null && uniqueTextures.Add(pt.Icon.Texture));
+        }
+
+        private void DetectAndBuildContexts() {
+            this.PathingCategory.TryGetAchievementId(out _achievementId);
+            this.PathingCategory.TryGetAchievementBit(out _achievementBit);
+
+            _achievementHidden = _packState.AchievementStates.IsAchievementHidden(_achievementId, _achievementBit);
+
+            if (_achievementHidden) 
+                CheckDisabled = true;
         }
 
         //private void DetectAndBuildContexts()

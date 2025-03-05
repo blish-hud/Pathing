@@ -3,11 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
+using BhModule.Community.Pathing.UI.Controls.TreeNodes;
 using Blish_HUD;
 using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.Utility {
     public static class CategoryUtil {
+
+        public static bool ParentIsActive(this PathingCategory category, IPackState packState)
+        {
+            var active = !packState.CategoryStates.GetCategoryInactive(category);
+
+            if (category.Parent != null)
+            {
+                return active && category.Parent.ParentIsActive(packState);
+            }
+
+            //Return true if parent is not a node
+            return active;
+        }
+
         public static IEnumerable<PathingCategory> FlattenCategories(PathingCategory category)
         {
             yield return category;

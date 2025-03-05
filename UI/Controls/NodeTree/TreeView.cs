@@ -67,22 +67,28 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         }
 
         public override void RecalculateLayout() {
-            ReflowChildLayout(ChildBaseNodes);
-
+            try {
+                ReflowChildLayout(ChildBaseNodes);
+            } catch (Exception _) {
+                //Investigate why collection is sometimes modified during reflow
+            }
+           
             base.RecalculateLayout();
         }
 
-        private int ReflowChildLayout(IEnumerable<TreeNodeBase> containerChildren)
+        private int ReflowChildLayout(IList<TreeNodeBase> containerChildren)
         {
             var lastBottom =  0;
 
-            foreach (var child in containerChildren.Where(c => c.Visible))
+            var children = containerChildren.Where(c => c.Visible).ToList();
+
+            foreach (var child in children)
             {
                 child.Location = new Point(0, lastBottom);
 
                 lastBottom = child.Bottom;
             }
-
+            
             return lastBottom;
         }
 
@@ -171,7 +177,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
 
             LabelNode showAllSkippedCategories = null;
 
-            if (skipped > 0) {
+            if (skipped > 0 && packState.UserConfiguration.PackShowWhenCategoriesAreFiltered.Value) {
                 showAllSkippedCategories = new LabelNode($"{skipped} hidden (click to show)", AsyncTexture2D.FromAssetId(358463))
                 {
                     Clickable        = true,
@@ -197,7 +203,9 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
             return showAllSkippedCategories;
         }
         public void NavigateToPath(string path) {
-            PathingCategoryNode currentNode = null;
+            if(_rootNode == null) return;
+
+            PathingCategoryNode currentNode = _rootNode;
 
             RemoveNodeHighlights();
             var splitPath = path.Split('.');
@@ -209,13 +217,13 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
             foreach (var item in pathItemsWithIndex) {
                 if (string.IsNullOrWhiteSpace(item.pathItem)) continue;
 
-                var categoryResult = (currentNode ?? _rootNode)?
+                var categoryResult = currentNode
                                      .PathingCategory?
                                      .FirstOrDefault(n => !string.IsNullOrWhiteSpace(n?.Name) && n.Name.Equals(item.pathItem));
 
                 if (categoryResult == null) return;
 
-                var baseNodes = currentNode?.ChildBaseNodes ?? _rootNode?.ChildBaseNodes;
+                var baseNodes = currentNode.ChildBaseNodes ?? _rootNode?.ChildBaseNodes;
 
                 if (baseNodes == null) 
                     return;
@@ -238,23 +246,23 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
             if (currentNode == null) return;
 
             currentNode.Highlighted = true;
-            ScrollToChildControl    = currentNode;
+            _scrollToChildControl    = currentNode;
 
-            if (ScrollToChildControl != null && this.Parent is CustomFlowPanel parentPanel)
+            if (_scrollToChildControl != null && this.Parent is CustomFlowPanel parentPanel)
             {
-                parentPanel.ScrollToChild(ScrollToChildControl, ScrollToChildControl.Height);
+                parentPanel.ScrollToChild(_scrollToChildControl, _scrollToChildControl.Height);
             }
         }
 
-        private Control ScrollToChildControl = null;
+        private Control _scrollToChildControl = null;
 
         protected override void OnResized(ResizedEventArgs e) {
             base.OnResized(e);
 
-            if (ScrollToChildControl != null && this.Parent is CustomFlowPanel parentPanel)
+            if (_scrollToChildControl != null && this.Parent is CustomFlowPanel parentPanel)
             {
-                parentPanel.ScrollToChild(ScrollToChildControl, ScrollToChildControl.Height);
-                ScrollToChildControl = null;
+                parentPanel.ScrollToChild(_scrollToChildControl, _scrollToChildControl.Height);
+                _scrollToChildControl = null;
             }
         }
     }

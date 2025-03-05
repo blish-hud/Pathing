@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BhModule.Community.Pathing.State;
+using BhModule.Community.Pathing.UI.Models;
 using BhModule.Community.Pathing.UI.Tooltips;
 using BhModule.Community.Pathing.UI.Views;
 using Blish_HUD;
@@ -10,62 +12,49 @@ using Blish_HUD.Controls.Effects;
 using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using YamlDotNet.Core.Tokens;
 
 namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 {
+
     public abstract class PathingNode : TreeNodeBase
     {
         protected Image IconControl;
         protected Label LabelControl;
 
+        protected FlowPanel _detailsPanel;
+
+        protected FlowPanel _propertiesPanel;
+
         private Color _textColor = Color.White;
 
         public Color TextColor
         {
-            get => this.Active ? _textColor : _textColor * 0.7f;
+            get => _textColor;
             set {
                 if (!SetProperty(ref _textColor, value) || LabelControl == null) return;
                
                 LabelControl.TextColor = _textColor;
-
-                if (IconControl != null)
-                    IconControl.Tint = _textColor;
-                
             }
         }
 
-        protected AsyncTexture2D Icon;
+        protected List<PathingTexture> IconTextures = new List<PathingTexture>();
 
         protected int IconPaddingTop = 0;
 
         protected Point IconSize = new Point(30, 30);
 
         private bool _checkable;
-        protected bool Checkable {
+        public bool Checkable {
             get => _checkable;
             set {
                 if (!SetProperty(ref _checkable, value)) return;
 
                 if (value) {
-                    //this.Active = true;
                     this._checkbox?.Show();
                 }
                 else {
                     this._checkbox?.Hide();
-                }
-            }
-        }
-
-        private bool _active = true;
-
-        public bool Active
-        {
-            get => _active;
-            set
-            {
-                if (SetProperty(ref _active, value)) {
-                    UpdateChildrenActiveState();
-                    UpdateLabelTextColor();
                 }
             }
         }
@@ -78,12 +67,12 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             set {
                 if (SetProperty(ref _checked, value) && this._checkbox != null)
                     this._checkbox.Checked = value;
-
-                UpdateActiveState();
             }
         }
 
-        private Checkbox _checkbox;
+        protected bool CheckDisabled = false;
+
+        protected Checkbox _checkbox;
 
         private bool _built = false;
 
@@ -115,8 +104,6 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             _built = true;
         }
 
-
-        protected FlowPanel _detailsPanel;
         private void BuildDetailsPanel()
         {
             if (_detailsPanel != null) throw new InvalidOperationException("Requirements panel already exists.");
@@ -125,15 +112,15 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             {
                 Parent         = this,
                 FlowDirection  = ControlFlowDirection.LeftToRight,
-                Size           = new Point(this.ContentRegion.Width - 300, this.PanelHeight),
+                Size           = new Point(this.ContentRegion.Width - 220, this.PanelHeight),
                 Location       = new Point(28, 1),
                 ControlPadding = new Vector2(5, 0),
                 CanScroll      = false,
+                Tooltip = this.Tooltip,
                 ShowTint       = DevMode
             };
         }
 
-        protected FlowPanel _propertiesPanel;
         private void BuildPropertiesPanel()
         {
             if (_propertiesPanel != null) throw new InvalidOperationException("Requirements panel already exists.");
@@ -160,55 +147,84 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         protected override void OnParentChanged() {
             base.OnParentChanged();
 
-            UpdateActiveState();
+            if (Parent is PathingNode parentNode && !CheckDisabled) 
+                CheckDisabled = parentNode.CheckDisabled;
         }
 
         private void BuildIcon() {
-            if (Icon == null) return;
+            if (IconTextures.Count <= 0) return;
 
-            var tooltip = new Tooltip(new EntityTextureTooltip(Icon));
-
-            var iconContainer = new Panel() {
+            var iconContainer = new Panel {
                 Parent  = _detailsPanel,
-                Size    = new Point(IconSize.X, this.Height),
-                Tooltip = tooltip
+                Size    = new Point(IconSize.X * IconTextures.Count + 5, this.Height),
+                Tooltip = IconTextures.Count > 0 ? new Tooltip(new EntityTextureTooltip(IconTextures)) : null
             };
 
-            IconControl = new Image(Icon)
-            {
-                Parent  = iconContainer,
-                Top     = IconPaddingTop,
-                Size    = IconSize,
-                Tint    = TextColor,
-                Tooltip = tooltip
-            };
+            var leftPos = 0;
+
+            foreach (var item in IconTextures) {
+                _ = new Image(item.Icon)
+                {
+                    Top  = IconPaddingTop,
+                    Left = leftPos,
+                    Size = IconSize,
+                    Tint = item.Tint,
+                    Tooltip = iconContainer.Tooltip,
+                    Parent  = iconContainer
+                };
+
+                leftPos += IconSize.X;
+            }
         }
 
-        private void UpdateActiveState() {
-            //if (!this.Checkable) {
-            //    this.Active = true;
-            //    return;
-            //}
-            
-            //if (this.Parent is PathingNode parentNode)
-            //    this.Active = this.Checked && parentNode.Active;
-            //else
-            //    this.Active = this.Checked;
-        }
+        //public virtual void UpdateActiveState(bool? active = null)
+        //{
+        //    if (!this.Checkable)
+        //    {
+        //        this.Active = true;
+        //        return;
+        //    }
 
-        private void UpdateChildrenActiveState() {
-            //foreach (var child in this.ChildBaseNodes
-            //                          .OfType<PathingNode>()
-            //                          .Where(n => n.Checkable))
-            //{
-            //    child.UpdateActiveState();
-            //}
-        }
+        //    if (this.Parent is PathingNode parentNode)
+        //        this.Active = this.Checked && parentNode.Active;
+        //    else
+        //        this.Active = this.Checked;
+        //}
 
-        public void UpdateLabelTextColor() {
-            if (LabelControl != null)
-                LabelControl.TextColor = this.TextColor;
-        }
+        //private void UpdateChildrenActiveState()
+        //{
+        //    foreach (var child in this.ChildBaseNodes
+        //                              .OfType<PathingNode>()
+        //                              .Where(n => n.Checkable))
+        //    {
+        //        child.UpdateActiveState();
+        //    }
+        //}
+
+        //protected virtual void UpdateActiveState() {
+        //    if (!this.Checkable)
+        //    {
+        //        this.Active = true;
+        //        return;
+        //    }
+
+        //    if (this.Parent is PathingNode parentNode)
+        //        this.Active = this.Checked && parentNode.Active;
+        //    else
+        //        this.Active = this.Checked;
+        //}
+
+        //private void UpdateChildrenActiveState()
+        //{
+        //    foreach (var child in this.ChildBaseNodes
+        //                              .OfType<PathingNode>()
+        //                              .Where(n => n.Checkable))
+        //    {
+        //        child.UpdateActiveState();
+        //    }
+        //}
+
+
 
         private void BuildNameLabel()
         {
@@ -219,7 +235,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 Parent           = _detailsPanel,
                 Text             = this.Name,
                 Height           = this.PanelHeight,
-                Width            = _detailsPanel.Width - 100,
+                Width            = _detailsPanel.Width - 60 - (IconTextures.Count * IconSize.X),
                 Font             = GameService.Content.DefaultFont16,
                 TextColor        = this.TextColor,
                 WrapText         = true,
@@ -240,15 +256,25 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 Size   = new Point(this.PanelHeight / 2 + 5, this.PanelHeight),
             };
 
-            this._checkbox = new Checkbox
-            {
-                Parent  = checkboxContainer,
-                Left    = 5,
-                Size    = new Point(this.PanelHeight, this.PanelHeight),
-                Checked = this.Checked
-            };
+            if (!CheckDisabled) {
+                this._checkbox = new Checkbox
+                {
+                    Parent  = checkboxContainer,
+                    Left    = 5,
+                    Size    = new Point(this.PanelHeight, this.PanelHeight),
+                    Checked = this.Checked,
+                };
 
-            this._checkbox.CheckedChanged += CheckboxOnCheckedChanged;
+                this._checkbox.CheckedChanged += CheckboxOnCheckedChanged;
+            } else {
+                _ = new Image(AsyncTexture2D.FromAssetId(255218))
+                {
+                    Parent           = checkboxContainer,
+                    Size             = new Point(30, 30),
+                    Top              = 4,
+                    BasicTooltipText = "Completed",
+                };
+            }
         }
 
         private void CheckboxOnCheckedChanged(object sender, CheckChangedEvent e) {

@@ -1,4 +1,6 @@
-﻿using Blish_HUD.Content;
+﻿using System.Collections.Generic;
+using BhModule.Community.Pathing.UI.Models;
+using Blish_HUD.Content;
 using Microsoft.Xna.Framework;
 
 namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
@@ -9,7 +11,12 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         {
             IconPaddingTop = 2;
             IconSize       = new Point(25, 25);
-            Icon           = icon;
+
+            IconTextures = [
+                new PathingTexture() {
+                    Icon = icon
+                }
+            ];
 
             this.ShowBackground   = true;
             this.PanelHeight      = 30;

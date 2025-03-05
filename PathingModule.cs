@@ -133,7 +133,7 @@ namespace BhModule.Community.Pathing {
             };
 
             this.CategoryTreeView = new CategoryTreeView(this);
-            this.CategoryTreeTab  = new Tab(AsyncTexture2D.FromAssetId(1654244),                  () => this.CategoryTreeView,                           "Marker Tree View");
+            this.CategoryTreeTab  = new Tab(AsyncTexture2D.FromAssetId(1654244),                  () => this.CategoryTreeView,                           "Category Explorer");
             PackSettingsTab       = new Tab(ContentsManager.GetTexture(@"png\156740+155150.png"), () => new SettingsView(this.Settings.PackSettings),    Strings.Window_MainSettingsTab);
             MapSettingsTab        = new Tab(ContentsManager.GetTexture(@"png\157123+155150.png"), () => new SettingsView(this.Settings.MapSettings),     Strings.Window_MapSettingsTab);
             ScriptSettingsTab     = new Tab(AsyncTexture2D.FromAssetId(156701),                   () => new SettingsView(this.Settings.ScriptSettings),  "Script Options");

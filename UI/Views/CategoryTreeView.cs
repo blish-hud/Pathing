@@ -81,6 +81,8 @@ namespace BhModule.Community.Pathing.UI.Views {
             };
 
             this.TreeView.NodeLoadingStarted += (_, _) => {
+                _cancellationTokenSource?.Cancel();
+
                 SetLoading(true);
                 ResetSearch();
             };
@@ -97,7 +99,11 @@ namespace BhModule.Community.Pathing.UI.Views {
 
         private void SearchBoxTextChanged(object sender, EventArgs e) {
             if (Presenter is CategoryTreePresenter presenter) {
+                _cancellationTokenSource?.Cancel();
+                _cancellationTokenSource = new CancellationTokenSource();
+
                 TreeView.RemoveNodeHighlights();
+                _searchStatusLabel.Visible = false;
 
                 if (_searchBox.Text.StartsWith(".")) {
                     TreeView.NavigateToPath(_searchBox.Text);
@@ -111,9 +117,6 @@ namespace BhModule.Community.Pathing.UI.Views {
 
                     return;
                 }
-
-                _cancellationTokenSource?.Cancel();
-                _cancellationTokenSource   = new CancellationTokenSource();
 
                 TreeView.ClearChildNodes();
                 SetLoading(true);
@@ -129,12 +132,13 @@ namespace BhModule.Community.Pathing.UI.Views {
         }
 
         public void NavigateToCategory(PathingCategory category) {
+            ResetSearch();
+
+            this.TreeView?.LoadNodes();
             this.TreeView?.NavigateToPath(category.GetPath());
         }
 
         private static readonly SemaphoreSlim _searchSemaphore = new SemaphoreSlim(1, 1); // Limit to 1 concurrent search
-
-        private bool _forceShowAll;
 
         private async Task ExecuteSearch(string input, CancellationToken cancellationToken, bool forceShowAll = false) {
             await _searchSemaphore.WaitAsync(cancellationToken);
@@ -146,8 +150,6 @@ namespace BhModule.Community.Pathing.UI.Views {
                 await Task.Delay(200, cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
-
-                _forceShowAll = forceShowAll;
 
                 var searchResult = await TreeView.SearchAsync(input, cancellationToken, forceShowAll);
 

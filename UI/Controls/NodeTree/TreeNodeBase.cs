@@ -82,8 +82,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         {
 			if (!(e.ChangedChild is TreeNodeBase newChild)) return;
 
-            this.TreeView.AddNode(newChild);
-            this.ChildBaseNodes.Add(newChild);
+            this.TreeView?.AddNode(newChild);
+            this.ChildBaseNodes?.Add(newChild);
 
 			ReflowChildLayout(this.ChildBaseNodes);
 

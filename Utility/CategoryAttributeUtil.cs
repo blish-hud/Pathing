@@ -1,14 +1,8 @@
 ﻿using BhModule.Community.Pathing.Behavior.Filter;
 using Blish_HUD;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BhModule.Community.Pathing.Behavior.Modifier;
 using TmfLib.Pathable;
 using TmfLib.Prototype;
-using BhModule.Community.Pathing.State;
 
 namespace BhModule.Community.Pathing.Utility
 {
