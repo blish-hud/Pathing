@@ -61,7 +61,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 
         private bool _checked;
 
-        protected bool Checked
+        public bool Checked
         {
             get => _checked;
             set {

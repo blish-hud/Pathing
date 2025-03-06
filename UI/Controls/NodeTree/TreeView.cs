@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.XPath;
@@ -18,14 +19,14 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
 {
     public class TreeView : Container
     {
-        public PackInitiator PackInitiator { get; set; }
-
-        public IList<TreeNodeBase> AllBaseNodes { get; } = new List<TreeNodeBase>();
-        public IList<TreeNodeBase> ChildBaseNodes { get; } = new List<TreeNodeBase>();
-
-        private IList<PathingCategory> AllCategories { get; set; } = new List<PathingCategory>();
+        private Control _scrollToChildControl = null;
 
         private PathingCategoryNode _rootNode;
+
+        public PackInitiator PackInitiator { get; set; }
+        public IList<TreeNodeBase> AllBaseNodes { get; } = new List<TreeNodeBase>();
+        public IList<TreeNodeBase> ChildBaseNodes { get; } = new List<TreeNodeBase>();
+        private IList<PathingCategory> AllCategories { get; set; } = new List<PathingCategory>();
 
         public event EventHandler<EventArgs> NodeLoadingStarted;
         public event EventHandler<EventArgs> NodesLoadedFinished;
@@ -254,7 +255,15 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
             }
         }
 
-        private Control _scrollToChildControl = null;
+        public void UpdateCheckedState(PathingCategory category, bool active) {
+            var node = AllBaseNodes
+                      .OfType<PathingCategoryNode>()
+                      .FirstOrDefault(n => n.PathingCategory == category);
+
+            if (node != null) {
+                node.Checked = active;
+            }
+        }
 
         protected override void OnResized(ResizedEventArgs e) {
             base.OnResized(e);

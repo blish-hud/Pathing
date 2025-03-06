@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BhModule.Community.Pathing.UI.Controls.TreeView;
+using BhModule.Community.Pathing.UI.Events;
 using BhModule.Community.Pathing.UI.Views;
 using BhModule.Community.Pathing.Utility;
-using Blish_HUD;
 using Blish_HUD.Graphics.UI;
 
 namespace BhModule.Community.Pathing.UI.Presenter {
@@ -34,9 +33,14 @@ namespace BhModule.Community.Pathing.UI.Presenter {
         private void Initialize() {
             this.View.TreeView.PackInitiator = _module.PackInitiator;
 
-            _module.PackInitiator.LoadMapFromEachPackStarted += PackInitiatorOnLoadMapFromEachPackStarted;
-            _module.PackInitiator.LoadMapFromEachPackFinished += PackInitiatorOnLoadMapFromEachPackFinished;
-            _isEventSubscribed                                 =  true;
+            _module.PackInitiator.LoadMapFromEachPackStarted                       += PackInitiatorOnLoadMapFromEachPackStarted;
+            _module.PackInitiator.LoadMapFromEachPackFinished                      += PackInitiatorOnLoadMapFromEachPackFinished;
+            _module.PackInitiator.PackState.CategoryStates.CategoryInactiveChanged += CategoryStatesOnCategoryInactiveChanged;
+            _isEventSubscribed                                                     =  true;
+        }
+
+        private void CategoryStatesOnCategoryInactiveChanged(object sender, PathingCategoryEventArgs e) {
+            this.View.TreeView?.UpdateCheckedState(e.Category, e.Active);
         }
 
         private void PackInitiatorOnLoadMapFromEachPackStarted(object sender, EventArgs e) {
@@ -73,10 +77,12 @@ namespace BhModule.Community.Pathing.UI.Presenter {
         }
 
         protected override void Unload() {
-            _module.ModuleLoaded                              -= _module_ModuleLoaded;
-            _module.PackInitiator.LoadMapFromEachPackStarted  -= PackInitiatorOnLoadMapFromEachPackStarted;
-            _module.PackInitiator.LoadMapFromEachPackFinished -= PackInitiatorOnLoadMapFromEachPackFinished;
-            _isEventSubscribed                                =  false;
+            _module.ModuleLoaded                                                   -= _module_ModuleLoaded;
+            _module.PackInitiator.LoadMapFromEachPackStarted                       -= PackInitiatorOnLoadMapFromEachPackStarted;
+            _module.PackInitiator.LoadMapFromEachPackFinished                      -= PackInitiatorOnLoadMapFromEachPackFinished;
+            _module.PackInitiator.PackState.CategoryStates.CategoryInactiveChanged -= CategoryStatesOnCategoryInactiveChanged;
+
+            _isEventSubscribed =  false;
 
             base.Unload();
         }

@@ -34,6 +34,8 @@ namespace BhModule.Community.Pathing.State {
         private bool _stateDirty       = false;
         private bool _calculationDirty = false;
 
+        public event EventHandler<PathingCategoryEventArgs> CategoryInactiveChanged;
+
         public CategoryStates(IRootPackState packState) : base(packState) { /* NOOP */ }
 
         private async Task LoadCategoryState(string stateFileName, SafeList<PathingCategory> rawCategoriesList, PathingCategory rootCategory) {
@@ -203,11 +205,18 @@ namespace BhModule.Community.Pathing.State {
         }
 
         private void SetInactive(PathingCategory category, bool isInactive, SafeList<PathingCategory> rawCategoriesList) {
-            rawCategoriesList.Remove(category);
+            var alreadyInactive = rawCategoriesList.Contains(category);
+            
+            if(alreadyInactive)
+                rawCategoriesList.Remove(category);
 
             if (isInactive) {
                 rawCategoriesList.Add(category);
             }
+
+            //Trigger event when inactive state has changed
+            if(alreadyInactive != isInactive)
+                CategoryInactiveChanged?.Invoke(this, new PathingCategoryEventArgs(category){ Active = !isInactive});
 
             _stateDirty       = true; // Ensure that we save the new state.
             _calculationDirty = true; // Ensure that the hashset is recalculated.

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
-using BhModule.Community.Pathing.UI.Controls.TreeNodes;
 using Blish_HUD;
 using TmfLib.Pathable;
 
