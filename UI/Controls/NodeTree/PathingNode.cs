@@ -177,55 +177,6 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             }
         }
 
-        //public virtual void UpdateActiveState(bool? active = null)
-        //{
-        //    if (!this.Checkable)
-        //    {
-        //        this.Active = true;
-        //        return;
-        //    }
-
-        //    if (this.Parent is PathingNode parentNode)
-        //        this.Active = this.Checked && parentNode.Active;
-        //    else
-        //        this.Active = this.Checked;
-        //}
-
-        //private void UpdateChildrenActiveState()
-        //{
-        //    foreach (var child in this.ChildBaseNodes
-        //                              .OfType<PathingNode>()
-        //                              .Where(n => n.Checkable))
-        //    {
-        //        child.UpdateActiveState();
-        //    }
-        //}
-
-        //protected virtual void UpdateActiveState() {
-        //    if (!this.Checkable)
-        //    {
-        //        this.Active = true;
-        //        return;
-        //    }
-
-        //    if (this.Parent is PathingNode parentNode)
-        //        this.Active = this.Checked && parentNode.Active;
-        //    else
-        //        this.Active = this.Checked;
-        //}
-
-        //private void UpdateChildrenActiveState()
-        //{
-        //    foreach (var child in this.ChildBaseNodes
-        //                              .OfType<PathingNode>()
-        //                              .Where(n => n.Checkable))
-        //    {
-        //        child.UpdateActiveState();
-        //    }
-        //}
-
-
-
         private void BuildNameLabel()
         {
             LabelControl?.Dispose();

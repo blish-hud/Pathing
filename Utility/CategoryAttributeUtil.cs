@@ -8,24 +8,12 @@ namespace BhModule.Community.Pathing.Utility
 {
     internal static class CategoryAttributeUtil
     {
-        internal static bool TryGetAchievementId(this PathingCategory pathingCategory, out int achievementId)
-        {
+
+        internal static bool TryGetAchievementId(this PathingCategory pathingCategory, out int achievementId) {
             achievementId = -1;
 
             if (pathingCategory.ExplicitAttributes.TryGetAttribute(AchievementFilter.ATTR_ID, out var achievementAttr) &&
-                InvariantUtil.TryParseInt(achievementAttr?.Value, out achievementId))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        internal static bool TryGetAggregateAchievementId(this PathingCategory pathingCategory, out int achievementId) {
-            achievementId = -1;
-
-            if (pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_ID, out var achievementAttr) &&
-                    InvariantUtil.TryParseInt(achievementAttr, out achievementId)) {
+                InvariantUtil.TryParseInt(achievementAttr?.Value, out achievementId)) {
                 return true;
             }
 

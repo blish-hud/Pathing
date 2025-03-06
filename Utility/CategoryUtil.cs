@@ -37,7 +37,7 @@ namespace BhModule.Community.Pathing.Utility {
         }
 
         public static string GetPath(this PathingCategory category) {
-            return category.Parent == null ? category.Name : category.Parent.GetPath() + "." + category.Name;
+            return $".{category.Namespace}";
         }
 
         public static (IEnumerable<PathingCategory>, int skipped) FilterCategories(this IEnumerable<PathingCategory> categories, IPackState packState, bool forceShowAll = false) {

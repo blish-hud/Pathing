@@ -400,55 +400,18 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             this.PathingCategory.TryGetAchievementId(out _achievementId);
             this.PathingCategory.TryGetAchievementBit(out _achievementBit);
 
-            _achievementHidden = _packState.AchievementStates.IsAchievementHidden(_achievementId, _achievementBit);
+            if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
+                _achievementHidden = _packState.AchievementStates.IsAchievementHidden(_achievementId, _achievementBit);
 
-            if (_achievementHidden) 
-                CheckDisabled = true;
+                if (_achievementHidden)
+                    CheckDisabled = true;
+            }
         }
-
-        //private void DetectAndBuildContexts()
-        //{
-        //    if (PathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_ID, out var achievementAttr))
-        //    {
-
-        //        var achievementBit = -1;
-        //        if (PathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_BIT, out var achievementBitAttr))
-        //        {
-        //            if (InvariantUtil.TryParseInt(achievementBitAttr, out int achievementBitParsed))
-        //            {
-        //                achievementBit = achievementBitParsed;
-        //            }
-        //        }
-
-        //        // TODO: Add as a context so that multiple characteristics can be accounted for.
-
-        //        if (!InvariantUtil.TryParseInt(achievementAttr, out int achievementId)) return;
-
-        //        if (achievementId < 0) return;
-
-        //        if (_packState.UserConfiguration.PackShowTooltipsOnAchievements.Value)
-        //        {
-        //            this.Tooltip = new Tooltip(new AchievementTooltipView(achievementId, achievementBit));
-        //        }
-
-        //        if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value)
-        //        {
-        //            this.Enabled = !_packState.AchievementStates.IsAchievementHidden(achievementId, achievementBit);
-
-        //            if (!this.Enabled && this._checkbox != null)
-        //            {
-        //                this._checkbox.Checked = false;
-        //            }
-        //        }
-        //    }
-        //    else if (PathingCategory.ExplicitAttributes.TryGetAttribute("tip-description", out var descriptionAttr))
-        //    {
-        //        this.Tooltip = new Tooltip(new DescriptionTooltipView(null, descriptionAttr.Value));
-        //    }
-        //}
 
         protected override void DisposeControl()
         {
+            this.Tooltip?.Dispose();
+            this.Menu?.Dispose();
 
             base.DisposeControl();
         }
