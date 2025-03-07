@@ -3,14 +3,17 @@ using System.Threading.Tasks;
 using BhModule.Community.Pathing.UI.Events;
 using BhModule.Community.Pathing.UI.Views;
 using BhModule.Community.Pathing.Utility;
+using Blish_HUD;
 using Blish_HUD.Graphics.UI;
 
 namespace BhModule.Community.Pathing.UI.Presenter {
 
     public class CategoryTreePresenter : Presenter<CategoryTreeView, PackInitiator> {
 
-        private readonly PathingModule _module;
-        private          bool          _isEventSubscribed;
+        private readonly        PathingModule _module;
+        private                 bool          _packEventsInitialized;
+        private                 bool          _updatingView;
+        private static readonly Logger        _logger = Logger.GetLogger<CategoryTreePresenter>();
 
         public CategoryTreePresenter(CategoryTreeView view, PathingModule module) : base(view, module.PackInitiator) {
             _module = module;
@@ -31,12 +34,18 @@ namespace BhModule.Community.Pathing.UI.Presenter {
         }
 
         private void Initialize() {
-            this.View.TreeView.PackInitiator = _module.PackInitiator;
+            this.View.TreeView.SetPackInitiator(_module.PackInitiator);
 
+            //Handle pack events
+            InitalizePackEvents();
+        }
+
+        private void InitalizePackEvents()
+        {
             _module.PackInitiator.LoadMapFromEachPackStarted                       += PackInitiatorOnLoadMapFromEachPackStarted;
             _module.PackInitiator.LoadMapFromEachPackFinished                      += PackInitiatorOnLoadMapFromEachPackFinished;
             _module.PackInitiator.PackState.CategoryStates.CategoryInactiveChanged += CategoryStatesOnCategoryInactiveChanged;
-            _isEventSubscribed                                                     =  true;
+            _packEventsInitialized                                                     =  true;
         }
 
         private void CategoryStatesOnCategoryInactiveChanged(object sender, PathingCategoryEventArgs e) {
@@ -50,30 +59,34 @@ namespace BhModule.Community.Pathing.UI.Presenter {
 
         private void PackInitiatorOnLoadMapFromEachPackFinished(object sender, EventArgs e) {
             UpdateView();
+            this.View.SetLoading(false);
         }
 
         protected override void UpdateView() {
-            if(this.View.TreeView == null) return;
+            if(_updatingView || this.View.TreeView == null) return;
 
             this.View.TreeView.ClearChildNodes();
 
             if (_module.PackInitiator == null || _module.PackInitiator.IsLoading) return;
 
-            this.View.TreeView.PackInitiator ??= _module.PackInitiator;
+            this.View.TreeView.SetPackInitiator(_module.PackInitiator);
 
-            this.View.TreeView.LoadNodes();
+            try {
+                _updatingView = true;
+                this.View.TreeView.LoadNodes();
 
-            if (this.View.TargetCategory != null) {
-                this.View.TreeView.NavigateToPath(this.View.TargetCategory.GetPath());
-                this.View.TargetCategory = null;
+                if (this.View.TargetCategory != null) {
+                    this.View.TreeView.NavigateToPath(this.View.TargetCategory.GetPath());
+                    this.View.TargetCategory = null;
+                }
+            } catch (Exception ex) {
+                _logger.Error($"Failed to update view with error: {ex.Message}");
+            } finally {
+                _updatingView = false;
             }
-            
-            if (!_isEventSubscribed)
-            {
-                _module.PackInitiator.LoadMapFromEachPackFinished += PackInitiatorOnLoadMapFromEachPackFinished;
-                _isEventSubscribed                                 =  true;
-            }
 
+            if (!_packEventsInitialized)
+                InitalizePackEvents();
         }
 
         protected override void Unload() {
@@ -82,7 +95,7 @@ namespace BhModule.Community.Pathing.UI.Presenter {
             _module.PackInitiator.LoadMapFromEachPackFinished                      -= PackInitiatorOnLoadMapFromEachPackFinished;
             _module.PackInitiator.PackState.CategoryStates.CategoryInactiveChanged -= CategoryStatesOnCategoryInactiveChanged;
 
-            _isEventSubscribed =  false;
+            _packEventsInitialized =  false;
 
             base.Unload();
         }

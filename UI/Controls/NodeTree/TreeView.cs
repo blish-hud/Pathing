@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.XPath;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Controls.TreeNodes;
 using BhModule.Community.Pathing.Utility;
+using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
-using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using TmfLib.Pathable;
 
@@ -22,17 +19,18 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         private Control _scrollToChildControl = null;
 
         private PathingCategoryNode _rootNode;
+        private static readonly Logger _logger = Logger.GetLogger<TreeView>();
 
-        public PackInitiator PackInitiator { get; set; }
-        public IList<TreeNodeBase> AllBaseNodes { get; } = new List<TreeNodeBase>();
-        public IList<TreeNodeBase> ChildBaseNodes { get; } = new List<TreeNodeBase>();
-        private IList<PathingCategory> AllCategories { get; set; } = new List<PathingCategory>();
+        public  PackInitiator          PackInitiator  { get; private set; }
+        public  IList<TreeNodeBase>    AllBaseNodes   { get; }      = new List<TreeNodeBase>();
+        public  IList<TreeNodeBase>    ChildBaseNodes { get; }      = new List<TreeNodeBase>();
+        private IList<PathingCategory> AllCategories  { get; set; } = new List<PathingCategory>();
 
         public event EventHandler<EventArgs> NodeLoadingStarted;
         public event EventHandler<EventArgs> NodesLoadedFinished;
 
         public TreeView(PackInitiator packInitiator) {
-            PackInitiator = packInitiator;
+            PackInitiator                                                                   =  packInitiator;
         }
 
         public void AddNode(TreeNodeBase node) {
@@ -43,6 +41,14 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         public void RemoveNode(TreeNodeBase node) {
             if(AllBaseNodes.Contains(node))
                 AllBaseNodes.Remove(node);
+        }
+
+        public void SetPackInitiator(PackInitiator packInitiator) {
+            if (packInitiator == null || PackInitiator == packInitiator) return;
+
+            PackInitiator = packInitiator;
+
+            PackInitiator.PackState.UserConfiguration.GlobalPathablesEnabled.SettingChanged += GlobalPathablesEnabledOnSettingChanged;
         }
 
         protected override void OnChildAdded(ChildChangedEventArgs e)
@@ -70,8 +76,9 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         public override void RecalculateLayout() {
             try {
                 ReflowChildLayout(ChildBaseNodes);
-            } catch (Exception _) {
+            } catch (Exception ex) {
                 //Investigate why collection is sometimes modified during reflow
+                _logger.Info($"Could not recalculate TreeView layout: {ex.Message}");
             }
            
             base.RecalculateLayout();
@@ -116,6 +123,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
 
             if (rootCategory == null) return;
 
+            _rootNode?.Dispose();
             _rootNode = new PathingCategoryNode(PackInitiator.PackState, rootCategory, false)
             {
                 Name   = "All Markers",
@@ -123,11 +131,22 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
                 Parent = this
             };
 
+            _rootNode.Checked = PackInitiator.PackState.UserConfiguration.GlobalPathablesEnabled.Value;
+
+            _rootNode.CheckedChanged += (_, e) => {
+                if(PackInitiator?.PackState != null)
+                    PackInitiator.PackState.UserConfiguration.GlobalPathablesEnabled.Value = e.Checked;
+            };
+
             _rootNode.Expand();
 
             AllCategories = CategoryUtil.FlattenCategories(rootCategory).ToList();
 
             this.NodesLoadedFinished?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void GlobalPathablesEnabledOnSettingChanged(object sender, ValueChangedEventArgs<bool> e) {
+            _rootNode.Checked = PackInitiator.PackState.UserConfiguration.GlobalPathablesEnabled.Value; ;
         }
 
         public async Task<(List<PathingCategory> categories, int skipped)> SearchAsync(string input, CancellationToken cancellationToken = default, bool forceShowAll = false)
@@ -274,5 +293,12 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
                 _scrollToChildControl = null;
             }
         }
+
+        protected override void DisposeControl() {
+            PackInitiator.PackState.UserConfiguration.GlobalPathablesEnabled.SettingChanged -= GlobalPathablesEnabledOnSettingChanged;
+            
+            base.DisposeControl();
+        }
+
     }
 }

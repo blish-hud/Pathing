@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Threading;
 using BhModule.Community.Pathing.UI.Controls.TreeView;
@@ -14,8 +12,8 @@ using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.UI.Views {
     public class CategoryTreeView : View {
-
-        private FlowPanel RepoFlowPanel { get; set; }
+        private static readonly Logger    _logger = Logger.GetLogger<CategoryTreeView>();
+        private                 FlowPanel RepoFlowPanel { get; set; }
 
         public TreeView TreeView { get; private set; }
 
@@ -111,22 +109,16 @@ namespace BhModule.Community.Pathing.UI.Views {
                 }
 
                 if (string.IsNullOrWhiteSpace(_searchBox.Text)) {
-                    try {
-                        presenter.DoUpdateView();
-                    } catch(Exception ex) { /*will fail when search is executed again*/ }
-
+                    presenter.DoUpdateView();
                     return;
                 }
+
 
                 TreeView.ClearChildNodes();
                 SetLoading(true);
 
                 Task.Run(async () => {
-                    try {
-                        await ExecuteSearch(_searchBox.Text, _cancellationTokenSource.Token);
-                    } catch (OperationCanceledException cancelledException) {
-
-                    }
+                    await ExecuteSearch(_searchBox.Text, _cancellationTokenSource.Token);
                 }, _cancellationTokenSource.Token);
             }
         }
@@ -170,6 +162,14 @@ namespace BhModule.Community.Pathing.UI.Views {
 
                 _searchStatusLabel.Visible = searchResult.categories.Count <= 0;
                 SetLoading(false);
+            }
+            catch (OperationCanceledException _)
+            {
+                //Triggered when a new search is executed
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Category search failed with error: {ex.Message}");
             }
             finally
             {
