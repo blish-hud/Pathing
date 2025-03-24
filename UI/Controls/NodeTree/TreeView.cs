@@ -124,6 +124,9 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
             if (rootCategory == null) return;
 
             _rootNode?.Dispose();
+
+            if (rootCategory.Count(c => c.LoadedFromPack) <= 0) return; //No packs installed
+
             _rootNode = new PathingCategoryNode(PackInitiator.PackState, rootCategory, false)
             {
                 Name   = "All Markers",

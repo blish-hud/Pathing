@@ -9,6 +9,7 @@ using Blish_HUD.Graphics.UI;
 using Microsoft.Xna.Framework;
 using Blish_HUD;
 using TmfLib.Pathable;
+using System.Linq;
 
 namespace BhModule.Community.Pathing.UI.Views {
     public class CategoryTreeView : View {
@@ -20,6 +21,10 @@ namespace BhModule.Community.Pathing.UI.Views {
         private TextBox    _searchBox;
 
         private Label _searchStatusLabel;
+
+        public Label _packsNotInitializedLabel;
+
+        public Label _packsNotLoadedLabel;
 
         private LoadingSpinner _loadingSpinner;
 
@@ -44,6 +49,28 @@ namespace BhModule.Community.Pathing.UI.Views {
             };
 
             this._searchBox.TextChanged += SearchBoxTextChanged;
+
+            this._packsNotInitializedLabel = new Label
+            {
+                Text           = "Please enter the game to load the marker packs.",
+                Font           = GameService.Content.DefaultFont18,
+                AutoSizeHeight = true,
+                AutoSizeWidth  = true,
+                Location       = new Point(buildPanel.Width / 2 - 200, buildPanel.Height / 2 - 80),
+                Parent         = buildPanel,
+                Visible        = !PacksAreInitialized(),
+            };
+
+            this._packsNotLoadedLabel = new Label
+            {
+                Text           = "No marker packs have been loaded.",
+                Font           = GameService.Content.DefaultFont18,
+                AutoSizeHeight = true,
+                AutoSizeWidth  = true,
+                Location       = new Point(buildPanel.Width / 2 - 160, buildPanel.Height / 2 - 80),
+                Parent         = buildPanel,
+                Visible        = PacksAreInitialized() && !PacksAreLoaded(),
+            };
 
             this._searchStatusLabel = new Label
             {
@@ -75,7 +102,8 @@ namespace BhModule.Community.Pathing.UI.Views {
             {
                 Parent   = buildPanel,
                 Location = new Point(buildPanel.Width / 2 - 75, buildPanel.Height / 2 - 75),
-                Size     = new Point(55, 55)
+                Size     = new Point(55, 55),
+                Visible  = false // Hide by default
             };
 
             this.TreeView.NodeLoadingStarted += (_, _) => {
@@ -90,9 +118,29 @@ namespace BhModule.Community.Pathing.UI.Views {
             };
         }
 
-        public void SetLoading(bool loading)
-        {
-            this._loadingSpinner.Visible = loading;
+        public bool ValidateMarkerPacksState() {
+            var packsAreInitialized = PacksAreInitialized(); 
+            var packsAreLoaded      = PacksAreLoaded();
+
+            if (_packsNotInitializedLabel != null) 
+                _packsNotInitializedLabel.Visible = !packsAreInitialized;
+
+            if(_packsNotLoadedLabel != null)
+                _packsNotLoadedLabel.Visible = packsAreInitialized && !packsAreLoaded;
+
+            return packsAreLoaded;
+        }
+
+        public void SetLoading(bool loading) {
+            if (loading) {
+                if (_packsNotInitializedLabel != null) 
+                    _packsNotInitializedLabel.Visible = false;
+
+                if(_packsNotLoadedLabel != null)
+                    _packsNotLoadedLabel.Visible = false;
+            }
+            
+            this._loadingSpinner.Visible     = loading;
         }
 
         private void SearchBoxTextChanged(object sender, EventArgs e) {
@@ -179,6 +227,18 @@ namespace BhModule.Community.Pathing.UI.Views {
 
         public void ResetSearch() {
             _searchBox.Text            = string.Empty;
+        }
+
+        private bool PacksAreInitialized()
+        {
+            return _module.PackInitiator?.GetAllMarkersCategories() != null;
+        }
+
+        private bool PacksAreLoaded()
+        {
+            var rootCategory = _module.PackInitiator.GetAllMarkersCategories();
+
+            return rootCategory != null && !(rootCategory.Count(c => c.LoadedFromPack) <= 0);
         }
     }
 }

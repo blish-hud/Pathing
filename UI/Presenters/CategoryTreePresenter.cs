@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.UI.Events;
 using BhModule.Community.Pathing.UI.Views;
@@ -28,6 +29,43 @@ namespace BhModule.Community.Pathing.UI.Presenter {
             return Task.FromResult(true);
         }
 
+        protected override void UpdateView()
+        {
+            if (_updatingView || this.View.TreeView == null) return;
+
+            this.View.TreeView.ClearChildNodes();
+
+            if (_module.PackInitiator == null || _module.PackInitiator.IsLoading) return;
+
+            if(!this.View.ValidateMarkerPacksState())
+                return;
+
+            this.View.TreeView.SetPackInitiator(_module.PackInitiator);
+
+            try
+            {
+                _updatingView = true;
+                this.View.TreeView.LoadNodes();
+
+                if (this.View.TargetCategory != null)
+                {
+                    this.View.TreeView.NavigateToPath(this.View.TargetCategory.GetPath());
+                    this.View.TargetCategory = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Failed to update view with error: {ex.Message}");
+            }
+            finally
+            {
+                _updatingView = false;
+            }
+
+            if (!_packEventsInitialized)
+                InitalizePackEvents();
+        }
+
         private void _module_ModuleLoaded(object sender, EventArgs e)
         {
             Initialize();
@@ -38,6 +76,14 @@ namespace BhModule.Community.Pathing.UI.Presenter {
 
             //Handle pack events
             InitalizePackEvents();
+
+            if (!_module.PackInitiator.IsLoading) {
+                this.View.SetLoading(true);
+
+                UpdateView();
+
+                this.View.SetLoading(false);
+            }
         }
 
         private void InitalizePackEvents()
@@ -60,33 +106,6 @@ namespace BhModule.Community.Pathing.UI.Presenter {
         private void PackInitiatorOnLoadMapFromEachPackFinished(object sender, EventArgs e) {
             UpdateView();
             this.View.SetLoading(false);
-        }
-
-        protected override void UpdateView() {
-            if(_updatingView || this.View.TreeView == null) return;
-
-            this.View.TreeView.ClearChildNodes();
-
-            if (_module.PackInitiator == null || _module.PackInitiator.IsLoading) return;
-
-            this.View.TreeView.SetPackInitiator(_module.PackInitiator);
-
-            try {
-                _updatingView = true;
-                this.View.TreeView.LoadNodes();
-
-                if (this.View.TargetCategory != null) {
-                    this.View.TreeView.NavigateToPath(this.View.TargetCategory.GetPath());
-                    this.View.TargetCategory = null;
-                }
-            } catch (Exception ex) {
-                _logger.Error($"Failed to update view with error: {ex.Message}");
-            } finally {
-                _updatingView = false;
-            }
-
-            if (!_packEventsInitialized)
-                InitalizePackEvents();
         }
 
         protected override void Unload() {
