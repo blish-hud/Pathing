@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using BhModule.Community.Pathing.Behavior.Modifier;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
@@ -12,8 +10,10 @@ using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
+using Blish_HUD.Modules.Managers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SharpDX.Direct3D9;
 using TmfLib.Pathable;
 using Label = Blish_HUD.Controls.Label;
 using MouseEventArgs = Blish_HUD.Input.MouseEventArgs;
@@ -131,12 +131,12 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 Size   = new Point(30, this.Height)
             };
 
-            var tooltipIcon = new Image(AsyncTexture2D.FromAssetId(155062))
+            var tooltipIcon = new Image
             {
                 Parent  = achievementIconContainer,
-                Size    = new Point(35, 35),
-                Top     = 2,
-                
+                Size    = new Point(30, 30),
+                Top     = 4,
+                Texture = _achievementHidden ? PathingModule.Instance.ContentsManager.GetTexture(@"png\155061+255218.png") : AsyncTexture2D.FromAssetId(155061)
             };
 
             if (_packState.UserConfiguration.PackShowTooltipsOnAchievements.Value) {

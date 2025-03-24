@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Models;
 using BhModule.Community.Pathing.UI.Tooltips;
-using BhModule.Community.Pathing.UI.Views;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
@@ -12,7 +9,6 @@ using Blish_HUD.Controls.Effects;
 using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using YamlDotNet.Core.Tokens;
 
 namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 {
@@ -207,25 +203,16 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 Size   = new Point(this.PanelHeight / 2 + 5, this.PanelHeight),
             };
 
-            if (!CheckDisabled) {
-                this._checkbox = new Checkbox
-                {
-                    Parent  = checkboxContainer,
-                    Left    = 5,
-                    Size    = new Point(this.PanelHeight, this.PanelHeight),
-                    Checked = this.Checked,
-                };
+            this._checkbox = new Checkbox
+            {
+                Parent  = checkboxContainer,
+                Left    = 5,
+                Size    = new Point(this.PanelHeight, this.PanelHeight),
+                Checked = this.Checked,
+                Enabled = !CheckDisabled
+            };
 
-                this._checkbox.CheckedChanged += CheckboxOnCheckedChanged;
-            } else {
-                _ = new Image(AsyncTexture2D.FromAssetId(255218))
-                {
-                    Parent           = checkboxContainer,
-                    Size             = new Point(30, 30),
-                    Top              = 4,
-                    BasicTooltipText = "Completed",
-                };
-            }
+            this._checkbox.CheckedChanged += CheckboxOnCheckedChanged;
         }
 
         private void CheckboxOnCheckedChanged(object sender, CheckChangedEvent e) {
