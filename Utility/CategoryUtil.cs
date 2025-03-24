@@ -58,7 +58,7 @@ namespace BhModule.Community.Pathing.Utility {
             int skipped = 0;
 
             // We go bottom to top to check if the categories are potentially relevant to categories below.
-            foreach (var subCategory in categories.Reverse())
+            foreach (var subCategory in subCategories.Reverse())
             {
                 if (subCategory.IsSeparator && ((!lastCategory?.IsSeparator ?? false) || lastIsSeparator))
                 {
