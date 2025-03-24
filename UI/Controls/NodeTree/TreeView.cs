@@ -78,7 +78,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
                 ReflowChildLayout(ChildBaseNodes);
             } catch (Exception ex) {
                 //Investigate why collection is sometimes modified during reflow
-                _logger.Info($"Could not recalculate TreeView layout: {ex.Message}");
+                _logger.Warn($"Could not recalculate TreeView layout: {ex.Message}");
             }
            
             base.RecalculateLayout();
