@@ -225,7 +225,6 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             this.Menu = new ContextMenuStrip();
 
             BuildCopyName();
-            BuildCopyDisplayName();
 
             if(this.Checkable)
                 BuildDeselectAdjacentNodes();
@@ -239,19 +238,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 Parent = this.Menu
             };
 
-            stripItem.Click += (_, _) => CopyToClipboard(this.Name, "Name copied to clipboard");
-        }
-
-        private void BuildCopyDisplayName()
-        {
-            if (string.IsNullOrWhiteSpace(this.Name)) return;
-
-            var stripItem = new ContextMenuStripItem("Copy Display Name")
-            {
-                Parent = this.Menu
-            };
-
-            stripItem.Click += (_, _) => CopyToClipboard(this.Name, "Display name copied to clipboard");
+            stripItem.Click += (_, _) => CopyToClipboard(this.Name, $"\"{this.Name}\" copied to clipboard");
         }
 
         private void BuildDeselectAdjacentNodes()
