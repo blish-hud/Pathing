@@ -244,7 +244,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
                                      .PathingCategory?
                                      .FirstOrDefault(n => !string.IsNullOrWhiteSpace(n?.Name) && n.Name.Equals(item.pathItem));
 
-                if (categoryResult == null) return;
+                if (categoryResult == null || !categoryResult.LoadedFromPack) return;
 
                 var baseNodes = currentNode.ChildBaseNodes ?? _rootNode?.ChildBaseNodes;
 
