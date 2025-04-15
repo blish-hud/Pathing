@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BhModule.Community.Pathing.UI.Controls.TreeNodes;
 using BhModule.Community.Pathing.UI.Models;
 using Blish_HUD.Common.UI.Views;
@@ -23,21 +24,43 @@ namespace BhModule.Community.Pathing.UI.Tooltips
         protected override void Build(Container buildPanel)
         {
             if (_textures.Count <= 0) return;
-
+            
             var xPosition = 0;
 
-            foreach(var texture in _textures)
+            foreach (var texture in _textures)
             {
+                var (newWidth, newHeight) = GetResizedDimensions(texture.Icon, 200, 200);
+
                 _imgIcons.Add(new Image(texture.Icon)
                 {
-                    Size     = new Point(texture.Icon.Width, texture.Icon.Height),
+                    Size     = new Point(newWidth, newHeight),
                     Tint     = texture.Tint,
-                    Location = new Point(xPosition,     0),
+                    Location = new Point(xPosition, 0),
                     Parent   = buildPanel
                 });
 
-                xPosition += texture.Icon.Width;
+                xPosition += newWidth;
             }
+        }
+
+        private (int width, int height) GetResizedDimensions(AsyncTexture2D texture, int maxWidth, int maxHeight)
+        {
+            var originalWidth  = texture.Width;
+            var originalHeight = texture.Height;
+
+            if (originalWidth <= maxWidth && originalHeight <= maxHeight)
+            {
+                return (originalWidth, originalHeight);
+            }
+
+            float widthRatio  = (float)maxWidth  / originalWidth;
+            float heightRatio = (float)maxHeight / originalHeight;
+            float scale       = Math.Min(widthRatio, heightRatio);
+
+            int newWidth  = (int)(originalWidth  * scale);
+            int newHeight = (int)(originalHeight * scale);
+
+            return (newWidth, newHeight);
         }
 
         protected override void Unload()

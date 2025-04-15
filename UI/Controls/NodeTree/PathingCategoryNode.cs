@@ -58,9 +58,10 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             _forceShowAll        = showForceAll;
 
             if (pathingCategory.IsSeparator) {
-                this.Checkable    = false;
-                this.TextColor    = Color.LightYellow;
-                BackgroundOpacity = 0.3f;
+                this.Checkable       = false;
+                this.TextColor       = Color.LightYellow;
+                BackgroundOpacity    = 0.3f;
+                this.ShowIconTooltip = false;
             } else {
                 this.Checkable    = true;
 
@@ -336,9 +337,10 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 
                 _ = new PathingCategoryNode(_packState, subCategory, forceShowAll)
                 {
-                    Width   = this.Parent.Width - 14,
-                    Parent  = this,
-                    Visible = this.Expanded,
+                    Width          = this.Parent.Width - 14,
+                    Parent         = this,
+                    Visible        = this.Expanded,
+                    IsSearchResult = this.IsSearchResult
                 };
             }
 

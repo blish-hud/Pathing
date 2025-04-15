@@ -38,12 +38,12 @@ namespace BhModule.Community.Pathing.Entity {
         private ContextMenuStrip BuildPathableMenu(IPathingEntity pathingEntry) {
             var newMenu = new ContextMenuStrip();
 
-            newMenu.AddMenuItem("Hide Parent Category").Click += delegate {
-                _packState.CategoryStates.SetInactive(pathingEntry.Category.Namespace, true);
+            newMenu.AddMenuItem("Open Parent Category").Click += delegate {
+                _packState.CategoryStates.TriggerOpenCategory(pathingEntry.Category);
             };
 
-            newMenu.AddMenuItem("Open Parent Category").Click += delegate {
-                    _packState.CategoryStates.TriggerOpenCategory(pathingEntry.Category);
+            newMenu.AddMenuItem("Hide Parent Category").Click += delegate {
+                _packState.CategoryStates.SetInactive(pathingEntry.Category.Namespace, true);
             };
 
             if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {

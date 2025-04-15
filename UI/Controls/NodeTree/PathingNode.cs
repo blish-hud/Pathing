@@ -40,6 +40,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 
         protected Point IconSize = new Point(30, 30);
 
+        public bool ShowIconTooltip = true;
+
         private bool _checkable;
         public bool Checkable {
             get => _checkable;
@@ -153,7 +155,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             var iconContainer = new Panel {
                 Parent  = _detailsPanel,
                 Size    = new Point(IconSize.X * IconTextures.Count + 5, this.Height),
-                Tooltip = IconTextures.Count > 0 ? new Tooltip(new EntityTextureTooltip(IconTextures)) : null
+                Tooltip = (IconTextures.Count > 0 && ShowIconTooltip) ? new Tooltip(new EntityTextureTooltip(IconTextures)) : null
             };
 
             var leftPos = 0;

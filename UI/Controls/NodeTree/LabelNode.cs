@@ -18,6 +18,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 }
             ];
 
+            this.ShowIconTooltip  = false;
             this.ShowBackground   = true;
             this.PanelHeight      = 30;
             this.Checkable        = false;
