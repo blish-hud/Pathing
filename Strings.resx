@@ -190,7 +190,7 @@
     <value>Categories hidden because they are for markers on a different map.
 
 Click to view them or you can disable this filter by toggling:
-Pathing Module Settings &gt; {0}.</value>
+Pathing Module Settings &gt; Marker Options &gt; {0}.</value>
   </data>
   <data name="Setting_PackMarkerConsentToClipboardDescription" xml:space="preserve">
     <value>Some markers support copying text to your clipboard (such as waypoints or build templates).

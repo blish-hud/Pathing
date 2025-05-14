@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.UI.Controls.TreeView;
+using BhModule.Community.Pathing.UI.Events;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
@@ -31,6 +33,8 @@ namespace BhModule.Community.Pathing.State {
 
         private bool _stateDirty       = false;
         private bool _calculationDirty = false;
+
+        public event EventHandler<PathingCategoryEventArgs> CategoryInactiveChanged;
 
         public CategoryStates(IRootPackState packState) : base(packState) { /* NOOP */ }
 
@@ -194,12 +198,25 @@ namespace BhModule.Community.Pathing.State {
             }
         }
 
+        public event EventHandler<PathingCategoryEventArgs> TriggerOpenCategoryView;
+
+        public void TriggerOpenCategory(PathingCategory category) {
+            TriggerOpenCategoryView?.Invoke(this, new PathingCategoryEventArgs(category));
+        }
+
         private void SetInactive(PathingCategory category, bool isInactive, SafeList<PathingCategory> rawCategoriesList) {
-            rawCategoriesList.Remove(category);
+            var alreadyInactive = rawCategoriesList.Contains(category);
+            
+            if(alreadyInactive)
+                rawCategoriesList.Remove(category);
 
             if (isInactive) {
                 rawCategoriesList.Add(category);
             }
+
+            //Trigger event when inactive state has changed
+            if(alreadyInactive != isInactive)
+                CategoryInactiveChanged?.Invoke(this, new PathingCategoryEventArgs(category){ Active = !isInactive});
 
             _stateDirty       = true; // Ensure that we save the new state.
             _calculationDirty = true; // Ensure that the hashset is recalculated.
