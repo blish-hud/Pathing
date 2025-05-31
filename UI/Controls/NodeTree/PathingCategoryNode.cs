@@ -37,7 +37,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         }
 
         private readonly IPackState      _packState;
-        public           PathingCategory PathingCategory { get; }
+        public  PathingCategory PathingCategory { get; }
+        private PathingCategory PackCategory { get; }
 
         private readonly IList<IPathingEntity> _entities;
 
@@ -47,7 +48,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         private int _achievementBit;
         private bool _achievementHidden;
 
-        public bool IsSearchResult { get; init; }
+        protected Label PackNameControl;
+        public    bool  IsSearchResult { get; init; }
 
         public PathingCategoryNode(IPackState packState, PathingCategory pathingCategory, bool showForceAll) 
             : base(pathingCategory.DisplayName)
@@ -79,7 +81,10 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 this.Checked = !_packState.CategoryStates.GetCategoryInactive(pathingCategory);
                 UpdateActiveState(this.Checked);
             }
-                
+
+            PackCategory = PathingCategory.GetParents()
+                                          .LastOrDefault();
+
             this.CheckedChanged += CheckboxOnCheckedChanged;
         }
 
@@ -113,12 +118,35 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             //Details
             BuildAchievementTexture();
 
+            //Pack name
+            if (IsSearchResult) 
+                BuildPackName();
+
             //Properties
             BuildEntityCount();
 
             //Context menu
             if(this.Menu != null)
                 BuildContextMenu();
+        }
+
+        private void BuildPackName() {
+            if (PackCategory == null) return;
+
+            PackNameControl?.Dispose();
+
+            PackNameControl = new Label
+            {
+                Parent           = _propertiesPanel,
+                Text             = PackCategory.DisplayName,
+                Height           = this.PanelHeight,
+                AutoSizeWidth    = true,
+                Font             = GameService.Content.DefaultFont16,
+                TextColor        = Color.Orange,
+                WrapText         = true,
+                StrokeText       = true,
+                BasicTooltipText = this.BasicTooltipText
+            };
         }
 
         private void BuildAchievementTexture() {
