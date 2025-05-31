@@ -393,7 +393,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                        StandardTrail trail => new PathingTexture { Icon   = trail.Texture, Tint  = trail.Tint },
                        _ => null
                    })
-                  .Where(pt => pt != null && uniqueTextures.Add(pt.Icon.Texture));
+                  .Where(pt => pt?.Icon?.Texture != null && uniqueTextures.Add(pt.Icon.Texture));
         }
 
         private void DetectAndBuildContexts() {
