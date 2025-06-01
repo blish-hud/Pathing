@@ -35,6 +35,7 @@ namespace BhModule.Community.Pathing.State {
         private bool _calculationDirty = false;
 
         public event EventHandler<PathingCategoryEventArgs> CategoryInactiveChanged;
+        public event EventHandler<EventArgs> CategoryStatesOptimized;
 
         public CategoryStates(IRootPackState packState) : base(packState) { /* NOOP */ }
 
@@ -156,6 +157,8 @@ namespace BhModule.Community.Pathing.State {
             }
 
             _inactiveCategories = preCalcInactiveCategories;
+            this.CategoryStatesOptimized?.Invoke(this, EventArgs.Empty);
+
             _calculationDirty = false;
         }
 
@@ -184,6 +187,11 @@ namespace BhModule.Community.Pathing.State {
 
         public bool GetNamespaceInactive(string categoryNamespace) {
             return _inactiveCategories.Contains(categoryNamespace);
+        }
+
+        public bool GetRawNamespaceInactive(string categoryNamespace)
+        {
+            return _rawInactiveCategories.FirstOrDefault(c => c.Namespace.Equals(categoryNamespace)) != null;
         }
 
         private bool GetCategoryInactive(PathingCategory category, SafeList<PathingCategory> rawCategoriesList) {

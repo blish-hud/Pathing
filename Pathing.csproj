@@ -309,6 +309,7 @@
     <Compile Include="UI\Effects\AlphaMaskEffect.cs" />
     <Compile Include="UI\Presenters\PackRepoPresenter.cs" />
     <Compile Include="UI\Presenters\SettingsHintPresenter.cs" />
+    <Compile Include="UI\Views\ConfirmationView.cs" />
     <Compile Include="UI\Views\AdvancedCategoryView.cs" />
     <Compile Include="UI\Views\IndividualPackSettingsView.cs" />
     <Compile Include="UI\Views\CategoryTreeView.cs" />

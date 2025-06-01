@@ -151,7 +151,7 @@ namespace BhModule.Community.Pathing {
             var searchMarkers = new ContextMenuStripItem()
             {
                 Text = "Search",
-                BackgroundColor = Color.Yellow * 0.1f
+                BackgroundColor = Color.LightBlue * 0.1f
             };
 
 

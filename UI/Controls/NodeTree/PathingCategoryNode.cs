@@ -6,6 +6,7 @@ using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Models;
 using BhModule.Community.Pathing.UI.Tooltips;
+using BhModule.Community.Pathing.UI.Views;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Content;
@@ -277,7 +278,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         }
 
         private void BuildOpenInTree() {
-            var stripItem = new ContextMenuStripItem("Open In Category Tree")
+            var stripItem = new ContextMenuStripItem("Open In Explorer")
             {
                 Parent = this.Menu
             };
@@ -298,13 +299,30 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 
             UpdateActiveState(e.Checked);
 
-            if (!ParentIsActive() && e.Checked)
-            {
-                ScreenNotification.ShowNotification("One or more of the parent categories are inactive.",
-                                                    ScreenNotification.NotificationType.Warning,
-                                                    null,
-                                                    2);
+            if (!ParentIsActive() && e.Checked) {
+                TreeView.SkipNextStateCheck(this);
+                ShowConfirmationWindow();
             }
+        }
+
+        private ViewContainer _confirmationContainer;
+
+        private void ShowConfirmationWindow() {
+            var window = PathingModule.Instance.SettingsWindow;
+
+            _confirmationContainer?.Dispose();
+
+            _confirmationContainer = new ViewContainer
+            {
+                Size     = new Point(400, 400),
+                HeightSizingMode = SizingMode.AutoSize,
+                Location = new Point(window.Location.X + (window.Size.X / 2 - 200), window.Location.Y + (window.Size.Y / 2 - 200)),
+                ZIndex   = int.MaxValue - 2,
+                FadeView = true,
+                Parent   = Graphics.SpriteScreen
+            };
+
+            _confirmationContainer.Show(new ConfirmationView(this.TreeView, this.PathingCategory, _packState));
         }
 
         public void UpdateActiveState(bool active) {
