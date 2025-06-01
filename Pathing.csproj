@@ -278,6 +278,7 @@
     <Compile Include="UI\Controls\NodeTree\PathingNode.cs" />
     <Compile Include="UI\Events\PathingCategoryEventArgs.cs" />
     <Compile Include="UI\Models\PathingTexture.cs" />
+    <Compile Include="UI\Tooltips\CategoryPathTooltip.cs" />
     <Compile Include="UI\Tooltips\EntityTextureTooltip.cs" />
     <Compile Include="UI\Controls\CustomFlowPanel.cs" />
     <Compile Include="UI\Controls\NodeTree\PathingCategoryNode.cs" />

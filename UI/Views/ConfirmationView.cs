@@ -21,13 +21,11 @@ namespace BhModule.Community.Pathing.UI.Views {
         protected BlueButton OpenButton { get; set; }
         protected StandardButton DenyButton { get; set; }
 
-        private TreeView _treeView { get; }
         private PathingCategory _category { get; }
 
         private IPackState _packState { get; }
 
-        public ConfirmationView(TreeView treeView, PathingCategory category, IPackState packState) {
-            this._treeView  = treeView;
+        public ConfirmationView(PathingCategory category, IPackState packState) {
             this._category  = category;
             this._packState = packState;
         }
@@ -52,7 +50,7 @@ namespace BhModule.Community.Pathing.UI.Views {
             var firstParent = true;
 
             foreach (var parent in parents) {
-                var color = firstParent ? Color.Orange : Color.LightYellow;
+                var color = parent == this._category ? Color.LightBlue : firstParent ? Color.Orange : Color.LightYellow;
 
                 var inactive = _packState.CategoryStates.GetCategoryInactive(parent);
                 builder = builder.CreatePart($" {parent.DisplayName}\n ", b => b.SetFontSize(ContentService.FontSize.Size16).SetTextColor(color).SetPrefixImage(AsyncTexture2D.FromAssetId(inactive ? 154982 : 154979)).SetPrefixImageSize(new Point(20, 20)));
@@ -83,9 +81,6 @@ namespace BhModule.Community.Pathing.UI.Views {
                 {
                     _packState.CategoryStates.SetInactive(parent, false);
                 }
-
-                //if (_treeView != null)
-                //    _treeView.UpdateSearchResultsCheckState(_packState);
 
                 buildPanel.Dispose();
             };

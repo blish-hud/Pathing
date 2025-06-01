@@ -120,8 +120,12 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             BuildAchievementTexture();
 
             //Pack name
-            if (IsSearchResult) 
+            if (IsSearchResult) {
+                LabelControl.MouseEntered += NameControlOnMouseEntered;
+
                 BuildPackName();
+            }
+               
 
             //Properties
             BuildEntityCount();
@@ -148,7 +152,21 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 StrokeText       = true,
                 BasicTooltipText = this.BasicTooltipText
             };
+
+            PackNameControl.MouseEntered += NameControlOnMouseEntered;
         }
+
+        private Tooltip _categoryPathTooltip;
+
+        private void NameControlOnMouseEntered(object sender, MouseEventArgs e) {
+            if (_categoryPathTooltip != null) return;
+
+            _categoryPathTooltip = new Tooltip(new CategoryPathTooltip(this.PathingCategory, _packState));
+
+            if (PackNameControl != null) PackNameControl.Tooltip = _categoryPathTooltip;
+            if (LabelControl != null) LabelControl.Tooltip = _categoryPathTooltip;
+        }
+
 
         private void BuildAchievementTexture() {
             if (_achievementId <= 0) return;
@@ -322,7 +340,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 Parent   = Graphics.SpriteScreen
             };
 
-            _confirmationContainer.Show(new ConfirmationView(this.TreeView, this.PathingCategory, _packState));
+            _confirmationContainer.Show(new ConfirmationView(this.PathingCategory, _packState));
         }
 
         public void UpdateActiveState(bool active) {
