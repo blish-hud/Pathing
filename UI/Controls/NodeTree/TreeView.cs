@@ -298,6 +298,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
                 if (node is PathingCategoryNode { IsSearchResult: true, Checkable: true } categoryNode && categoryNode != _skipStateCheckNode) {
                     categoryNode.Checked = !packState.CategoryStates.GetCategoryInactive(categoryNode.PathingCategory);
                     categoryNode.Active = !packState.CategoryStates.GetNamespaceInactive(categoryNode.PathingCategory.Namespace);
+
+                    categoryNode.InvalidatePath();
                 }
             }
 

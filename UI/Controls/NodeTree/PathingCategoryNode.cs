@@ -161,12 +161,22 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         private void NameControlOnMouseEntered(object sender, MouseEventArgs e) {
             if (_categoryPathTooltip != null) return;
 
+            BuildCategoryPathTooltip();
+        }
+
+        public void InvalidatePath() {
+            _categoryPathTooltip?.Dispose();
+            _categoryPathTooltip = null;
+        }
+
+        private void BuildCategoryPathTooltip() {
+            _categoryPathTooltip?.Dispose();
+
             _categoryPathTooltip = new Tooltip(new CategoryPathTooltip(this.PathingCategory, _packState));
 
             if (PackNameControl != null) PackNameControl.Tooltip = _categoryPathTooltip;
-            if (LabelControl != null) LabelControl.Tooltip = _categoryPathTooltip;
+            if (LabelControl    != null) LabelControl.Tooltip    = _categoryPathTooltip;
         }
-
 
         private void BuildAchievementTexture() {
             if (_achievementId <= 0) return;
@@ -314,6 +324,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             {
                 _packState.CategoryStates.SetInactive(this.PathingCategory, !e.Checked);
             }
+
+            InvalidatePath();
 
             UpdateActiveState(e.Checked);
 
