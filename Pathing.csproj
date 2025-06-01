@@ -278,6 +278,7 @@
     <Compile Include="UI\Controls\NodeTree\PathingNode.cs" />
     <Compile Include="UI\Events\PathingCategoryEventArgs.cs" />
     <Compile Include="UI\Models\PathingTexture.cs" />
+    <Compile Include="UI\Tooltips\CategoryPathTooltip.cs" />
     <Compile Include="UI\Tooltips\EntityTextureTooltip.cs" />
     <Compile Include="UI\Controls\CustomFlowPanel.cs" />
     <Compile Include="UI\Controls\NodeTree\PathingCategoryNode.cs" />
@@ -309,6 +310,7 @@
     <Compile Include="UI\Effects\AlphaMaskEffect.cs" />
     <Compile Include="UI\Presenters\PackRepoPresenter.cs" />
     <Compile Include="UI\Presenters\SettingsHintPresenter.cs" />
+    <Compile Include="UI\Views\ConfirmationView.cs" />
     <Compile Include="UI\Views\AdvancedCategoryView.cs" />
     <Compile Include="UI\Views\IndividualPackSettingsView.cs" />
     <Compile Include="UI\Views\CategoryTreeView.cs" />

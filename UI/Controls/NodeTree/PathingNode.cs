@@ -110,7 +110,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             {
                 Parent         = this,
                 FlowDirection  = ControlFlowDirection.LeftToRight,
-                Size           = new Point(this.ContentRegion.Width - 220, this.PanelHeight),
+                Size           = new Point(this.ContentRegion.Width - 240, this.PanelHeight),
                 Location       = new Point(28, 1),
                 ControlPadding = new Vector2(5, 0),
                 CanScroll      = false,
@@ -127,8 +127,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             {
                 Parent         = this,
                 FlowDirection  = ControlFlowDirection.RightToLeft,
-                Size           = new Point(200,              this.PanelHeight),
-                Location       = new Point(this.Width - 210, 1),
+                Size           = new Point(220,              this.PanelHeight),
+                Location       = new Point(this.Width - 230, 1),
                 ControlPadding = new Vector2(5, 0),
                 CanScroll      = false,
                 ShowTint       = DevMode 
@@ -137,7 +137,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 
         protected override void OnResized(ResizedEventArgs e) {
             if(_propertiesPanel != null)
-                _propertiesPanel.Left = e.CurrentSize.X - 210;
+                _propertiesPanel.Left = e.CurrentSize.X - 230;
 
             base.OnResized(e);
         }

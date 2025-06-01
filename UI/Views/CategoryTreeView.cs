@@ -22,9 +22,11 @@ namespace BhModule.Community.Pathing.UI.Views {
 
         private Label _searchStatusLabel;
 
-        public Label _packsNotInitializedLabel;
+        private Label _packsNotInitializedLabel;
 
-        public Label _packsNotLoadedLabel;
+        private Label _packsNotLoadedLabel;
+
+        private Label _helpTextLabel;
 
         private LoadingSpinner _loadingSpinner;
 
@@ -84,13 +86,27 @@ namespace BhModule.Community.Pathing.UI.Views {
                 Visible        = false,
             };
 
+            this._helpTextLabel = new Label()
+            {
+                Parent         = buildPanel,
+                Text           = "Right click on categories for options.",
+                AutoSizeHeight = true,
+                AutoSizeWidth  = true,
+                StrokeText     = true,
+                TextColor      = Color.LightYellow,
+                Font           = GameService.Content.DefaultFont16,
+            };
+
             this.RepoFlowPanel = new CustomFlowPanel {
-                Size       = new Point(buildPanel.ContentRegion.Width, buildPanel.ContentRegion.Height - _searchBox.Bottom - 5),
+                Size       = new Point(buildPanel.ContentRegion.Width, buildPanel.ContentRegion.Height - _searchBox.Bottom - this._helpTextLabel.Height - 5),
                 Top        = _searchBox.Bottom + 5,
                 CanScroll  = true,
                 ShowBorder = true,
                 Parent     = buildPanel
             };
+
+            this._helpTextLabel.Location = new Point(15, this.RepoFlowPanel.Bottom);
+            
 
             this.TreeView = new TreeView(_module.PackInitiator) {
                 HeightSizingMode = SizingMode.AutoSize,

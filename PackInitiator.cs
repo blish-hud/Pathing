@@ -144,13 +144,36 @@ namespace BhModule.Community.Pathing {
                              && _sharedPackCollection.Categories != null
                              && _sharedPackCollection.Categories.Any(category => !string.IsNullOrWhiteSpace(category.DisplayName));
 
+            var markerSubMenu = isAnyMarkers
+                                    ? new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories, false)
+                                    : null;
+
+            var searchMarkers = new ContextMenuStripItem()
+            {
+                Text = "Search",
+                BackgroundColor = Color.LightBlue * 0.1f
+            };
+
+
+            searchMarkers.Click += (_, _) => {
+                if (PathingModule.Instance.SettingsWindow.SelectedTab != PathingModule.Instance.CategoryTreeTab)
+                {
+                    PathingModule.Instance.SettingsWindow.SelectedTab = PathingModule.Instance.CategoryTreeTab;
+
+                    if (PathingModule.Instance.SettingsWindow.Visible) return;
+                }
+
+                PathingModule.Instance.SettingsWindow.ToggleWindow();
+            };
+
+            if (markerSubMenu != null)
+                markerSubMenu.AddMenuItem(searchMarkers);
+
             var allMarkers = new ContextMenuStripItem() {
                 Text = "All Markers", // TODO: Localize "All Markers"
                 CanCheck = true,
                 Checked = _module.Settings.GlobalPathablesEnabled.Value,
-                Submenu = isAnyMarkers
-                    ? new CategoryContextMenuStrip(_packState, _sharedPackCollection.Categories, false)
-                    : null
+                Submenu = markerSubMenu
             };
 
             allMarkers.CheckedChanged += (_, e) => {

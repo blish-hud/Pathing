@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Scripting;
 using BhModule.Community.Pathing.Scripting.Console;
-using BhModule.Community.Pathing.UI.Controls.TreeView;
 using BhModule.Community.Pathing.UI.Events;
 using BhModule.Community.Pathing.UI.Views;
 using Blish_HUD.Controls;

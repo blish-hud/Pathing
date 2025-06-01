@@ -91,7 +91,12 @@ namespace BhModule.Community.Pathing.UI.Presenter {
             _module.PackInitiator.LoadMapFromEachPackStarted                       += PackInitiatorOnLoadMapFromEachPackStarted;
             _module.PackInitiator.LoadMapFromEachPackFinished                      += PackInitiatorOnLoadMapFromEachPackFinished;
             _module.PackInitiator.PackState.CategoryStates.CategoryInactiveChanged += CategoryStatesOnCategoryInactiveChanged;
+            _module.PackInitiator.PackState.CategoryStates.CategoryStatesOptimized += CategoryStatesOnCategoryStatesOptimized;
             _packEventsInitialized                                                     =  true;
+        }
+
+        private void CategoryStatesOnCategoryStatesOptimized(object sender, EventArgs e) {
+            this.View.TreeView?.UpdateSearchResultsCheckState(_module.PackInitiator.PackState);
         }
 
         private void CategoryStatesOnCategoryInactiveChanged(object sender, PathingCategoryEventArgs e) {
