@@ -6,6 +6,7 @@ using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Models;
 using BhModule.Community.Pathing.UI.Tooltips;
+using BhModule.Community.Pathing.UI.Views;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Content;
@@ -37,7 +38,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         }
 
         private readonly IPackState      _packState;
-        public           PathingCategory PathingCategory { get; }
+        public  PathingCategory PathingCategory { get; }
+        private PathingCategory PackCategory { get; }
 
         private readonly IList<IPathingEntity> _entities;
 
@@ -47,7 +49,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         private int _achievementBit;
         private bool _achievementHidden;
 
-        public bool IsSearchResult { get; init; }
+        protected Label PackNameControl;
+        public    bool  IsSearchResult { get; init; }
 
         public PathingCategoryNode(IPackState packState, PathingCategory pathingCategory, bool showForceAll) 
             : base(pathingCategory.DisplayName)
@@ -79,7 +82,10 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 this.Checked = !_packState.CategoryStates.GetCategoryInactive(pathingCategory);
                 UpdateActiveState(this.Checked);
             }
-                
+
+            PackCategory = PathingCategory.GetParents()
+                                          .LastOrDefault();
+
             this.CheckedChanged += CheckboxOnCheckedChanged;
         }
 
@@ -113,12 +119,63 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             //Details
             BuildAchievementTexture();
 
+            //Pack name
+            if (IsSearchResult) {
+                LabelControl.MouseEntered += NameControlOnMouseEntered;
+
+                BuildPackName();
+            }
+               
+
             //Properties
             BuildEntityCount();
 
             //Context menu
             if(this.Menu != null)
                 BuildContextMenu();
+        }
+
+        private void BuildPackName() {
+            if (PackCategory == null) return;
+
+            PackNameControl?.Dispose();
+
+            PackNameControl = new Label
+            {
+                Parent           = _propertiesPanel,
+                Text             = PackCategory.DisplayName,
+                Height           = this.PanelHeight,
+                AutoSizeWidth    = true,
+                Font             = GameService.Content.DefaultFont16,
+                TextColor        = Color.Orange,
+                WrapText         = true,
+                StrokeText       = true,
+                BasicTooltipText = this.BasicTooltipText
+            };
+
+            PackNameControl.MouseEntered += NameControlOnMouseEntered;
+        }
+
+        private Tooltip _categoryPathTooltip;
+
+        private void NameControlOnMouseEntered(object sender, MouseEventArgs e) {
+            if (_categoryPathTooltip != null) return;
+
+            BuildCategoryPathTooltip();
+        }
+
+        public void InvalidatePath() {
+            _categoryPathTooltip?.Dispose();
+            _categoryPathTooltip = null;
+        }
+
+        private void BuildCategoryPathTooltip() {
+            _categoryPathTooltip?.Dispose();
+
+            _categoryPathTooltip = new Tooltip(new CategoryPathTooltip(this.PathingCategory, _packState));
+
+            if (PackNameControl != null) PackNameControl.Tooltip = _categoryPathTooltip;
+            if (LabelControl    != null) LabelControl.Tooltip    = _categoryPathTooltip;
         }
 
         private void BuildAchievementTexture() {
@@ -249,7 +306,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         }
 
         private void BuildOpenInTree() {
-            var stripItem = new ContextMenuStripItem("Open In Category Tree")
+            var stripItem = new ContextMenuStripItem("Open In Explorer")
             {
                 Parent = this.Menu
             };
@@ -268,15 +325,34 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 _packState.CategoryStates.SetInactive(this.PathingCategory, !e.Checked);
             }
 
+            InvalidatePath();
+
             UpdateActiveState(e.Checked);
 
-            if (!ParentIsActive() && e.Checked)
-            {
-                ScreenNotification.ShowNotification("One or more of the parent categories are inactive.",
-                                                    ScreenNotification.NotificationType.Warning,
-                                                    null,
-                                                    2);
+            if (!ParentIsActive() && e.Checked) {
+                TreeView.SkipNextStateCheck(this);
+                ShowConfirmationWindow();
             }
+        }
+
+        private ViewContainer _confirmationContainer;
+
+        private void ShowConfirmationWindow() {
+            var window = PathingModule.Instance.SettingsWindow;
+
+            _confirmationContainer?.Dispose();
+
+            _confirmationContainer = new ViewContainer
+            {
+                Size     = new Point(400, 400),
+                HeightSizingMode = SizingMode.AutoSize,
+                Location = new Point(window.Location.X + (window.Size.X / 2 - 200), window.Location.Y + (window.Size.Y / 2 - 200)),
+                ZIndex   = int.MaxValue - 2,
+                FadeView = true,
+                Parent   = Graphics.SpriteScreen
+            };
+
+            _confirmationContainer.Show(new ConfirmationView(this.PathingCategory, _packState));
         }
 
         public void UpdateActiveState(bool active) {
@@ -393,7 +469,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                        StandardTrail trail => new PathingTexture { Icon   = trail.Texture, Tint  = trail.Tint },
                        _ => null
                    })
-                  .Where(pt => pt != null && uniqueTextures.Add(pt.Icon.Texture));
+                  .Where(pt => pt?.Icon?.Texture != null && uniqueTextures.Add(pt.Icon.Texture));
         }
 
         private void DetectAndBuildContexts() {

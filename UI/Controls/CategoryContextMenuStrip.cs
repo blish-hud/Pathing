@@ -124,7 +124,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         private void ShowAllSkippedCategories_LeftMouseButtonReleased(object sender, MouseEventArgs e) {
-            this.ClearChildren();
+            ClearCategoryStrips();
 
             (IEnumerable<PathingCategory> subCategories, int skipped) = GetSubCategories(true);
 
@@ -138,9 +138,21 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 cmsiChild?.Submenu?.Hide();
             }
 
-            this.ClearChildren();
+            ClearCategoryStrips();
+
 
             base.OnHidden(e);
+        }
+
+        private void ClearCategoryStrips() {
+            var search = this.Children
+                             .OfType<ContextMenuStripItem>()
+                             .FirstOrDefault();
+
+            this.ClearChildren();
+
+            if (search != null)
+                search.Parent = this;
         }
 
         private const int SCROLLHINT_HEIGHT = 20;

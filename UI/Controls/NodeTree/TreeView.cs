@@ -18,10 +18,11 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
     {
         private Control _scrollToChildControl = null;
 
-        private PathingCategoryNode _rootNode;
-        private static readonly Logger _logger = Logger.GetLogger<TreeView>();
+        private                 PathingCategoryNode _rootNode;
+        private static readonly Logger              _logger = Logger.GetLogger<TreeView>();
+        private                 PathingCategoryNode _skipStateCheckNode;
 
-        public  PackInitiator          PackInitiator  { get; private set; }
+        public PackInitiator          PackInitiator  { get; private set; }
         public  IList<TreeNodeBase>    AllBaseNodes   { get; }      = new List<TreeNodeBase>();
         public  IList<TreeNodeBase>    ChildBaseNodes { get; }      = new List<TreeNodeBase>();
         private IList<PathingCategory> AllCategories  { get; set; } = new List<PathingCategory>();
@@ -149,7 +150,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         }
 
         private void GlobalPathablesEnabledOnSettingChanged(object sender, ValueChangedEventArgs<bool> e) {
-            _rootNode.Checked = PackInitiator.PackState.UserConfiguration.GlobalPathablesEnabled.Value; ;
+            _rootNode.Checked = PackInitiator.PackState.UserConfiguration.GlobalPathablesEnabled.Value;
         }
 
         public async Task<(List<PathingCategory> categories, int skipped)> SearchAsync(string input, CancellationToken cancellationToken = default, bool forceShowAll = false)
@@ -225,6 +226,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
 
             return showAllSkippedCategories;
         }
+
         public void NavigateToPath(string path) {
             if(_rootNode == null) return;
 
@@ -285,6 +287,23 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
             if (node != null) {
                 node.Checked = active;
             }
+        }
+
+        public void SkipNextStateCheck(PathingCategoryNode node) {
+            _skipStateCheckNode = node;
+        }
+
+        public void UpdateSearchResultsCheckState(IPackState packState) {
+            foreach (var node in AllBaseNodes) {
+                if (node is PathingCategoryNode { IsSearchResult: true, Checkable: true } categoryNode && categoryNode != _skipStateCheckNode) {
+                    categoryNode.Checked = !packState.CategoryStates.GetCategoryInactive(categoryNode.PathingCategory);
+                    categoryNode.Active = !packState.CategoryStates.GetNamespaceInactive(categoryNode.PathingCategory.Namespace);
+
+                    categoryNode.InvalidatePath();
+                }
+            }
+
+            _skipStateCheckNode = null;
         }
 
         protected override void OnResized(ResizedEventArgs e) {
