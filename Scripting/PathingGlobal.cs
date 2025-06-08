@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BhModule.Community.Pathing.Scripting.Lib;
 using BhModule.Community.Pathing.Scripting.Lib.Std;
 using Blish_HUD;
@@ -81,11 +82,10 @@ public class PathingGlobal : LuaTable {
         int lookup = HashCode.Combine(scriptName, resourceManager);
 
         if (!_loadedChunks.TryGetValue(lookup, out var chunk)) {
-            var loadScript = this.ScriptEngine.LoadScript(scriptName, resourceManager);
-            loadScript.Wait();
+            var loadScriptResult = this.ScriptEngine.LoadScript(scriptName, resourceManager).ConfigureAwait(false).GetAwaiter().GetResult();
 
-            if (loadScript.Result != null) {
-                _loadedChunks[lookup] = chunk = loadScript.Result;
+            if (loadScriptResult != null) {
+                _loadedChunks[lookup] = chunk = loadScriptResult;
             }
         }
 

@@ -92,12 +92,13 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 showAllSkippedCategories.LeftMouseButtonReleased += ShowAllSkippedCategories_LeftMouseButtonReleased;
             }
 
-            if (skipped == 0 && !subCategories.Any()) {
-                this.AddMenuItem(new ContextMenuStripItem() {
-                    Text = "No marker packs loaded...",
-                    Enabled = false,
-                });
-            }
+            // Results in weird behavior - this isn't right: https://discord.com/channels/531175899588984842/958231812780474409/1378696238790348800
+            //if (skipped == 0 && !subCategories.Any()) {
+            //    this.AddMenuItem(new ContextMenuStripItem() {
+            //        Text = "No marker packs loaded...",
+            //        Enabled = false,
+            //    });
+            //}
 
             base.OnShown(e);
 

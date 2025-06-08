@@ -152,10 +152,10 @@ public class ScriptEngine {
         }
 
         try {
-            var scriptStream = await resourceManager.LoadResourceStreamAsync(scriptName);
+            var scriptStream = await resourceManager.LoadResourceStreamAsync(scriptName).ConfigureAwait(false);
 
             using (var scriptReader = new StreamReader(scriptStream)) {
-                string scriptSource = await scriptReader.ReadToEndAsync();
+                string scriptSource = await scriptReader.ReadToEndAsync().ConfigureAwait(false);
 
                 var chunk = _lua.CompileChunk(scriptSource, scriptName, new LuaCompileOptions() {
                                                   DebugEngine = _stackTraceDebugger
