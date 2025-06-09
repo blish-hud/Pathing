@@ -47,6 +47,9 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         public void SetPackInitiator(PackInitiator packInitiator) {
             if (packInitiator == null || PackInitiator == packInitiator) return;
 
+            if(PackInitiator != null)
+                PackInitiator.PackState.UserConfiguration.GlobalPathablesEnabled.SettingChanged -= GlobalPathablesEnabledOnSettingChanged;
+
             PackInitiator = packInitiator;
 
             PackInitiator.PackState.UserConfiguration.GlobalPathablesEnabled.SettingChanged += GlobalPathablesEnabledOnSettingChanged;
@@ -150,6 +153,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         }
 
         private void GlobalPathablesEnabledOnSettingChanged(object sender, ValueChangedEventArgs<bool> e) {
+            if (_rootNode == null || PackInitiator?.PackState?.UserConfiguration == null) return;
+
             _rootNode.Checked = PackInitiator.PackState.UserConfiguration.GlobalPathablesEnabled.Value;
         }
 
