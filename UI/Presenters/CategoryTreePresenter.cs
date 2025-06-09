@@ -55,7 +55,7 @@ namespace BhModule.Community.Pathing.UI.Presenter {
             }
             catch (Exception ex)
             {
-                _logger.Error($"Failed to update view with error: {ex.Message}");
+                _logger.Error(ex, "Failed to update view.");
             }
             finally
             {

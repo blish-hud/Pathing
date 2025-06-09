@@ -233,7 +233,7 @@ namespace BhModule.Community.Pathing.UI.Views {
             }
             catch (Exception ex)
             {
-                _logger.Error($"Category search failed with error: {ex.Message}");
+                _logger.Error(ex, "Category search failed.");
             }
             finally
             {
