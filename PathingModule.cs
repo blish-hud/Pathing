@@ -91,13 +91,11 @@ namespace BhModule.Community.Pathing {
             };
 
             openSettings.Click += (_, _) => {
-                if (SettingsWindow.SelectedTab == MarkerRepoTab) {
+                if (SettingsWindow.SelectedTab == MarkerRepoTab || SettingsWindow.SelectedTab == CategoryTreeTab) {
                     SettingsWindow.SelectedTab = PackSettingsTab;
-
-                    if (SettingsWindow.Visible) return;
                 }
 
-                SettingsWindow.ToggleWindow();
+                SettingsWindow.Show();
             };
 
             yield return openSettings;

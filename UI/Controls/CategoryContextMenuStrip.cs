@@ -70,35 +70,22 @@ namespace BhModule.Community.Pathing.UI.Controls {
             return (Enumerable.Reverse(filteredSubCategories), skipped);
         }
 
+        private void ShowSearch() {
+            var searchMarker = new ContextMenuStripItem() {
+                Text = "Search",
+                BackgroundColor = Color.LightBlue * 0.1f
+            };
+
+            searchMarker.Click += (_, _) => {
+                PathingModule.Instance.SettingsWindow.SelectedTab = PathingModule.Instance.CategoryTreeTab;
+                PathingModule.Instance.SettingsWindow.Show();
+            };
+
+            this.AddMenuItem(searchMarker);
+        }
+
         protected override void OnShown(EventArgs e) {
-            (IEnumerable<PathingCategory> subCategories, int skipped) = GetSubCategories(_forceShowAll);
-
-            foreach (var subCategory in subCategories) {
-                this.AddMenuItem(new CategoryContextMenuStripItem(_packState, subCategory, _forceShowAll));
-            }
-
-            if (skipped > 0 && _packState.UserConfiguration.PackShowWhenCategoriesAreFiltered.Value) {
-                var showAllSkippedCategories = new ContextMenuStripItem() {
-                    // LOCALIZE: Skipped categories menu item
-                    Text = $"{skipped} Categories Are Hidden",
-                    Enabled = false,
-                    CanCheck = true,
-                    BasicTooltipText = string.Format(Strings.Info_HiddenCategories, _packState.UserConfiguration.PackEnableSmartCategoryFilter.DisplayName)
-                };
-
-                this.AddMenuItem(showAllSkippedCategories);
-
-                // The control is disabled, so the .Click event won't fire.  We cheat by just doing LeftMouseButtonReleased.
-                showAllSkippedCategories.LeftMouseButtonReleased += ShowAllSkippedCategories_LeftMouseButtonReleased;
-            }
-
-            // Results in weird behavior - this isn't right: https://discord.com/channels/531175899588984842/958231812780474409/1378696238790348800
-            //if (skipped == 0 && !subCategories.Any()) {
-            //    this.AddMenuItem(new ContextMenuStripItem() {
-            //        Text = "No marker packs loaded...",
-            //        Enabled = false,
-            //    });
-            //}
+            PopulateMenuItems(_forceShowAll);
 
             base.OnShown(e);
 
@@ -123,14 +110,45 @@ namespace BhModule.Community.Pathing.UI.Controls {
             // See that is it very little.
         }
 
-        private void ShowAllSkippedCategories_LeftMouseButtonReleased(object sender, MouseEventArgs e) {
-            ClearCategoryStrips();
+        private void PopulateMenuItems(bool showAll) {
+            this.ClearChildren();
 
-            (IEnumerable<PathingCategory> subCategories, int skipped) = GetSubCategories(true);
+            (IEnumerable<PathingCategory> subCategories, int skipped) = GetSubCategories(showAll);
+
+            if (_pathingCategory != null && _pathingCategory.Root) {
+                ShowSearch();
+
+                //Results in weird behavior -this isn't right: https://discord.com/channels/531175899588984842/958231812780474409/1378696238790348800
+                if (skipped == 0 && !subCategories.Any()) {
+                    this.AddMenuItem(new ContextMenuStripItem() {
+                        Text = "No marker packs loaded...",
+                        Enabled = false,
+                    });
+                }
+            }
 
             foreach (var subCategory in subCategories) {
-                this.AddMenuItem(new CategoryContextMenuStripItem(_packState, subCategory, true));
+                this.AddMenuItem(new CategoryContextMenuStripItem(_packState, subCategory, showAll));
             }
+
+            if (skipped > 0 && _packState.UserConfiguration.PackShowWhenCategoriesAreFiltered.Value) {
+                var showAllSkippedCategories = new ContextMenuStripItem() {
+                    // LOCALIZE: Skipped categories menu item
+                    Text = $"{skipped} Categories Are Hidden",
+                    Enabled = false,
+                    CanCheck = true,
+                    BasicTooltipText = string.Format(Strings.Info_HiddenCategories, _packState.UserConfiguration.PackEnableSmartCategoryFilter.DisplayName)
+                };
+
+                this.AddMenuItem(showAllSkippedCategories);
+
+                // The control is disabled, so the .Click event won't fire.  We cheat by just doing LeftMouseButtonReleased.
+                showAllSkippedCategories.LeftMouseButtonReleased += ShowAllSkippedCategories_LeftMouseButtonReleased;
+            }
+        }
+
+        private void ShowAllSkippedCategories_LeftMouseButtonReleased(object sender, MouseEventArgs e) {
+            PopulateMenuItems(true);
         }
 
         protected override void OnHidden(EventArgs e) {
@@ -138,21 +156,10 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 cmsiChild?.Submenu?.Hide();
             }
 
-            ClearCategoryStrips();
+            this.ClearChildren();
 
 
             base.OnHidden(e);
-        }
-
-        private void ClearCategoryStrips() {
-            var search = this.Children
-                             .OfType<ContextMenuStripItem>()
-                             .FirstOrDefault();
-
-            this.ClearChildren();
-
-            if (search != null)
-                search.Parent = this;
         }
 
         private const int SCROLLHINT_HEIGHT = 20;
