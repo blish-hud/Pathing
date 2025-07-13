@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using BhModule.Community.Pathing.UI.Controls.TreeView;
 using BhModule.Community.Pathing.UI.Events;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
@@ -47,10 +46,15 @@ namespace BhModule.Community.Pathing.State {
 
             string[] recordedCategories = Array.Empty<string>();
 
-            try {
-                recordedCategories = await FileUtil.ReadLinesAsync(categoryStatePath);
-            } catch (Exception e) {
-                Logger.Warn(e, $"Failed to read {STATE_FILE} ({categoryStatePath}).");
+            // We'll retry a few times before giving up and clearing the categories.
+            for (int i = 3; i > 0; i--) {
+                try {
+                    recordedCategories = await FileUtil.ReadLinesAsync(categoryStatePath);
+                    break;
+                } catch (Exception e) {
+                    Logger.Warn(e, $"Failed to read {STATE_FILE} ({categoryStatePath}).");
+                }
+                await Task.Delay(1000);
             }
 
             rawCategoriesList.Clear();

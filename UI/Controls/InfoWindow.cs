@@ -103,7 +103,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 this.Visible = false;
             }
 
-            if (PathingModule.Instance.Settings.PackInfoDisplayMode.Value == MarkerInfoDisplayMode.NeverDisplay) {
+            if (PathingModule.Instance == null || PathingModule.Instance.Settings.PackInfoDisplayMode.Value == MarkerInfoDisplayMode.NeverDisplay) {
                 Hide();
             }
 
