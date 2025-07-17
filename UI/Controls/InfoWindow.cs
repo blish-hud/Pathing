@@ -95,21 +95,19 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         public override void UpdateContainer(GameTime gameTime) {
-            try {
-                float fadeLerp = MathHelper.Clamp((float)((_fadeCompletion - gameTime.TotalGameTime.TotalMilliseconds) / FADEDURATION), 0f, 1f);
+            float fadeLerp = MathHelper.Clamp((float)((_fadeCompletion - gameTime.TotalGameTime.TotalMilliseconds) / FADEDURATION), 0f, 1f);
 
-                this.Opacity = _showing ? 1f - fadeLerp : fadeLerp;
+            this.Opacity = _showing ? 1f - fadeLerp : fadeLerp;
 
-                if (!_showing && fadeLerp <= 0f) {
-                    this.Visible = false;
-                }
+            if (!_showing && fadeLerp <= 0f) {
+                this.Visible = false;
+            }
 
-                if (PathingModule.Instance == null || PathingModule.Instance.Settings.PackInfoDisplayMode.Value == MarkerInfoDisplayMode.NeverDisplay) {
-                    Hide();
-                }
+            if (PathingModule.Instance == null || PathingModule.Instance.Settings.PackInfoDisplayMode.Value == MarkerInfoDisplayMode.NeverDisplay) {
+                Hide();
+            }
 
-                base.UpdateContainer(gameTime);
-            } catch (Exception) { /* NOOP */ }
+            base.UpdateContainer(gameTime);
         }
 
         protected override void OnClick(MouseEventArgs e) {
