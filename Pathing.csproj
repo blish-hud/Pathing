@@ -2,6 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B5DE694A-0648-4A39-8349-8C0BB0DD538C}</ProjectGuid>
@@ -178,6 +179,9 @@
     </Compile>
     <Compile Include="Entity\StandardTrail[edittag].cs" />
     <Compile Include="Entity\StandardTrail[fadenear,fadefar].cs">
+      <DependentUpon>StandardTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\StandardTrail[glow].cs">
       <DependentUpon>StandardTrail.cs</DependentUpon>
     </Compile>
     <Compile Include="Entity\StandardTrail[guid].cs" />
