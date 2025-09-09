@@ -124,14 +124,12 @@ namespace BhModule.Community.Pathing.Utility {
 
                 // Test to ensure that the pack is valid.
                 using (var packStream = File.Open(tempPackDownloadDestination, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-                    var packArchive = new ZipArchive(packStream);
-
-                    // Ensure we can see the list of entries, at least.
-                    if (!(packArchive.Entries.Count > 0)) {
-                        throw new InvalidDataException();
+                    using (var packArchive = new ZipArchive(packStream)) {
+                        // Ensure we can see the list of entries, at least.
+                        if (!(packArchive.Entries.Count > 0)) {
+                            throw new InvalidDataException();
+                        }
                     }
-
-                    packArchive.Dispose();
                 }
 
                 if (module.RunState == Blish_HUD.Modules.ModuleRunState.Loaded && module.PackInitiator.PackState.UserResourceStates.Advanced.OptimizeMarkerPacks) {
@@ -148,10 +146,19 @@ namespace BhModule.Community.Pathing.Utility {
 
                     while (module.PackInitiator.IsLoading) {
                         // We're currently loading the packs.  Wait a second and check again.
-                        Thread.Sleep(1000);
+                        await Task.Delay(1000);
                     }
 
-                    File.Delete(finalPath);
+                    for (int i = 5; i>= 0; i--) {
+                        try {
+                            File.Delete(finalPath);
+                            break;
+                        } catch (IOException) when (i > 0) {
+                            // File is probably temporarily locked.
+                            await Task.Delay(1500);
+                        }
+                    }
+
                 }
 
                 try {
