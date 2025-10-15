@@ -2,140 +2,213 @@
 using Blish_HUD.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.CompilerServices;
 
 namespace BhModule.Community.Pathing.Entity.Effects {
     public class TrailEffect : SharedEffect {
 
-        // Per-effect parameters
-        private const string PARAMETER_WORLDVIEWPROJECTION = "WorldViewProjection";
-        private const string PARAMETER_PLAYERVIEW          = "PlayerView";
-        private const string PARAMETER_PLAYERPOSITION      = "PlayerPosition";
-        private const string PARAMETER_CAMERAPOSITION      = "CameraPosition";
-        private const string PARAMETER_TOTALMILLISECONDS   = "TotalMilliseconds";
+        // Cached parameter handles
+        private readonly EffectParameter
+            _pWorldViewProjection, _pPlayerView, _pPlayerPosition, _pCameraPosition, _pTotalMilliseconds,
+            _pRace, _pMount,
+            _pTexture, _pFadeTexture, _pFlowSpeed, _pFadeNear, _pFadeFar, _pOpacity,
+            _pTintColor, _pPlayerFadeRadius, _pFadeCenter;
 
-        private Matrix  _worldViewProjection;
-        private Matrix  _playerView;
+        // Backing fields
+        private Matrix _worldViewProjection;
+        private Matrix _playerView;
         private Vector3 _playerPosition;
         private Vector3 _cameraPosition;
-        private float   _totalMilliseconds;
-
-        public Matrix WorldViewProjection {
-            get => _worldViewProjection;
-            set => SetParameter(PARAMETER_WORLDVIEWPROJECTION, ref _worldViewProjection, value);
-        }
-
-        public Matrix PlayerView {
-            get => _playerView;
-            set => SetParameter(PARAMETER_PLAYERVIEW, ref _playerView, value);
-        }
-
-        public Vector3 PlayerPosition {
-            get => _playerPosition;
-            set => SetParameter(PARAMETER_PLAYERPOSITION, ref _playerPosition, value);
-        }
-
-        public Vector3 CameraPosition {
-            get => _cameraPosition;
-            set => SetParameter(PARAMETER_CAMERAPOSITION, ref _cameraPosition, value);
-        }
-
-        public float TotalMilliseconds {
-            get => _totalMilliseconds;
-            set => SetParameter(PARAMETER_TOTALMILLISECONDS, ref _totalMilliseconds, value);
-        }
-
-        // Universal
-
-        private const string PARAMETER_RACE  = "Race";
-        private const string PARAMETER_MOUNT = "Mount";
+        private float _totalMilliseconds;
 
         private int _race;
         private int _mount;
 
+        private Texture2D _texture;
+        private Texture2D _fadeTexture;
+        private float _flowSpeed;
+        private float _fadeNear, _fadeFar;
+        private float _opacity;
+        private float _playerFadeRadius;
+        private bool _fadeCenter;
+        private Color _tintColor;
+
+        public Matrix WorldViewProjection {
+            get => _worldViewProjection;
+            set => SetParam(ref _worldViewProjection, value, _pWorldViewProjection);
+        }
+
+        public Matrix PlayerView {
+            get => _playerView;
+            set => SetParam(ref _playerView, value, _pPlayerView);
+        }
+
+        public Vector3 PlayerPosition {
+            get => _playerPosition;
+            set => SetParam(ref _playerPosition, value, _pPlayerPosition);
+        }
+
+        public Vector3 CameraPosition {
+            get => _cameraPosition;
+            set => SetParam(ref _cameraPosition, value, _pCameraPosition);
+        }
+
+        public float TotalMilliseconds {
+            get => _totalMilliseconds;
+            set => SetParam(ref _totalMilliseconds, value, _pTotalMilliseconds);
+        }
+
         public int Race {
             get => _race;
-            set => SetParameter(PARAMETER_RACE, ref _race, value);
+            set => SetParam(ref _race, value, _pRace);
         }
 
         public int Mount {
             get => _mount;
-            set => SetParameter(PARAMETER_MOUNT, ref _mount, value);
+            set => SetParam(ref _mount, value, _pMount);
         }
-
-        // Entity-unique parameters
-        private const string PARAMETER_TEXTURE          = "Texture";
-        private const string PARAMETER_FADETEXTURE      = "FadeTexture";
-        private const string PARAMETER_FLOWSPEED        = "FlowSpeed";
-        private const string PARAMETER_FADENEAR         = "FadeNear";
-        private const string PARAMETER_FADEFAR          = "FadeFar";
-        private const string PARAMETER_OPACITY          = "Opacity";
-        private const string PARAMETER_TINTCOLOR        = "TintColor";
-        private const string PARAMETER_PLAYERFADERADIUS = "PlayerFadeRadius";
-        private const string PARAMETER_FADECENTER       = "FadeCenter";
-
-        private Texture2D _texture;
-        private Texture2D _fadeTexture;
-        private float     _flowSpeed;
-        private float     _fadeNear, _fadeFar;
-        private float     _opacity;
-        private float     _playerFadeRadius;
-        private bool      _fadeCenter;
-        private Color     _tintColor;
 
         public Texture2D Texture {
             get => _texture;
-            set => SetParameter(PARAMETER_TEXTURE, ref _texture, value);
+            set => SetParam(ref _texture, value, _pTexture);
         }
 
         public Texture2D FadeTexture {
-            get => _texture;
-            set => SetParameter(PARAMETER_FADETEXTURE, ref _fadeTexture, value);
+            get => _fadeTexture;
+            set => SetParam(ref _fadeTexture, value, _pFadeTexture);
         }
 
         public float FlowSpeed {
             get => _flowSpeed;
-            set => SetParameter(PARAMETER_FLOWSPEED, ref _flowSpeed, value);
+            set => SetParam(ref _flowSpeed, value, _pFlowSpeed);
         }
 
         public float FadeNear {
             get => _fadeNear;
-            set => SetParameter(PARAMETER_FADENEAR, ref _fadeNear, value);
+            set => SetParam(ref _fadeNear, value, _pFadeNear);
         }
 
         public float FadeFar {
             get => _fadeFar;
-            set => SetParameter(PARAMETER_FADEFAR, ref _fadeFar, value);
+            set => SetParam(ref _fadeFar, value, _pFadeFar);
         }
 
         public float Opacity {
             get => _opacity;
-            set => SetParameter(PARAMETER_OPACITY, ref _opacity, value);
+            set => SetParam(ref _opacity, value, _pOpacity);
         }
 
         public float PlayerFadeRadius {
             get => _playerFadeRadius;
-            set => SetParameter(PARAMETER_PLAYERFADERADIUS, ref _playerFadeRadius, value);
+            set => SetParam(ref _playerFadeRadius, value, _pPlayerFadeRadius);
         }
 
         public bool FadeCenter {
             get => _fadeCenter;
-            set => SetParameter(PARAMETER_FADECENTER, ref _fadeCenter, value);
+            set => SetParam(ref _fadeCenter, value, _pFadeCenter);
         }
 
         public Color TintColor {
             get => _tintColor;
-            set => SetParameter(PARAMETER_TINTCOLOR, ref _tintColor, value);
+            set => SetParam(ref _tintColor, value, _pTintColor);
         }
+
 
         #region ctors
 
-        public TrailEffect(Effect cloneSource) : base(cloneSource) { /* NOOP */ }
+        public TrailEffect(Effect cloneSource) : base(cloneSource) {
+            _pWorldViewProjection = Parameters["WorldViewProjection"];
+            _pPlayerView = Parameters["PlayerView"];
+            _pPlayerPosition = Parameters["PlayerPosition"];
+            _pCameraPosition = Parameters["CameraPosition"];
+            _pTotalMilliseconds = Parameters["TotalMilliseconds"];
+            _pRace = Parameters["Race"];
+            _pMount = Parameters["Mount"];
+            _pTexture = Parameters["Texture"];
+            _pFadeTexture = Parameters["FadeTexture"];
+            _pFlowSpeed = Parameters["FlowSpeed"];
+            _pFadeNear = Parameters["FadeNear"];
+            _pFadeFar = Parameters["FadeFar"];
+            _pOpacity = Parameters["Opacity"];
+            _pTintColor = Parameters["TintColor"];
+            _pPlayerFadeRadius = Parameters["PlayerFadeRadius"];
+            _pFadeCenter = Parameters["FadeCenter"];
+        }
 
-        public TrailEffect(GraphicsDevice graphicsDevice, byte[] effectCode) : base(graphicsDevice, effectCode) { /* NOOP */ }
+        public TrailEffect(GraphicsDevice graphicsDevice, byte[] effectCode) : base(graphicsDevice, effectCode) {
+            _pWorldViewProjection = Parameters["WorldViewProjection"];
+            _pPlayerView = Parameters["PlayerView"];
+            _pPlayerPosition = Parameters["PlayerPosition"];
+            _pCameraPosition = Parameters["CameraPosition"];
+            _pTotalMilliseconds = Parameters["TotalMilliseconds"];
+            _pRace = Parameters["Race"];
+            _pMount = Parameters["Mount"];
+            _pTexture = Parameters["Texture"];
+            _pFadeTexture = Parameters["FadeTexture"];
+            _pFlowSpeed = Parameters["FlowSpeed"];
+            _pFadeNear = Parameters["FadeNear"];
+            _pFadeFar = Parameters["FadeFar"];
+            _pOpacity = Parameters["Opacity"];
+            _pTintColor = Parameters["TintColor"];
+            _pPlayerFadeRadius = Parameters["PlayerFadeRadius"];
+            _pFadeCenter = Parameters["FadeCenter"];
+        }
 
-        public TrailEffect(GraphicsDevice graphicsDevice, byte[] effectCode, int index, int count) : base(graphicsDevice, effectCode, index, count) { /* NOOP */ }
+        public TrailEffect(GraphicsDevice graphicsDevice, byte[] effectCode, int index, int count) : base(graphicsDevice, effectCode, index, count) {
+            _pWorldViewProjection = Parameters["WorldViewProjection"];
+            _pPlayerView = Parameters["PlayerView"];
+            _pPlayerPosition = Parameters["PlayerPosition"];
+            _pCameraPosition = Parameters["CameraPosition"];
+            _pTotalMilliseconds = Parameters["TotalMilliseconds"];
+            _pRace = Parameters["Race"];
+            _pMount = Parameters["Mount"];
+            _pTexture = Parameters["Texture"];
+            _pFadeTexture = Parameters["FadeTexture"];
+            _pFlowSpeed = Parameters["FlowSpeed"];
+            _pFadeNear = Parameters["FadeNear"];
+            _pFadeFar = Parameters["FadeFar"];
+            _pOpacity = Parameters["Opacity"];
+            _pTintColor = Parameters["TintColor"];
+            _pPlayerFadeRadius = Parameters["PlayerFadeRadius"];
+            _pFadeCenter = Parameters["FadeCenter"];
+        }
 
         #endregion
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool SetParam(ref Matrix f, Matrix v, EffectParameter p) {
+            if (f == v) return false; f = v; p.SetValue(v); return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool SetParam(ref Vector3 f, Vector3 v, EffectParameter p) {
+            if (f == v) return false; f = v; p.SetValue(v); return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool SetParam(ref Texture2D f, Texture2D v, EffectParameter p) {
+            if (ReferenceEquals(f, v)) return false; f = v; p.SetValue(v); return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool SetParam(ref float f, float v, EffectParameter p) {
+            if (f == v) return false; f = v; p.SetValue(v); return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool SetParam(ref int f, int v, EffectParameter p) {
+            if (f == v) return false; f = v; p.SetValue(v); return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool SetParam(ref bool f, bool v, EffectParameter p) {
+            if (f == v) return false; f = v; p.SetValue(v); return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool SetParam(ref Color f, Color v, EffectParameter p) {
+            if (f == v) return false; f = v; p.SetValue(v.ToVector4()); return true;
+        }
 
         public void SetEntityState(Texture2D texture, float flowSpeed, float fadeNear, float fadeFar, float opacity, float playerFadeRadius, bool fadeCenter, Color tintColor) {
             this.Texture          = texture;
