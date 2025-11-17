@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using BhModule.Community.Pathing.Entity;
 using Blish_HUD.Input;
 using Blish_HUD.Settings;
 using Microsoft.Xna.Framework.Input;
@@ -134,27 +135,33 @@ namespace BhModule.Community.Pathing {
         public SettingEntry<bool>               MapFadeVerticallyDistantTrailSegments { get; private set; }
         public SettingEntry<float>              MapTrailWidth                         { get; private set; }
         public SettingEntry<bool>               MapShowTooltip                        { get; private set; }
+        public SettingEntry<int>                MapTrailGlowBeadSpacing               { get; private set; }
+        public SettingEntry<int>                MapTrailGlowSpeed                     { get; private set; }
 
         private void InitMapSettings(SettingCollection settings) {
             this.MapSettings = settings.AddSubCollection(MAP_SETTINGS);
 
             // TODO: Add string to strings.resx for localization.
             // TODO: Add description to settings.
-            this.MapPathablesEnabled                   = this.MapSettings.DefineSetting(nameof(this.MapPathablesEnabled),                   true,                       () => "Show Markers on Maps");
-            this.MapMarkerVisibilityLevel              = this.MapSettings.DefineSetting(nameof(this.MapMarkerVisibilityLevel),              MapVisibilityLevel.Default, () => Strings.Setting_MapShowMarkersOnFullscreen,  () => "");
-            this.MapTrailVisibilityLevel               = this.MapSettings.DefineSetting(nameof(this.MapTrailVisibilityLevel),               MapVisibilityLevel.Default, () => Strings.Setting_MapShowTrailsOnFullscreen,   () => "");
-            this.MapDrawOpacity                        = this.MapSettings.DefineSetting(nameof(this.MapDrawOpacity),                        1f,                         () => "Opacity on Fullscreen Map",                 () => "");
-            this.MiniMapMarkerVisibilityLevel          = this.MapSettings.DefineSetting(nameof(this.MiniMapMarkerVisibilityLevel),          MapVisibilityLevel.Default, () => Strings.Setting_MapShowMarkersOnCompass,     () => "");
-            this.MiniMapTrailVisibilityLevel           = this.MapSettings.DefineSetting(nameof(this.MiniMapTrailVisibilityLevel),           MapVisibilityLevel.Default, () => Strings.Setting_MapShowTrailsOnCompass,      () => "");
-            this.MiniMapDrawOpacity                    = this.MapSettings.DefineSetting(nameof(this.MiniMapDrawOpacity),                    1f,                         () => "Opacity on the Minimap",                    () => "");
-            this.MapShowAboveBelowIndicators           = this.MapSettings.DefineSetting(nameof(this.MapShowAboveBelowIndicators),           true,                       () => Strings.Setting_MapShowAboveBelowIndicators, () => "");
-            this.MapFadeVerticallyDistantTrailSegments = this.MapSettings.DefineSetting(nameof(this.MapFadeVerticallyDistantTrailSegments), true,                       () => "Fade Trail Segments Which Are High Above or Below", () => "");
-            this.MapShowTooltip                        = this.MapSettings.DefineSetting(nameof(this.MapShowTooltip),                        true,                       () => "Show Tooltips on Map", () => "If enabled, tooltips will be shown on the map when the cursor is over a marker.");
-            this.MapTrailWidth                         = this.MapSettings.DefineSetting(nameof(this.MapTrailWidth),                         2f,                         () => "Trail Width on Maps", () => "The thickness of trails shown on the map.");
-
+            this.MapPathablesEnabled                   = this.MapSettings.DefineSetting(nameof(this.MapPathablesEnabled),                   true,                            () => "Show Markers on Maps");
+            this.MapMarkerVisibilityLevel              = this.MapSettings.DefineSetting(nameof(this.MapMarkerVisibilityLevel),              MapVisibilityLevel.Default,      () => Strings.Setting_MapShowMarkersOnFullscreen,          () => "");
+            this.MapTrailVisibilityLevel               = this.MapSettings.DefineSetting(nameof(this.MapTrailVisibilityLevel),               MapVisibilityLevel.Default,      () => Strings.Setting_MapShowTrailsOnFullscreen,           () => "");
+            this.MapDrawOpacity                        = this.MapSettings.DefineSetting(nameof(this.MapDrawOpacity),                        1f,                              () => "Opacity on Fullscreen Map",                         () => "");
+            this.MiniMapMarkerVisibilityLevel          = this.MapSettings.DefineSetting(nameof(this.MiniMapMarkerVisibilityLevel),          MapVisibilityLevel.Default,      () => Strings.Setting_MapShowMarkersOnCompass,             () => "");
+            this.MiniMapTrailVisibilityLevel           = this.MapSettings.DefineSetting(nameof(this.MiniMapTrailVisibilityLevel),           MapVisibilityLevel.Default,      () => Strings.Setting_MapShowTrailsOnCompass,              () => "");
+            this.MiniMapDrawOpacity                    = this.MapSettings.DefineSetting(nameof(this.MiniMapDrawOpacity),                    1f,                              () => "Opacity on the Minimap",                            () => "");
+            this.MapShowAboveBelowIndicators           = this.MapSettings.DefineSetting(nameof(this.MapShowAboveBelowIndicators),           true,                            () => Strings.Setting_MapShowAboveBelowIndicators,         () => "");
+            this.MapFadeVerticallyDistantTrailSegments = this.MapSettings.DefineSetting(nameof(this.MapFadeVerticallyDistantTrailSegments), true,                            () => "Fade Trail Segments Which Are High Above or Below", () => "");
+            this.MapShowTooltip                        = this.MapSettings.DefineSetting(nameof(this.MapShowTooltip),                        true,                            () => "Show Tooltips on Map",                              () => "If enabled, tooltips will be shown on the map when the cursor is over a marker.");
+            this.MapTrailWidth                         = this.MapSettings.DefineSetting(nameof(this.MapTrailWidth),                         2f,                              () => "Trail Width on Maps",                               () => "The thickness of trails shown on the map.");
+            this.MapTrailGlowBeadSpacing               = this.MapSettings.DefineSetting(nameof(this.MapTrailGlowBeadSpacing),               0,                               () => "Trail Glow Bead Distance",                          () => "How far apart glow beads should be");
+            this.MapTrailGlowSpeed                     = this.MapSettings.DefineSetting(nameof(this.MapTrailGlowSpeed),                     20,                              () => "Trail Glow Speed",                                  () => "The speed at which the glow moves along the trail");
+            
             this.MapDrawOpacity.SetRange(0f, 1f);
             this.MiniMapDrawOpacity.SetRange(0f, 1f);
             this.MapTrailWidth.SetRange(0.5f, 4.5f);
+            this.MapTrailGlowBeadSpacing.SetRange(5, 80);
+            this.MapTrailGlowSpeed.SetRange(3, 50);
         }
 
         #endregion

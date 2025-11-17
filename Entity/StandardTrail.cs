@@ -39,7 +39,7 @@ namespace BhModule.Community.Pathing.Entity {
             // Editor Specific
             Populate_EditTag(collection, resourceManager);
         }
-
+        
         private void Initialize(ITrail trail) {
             var trailSections = new List<Vector3[]>(trail.TrailSections.Count());
             foreach (var trailSection in trail.TrailSections) {
@@ -51,6 +51,11 @@ namespace BhModule.Community.Pathing.Entity {
             Populate(trail.GetAggregatedAttributes(), TextureResourceManager.GetTextureResourceManager(trail.ResourceManager));
 
             BuildBuffers(trail);
+            
+            UpdateMapGlowOpacity(_packState.UserConfiguration.MapDrawOpacity.Value);
+            UpdateMiniMapGlowOpacity(_packState.UserConfiguration.MiniMapDrawOpacity.Value);
+            _packState.UserConfiguration.MapDrawOpacity.SettingChanged += (_, args) => UpdateMapGlowOpacity(args.NewValue);
+            _packState.UserConfiguration.MiniMapDrawOpacity.SettingChanged += (_, args) => UpdateMiniMapGlowOpacity(args.NewValue);
 
             this.FadeIn();
         }
