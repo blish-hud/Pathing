@@ -320,8 +320,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         }
 
         private void CheckboxOnCheckedChanged(object sender, CheckChangedEvent e) {
-            if (this.Enabled && !this.PathingCategory.IsSeparator)
-            {
+            if (this.Enabled && !this.PathingCategory.IsSeparator) {
                 _packState.CategoryStates.SetInactive(this.PathingCategory, !e.Checked);
             }
 

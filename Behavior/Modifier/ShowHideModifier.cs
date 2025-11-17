@@ -1,11 +1,15 @@
 ﻿using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
+using Blish_HUD;
+using System;
 using TmfLib.Pathable;
 using TmfLib.Prototype;
 
 namespace BhModule.Community.Pathing.Behavior.Modifier {
     public class ShowHideModifier : Behavior<StandardMarker>, ICanInteract, ICanFocus {
+
+        private static readonly Logger Logger = Logger.GetLogger<ShowHideModifier>();
 
         public const string SHOW_PRIMARY_ATTR_NAME = "show";
         public const string HIDE_PRIMARY_ATTR_NAME = "hide";
@@ -25,18 +29,40 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
         public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
             // Create show modifier.
             if (attributes.TryGetAttribute(SHOW_PRIMARY_ATTR_NAME, out var showAttr)) {
-                return new ShowHideModifier(packState.RootCategory.GetOrAddCategoryFromNamespace(showAttr.GetValueAsString()),
-                                            true,
-                                            marker,
-                                            packState);
+                string attrValue = showAttr.GetValueAsString();
+
+                if (!string.IsNullOrWhiteSpace(attrValue)) {
+                    PathingCategory category = null;
+
+                    try {
+                        category = packState.RootCategory.GetOrAddCategoryFromNamespace(attrValue);
+                    } catch (Exception e) {
+                        Logger.Warn(e, $"Failed to load {showAttr.Name}=\"{attrValue}\".");
+                    }
+
+                    if (category != null) {
+                        return new ShowHideModifier(category, true, marker, packState);
+                    }
+                }
             }
 
             // Create hide modifier.
             if (attributes.TryGetAttribute(HIDE_PRIMARY_ATTR_NAME, out var hideAttr)) {
-                return new ShowHideModifier(packState.RootCategory.GetOrAddCategoryFromNamespace(hideAttr.GetValueAsString()),
-                                            false,
-                                            marker,
-                                            packState);
+                string attrValue = hideAttr.GetValueAsString();
+
+                if (!string.IsNullOrWhiteSpace(attrValue)) {
+                    PathingCategory category = null;
+
+                    try {
+                        category = packState.RootCategory.GetOrAddCategoryFromNamespace(attrValue);
+                    } catch (Exception e) {
+                        Logger.Warn(e, $"Failed to load {hideAttr.Name}=\"{attrValue}\".");
+                    }
+
+                    if (category != null) {
+                        return new ShowHideModifier(category, false, marker, packState);
+                    }
+                }
             }
 
             return null;

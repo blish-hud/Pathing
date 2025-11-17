@@ -1,11 +1,15 @@
 ﻿using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
+using Blish_HUD;
+using System;
 using TmfLib.Pathable;
 using TmfLib.Prototype;
 
 namespace BhModule.Community.Pathing.Behavior.Modifier {
     public class ToggleModifier : Behavior<StandardMarker>, ICanInteract, ICanFocus {
+
+        private static readonly Logger Logger = Logger.GetLogger<ToggleModifier>();
 
         public const string PRIMARY_ATTR_NAME = "toggle";
         public const string ALT_ATTR_NAME     = "togglecategory";
@@ -33,9 +37,21 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
             }
 
             if (toggleAttr != null) {
-                return new ToggleModifier(packState.RootCategory.GetOrAddCategoryFromNamespace(toggleAttr.GetValueAsString()),
-                                            marker,
-                                            packState);
+                string attrValue = toggleAttr.GetValueAsString();
+
+                if (!string.IsNullOrWhiteSpace(attrValue)) {
+                    PathingCategory category = null;
+
+                    try {
+                        category = packState.RootCategory.GetOrAddCategoryFromNamespace(attrValue);
+                    } catch (Exception e) {
+                        Logger.Warn(e, $"Failed to load {toggleAttr.Name}=\"{attrValue}\".");
+                    }
+
+                    if (category != null) {
+                        return new ToggleModifier(category, marker, packState);
+                    }
+                }
             }
 
             return null;
