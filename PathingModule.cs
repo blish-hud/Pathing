@@ -103,7 +103,7 @@ namespace BhModule.Community.Pathing {
 
         protected override void Initialize() {
             // SOTO Fix
-            if (DateTime.UtcNow.Date >= new DateTime(2023, 8, 22, 0, 0, 0, DateTimeKind.Utc) && Program.OverlayVersion < new SemVer.Version(1, 1, 0)) {
+            if (DateTime.UtcNow.Date >= new DateTime(2023, 8, 22, 0, 0, 0, DateTimeKind.Utc) && Program.OverlayVersion < new SemVer.Version(1, 1, 0) && Program.OverlayVersion > new SemVer.Version(0, 1, 0)) {
                 try {
                     var tacoActive = typeof(TacOIntegration).GetProperty(nameof(TacOIntegration.TacOIsRunning)).GetSetMethod(true);
                     tacoActive?.Invoke(GameService.GameIntegration.TacO, new object[] { true });
