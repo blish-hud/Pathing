@@ -25,6 +25,7 @@ public class ScriptEngine {
 
     public PathingGlobal Global { get; private set; }
 
+    private LuaCompileOptions _debugCompileOptions;
     private TraceLineDebugger _stackTraceDebugger;
 
     public SafeList<ScriptState> Scripts { get; } = new();
@@ -65,6 +66,7 @@ public class ScriptEngine {
         PathingCategoryScriptExtensions.SetPackInitiator(this.Module.PackInitiator);
 
         _stackTraceDebugger = new TraceLineDebugger();
+        _debugCompileOptions = new LuaCompileOptions() { DebugEngine = _stackTraceDebugger };
         
         this.Global = _lua.CreateEnvironment<PathingGlobal>();
         this.Global.ScriptEngine = this;
@@ -157,9 +159,15 @@ public class ScriptEngine {
             using (var scriptReader = new StreamReader(scriptStream)) {
                 string scriptSource = await scriptReader.ReadToEndAsync().ConfigureAwait(false);
 
-                var chunk = _lua.CompileChunk(scriptSource, scriptName, new LuaCompileOptions() {
-                                                  DebugEngine = _stackTraceDebugger
-                                              }, new KeyValuePair<string, Type>("Pack", typeof(PackContext)));
+                var cos = Module.Settings.ScriptsEnabled.Value && Module.Settings.ScriptsConsoleEnabled.Value
+                        ? _debugCompileOptions
+                        : null;
+
+                var chunk = _lua.CompileChunk(
+                    scriptSource, 
+                    scriptName,
+                    cos,
+                    new KeyValuePair<string, Type>("Pack", typeof(PackContext)));
 
                 var newScript = new ScriptState(chunk);
                 newScript.Run(this.Global, new PackContext(this, resourceManager));
@@ -181,9 +189,7 @@ public class ScriptEngine {
 
     internal LuaResult EvalScript(string script) {
         try {
-            var chunk = _lua.CompileChunk(script, "eval", new LuaCompileOptions() {
-                                              DebugEngine = _stackTraceDebugger
-                                          });
+            var chunk = _lua.CompileChunk(script, "eval", _debugCompileOptions);
 
             var scriptResult = WrapScriptCall(() => chunk.Run(this.Global));
 

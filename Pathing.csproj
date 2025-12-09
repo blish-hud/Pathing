@@ -423,8 +423,8 @@
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Dynamic, Version=1.2.2.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <HintPath>packages\DynamicLanguageRuntime.1.2.2\lib\net45\Microsoft.Dynamic.dll</HintPath>
+    <Reference Include="Microsoft.Dynamic, Version=1.3.5.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <HintPath>packages\DynamicLanguageRuntime.1.3.5\lib\net462\Microsoft.Dynamic.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Configuration, Version=3.1.26.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.Configuration.3.1.26\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
@@ -465,11 +465,11 @@
       <HintPath>packages\Microsoft.IdentityModel.Tokens.6.14.1\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.Scripting, Version=1.2.2.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <HintPath>packages\DynamicLanguageRuntime.1.2.2\lib\net45\Microsoft.Scripting.dll</HintPath>
+    <Reference Include="Microsoft.Scripting, Version=1.3.5.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <HintPath>packages\DynamicLanguageRuntime.1.3.5\lib\net462\Microsoft.Scripting.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Scripting.Metadata, Version=1.2.2.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <HintPath>packages\DynamicLanguageRuntime.1.2.2\lib\net45\Microsoft.Scripting.Metadata.dll</HintPath>
+    <Reference Include="Microsoft.Scripting.Metadata, Version=1.3.5.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <HintPath>packages\DynamicLanguageRuntime.1.3.5\lib\net462\Microsoft.Scripting.Metadata.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Win32.Primitives" />
     <Reference Include="MonoGame.Extended, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -490,12 +490,11 @@
       <HintPath>packages\NAudio.Wasapi.2.0.0\lib\netstandard2.0\NAudio.Wasapi.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Neo.Lua, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2">
-      <HintPath>packages\NeoLua.1.3.14\lib\net47\Neo.Lua.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Neo.Lua, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2, processorArchitecture=MSIL">
+      <HintPath>packages\NeoLua.1.3.19\lib\net48\Neo.Lua.dll</HintPath>
     </Reference>
     <Reference Include="Neo.Lua.Dbg, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2, processorArchitecture=MSIL">
-      <HintPath>packages\NeoLuaDebug.1.3.14\lib\net45\Neo.Lua.Dbg.dll</HintPath>
+      <HintPath>packages\NeoLuaDebug.1.3.19\lib\net462\Neo.Lua.Dbg.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
