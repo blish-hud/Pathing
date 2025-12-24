@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.State;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Neo.IronLua;
 using TmfLib.Pathable;
 using TmfLib.Prototype;
 
@@ -14,7 +17,7 @@ namespace BhModule.Community.Pathing.Entity {
 
         public override float DrawOrder => float.MaxValue;
 
-        private Vector3[][] _sectionPoints;
+        internal Vector3[][] _sectionPoints;
 
         public StandardTrail(IPackState packState, ITrail trail) : base(packState, trail) {
             Initialize(trail);
@@ -37,20 +40,24 @@ namespace BhModule.Community.Pathing.Entity {
             Populate_Behaviors(collection, resourceManager);
 
             // Editor Specific
-            Populate_EditTag(collection, resourceManager);
+            // Populate_EditTag(collection, resourceManager);
         }
 
         private void Initialize(ITrail trail) {
-            var trailSections = new List<Vector3[]>(trail.TrailSections.Count());
-            foreach (var trailSection in trail.TrailSections) {
-                trailSections.Add(PostProcessing_DouglasPeucker(trailSection.TrailPoints.Select(v => new Vector3(v.X, v.Y, v.Z)), _packState.UserResourceStates.Advanced.MapTrailDouglasPeuckerError).ToArray());
-            }
-
-            _sectionPoints = trailSections.ToArray();
-
             Populate(trail.GetAggregatedAttributes(), TextureResourceManager.GetTextureResourceManager(trail.ResourceManager));
 
-            BuildBuffers(trail);
+            if (trail.TrailSections != null) { 
+                var trailSections = new List<Vector3[]>(trail.TrailSections.Count());
+                foreach (var trailSection in trail.TrailSections) {
+                    trailSections.Add(PostProcessing_DouglasPeucker(trailSection.TrailPoints.Select(v => new Vector3(v.X, v.Y, v.Z)), _packState.UserResourceStates.Advanced.MapTrailDouglasPeuckerError).ToArray());
+                }
+
+                _sectionPoints = trailSections.ToArray();
+
+                BuildBuffers(trail);
+            } else {
+                _sectionBuffers = Array.Empty<VertexBuffer>();
+            }
 
             this.FadeIn();
         }

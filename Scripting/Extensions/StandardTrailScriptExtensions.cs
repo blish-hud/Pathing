@@ -3,6 +3,11 @@ using Blish_HUD.Content;
 using Blish_HUD;
 using System;
 using BhModule.Community.Pathing.Behavior;
+using Neo.IronLua;
+using BhModule.Community.Pathing.State;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace BhModule.Community.Pathing.Scripting.Extensions {
     internal static class StandardTrailScriptExtensions {
@@ -11,6 +16,20 @@ namespace BhModule.Community.Pathing.Scripting.Extensions {
 
         internal static void SetPackInitiator(PackInitiator packInitiator) {
             _packInitiator = packInitiator;
+        }
+
+        // Points
+
+        public static void SetPoints(this StandardTrail trail, LuaTable points) {
+            var vpoints = points.ArrayList.Select(a => (Vector3)a).ToArray();
+
+            var trailSections = new List<Vector3[]>(1) {
+                trail.PostProcessing_DouglasPeucker(vpoints, _packInitiator.PackState.UserResourceStates.Advanced.MapTrailDouglasPeuckerError).ToArray()
+            };
+
+            trail._sectionPoints = trailSections.ToArray();
+
+            trail.BuildBuffers(vpoints);
         }
 
         // Remove

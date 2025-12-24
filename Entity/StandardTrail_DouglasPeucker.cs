@@ -15,7 +15,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// <param name="points">The list of points</param>
         /// <param name="error">The tolerance before detecting a turn</param>
         /// <returns>The downsampled list of points</returns>
-        private IEnumerable<Vector3> PostProcessing_DouglasPeucker(IEnumerable<Vector3> points, float error = 0.2f) {
+        internal IEnumerable<Vector3> PostProcessing_DouglasPeucker(IEnumerable<Vector3> points, float error = 0.2f) {
             Vector3[] vectors = points.ToArray();
 
             if (vectors.Length < 3) {

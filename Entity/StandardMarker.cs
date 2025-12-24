@@ -47,7 +47,7 @@ namespace BhModule.Community.Pathing.Entity {
             Populate_Behaviors(collection, resourceManager);
 
             // Editor Specific
-            Populate_EditTag(collection, resourceManager);
+            // Populate_EditTag(collection, resourceManager);
         }
 
         public override void Update(GameTime gameTime) {

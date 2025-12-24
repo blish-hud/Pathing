@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using BhModule.Community.Pathing.Content;
@@ -34,11 +35,13 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
             return new Color(r, g, b, a);
         }
 
-        // Marker
+        // Pathables
 
         private AttributeCollection AttributeCollectionFromLuaTable(LuaTable luaTable) {
             return new AttributeCollection(luaTable.Members.Select(member => new Attribute(member.Key, string.Format(CultureInfo.InvariantCulture, "{0}", member.Value))));
         }
+
+        // Marker
 
         public StandardMarker Marker(IPackResourceManager resourceManager, LuaTable attributes = null) {
             var poi = new PointOfInterest(resourceManager, 
@@ -56,6 +59,34 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
             }
 
             return marker;
+        }
+
+        // Trail
+
+        internal class TrailProxy : PointOfInterest, ITrail {
+            public TrailProxy(IPackResourceManager resourceManager, AttributeCollection explicitAttributes, PathingCategory rootPathingCategory) : base(resourceManager, PointOfInterestType.Trail, explicitAttributes, rootPathingCategory) {
+            }
+
+            public IEnumerable<ITrailSection> TrailSections => null;
+
+            public IEnumerable<System.Numerics.Vector3> TrailPoints => null;
+        }
+
+        public StandardTrail Trail(IPackResourceManager resourceManager, LuaTable attributes = null) {
+            var poi = new TrailProxy(resourceManager,
+                                          attributes != null 
+                                            ? AttributeCollectionFromLuaTable(attributes) 
+                                            : new AttributeCollection(),
+                                          _global.ScriptEngine.Module.PackInitiator.PackState.RootCategory);
+
+            var trail = _global.ScriptEngine.Module.PackInitiator.PackState.InitPointOfInterest(poi) as StandardTrail;
+
+            if (trail.MapId < 0) {
+                // Map ID can be assumed since we only show current map icons anyways, but UI filtering doesn't know that.
+                trail.MapId = GameService.Gw2Mumble.CurrentMap.Id;
+            }
+
+            return trail;
         }
 
         // Guid

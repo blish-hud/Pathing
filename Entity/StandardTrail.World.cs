@@ -102,6 +102,21 @@ namespace BhModule.Community.Pathing.Entity {
             _sectionBuffers = buffers.ToArray();
         }
 
+        internal void BuildBuffers(Vector3[] trail) {
+            var buffers = new List<VertexBuffer>();
+
+            using (var gdctx = GameService.Graphics.LendGraphicsDeviceContext()) {
+                // TODO: Fix cursed Vector3 type conversion
+                var processedBuffer = PostProcessTrailSection(gdctx.GraphicsDevice, trail.Select(v => new Vector3(v.X, v.Y, v.Z)));
+
+                if (processedBuffer != null) {
+                    buffers.Add(processedBuffer);
+                }
+            }
+
+            _sectionBuffers = buffers.ToArray();
+        }
+
         private float GetOpacity() {
             return this.Alpha
                  * _packState.UserConfiguration.PackMaxOpacityOverride.Value

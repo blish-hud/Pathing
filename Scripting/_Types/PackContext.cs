@@ -22,5 +22,8 @@ namespace BhModule.Community.Pathing.Scripting {
         public StandardMarker CreateMarker(LuaTable attributes = null) 
             => _scriptEngine.Global.I.Marker(this.ResourceManager, attributes);
 
+        public StandardTrail CreateTrail(LuaTable attributes = null)
+            => _scriptEngine.Global.I.Trail(this.ResourceManager, attributes);
+
     }
 }

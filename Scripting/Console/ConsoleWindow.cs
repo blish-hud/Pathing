@@ -59,10 +59,14 @@ namespace BhModule.Community.Pathing.Scripting.Console {
                 };
 
                 // Update watch window.
-                var watchValues = _module.ScriptEngine.Global.Debug.WatchValues.ToArray();
-                foreach (var watchValue in watchValues) {
-                    var node = CreateOrUpdateNode(watchValue.Key);
-                    node.Refresh(watchValue.Value);
+                try {
+                    var watchValues = _module.ScriptEngine.Global.Debug.WatchValues.ToArray();
+                    foreach (var watchValue in watchValues) {
+                        var node = CreateOrUpdateNode(watchValue.Key);
+                        node.Refresh(watchValue.Value);
+                    }
+                } catch (Exception _) {
+                    /* NOOP */
                 }
 
                 // Update script output.

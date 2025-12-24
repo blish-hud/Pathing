@@ -8,7 +8,7 @@ namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
 
         public override RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, float opacity) {
-            if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return null;
+            if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null || _sectionPoints == null) return null;
 
             bool isMapOpen = GameService.Gw2Mumble.UI.IsMapOpen;
 
