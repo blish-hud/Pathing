@@ -97,7 +97,7 @@ namespace BhModule.Community.Pathing.State {
             await Reload();
         }
 
-        private const double METERCONVERSION = 1d / 254d * 10000d;
+        private const float METERCONVERSION = 39.37f;
 
         private MapDetails? _currentMapDetails = null;
 
