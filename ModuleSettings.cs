@@ -193,10 +193,10 @@ namespace BhModule.Community.Pathing {
 
             // TODO: Add strings to strings.resx for localization.
             // TODO: Add description to settings.
-            this.KeyBindTogglePathables      = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindTogglePathables), new KeyBinding(ModifierKeys.Shift | ModifierKeys.Alt, Keys.OemPipe),              () => "Toggle Markers",          () => "");
-            this.KeyBindToggleWorldPathables = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindToggleWorldPathables), new KeyBinding(ModifierKeys.Shift | ModifierKeys.Alt, Keys.OemOpenBrackets), () => "Toggle Markers in World", () => "");
-            this.KeyBindToggleMapPathables   = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindToggleMapPathables), new KeyBinding(ModifierKeys.Shift | ModifierKeys.Alt, Keys.OemCloseBrackets),  () => "Toggle Markers on Map",   () => "");
-            this.KeyBindReloadMarkerPacks    = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindReloadMarkerPacks), new KeyBinding(ModifierKeys.Shift | ModifierKeys.Alt, Keys.R),                  () => "Reload Marker Packs",     () => "");
+            this.KeyBindTogglePathables      = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindTogglePathables), new KeyBinding(),      () => "Toggle Markers",          () => "");
+            this.KeyBindToggleWorldPathables = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindToggleWorldPathables), new KeyBinding(), () => "Toggle Markers in World", () => "");
+            this.KeyBindToggleMapPathables   = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindToggleMapPathables), new KeyBinding(),   () => "Toggle Markers on Map",   () => "");
+            this.KeyBindReloadMarkerPacks    = this.KeyBindSettings.DefineSetting(nameof(this.KeyBindReloadMarkerPacks), new KeyBinding(),    () => "Reload Marker Packs",     () => "");
 
             HandleInternalKeyBinds();
         }

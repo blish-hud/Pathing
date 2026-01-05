@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Behavior;
-using BhModule.Community.Pathing.UI.Tooltips;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
