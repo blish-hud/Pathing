@@ -114,10 +114,15 @@ namespace BhModule.Community.Pathing.UI.Presenter {
         }
 
         protected override void Unload() {
-            _module.ModuleLoaded                                                   -= _module_ModuleLoaded;
-            _module.PackInitiator.LoadMapFromEachPackStarted                       -= PackInitiatorOnLoadMapFromEachPackStarted;
-            _module.PackInitiator.LoadMapFromEachPackFinished                      -= PackInitiatorOnLoadMapFromEachPackFinished;
-            _module.PackInitiator.PackState.CategoryStates.CategoryInactiveChanged -= CategoryStatesOnCategoryInactiveChanged;
+            if (_module != null) { 
+                _module.ModuleLoaded -= _module_ModuleLoaded;
+
+                if (_module.PackInitiator != null) {
+                    _module.PackInitiator.LoadMapFromEachPackStarted                       -= PackInitiatorOnLoadMapFromEachPackStarted;
+                    _module.PackInitiator.LoadMapFromEachPackFinished                      -= PackInitiatorOnLoadMapFromEachPackFinished;
+                    _module.PackInitiator.PackState.CategoryStates.CategoryInactiveChanged -= CategoryStatesOnCategoryInactiveChanged;
+                }
+            }
 
             _packEventsInitialized =  false;
 

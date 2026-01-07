@@ -22,6 +22,8 @@ public class PathingGlobal : LuaTable {
     public PathingGlobal(Lua lua) {
 		_sandboxedGlobal = new LuaGlobal(lua);
 
+        this.Pathing = new Lib.Pathing(this);
+
         this.Debug = new Debug(this);
         this.Event = new Event(this);
         this.User  = new User(this);
@@ -32,7 +34,10 @@ public class PathingGlobal : LuaTable {
     }
 
     [LuaMember("PathingVersion")]
-    public string PathingVersion => this.ScriptEngine.Module.Version.Clean();
+    public string PathingVersion => this.Pathing.Version;
+
+    [LuaMember(nameof(Lib.Pathing))]
+    public Lib.Pathing Pathing { get; }
 
     [LuaMember(nameof(World))]
     public World World { get; }
