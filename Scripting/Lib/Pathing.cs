@@ -1,9 +1,4 @@
-﻿using SemVer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace BhModule.Community.Pathing.Scripting.Lib {
     public class Pathing {

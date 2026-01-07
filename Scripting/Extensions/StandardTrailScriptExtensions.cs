@@ -8,6 +8,7 @@ using BhModule.Community.Pathing.State;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Linq;
+using BhModule.Community.Pathing.Scripting.Lib;
 
 namespace BhModule.Community.Pathing.Scripting.Extensions {
     internal static class StandardTrailScriptExtensions {
@@ -42,7 +43,7 @@ namespace BhModule.Community.Pathing.Scripting.Extensions {
         // Texture
 
         public static void SetTexture(this StandardTrail trail, string texturePath) {
-            throw new NotImplementedException("This method has not been implemented yet.");
+            trail.Texture = Instance.Texture(trail.TextureResourceManager, texturePath);
         }
 
         public static void SetTexture(this StandardTrail trail, int textureId) {

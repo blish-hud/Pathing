@@ -17,9 +17,13 @@ namespace BhModule.Community.Pathing.Entity {
 
         public override float DrawOrder => float.MaxValue;
 
+        public TextureResourceManager TextureResourceManager { get; }
+
         internal Vector3[][] _sectionPoints;
 
         public StandardTrail(IPackState packState, ITrail trail) : base(packState, trail) {
+            this.TextureResourceManager = TextureResourceManager.GetTextureResourceManager(trail.ResourceManager);
+
             Initialize(trail);
         }
 
