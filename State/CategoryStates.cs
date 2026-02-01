@@ -228,7 +228,7 @@ namespace BhModule.Community.Pathing.State {
 
             //Trigger event when inactive state has changed
             if(alreadyInactive != isInactive)
-                CategoryInactiveChanged?.Invoke(this, new PathingCategoryEventArgs(category){ Active = !isInactive});
+                CategoryInactiveChanged?.Invoke(this, new PathingCategoryEventArgs(category){ Active = category.DefaultToggle ? !isInactive : isInactive});
 
             _stateDirty       = true; // Ensure that we save the new state.
             _calculationDirty = true; // Ensure that the hashset is recalculated.

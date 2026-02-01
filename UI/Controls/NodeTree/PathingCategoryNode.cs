@@ -27,10 +27,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         public bool Active
         {
             get => _active;
-            set
-            {
-                if (SetProperty(ref _active, value))
-                {
+            set {
+                if (SetProperty(ref _active, value)) {
                     UpdateChildrenActiveState();
                     UpdateLabelActiveState();
                 }
@@ -52,9 +50,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         protected Label PackNameControl;
         public    bool  IsSearchResult { get; init; }
 
-        public PathingCategoryNode(IPackState packState, PathingCategory pathingCategory, bool showForceAll) 
-            : base(pathingCategory.DisplayName)
-        {
+        public PathingCategoryNode(IPackState packState, PathingCategory pathingCategory, bool showForceAll) : base(pathingCategory.DisplayName) {
             _packState           = packState;
             this.PathingCategory = pathingCategory;
             _entities            = CategoryUtil.GetAssociatedPathingEntities(pathingCategory, packState.Entities).ToList();
@@ -66,7 +62,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 BackgroundOpacity    = 0.3f;
                 this.ShowIconTooltip = false;
             } else {
-                this.Checkable    = true;
+                this.Checkable = true;
 
                 if (_entities.Count <= 0 && (this.PathingCategory.IsSeparator || this.PathingCategory.Count > 0)) {
                     BackgroundOpacity = 0.3f;
@@ -93,8 +89,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             //Set icon before base build
             IconPaddingTop = 4;
 
-            var iconTextures = new List<PathingTexture>(new List<PathingTexture>()
-            {
+            var iconTextures = new List<PathingTexture>(new List<PathingTexture>() {
                 new PathingTexture() {
                     Icon = AsyncTexture2D.FromAssetId(255302)
                 }
@@ -140,8 +135,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 
             PackNameControl?.Dispose();
 
-            PackNameControl = new Label
-            {
+            PackNameControl = new Label {
                 Parent           = _propertiesPanel,
                 Text             = PackCategory.DisplayName,
                 Height           = this.PanelHeight,
@@ -181,14 +175,12 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         private void BuildAchievementTexture() {
             if (_achievementId <= 0) return;
 
-            var achievementIconContainer = new Panel
-            {
+            var achievementIconContainer = new Panel {
                 Parent = _propertiesPanel,
                 Size   = new Point(30, this.Height)
             };
 
-            var tooltipIcon = new Image
-            {
+            var tooltipIcon = new Image {
                 Parent  = achievementIconContainer,
                 Size    = new Point(30, 30),
                 Top     = 4,
@@ -203,11 +195,9 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         }
 
         private void BuildEntityCount() {
-            if (_entities.Count <= 0)
-            {
+            if (_entities.Count <= 0) {
                 if (!this.PathingCategory.IsSeparator && this.PathingCategory.Count <= 0) {
-                    _ = new Label
-                    {
+                    _ = new Label {
                         Parent           = _propertiesPanel,
                         Text             = "not loaded",
                         Height           = this.PanelHeight,
@@ -227,8 +217,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             if (markerCount > 0) {
                 var affix = markerCount > 1 ? "markers" : "marker";
 
-                _ = new Label
-                {
+                _ = new Label {
                     Parent           = _propertiesPanel,
                     Text             = $"{markerCount} {affix}",
                     Height           = this.PanelHeight,
@@ -242,12 +231,10 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 
             var trailCount = _entities.OfType<StandardTrail>().Count();
 
-            if (trailCount > 0)
-            {
+            if (trailCount > 0) {
                 var affix = trailCount > 1 ? "trails" : "trail";
 
-                _ = new Label
-                {
+                _ = new Label {
                     Parent = _propertiesPanel,
                     Text = $"{trailCount} {affix}",
                     Height = this.PanelHeight,
@@ -262,8 +249,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 
         private void BuildTooltip() {
             //Note: Tip name is not displayed at the moment
-            if (PathingCategory.ExplicitAttributes.TryGetAttribute("tip-description", out var descriptionAttr))
-            {
+            if (PathingCategory.ExplicitAttributes.TryGetAttribute("tip-description", out var descriptionAttr)) {
                 this.BasicTooltipText = descriptionAttr.Value;
             }
         }
@@ -283,8 +269,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 !this.PathingCategory.TryGetCopy(out var copyValue) || 
                 string.IsNullOrWhiteSpace(copyValue)) return;
 
-            var stripItem = new ContextMenuStripItem($"Copy: {copyValue}")
-            {
+            var stripItem = new ContextMenuStripItem($"Copy: {copyValue}") {
                 Parent = this.Menu
             };
 
@@ -297,8 +282,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         }
 
         private void BuildCopyPath() {
-            var stripItem = new ContextMenuStripItem("Copy Path")
-            {
+            var stripItem = new ContextMenuStripItem("Copy Path") {
                 Parent = this.Menu
             };
 
@@ -306,8 +290,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         }
 
         private void BuildOpenInTree() {
-            var stripItem = new ContextMenuStripItem("Open In Explorer")
-            {
+            var stripItem = new ContextMenuStripItem("Open In Explorer") {
                 Parent = this.Menu
             };
 
@@ -371,28 +354,23 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
             return this.PathingCategory.ParentIsActive(_packState);
         }
 
-        private void UpdateChildrenActiveState()
-        {
+        private void UpdateChildrenActiveState() {
             foreach (var child in this.ChildBaseNodes
                                       .OfType<PathingCategoryNode>()
-                                      .Where(n => n.Checkable))
-            {
+                                      .Where(n => n.Checkable)) {
                 child.UpdateActiveState(child.Checked);
             }
         }
 
-        protected override void OnParentChanged()
-        {
+        protected override void OnParentChanged() {
             base.OnParentChanged();
 
             if(Checkable)
                 UpdateActiveState(Checked);
         }
 
-        public void UpdateLabelActiveState()
-        {
-            if (LabelControl != null)
-            {
+        public void UpdateLabelActiveState() {
+            if (LabelControl != null) {
                 LabelControl.TextColor  = this.Active ? this.TextColor : Color.LightGray * 0.7f;
                 LabelControl.StrokeText = this.Active;
                 LabelControl.ShowShadow = !this.Active;
@@ -472,14 +450,19 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         }
 
         private void DetectAndBuildContexts() {
-            this.PathingCategory.TryGetAchievementId(out _achievementId);
-            this.PathingCategory.TryGetAchievementBit(out _achievementBit);
+            bool foundAchievement = this.PathingCategory.TryGetAchievementId(out _achievementId);
 
-            if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
-                _achievementHidden = _packState.AchievementStates.IsAchievementHidden(_achievementId, _achievementBit);
+            // No point in continuing if we haven't found an achievement ID.
+            if (foundAchievement) {
+                this.PathingCategory.TryGetAchievementBit(out _achievementBit);
 
-                if (_achievementHidden)
-                    CheckDisabled = true;
+                if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
+                    _achievementHidden = _packState.AchievementStates.IsAchievementHidden(_achievementId, _achievementBit);
+
+                    if (_achievementHidden) {
+                        CheckDisabled = true;
+                    }
+                }
             }
         }
 
