@@ -8,7 +8,7 @@ The Pathing module is a [Blish HUD](https://blishhud.com/) module which provides
 
 ## Download the Pathing Module
 
-You can downlaod the Pathing module from:
+You can download the Pathing module from:
 - Our [Releases](https://github.com/blish-hud/Pathing/releases) page here on GitHub.
 - The Blish HUD repository while in-game.
 
@@ -31,7 +31,7 @@ You can ignore the `Pathing.Harness` project.  It is not necessary for building 
 
 #### TmfLib
 
-TmfLib is a library dedicated to reading and writing Blish HUD / TacO format marker packs.  This library is seperated so that it can be used with other projects as well while ensuring we maintain the same parsing spec.  It's currently also used by our linter and a marker pack re-packer.
+TmfLib is a library dedicated to reading and writing Blish HUD / TacO format marker packs.  This library is separated so that it can be used with other projects as well while ensuring we maintain the same parsing spec.  It's currently also used by our linter and a marker pack re-packer.
 
 ### License
 
