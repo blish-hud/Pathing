@@ -20,6 +20,7 @@ namespace BhModule.Community.Pathing.MarkerPackRepo {
         public string   AuthorName     { get; set; }
         public string   AuthorUsername { get; set; }
         public DateTime LastUpdate     { get; set; }
+        public int[]    MapIds         { get; set; }
 
         // Lazy state handling
         public DateTime CurrentDownloadDate { get; set; }
