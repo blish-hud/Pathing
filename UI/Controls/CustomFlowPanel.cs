@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using BhModule.Community.Pathing.UI.Extensions;
 using Blish_HUD.Controls;
@@ -47,13 +47,17 @@ public class CustomFlowPanel : FlowPanel
     public void UpdateScrollDistance(float target)
     {
         if (this.Scrollbar != null && !float.IsNaN(target)) {
-            var bottom = this.Children
-                             .Where(c => c.Visible)
-                             .Max(c => c.Bottom);
+            var visibleChildren = this.Children.Where(c => c.Visible).ToList();
+            var bottom = visibleChildren.Any() ? visibleChildren.Max(c => c.Bottom) : 0;
 
-            float distance = (float)target / (float)(bottom + (int)this.ControlPadding.Y - this.Scrollbar.Height);
-
-            Scrollbar.ScrollDistance = Math.Min(distance, 1f);
+            float scrollRange = (float)(bottom + (int)this.ControlPadding.Y - this.Scrollbar.Height);
+            
+            if (scrollRange <= 0) {
+                Scrollbar.ScrollDistance = 0f;
+            } else {
+                float distance = (float)target / scrollRange;
+                Scrollbar.ScrollDistance = MathHelper.Clamp(distance, 0f, 1f);
+            }
         }
     }
 
@@ -105,12 +109,14 @@ public class CustomFlowPanel : FlowPanel
     public void ScrollToChild(Control child, int paddingTop) {
         var childPosition = this.ContainsChildPosition(child);
 
-        this.ScrollToChild(childPosition - paddingTop);
+        if (childPosition == -1) return;
+
+        this.ScrollToChild(Math.Max(0, childPosition - paddingTop));
     }
 
     public void ScrollToChild(int childYPosition)
     {
-        if (childYPosition == -1) return;
+        if (childYPosition < 0) return;
 
         var scrollbar = this.Parent?.Children
                              .OfType<Scrollbar>()
@@ -123,13 +129,20 @@ public class CustomFlowPanel : FlowPanel
             scrollbar.ScrollDistance = 0f;
         else
         {
-            var panelHeight = (float)this.Children.Where(c => c.Visible).Max(c => c.Bottom);
+            var visibleChildren = this.Children.Where(c => c.Visible).ToList();
+            if (!visibleChildren.Any()) return;
+            
+            var panelHeight = (float)visibleChildren.Max(c => c.Bottom);
+            var scrollRange = panelHeight - scrollbar.Height;
 
-            var scrollPosition = (float)childYPosition / (panelHeight - scrollbar.Height);
-
-            scrollbar.ScrollDistance = scrollPosition;
-
-            this.SetTargetScrollDistance(scrollPosition);
+            if (scrollRange <= 0) {
+                scrollbar.ScrollDistance = 0f;
+                this.SetTargetScrollDistance(0f);
+            } else {
+                var scrollPosition = MathHelper.Clamp((float)childYPosition / scrollRange, 0f, 1f);
+                scrollbar.ScrollDistance = scrollPosition;
+                this.SetTargetScrollDistance(scrollPosition);
+            }
         }
     }
 
