@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Controls.TreeNodes;
 using BhModule.Community.Pathing.Utility;
@@ -29,6 +30,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
 
         public event EventHandler<EventArgs> NodeLoadingStarted;
         public event EventHandler<EventArgs> NodesLoadedFinished;
+
+        public ILookup<PathingCategory, IPathingEntity> EntityLookup { get; private set; }
 
         public TreeView(PackInitiator packInitiator) {
             PackInitiator                                                                   =  packInitiator;
@@ -123,6 +126,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
             ClearChildNodes();
             AllBaseNodes.Clear();
 
+            this.EntityLookup = PackInitiator.PackState.Entities.ToArray().ToLookup(e => e.Category);
+
             var rootCategory = PackInitiator.GetAllMarkersCategories();
 
             if (rootCategory == null) return;
@@ -189,7 +194,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
                        normalizedName.IndexOf(normalizedInput, StringComparison.OrdinalIgnoreCase) >= 0;
             }).ToList();
 
-            (filteredResults, skipped) = results.FilterCategories(PackInitiator.PackState, forceShowAll);
+            (filteredResults, skipped) = results.FilterCategories(PackInitiator.PackState, forceShowAll, this.EntityLookup);
 
             return (filteredResults.ToList(), skipped);
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BhModule.Community.Pathing.Entity;
@@ -39,7 +39,7 @@ namespace BhModule.Community.Pathing.Utility {
             return $".{category.Namespace}";
         }
 
-        public static (IEnumerable<PathingCategory>, int skipped) FilterCategories(this IEnumerable<PathingCategory> categories, IPackState packState, bool forceShowAll = false) {
+        public static (IEnumerable<PathingCategory>, int skipped) FilterCategories(this IEnumerable<PathingCategory> categories, IPackState packState, bool forceShowAll = false, ILookup<PathingCategory, IPathingEntity> entityLookup = null) {
             if (categories == null || packState == null) return (null, 0);
 
             var subCategories = categories.Where(cat => cat.LoadedFromPack && cat.DisplayName != "" && !cat.IsHidden);
@@ -67,7 +67,7 @@ namespace BhModule.Community.Pathing.Utility {
                     lastIsSeparator = true;
                 }
                 //Check if the category has any loaded/visible children recursively
-                else if (subCategory.HasVisibleChildren(packState, true))
+                else if (subCategory.HasVisibleChildren(packState, true, entityLookup))
                 {
                     // If category has visible children, we include it
                     filteredSubCategories.Add(subCategory);
@@ -86,7 +86,7 @@ namespace BhModule.Community.Pathing.Utility {
             return (Enumerable.Reverse(filteredSubCategories), skipped);
         }
 
-        public static bool HasVisibleChildren(this PathingCategory category, IPackState packState, bool recursively = false) {
+        public static bool HasVisibleChildren(this PathingCategory category, IPackState packState, bool recursively = false, ILookup<PathingCategory, IPathingEntity> entityLookup = null) {
 
             if (packState == null || 
                 string.IsNullOrWhiteSpace(category.DisplayName) || 
@@ -94,16 +94,18 @@ namespace BhModule.Community.Pathing.Utility {
 
             var mapId = GameService.Gw2Mumble.CurrentMap.Id;
 
-            var hasVisibleEntities = packState.Entities
-                                              .ToArray()
-                                              .Any(e => e.MapId == mapId && e.Category == category);
+            var hasVisibleEntities = entityLookup != null
+                                         ? entityLookup[category].Any(e => e.MapId == mapId)
+                                         : packState.Entities
+                                                    .ToArray()
+                                                    .Any(e => e.MapId == mapId && e.Category == category);
 
             if (hasVisibleEntities) return true;
 
             if (recursively) {
                 foreach (var childCategory in category)
                 {
-                    if (childCategory.HasVisibleChildren(packState, true))
+                    if (childCategory.HasVisibleChildren(packState, true, entityLookup))
                     {
                         return true;
                     }
