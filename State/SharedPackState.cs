@@ -42,7 +42,7 @@ namespace BhModule.Community.Pathing {
         private ManagedState[] _managedStates;
 
         private bool _initialized  = false;
-        private bool _loadingPack  = false;
+        private readonly SemaphoreSlim _loadingPackSemaphore = new SemaphoreSlim(1, 1);
         private bool _loadingState = false;
 
         public SharedPackState(PathingModule module) {
@@ -94,20 +94,17 @@ namespace BhModule.Community.Pathing {
         }
 
         public async Task LoadPackCollection(IPackCollection collection) {
-            // TODO: Support cancel instead of spinning like this.
-            while (_loadingPack) {
-                await Task.Delay(100);
+            await _loadingPackSemaphore.WaitAsync();
+
+            try {
+                this.RootCategory = collection.Categories;
+
+                await ReloadStates();
+
+                await InitPointsOfInterest(collection.PointsOfInterest);
+            } finally {
+                _loadingPackSemaphore.Release();
             }
-
-            _loadingPack = true;
-
-            this.RootCategory = collection.Categories;
-
-            await ReloadStates();
-
-            await InitPointsOfInterest(collection.PointsOfInterest);
-
-            _loadingPack = false;
         }
 
         private static async Task PreloadTextures(IPointOfInterest pointOfInterest) {

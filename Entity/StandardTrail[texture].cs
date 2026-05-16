@@ -39,6 +39,7 @@ namespace BhModule.Community.Pathing.Entity {
                                 this.TrailSampleColor = textureTaskResult.Result.Sample;
                             }
                         } else {
+                            this.Texture = _packState.UserResourceStates.Textures.DefaultTrailTexture;
                             Logger.Warn("Trail failed to load texture '{trailTexture}'", attribute);
                         }
                     });

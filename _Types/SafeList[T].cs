@@ -189,7 +189,7 @@ namespace BhModule.Community.Pathing {
             }
 
             try {
-                return _innerList.Count;
+                return _innerList.IndexOf(item);
             } finally {
                 _listLock.ExitReadLock();
             }

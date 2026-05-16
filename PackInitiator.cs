@@ -255,11 +255,7 @@ namespace BhModule.Community.Pathing {
                 _lastMap = mapId;
             }
 
-            var thread = new Thread(async () => await LoadMapFromEachPack(mapId)) {
-                IsBackground = true
-            };
-
-            thread.Start();
+            Task.Run(() => LoadMapFromEachPack(mapId));
         }
 
         private async Task LoadMapFromEachPack(int mapId) {
