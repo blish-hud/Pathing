@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BhModule.Community.Pathing.Behavior.Modifier;
@@ -39,7 +39,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         public  PathingCategory PathingCategory { get; }
         private PathingCategory PackCategory { get; }
 
-        private readonly IList<IPathingEntity> _entities;
+        private IEnumerable<IPathingEntity> _entities => this.TreeView?.EntityLookup?[this.PathingCategory]
+                                                         ?? CategoryUtil.GetAssociatedPathingEntities(this.PathingCategory, _packState.Entities);
 
         private readonly bool _forceShowAll = false;
 
@@ -53,7 +54,6 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         public PathingCategoryNode(IPackState packState, PathingCategory pathingCategory, bool showForceAll) : base(pathingCategory.DisplayName) {
             _packState           = packState;
             this.PathingCategory = pathingCategory;
-            _entities            = CategoryUtil.GetAssociatedPathingEntities(pathingCategory, packState.Entities).ToList();
             _forceShowAll        = showForceAll;
 
             if (pathingCategory.IsSeparator) {
@@ -63,13 +63,6 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
                 this.ShowIconTooltip = false;
             } else {
                 this.Checkable = true;
-
-                if (_entities.Count <= 0 && (this.PathingCategory.IsSeparator || this.PathingCategory.Count > 0)) {
-                    BackgroundOpacity = 0.3f;
-                } else {
-                    BackgroundOpacity     = 0.05f;
-                    BackgroundOpaqueColor = Color.LightYellow;
-                }
             }
 
             DetectAndBuildContexts();
@@ -195,7 +188,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         }
 
         private void BuildEntityCount() {
-            if (_entities.Count <= 0) {
+            if (!_entities.Any()) {
                 if (!this.PathingCategory.IsSeparator && this.PathingCategory.Count <= 0) {
                     _ = new Label {
                         Parent           = _propertiesPanel,
@@ -365,6 +358,15 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         protected override void OnParentChanged() {
             base.OnParentChanged();
 
+            if (this.TreeView != null && !this.PathingCategory.IsSeparator) {
+                if (!_entities.Any() && (this.PathingCategory.IsSeparator || this.PathingCategory.Count > 0)) {
+                    BackgroundOpacity = 0.3f;
+                } else {
+                    BackgroundOpacity     = 0.05f;
+                    BackgroundOpaqueColor = Color.LightYellow;
+                }
+            }
+
             if(Checkable)
                 UpdateActiveState(Checked);
         }
@@ -380,7 +382,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         public int AddSubNodes(bool forceShowAll) {
             if (this.PathingCategory.Count <= 0) return 0;
 
-            (IEnumerable<PathingCategory> subCategories, int skipped) = this.PathingCategory.FilterCategories(_packState, forceShowAll);
+            (IEnumerable<PathingCategory> subCategories, int skipped) = this.PathingCategory.FilterCategories(_packState, forceShowAll, this.TreeView?.EntityLookup);
 
             foreach (var subCategory in subCategories) {
                 if (subCategory == null) continue;
