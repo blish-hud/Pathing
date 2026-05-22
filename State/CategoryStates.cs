@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,23 +10,22 @@ using Blish_HUD;
 using Microsoft.Xna.Framework;
 using TmfLib.Pathable;
 
-// ReSharper disable InconsistentlySynchronizedField
-
 namespace BhModule.Community.Pathing.State {
     public class CategoryStates : ManagedState {
 
         private static readonly Logger Logger = Logger.GetLogger<CategoryStates>();
 
-        private const string STATE_FILE         = "categories.txt";
-        private const string INVERTEDSTATE_FILE = "invcategories.txt";
+        private const string NEW_STATE_FILE = "category_preferences.txt";
+        private const string OLD_STATE_FILE = "categories.txt";
+        private const string OLD_INVERTED_FILE = "invcategories.txt";
 
-        private const double INTERVAL_SAVESTATE                = 5000; // 5.0 seconds
+        private const double INTERVAL_SAVESTATE = 5000; // 5.0 seconds
         private const double INTERVAL_UPDATEINACTIVECATEGORIES = 100;  // 0.1 seconds
 
-        private HashSet<string> _inactiveCategories = new(StringComparer.OrdinalIgnoreCase);
+        // Key: Namespace, Value: True (Explicitly Enabled) | False (Explicitly Disabled)
+        private readonly ConcurrentDictionary<string, bool> _explicitStates = new(StringComparer.OrdinalIgnoreCase);
 
-        private readonly SafeList<PathingCategory> _rawInactiveCategories = new(); // Contains all categories which have been explicitly unchecked.
-        private readonly SafeList<PathingCategory> _rawInvertedCategories = new(); // Contains all categories which have been explicitly checked and by default are toggled off.
+        private HashSet<string> _evaluatedInactiveCategories = new(StringComparer.OrdinalIgnoreCase);
 
         private double _lastSaveState                     = 0;
         private double _lastInactiveCategoriesCalculation = 0;
@@ -38,120 +38,111 @@ namespace BhModule.Community.Pathing.State {
 
         public CategoryStates(IRootPackState packState) : base(packState) { /* NOOP */ }
 
-        private async Task LoadCategoryState(string stateFileName, SafeList<PathingCategory> rawCategoriesList, PathingCategory rootCategory) {
-            string categoryStatePath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), stateFileName);
-
-            if (!File.Exists(categoryStatePath))
-                return; // Early skip if this state file doesn't exist yet.
-
-            string[] recordedCategories = Array.Empty<string>();
-
-            // We'll retry a few times before giving up and clearing the categories.
-            for (int i = 3; i > 0; i--) {
-                try {
-                    recordedCategories = await FileUtil.ReadLinesAsync(categoryStatePath);
-                    break;
-                } catch (Exception e) {
-                    Logger.Warn(e, $"Failed to read {STATE_FILE} ({categoryStatePath}).");
-                }
-                await Task.Delay(1000);
-            }
-
-            rawCategoriesList.Clear();
-
-            foreach (string categoryNamespace in recordedCategories) {
-                // TODO: Consider the case where a category no longer exists - this will create it.
-                // We end up ignoring it, though, as it is known that it was not pulled from a pack based on the LoadedFromPack property.
-                rawCategoriesList.Add(rootCategory.GetOrAddCategoryFromNamespace(categoryNamespace));
-            }
+        protected override async Task<bool> Initialize() {
+            await LoadStates();
+            return true;
         }
 
-        private void CleanTwinStates(SafeList<PathingCategory> categories, SafeList<PathingCategory> invertedCategories) {
-            var twins = categories.ToArray().Intersect(invertedCategories.ToArray());
-
-            foreach (var twin in twins) {
-                // We'll remove from both since we honestly have no idea at this time which it should be in.
-                // It'll sort itself out the next time the user toggles it.
-                categories.Remove(twin);
-                invertedCategories.Remove(twin);
-            }
+        public override async Task Reload() {
+            await SaveStates(null);
+            _explicitStates.Clear();
+            _evaluatedInactiveCategories.Clear();
+            await LoadStates();
         }
 
         private async Task LoadStates() {
-            var rootCategory = _rootPackState.RootCategory;
-
-            if (rootCategory == null)
-                return; // Early skip if the pack is already getting repopulated.
+            string dataDir = DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE);
+            string newStatePath = Path.Combine(dataDir, NEW_STATE_FILE);
 
             Logger.Debug($"Loading {nameof(CategoryStates)} state.");
 
-            await LoadCategoryState(STATE_FILE,         _rawInactiveCategories, rootCategory);
-            await LoadCategoryState(INVERTEDSTATE_FILE, _rawInvertedCategories, rootCategory);
-
-            // Avoids an edge case where a category ends up in both files (a pack is updated with defaultToggle).
-            // REF: https://discord.com/channels/531175899588984842/534492173362528287/1010130170625138729
-            CleanTwinStates(_rawInactiveCategories, _rawInvertedCategories);
+            if (File.Exists(newStatePath)) {
+                await LoadUnifiedState(newStatePath);
+            } else {
+                await MigrateOldStates(dataDir);
+            }
 
             _calculationDirty = true;
         }
 
-        private async Task SaveCategoryState(string stateFileName, SafeList<PathingCategory> rawCategoriesList) {
-            PathingCategory[] toggledCategories = rawCategoriesList.ToArray();
-
-            string categoryStatePath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), stateFileName);
-
+        private async Task LoadUnifiedState(string filePath) {
             try {
-                await FileUtil.WriteLinesAsync(categoryStatePath, toggledCategories.Select(c => c.Namespace));
+                string[] lines = await FileUtil.ReadLinesAsync(filePath);
+                foreach (string line in lines) {
+                    if (string.IsNullOrWhiteSpace(line) || line.Length < 2) continue;
+
+                    bool explicitActive = line[0] == '+';
+                    string categoryNamespace = line.Substring(1);
+
+                    _explicitStates[categoryNamespace] = explicitActive;
+                }
             } catch (Exception e) {
-                Logger.Warn(e, $"Failed to write {stateFileName} ({categoryStatePath}).");
+                Logger.Warn(e, $"Failed to read unified category states from {filePath}.");
+            }
+        }
+
+        private async Task MigrateOldStates(string dataDir) {
+            string oldStatePath = Path.Combine(dataDir, OLD_STATE_FILE);
+            string oldInvertedPath = Path.Combine(dataDir, OLD_INVERTED_FILE);
+
+            // Legacy Categories: Everything listed here was explicitly UNCHECKED (Disabled)
+            if (File.Exists(oldStatePath)) {
+                try {
+                    string[] lines = await FileUtil.ReadLinesAsync(oldStatePath);
+                    foreach (string ns in lines) _explicitStates[ns] = false;
+                } catch (Exception e) { Logger.Warn(e, "Failed to migrate legacy standard categories."); }
+            }
+
+            // Legacy Inverted Categories: Everything listed here was explicitly CHECKED (Enabled)
+            if (File.Exists(oldInvertedPath)) {
+                try {
+                    string[] lines = await FileUtil.ReadLinesAsync(oldInvertedPath);
+                    foreach (string ns in lines) _explicitStates[ns] = true;
+                } catch (Exception e) { Logger.Warn(e, "Failed to migrate legacy inverted categories."); }
+            }
+
+            if (_explicitStates.Count > 0) {
+                _stateDirty = true; // Queue a write to the new unified format
+                Logger.Info($"Successfully migrated {_explicitStates.Count} legacy category states to the unified layout.");
             }
         }
 
         private async Task SaveStates(GameTime gameTime) {
             if (!_stateDirty) return;
 
-            Logger.Debug($"Saving {nameof(CategoryStates)} state.");
+            Logger.Debug($"Saving {nameof(CategoryStates)} preferences.");
+            string newStatePath = Path.Combine(DataDirUtil.GetSafeDataDir(DataDirUtil.COMMON_STATE), NEW_STATE_FILE);
 
-            await SaveCategoryState(STATE_FILE,         _rawInactiveCategories); // Standard categories.
-            await SaveCategoryState(INVERTEDSTATE_FILE, _rawInvertedCategories); // Inverted categories.
-            
-            _stateDirty = false;
-        }
-
-        private void AddAllSubCategories(HashSet<string> categories, PathingCategory topCategory) {
-            var remainingCategories = new Queue<PathingCategory>(topCategory);
-
-            while (remainingCategories.Count > 0) {
-                var category = remainingCategories.Dequeue();
-
-                categories.Add(category.Namespace);
-
-                foreach (var subCategory in category) {
-                    remainingCategories.Enqueue(subCategory);
-                }
+            try {
+                // Format: +namespace means Explicitly On, -namespace means Explicitly Off
+                var lines = _explicitStates.Select(kvp => $"{(kvp.Value ? "+" : "-")}{kvp.Key}");
+                await FileUtil.WriteLinesAsync(newStatePath, lines);
+                _stateDirty = false;
+            } catch (Exception e) {
+                Logger.Warn(e, $"Failed to write unified category states to {newStatePath}.");
             }
         }
 
         private void CalculateOptimizedCategoryStates(GameTime gameTime) {
-            if (!_calculationDirty) return;
+            if (!_calculationDirty || _rootPackState.RootCategory == null) return;
 
-            if (_rootPackState.RootCategory == null) return;
-
-            PathingCategory[] inactiveCategories       = _rawInactiveCategories.ToArray();
-            PathingCategory[] activeInvertedCategories = _rawInvertedCategories.ToArray();
-
+            var preCalcInactive = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var remainingCategories = new Queue<PathingCategory>();
             remainingCategories.Enqueue(_rootPackState.RootCategory);
-
-            var preCalcInactiveCategories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             while (remainingCategories.Count > 0) {
                 var category = remainingCategories.Dequeue();
 
-                if (inactiveCategories.Contains(category) // Standard toggled categories.
-                  || (!category.DefaultToggle && !activeInvertedCategories.Contains(category))) { // Inverted toggled categories.
-                    preCalcInactiveCategories.Add(category.Namespace);
-                    AddAllSubCategories(preCalcInactiveCategories, category);
+                // Check explicit override preference first. 
+                // Fallback to the intrinsic DefaultToggle of the pack if no override exists.
+                bool isCategoryActive = _explicitStates.TryGetValue(category.Namespace, out bool explicitActive)
+                    ? explicitActive
+                    : category.DefaultToggle;
+
+                if (!isCategoryActive) {
+                    // This node is disabled; instantly flag it and all subcategories as inactive without diving deeper
+                    preCalcInactive.Add(category.Namespace);
+                    AddAllSubCategories(preCalcInactive, category);
                     continue;
                 }
 
@@ -160,24 +151,22 @@ namespace BhModule.Community.Pathing.State {
                 }
             }
 
-            _inactiveCategories = preCalcInactiveCategories;
+            _evaluatedInactiveCategories = preCalcInactive;
             this.CategoryStatesOptimized?.Invoke(this, EventArgs.Empty);
-
             _calculationDirty = false;
         }
 
-        protected override async Task<bool> Initialize() {
-            await LoadStates();
+        private void AddAllSubCategories(HashSet<string> categories, PathingCategory topCategory) {
+            var remainingCategories = new Queue<PathingCategory>(topCategory);
 
-            return true;
-        }
+            while (remainingCategories.Count > 0) {
+                var category = remainingCategories.Dequeue();
+                categories.Add(category.Namespace);
 
-        public override async Task Reload() {
-            _inactiveCategories.Clear();
-            _rawInactiveCategories.Clear();
-            _rawInvertedCategories.Clear();
-
-            await LoadStates();
+                foreach (var subCategory in category) {
+                    remainingCategories.Enqueue(subCategory);
+                }
+            }
         }
 
         public override void Update(GameTime gameTime) {
@@ -190,23 +179,45 @@ namespace BhModule.Community.Pathing.State {
         }
 
         public bool GetNamespaceInactive(string categoryNamespace) {
-            return _inactiveCategories.Contains(categoryNamespace);
+            return _evaluatedInactiveCategories.Contains(categoryNamespace);
         }
 
-        public bool GetRawNamespaceInactive(string categoryNamespace)
-        {
-            return _rawInactiveCategories.FirstOrDefault(c => c.Namespace.Equals(categoryNamespace)) != null;
-        }
-
-        private bool GetCategoryInactive(PathingCategory category, SafeList<PathingCategory> rawCategoriesList) {
-            return rawCategoriesList.Contains(category);
+        public bool GetRawNamespaceInactive(string categoryNamespace) {
+            return _explicitStates.TryGetValue(categoryNamespace, out bool active) && !active;
         }
 
         public bool GetCategoryInactive(PathingCategory category) {
-            if (category.DefaultToggle) {
-                return GetCategoryInactive(category, _rawInactiveCategories);
+            if (_explicitStates.TryGetValue(category.Namespace, out bool explicitActive)) {
+                return !explicitActive;
+            }
+            return !category.DefaultToggle;
+        }
+
+        public void SetInactive(PathingCategory category, bool isInactive) {
+            bool targetActiveState = !isInactive;
+
+            // Cleanup Optimization: If user choice perfectly matches the marker pack's default,
+            // we can remove the override entirely to keep the text save-file clean.
+            if (category.DefaultToggle == targetActiveState) {
+                _explicitStates.TryRemove(category.Namespace, out _);
             } else {
-                return !GetCategoryInactive(category, _rawInvertedCategories);
+                _explicitStates[category.Namespace] = targetActiveState;
+            }
+
+            CategoryInactiveChanged?.Invoke(this, new PathingCategoryEventArgs(category) { Active = targetActiveState });
+
+            _stateDirty       = true; // Ensure that we save the new state.
+            _calculationDirty = true; // Ensure that the hashset is recalculated.
+        }
+
+        public void SetInactive(string categoryNamespace, bool isInactive) {
+            if (_rootPackState?.RootCategory != null && _rootPackState.RootCategory.TryGetCategoryFromNamespace(categoryNamespace, out var liveCategory)) {
+                SetInactive(liveCategory, isInactive);
+            } else {
+                // Make sure we store the state even if set through a Lua script while the pack isn't active on the map.
+                _explicitStates[categoryNamespace] = !isInactive;
+                _stateDirty = true;
+                _calculationDirty = true;
             }
         }
 
@@ -215,34 +226,5 @@ namespace BhModule.Community.Pathing.State {
         public void TriggerOpenCategory(PathingCategory category) {
             TriggerOpenCategoryView?.Invoke(this, new PathingCategoryEventArgs(category));
         }
-
-        private void SetInactive(PathingCategory category, bool isInactive, SafeList<PathingCategory> rawCategoriesList) {
-            var alreadyInactive = rawCategoriesList.Contains(category);
-            
-            if(alreadyInactive)
-                rawCategoriesList.Remove(category);
-
-            if (isInactive) {
-                rawCategoriesList.Add(category);
-            }
-
-            //Trigger event when inactive state has changed
-            if(alreadyInactive != isInactive)
-                CategoryInactiveChanged?.Invoke(this, new PathingCategoryEventArgs(category){ Active = category.DefaultToggle ? !isInactive : isInactive});
-
-            _stateDirty       = true; // Ensure that we save the new state.
-            _calculationDirty = true; // Ensure that the hashset is recalculated.
-        }
-
-        public void SetInactive(PathingCategory category, bool isInactive) {
-            if (category.DefaultToggle) {
-                SetInactive(category, isInactive, _rawInactiveCategories);
-            } else {
-                SetInactive(category, !isInactive, _rawInvertedCategories);
-            }
-        }
-
-        public void SetInactive(string categoryNamespace, bool isInactive) => SetInactive(_rootPackState.RootCategory.GetOrAddCategoryFromNamespace(categoryNamespace), isInactive);
-
     }
 }

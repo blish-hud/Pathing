@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using BhModule.Community.Pathing.State;
-using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
@@ -15,6 +14,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private readonly IPackState      _packState;
         private readonly PathingCategory _pathingCategory;
+        private HashSet<PathingCategory> _activeCategories;
 
         private static readonly Texture2D _textureContinueMenu = Content.GetTexture("156057");
 
@@ -22,30 +22,47 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private bool _forceShowAll = false;
 
-        public CategoryContextMenuStrip(IPackState packState, PathingCategory pathingCategory, bool forceShowAll) {
-            _packState       = packState;
-            _pathingCategory = pathingCategory;
-
-            _forceShowAll = forceShowAll;
+        public CategoryContextMenuStrip(IPackState packState, PathingCategory pathingCategory, bool forceShowAll, HashSet<PathingCategory> activeCategories = null) {
+            _packState        = packState;
+            _pathingCategory  = pathingCategory;
+            _forceShowAll     = forceShowAll;
+            _activeCategories = activeCategories;
         }
 
-        // TODO: Make category filtering less janky.
+        private void EnsureActiveCategoriesPopulated() {
+            if (_activeCategories != null) return;
+
+            _activeCategories = new HashSet<PathingCategory>();
+            int currentMapId = GameService.Gw2Mumble.CurrentMap.Id;
+
+            var entities = _packState.Entities.ToArray();
+
+            foreach (var entity in entities) {
+                if (entity.MapId == currentMapId && entity.Category != null) {
+                    var cat = entity.Category;
+                    while (cat != null) {
+                        // .Add returns false if the item is already present; breaks early out of root paths
+                        if (!_activeCategories.Add(cat)) break;
+                        cat = cat.Parent;
+                    }
+                }
+            }
+        }
 
         private (IEnumerable<PathingCategory> SubCategories, int Skipped) GetSubCategories(bool forceShowAll = false) {
             // We only show subcategories with a non-empty DisplayName (explicitly setting it to "" will hide it) and
-            // was loaded by one of the packs (since those still around from unloaded packs will remain).
+            // was loaded by one of the packs.
             var subCategories = _pathingCategory.Where(cat => cat.LoadedFromPack && cat.DisplayName != "" && !cat.IsHidden);
 
             if (!_packState.UserConfiguration.PackEnableSmartCategoryFilter.Value || forceShowAll) {
                 return (subCategories, 0);
             }
 
+            EnsureActiveCategoriesPopulated();
+
             var filteredSubCategories = new List<PathingCategory>();
-
             PathingCategory lastCategory = null;
-
             bool lastIsSeparator = false;
-
             int skipped = 0;
 
             // We go bottom to top to check if the categories are potentially relevant to categories below.
@@ -54,7 +71,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
                     // If separator was relevant to this category, we include it.
                     filteredSubCategories.Add(subCategory);
                     lastIsSeparator = true;
-                } else if (CategoryUtil.UiCategoryIsNotFiltered(subCategory, _packState)) {
+                } else if (!string.IsNullOrWhiteSpace(subCategory.DisplayName) && _activeCategories.Contains(subCategory)) {
                     // If category was not filtered, we include it.
                     filteredSubCategories.Add(subCategory);
                     lastIsSeparator = false;
@@ -66,7 +83,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
                 lastCategory = subCategory;
             }
-            
+
             return (Enumerable.Reverse(filteredSubCategories), skipped);
         }
 
@@ -86,7 +103,6 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         protected override void OnShown(EventArgs e) {
             PopulateMenuItems(_forceShowAll);
-
             base.OnShown(e);
 
             // Behold: the effort I'm willing to put towards making huge category listings visible.
@@ -128,7 +144,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
             }
 
             foreach (var subCategory in subCategories) {
-                this.AddMenuItem(new CategoryContextMenuStripItem(_packState, subCategory, showAll));
+                this.AddMenuItem(new CategoryContextMenuStripItem(_packState, subCategory, showAll, _activeCategories));
             }
 
             if (skipped > 0 && _packState.UserConfiguration.PackShowWhenCategoriesAreFiltered.Value) {

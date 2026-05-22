@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BhModule.Community.Pathing.Behavior.Filter;
+﻿using BhModule.Community.Pathing.Behavior.Filter;
 using BhModule.Community.Pathing.Behavior.Modifier;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Tooltips;
@@ -13,6 +9,10 @@ using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TmfLib.Pathable;
 using TmfLib.Prototype;
 
@@ -27,16 +27,18 @@ namespace BhModule.Community.Pathing.UI.Controls {
         private readonly IPackState      _packState;
         private readonly PathingCategory _pathingCategory;
 
-        private readonly bool _forceShowAll = false;
+        private readonly HashSet<PathingCategory> _activeCategories;
 
+        private readonly bool _forceShowAll = false;
         private readonly List<(Texture2D, string, Action)> _contexts;
 
-        public CategoryContextMenuStripItem(IPackState packState, PathingCategory pathingCategory, bool forceShowAll) {
+        public CategoryContextMenuStripItem(IPackState packState, PathingCategory pathingCategory, bool forceShowAll, HashSet<PathingCategory> activeCategories) {
             _packState       = packState;
             _pathingCategory = pathingCategory;
             
-            _contexts     = new List<(Texture2D, string, Action)>();
-            _forceShowAll = forceShowAll;
+            _contexts         = new List<(Texture2D, string, Action)>();
+            _forceShowAll     = forceShowAll;
+            _activeCategories = activeCategories;
 
             BuildCategoryMenu();
             DetectAndBuildContexts();
@@ -63,16 +65,21 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
             if (_packState.CategoryStates == null) return;
 
-            // TODO: Yikes, filter is getting called a lot.  Let's pass this down from the last time we calcualted it.
-            if (_forceShowAll && _pathingCategory.Any() 
-             || _pathingCategory.Any(c => CategoryUtil.UiCategoryIsNotFiltered(c, _packState))) {
-                this.Submenu = new CategoryContextMenuStrip(_packState, _pathingCategory, _forceShowAll);
+            if (_pathingCategory.Any()) {
+                bool shouldShowSubmenu = _forceShowAll || !_packState.UserConfiguration.PackEnableSmartCategoryFilter.Value;
+
+                if (!shouldShowSubmenu && _activeCategories != null) {
+                    // Evaluate if child objects exist on the current map
+                    shouldShowSubmenu = _pathingCategory.Any(c => !string.IsNullOrWhiteSpace(c.DisplayName) && _activeCategories.Contains(c));
+                }
+
+                if (shouldShowSubmenu) {
+                    this.Submenu = new CategoryContextMenuStrip(_packState, _pathingCategory, _forceShowAll, _activeCategories);
+                }
             }
 
-            /*if (!_pathingCategory.IsSeparator) {*/
-                this.CanCheck = true;
-                this.Checked  = !_packState.CategoryStates.GetCategoryInactive(_pathingCategory);
-            /*}*/
+            this.CanCheck = true;
+            this.Checked  = !_packState.CategoryStates.GetCategoryInactive(_pathingCategory);
         }
 
         protected override void OnMouseEntered(MouseEventArgs e) {
@@ -98,12 +105,9 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         private void DetectAndBuildContexts() {
             if (_pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_ID, out var achievementAttr)) {
-
                 var achievementBit = -1;
-                if (_pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_BIT, out var achievementBitAttr))
-                {
-                    if (InvariantUtil.TryParseInt(achievementBitAttr, out int achievementBitParsed))
-                    {
+                if (_pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_BIT, out var achievementBitAttr)) {
+                    if (InvariantUtil.TryParseInt(achievementBitAttr, out int achievementBitParsed)) {
                         achievementBit = achievementBitParsed;
                     }
                 }
