@@ -156,7 +156,7 @@ namespace BhModule.Community.Pathing.UI.Views {
                     _packsNotLoadedLabel.Visible = false;
             }
             
-            this._loadingSpinner.Visible     = loading;
+            _loadingSpinner.Visible = loading;
         }
 
         private void SearchBoxTextChanged(object sender, EventArgs e) {

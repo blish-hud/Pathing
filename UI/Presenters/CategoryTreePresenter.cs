@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.UI.Events;
 using BhModule.Community.Pathing.UI.Views;
@@ -29,36 +28,29 @@ namespace BhModule.Community.Pathing.UI.Presenter {
             return Task.FromResult(true);
         }
 
-        protected override void UpdateView()
-        {
+        protected override void UpdateView() {
             if (_updatingView || this.View.TreeView == null) return;
 
             this.View.TreeView.ClearChildNodes();
 
             if (_module.PackInitiator == null || _module.PackInitiator.IsLoading) return;
 
-            if(!this.View.ValidateMarkerPacksState())
+            if (!this.View.ValidateMarkerPacksState())
                 return;
 
             this.View.TreeView.SetPackInitiator(_module.PackInitiator);
 
-            try
-            {
+            try {
                 _updatingView = true;
                 this.View.TreeView.LoadNodes();
 
-                if (this.View.TargetCategory != null)
-                {
+                if (this.View.TargetCategory != null) {
                     this.View.TreeView.NavigateToPath(this.View.TargetCategory.GetPath());
                     this.View.TargetCategory = null;
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _logger.Error(ex, "Failed to update view.");
-            }
-            finally
-            {
+            } finally {
                 _updatingView = false;
             }
 
@@ -66,8 +58,7 @@ namespace BhModule.Community.Pathing.UI.Presenter {
                 InitalizePackEvents();
         }
 
-        private void _module_ModuleLoaded(object sender, EventArgs e)
-        {
+        private void _module_ModuleLoaded(object sender, EventArgs e) {
             Initialize();
         }
 
@@ -80,19 +71,18 @@ namespace BhModule.Community.Pathing.UI.Presenter {
             if (!_module.PackInitiator.IsLoading) {
                 this.View.SetLoading(true);
 
-                UpdateView();
+                ThreadUtil.RunOnMainThread(UpdateView);
 
                 this.View.SetLoading(false);
             }
         }
 
-        private void InitalizePackEvents()
-        {
-            _module.PackInitiator.LoadMapFromEachPackStarted                       += PackInitiatorOnLoadMapFromEachPackStarted;
-            _module.PackInitiator.LoadMapFromEachPackFinished                      += PackInitiatorOnLoadMapFromEachPackFinished;
+        private void InitalizePackEvents() {
+            _module.PackInitiator.LoadMapFromEachPackStarted += PackInitiatorOnLoadMapFromEachPackStarted;
+            _module.PackInitiator.LoadMapFromEachPackFinished += PackInitiatorOnLoadMapFromEachPackFinished;
             _module.PackInitiator.PackState.CategoryStates.CategoryInactiveChanged += CategoryStatesOnCategoryInactiveChanged;
             _module.PackInitiator.PackState.CategoryStates.CategoryStatesOptimized += CategoryStatesOnCategoryStatesOptimized;
-            _packEventsInitialized                                                     =  true;
+            _packEventsInitialized = true;
         }
 
         private void CategoryStatesOnCategoryStatesOptimized(object sender, EventArgs e) {
@@ -109,22 +99,22 @@ namespace BhModule.Community.Pathing.UI.Presenter {
         }
 
         private void PackInitiatorOnLoadMapFromEachPackFinished(object sender, EventArgs e) {
-            UpdateView();
+            ThreadUtil.RunOnMainThread(UpdateView);
             this.View.SetLoading(false);
         }
 
         protected override void Unload() {
-            if (_module != null) { 
+            if (_module != null) {
                 _module.ModuleLoaded -= _module_ModuleLoaded;
 
                 if (_module.PackInitiator != null) {
-                    _module.PackInitiator.LoadMapFromEachPackStarted                       -= PackInitiatorOnLoadMapFromEachPackStarted;
-                    _module.PackInitiator.LoadMapFromEachPackFinished                      -= PackInitiatorOnLoadMapFromEachPackFinished;
+                    _module.PackInitiator.LoadMapFromEachPackStarted -= PackInitiatorOnLoadMapFromEachPackStarted;
+                    _module.PackInitiator.LoadMapFromEachPackFinished -= PackInitiatorOnLoadMapFromEachPackFinished;
                     _module.PackInitiator.PackState.CategoryStates.CategoryInactiveChanged -= CategoryStatesOnCategoryInactiveChanged;
                 }
             }
 
-            _packEventsInitialized =  false;
+            _packEventsInitialized = false;
 
             base.Unload();
         }
