@@ -169,9 +169,12 @@ namespace BhModule.Community.Pathing.State {
             }
         }
 
+        private Action<GameTime>     _calculateOptimizedCategoryStatesCall;
+        private Func<GameTime, Task> _saveStatesCall;
+
         public override void Update(GameTime gameTime) {
-            UpdateCadenceUtil.UpdateWithCadence(CalculateOptimizedCategoryStates, gameTime, INTERVAL_UPDATEINACTIVECATEGORIES, ref _lastInactiveCategoriesCalculation);
-            UpdateCadenceUtil.UpdateAsyncWithCadence(SaveStates, gameTime, INTERVAL_SAVESTATE, ref _lastSaveState);
+            UpdateCadenceUtil.UpdateWithCadence(_calculateOptimizedCategoryStatesCall ??= CalculateOptimizedCategoryStates, gameTime, INTERVAL_UPDATEINACTIVECATEGORIES, ref _lastInactiveCategoriesCalculation);
+            UpdateCadenceUtil.UpdateAsyncWithCadence(_saveStatesCall ??= SaveStates, gameTime, INTERVAL_SAVESTATE, ref _lastSaveState);
         }
 
         public override async Task Unload() {

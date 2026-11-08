@@ -24,8 +24,10 @@ namespace BhModule.Community.Pathing.State {
             return Task.CompletedTask;
         }
 
+        private Func<GameTime, Task> _updateRaidsCall;
+
         public override void Update(GameTime gameTime) {
-            UpdateCadenceUtil.UpdateAsyncWithCadence(UpdateRaids, gameTime, INTERVAL_CHECKACHIEVEMENTS, ref _lastRaidCheck);
+            UpdateCadenceUtil.UpdateAsyncWithCadence(_updateRaidsCall ??= UpdateRaids, gameTime, INTERVAL_CHECKACHIEVEMENTS, ref _lastRaidCheck);
         }
 
         protected override Task<bool> Initialize() {

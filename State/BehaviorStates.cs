@@ -172,9 +172,12 @@ namespace BhModule.Community.Pathing.State {
 
         public override Task Reload() { return Task.CompletedTask; /* NOOP */ }
 
+        private Action<GameTime>     _updateTimersCall;
+        private Func<GameTime, Task> _saveStateCall;
+
         public override void Update(GameTime gameTime) {
-            UpdateCadenceUtil.UpdateWithCadence(UpdateTimers, gameTime, INTERVAL_CHECKTIMERS, ref _lastTimerCheck);
-            UpdateCadenceUtil.UpdateAsyncWithCadence(SaveState, gameTime, INTERVAL_SAVESTATE, ref _lastSaveState);
+            UpdateCadenceUtil.UpdateWithCadence(_updateTimersCall ??= UpdateTimers, gameTime, INTERVAL_CHECKTIMERS, ref _lastTimerCheck);
+            UpdateCadenceUtil.UpdateAsyncWithCadence(_saveStateCall ??= SaveState, gameTime, INTERVAL_SAVESTATE, ref _lastSaveState);
         }
 
         public override async Task Unload() {

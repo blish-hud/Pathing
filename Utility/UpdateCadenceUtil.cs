@@ -23,21 +23,26 @@ namespace BhModule.Community.Pathing.Utility {
         public static void UpdateAsyncWithCadence(Func<GameTime, Task> call, GameTime gameTime, double cadence, ref double lastCheck) {
             lastCheck += gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (lastCheck >= cadence) {
-                lock (_asyncStateMonitor) {
-                    if (_asyncStateMonitor.Contains(call.Method.MethodHandle.Value)) {
-                        Logger.Debug($"Async {call.Method.Name} has skipped its cadence because it has not completed running.");
-                        return;
-                    }
-
-                    _asyncStateMonitor.Add(call.Method.MethodHandle.Value);
-                }
-
-                call(gameTime).ContinueWith(_ => {
-                                                lock (_asyncStateMonitor) _asyncStateMonitor.Remove(call.Method.MethodHandle.Value);
-                                            });
+            if (lastCheck >= cadence && TryStartAsync(call, gameTime)) {
                 lastCheck = 0;
             }
+        }
+
+        private static bool TryStartAsync(Func<GameTime, Task> call, GameTime gameTime) {
+            lock (_asyncStateMonitor) {
+                if (_asyncStateMonitor.Contains(call.Method.MethodHandle.Value)) {
+                    Logger.Debug($"Async {call.Method.Name} has skipped its cadence because it has not completed running.");
+                    return false;
+                }
+
+                _asyncStateMonitor.Add(call.Method.MethodHandle.Value);
+            }
+
+            call(gameTime).ContinueWith(_ => {
+                                            lock (_asyncStateMonitor) _asyncStateMonitor.Remove(call.Method.MethodHandle.Value);
+                                        });
+
+            return true;
         }
 
     }

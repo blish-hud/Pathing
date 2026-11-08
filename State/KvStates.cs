@@ -95,8 +95,10 @@ namespace BhModule.Community.Pathing.State {
             await Initialize();
         }
 
+        private Func<GameTime, Task> _flushKvCall;
+
         public override void Update(GameTime gameTime) {
-            UpdateCadenceUtil.UpdateAsyncWithCadence(FlushKv, gameTime, INTERVAL_CHECKPOINT, ref _lastCheckpointCheck);
+            UpdateCadenceUtil.UpdateAsyncWithCadence(_flushKvCall ??= FlushKv, gameTime, INTERVAL_CHECKPOINT, ref _lastCheckpointCheck);
         }
 
         public override async Task Unload() {
