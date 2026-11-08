@@ -50,7 +50,7 @@ namespace BhModule.Community.Pathing.Entity {
             };
 
             if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Shift)) {
-                newMenu.AddMenuItem("Copy Parent Category Namespace").Click += async delegate { await ClipboardUtil.WindowsClipboardService.SetTextAsync(pathingEntry.Category.Namespace); };
+                newMenu.AddMenuItem("Copy Parent Category Namespace").Click += delegate { ClipboardHelper.CopyWithNotification(pathingEntry.Category.Namespace, null); };
             }
 
             newMenu.Hidden += delegate { _activeContextMenu?.Dispose(); _activeContextMenu = null; };

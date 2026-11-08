@@ -1,6 +1,5 @@
 ﻿using BhModule.Community.Pathing.Behavior.Modifier;
-using Blish_HUD;
-using Blish_HUD.Controls;
+using BhModule.Community.Pathing.Utility;
 
 namespace BhModule.Community.Pathing.Scripting.Lib {
     public class User {
@@ -23,14 +22,7 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
                 return false;
             }
 
-            ClipboardUtil.WindowsClipboardService.SetTextAsync(value).ContinueWith(t => {
-                if (t.IsCompleted && t.Result) {
-                    ScreenNotification.ShowNotification(message,
-                                                        ScreenNotification.NotificationType.Info,
-                                                        null,
-                                                        2);
-                }
-            });
+            ClipboardHelper.CopyWithNotification(value, message);
 
             // TODO: Evaluate our options for handling async methods that get called from Lua.  Currenly we just fire it and let it go.
             return true;

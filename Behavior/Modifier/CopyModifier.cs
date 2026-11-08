@@ -52,14 +52,7 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
                 return;
             }
 
-            ClipboardUtil.WindowsClipboardService.SetTextAsync(this.CopyValue).ContinueWith(t => {
-                  if (t.IsCompleted && t.Result) {
-                      ScreenNotification.ShowNotification(string.Format(this.CopyMessage, this.CopyValue),
-                                                          ScreenNotification.NotificationType.Info,
-                                                          null,
-                                                          2);
-                  }
-            });
+            ClipboardHelper.CopyWithNotification(this.CopyValue, ClipboardHelper.FormatMessage(this.CopyMessage, this.CopyValue));
         }
 
 

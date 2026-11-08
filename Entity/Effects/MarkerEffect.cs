@@ -17,6 +17,8 @@ namespace BhModule.Community.Pathing.Entity.Effects {
             _pPlayerFadeRadius, _pFadeCenter,
             _pTintColor, _pShowDebugWireframe;
 
+        private volatile bool _parametersReady;
+
         private Matrix _view, _projection, _playerView;
         private Vector3 _playerPosition;
         private Vector3 _cameraPosition;
@@ -57,6 +59,8 @@ namespace BhModule.Community.Pathing.Entity.Effects {
             _pFadeCenter = Parameters["FadeCenter"];
             _pTintColor = Parameters["TintColor"];
             _pShowDebugWireframe = Parameters["ShowDebugWireframe"];
+
+            _parametersReady = true;
         }
 
         private MarkerEffect(GraphicsDevice graphicsDevice, byte[] effectCode) : base(graphicsDevice, effectCode) {
@@ -79,6 +83,8 @@ namespace BhModule.Community.Pathing.Entity.Effects {
             _pFadeCenter = Parameters["FadeCenter"];
             _pTintColor = Parameters["TintColor"];
             _pShowDebugWireframe = Parameters["ShowDebugWireframe"];
+
+            _parametersReady = true;
         }
 
         private MarkerEffect(GraphicsDevice graphicsDevice, byte[] effectCode, int index, int count) : base(graphicsDevice, effectCode, index, count) {
@@ -101,6 +107,8 @@ namespace BhModule.Community.Pathing.Entity.Effects {
             _pFadeCenter = Parameters["FadeCenter"];
             _pTintColor = Parameters["TintColor"];
             _pShowDebugWireframe = Parameters["ShowDebugWireframe"];
+
+            _parametersReady = true;
         }
 
         #endregion
@@ -117,6 +125,8 @@ namespace BhModule.Community.Pathing.Entity.Effects {
         }
         
         protected override void Update(GameTime gameTime) {
+            if (!_parametersReady) return;
+
             this.PlayerPosition = GameService.Gw2Mumble.PlayerCharacter.Position;
             this.CameraPosition = GameService.Gw2Mumble.PlayerCamera.Position;
 

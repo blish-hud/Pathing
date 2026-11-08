@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BhModule.Community.Pathing.UI.Models;
 using BhModule.Community.Pathing.UI.Tooltips;
+using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
@@ -256,15 +257,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         }
 
         protected void CopyToClipboard(string value, string message) {
-            ClipboardUtil.WindowsClipboardService.SetTextAsync(value).ContinueWith(t => {
-                if (!string.IsNullOrWhiteSpace(message) && t.IsCompleted && t.Result)
-                {
-                    ScreenNotification.ShowNotification(string.Format(message, value),
-                                                        ScreenNotification.NotificationType.Info,
-                                                        null,
-                                                        2);
-                }
-            });
+            ClipboardHelper.CopyWithNotification(value, ClipboardHelper.FormatMessage(message, value));
         }
 
         public void DeselectAdjacentNodesExcept(PathingNode node)

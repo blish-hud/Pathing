@@ -14,6 +14,8 @@ namespace BhModule.Community.Pathing.Entity.Effects {
             _pTexture, _pFadeTexture, _pFlowSpeed, _pFadeNear, _pFadeFar, _pOpacity,
             _pTintColor, _pPlayerFadeRadius, _pFadeCenter;
 
+        private volatile bool _parametersReady;
+
         // Backing fields
         private Matrix _worldViewProjection;
         private Matrix _playerView;
@@ -133,6 +135,8 @@ namespace BhModule.Community.Pathing.Entity.Effects {
             _pTintColor = Parameters["TintColor"];
             _pPlayerFadeRadius = Parameters["PlayerFadeRadius"];
             _pFadeCenter = Parameters["FadeCenter"];
+
+            _parametersReady = true;
         }
 
         public TrailEffect(GraphicsDevice graphicsDevice, byte[] effectCode) : base(graphicsDevice, effectCode) {
@@ -152,6 +156,8 @@ namespace BhModule.Community.Pathing.Entity.Effects {
             _pTintColor = Parameters["TintColor"];
             _pPlayerFadeRadius = Parameters["PlayerFadeRadius"];
             _pFadeCenter = Parameters["FadeCenter"];
+
+            _parametersReady = true;
         }
 
         public TrailEffect(GraphicsDevice graphicsDevice, byte[] effectCode, int index, int count) : base(graphicsDevice, effectCode, index, count) {
@@ -171,6 +177,8 @@ namespace BhModule.Community.Pathing.Entity.Effects {
             _pTintColor = Parameters["TintColor"];
             _pPlayerFadeRadius = Parameters["PlayerFadeRadius"];
             _pFadeCenter = Parameters["FadeCenter"];
+
+            _parametersReady = true;
         }
 
         #endregion
@@ -222,6 +230,8 @@ namespace BhModule.Community.Pathing.Entity.Effects {
         }
 
         protected override void Update(GameTime gameTime) {
+            if (!_parametersReady) return;
+
             this.TotalMilliseconds = (float)gameTime.TotalGameTime.TotalMilliseconds;
             this.PlayerPosition    = GameService.Gw2Mumble.PlayerCharacter.Position;
             this.CameraPosition    = GameService.Gw2Mumble.PlayerCamera.Position;

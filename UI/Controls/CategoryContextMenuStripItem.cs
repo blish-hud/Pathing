@@ -159,7 +159,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
                     copyMessage = copyMessageAttr.GetValueAsString();
                 }
 
-                copyMessage = string.Format(copyMessage, copyValue);
+                copyMessage = ClipboardHelper.FormatMessage(copyMessage, copyValue);
                 return true;
             }
 
@@ -168,14 +168,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
 
         protected override void OnClick(MouseEventArgs e) {
             if (_pathingCategory.IsSeparator && TryGetCopyDetails(out string copyValue, out string copyMessage)) {
-                ClipboardUtil.WindowsClipboardService.SetTextAsync(copyValue).ContinueWith(t => {
-                    if (t.IsCompleted && t.Result) {
-                        ScreenNotification.ShowNotification(string.Format(copyMessage, copyValue),
-                                                            ScreenNotification.NotificationType.Info,
-                                                            null,
-                                                            2);
-                    }
-                });
+                ClipboardHelper.CopyWithNotification(copyValue, copyMessage);
             } else if (!_pathingCategory.IsSeparator) {
                 // If CTRL is held down when clicked, uncheck all adjacent menu items except for this one.
                 if (GameService.Input.Keyboard.ActiveModifiers.HasFlag(ModifierKeys.Ctrl)) {

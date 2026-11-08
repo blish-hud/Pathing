@@ -97,10 +97,8 @@ namespace BhModule.Community.Pathing.Scripting.Console {
             rtbOutput.ResumeLayout();
         }
 
-        private async void btnCopyOutput_Click(object sender, EventArgs e) {
-            try {
-                await Blish_HUD.ClipboardUtil.WindowsClipboardService.SetTextAsync(rtbOutput.Text);
-            } catch { /* NOOP */ }
+        private void btnCopyOutput_Click(object sender, EventArgs e) {
+            BhModule.Community.Pathing.Utility.ClipboardHelper.CopyWithNotification(rtbOutput.Text, null);
         }
 
         private void btnClearOutput_Click(object sender, EventArgs e) {
