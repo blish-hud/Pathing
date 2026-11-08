@@ -10,7 +10,7 @@ namespace BhModule.Community.Pathing.Entity {
         public override RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, float opacity) {
             if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null || _sectionPoints == null) return null;
 
-            bool isMapOpen = GameService.Gw2Mumble.UI.IsMapOpen;
+            bool isMapOpen = _packState.CachedMumbleStates.IsMapOpen;
 
             // TODO: Simplify these two map visibility filters
             var mapTrailVisibilityLevel = _packState.UserConfiguration.MapTrailVisibilityLevel.Value;

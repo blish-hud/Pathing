@@ -12,6 +12,7 @@ namespace BhModule.Community.Pathing.Entity {
         
         private static          DynamicVertexBuffer _sharedVertexBuffer;
         private static readonly Vector4[]           _screenVerts = new Vector4[4];
+        private static readonly Point2[]            _screenPoints = new Point2[4];
 
         private static readonly Vector3[] _faceVerts = {
             new(-0.5f, -0.5f, 0), new(0.5f, -0.5f, 0), new(-0.5f, 0.5f, 0), new(0.5f, 0.5f, 0),
@@ -49,7 +50,7 @@ namespace BhModule.Community.Pathing.Entity {
                  * _packState.UserConfiguration.PackMaxOpacityOverride.Value
                  * this.AnimatedFadeOpacity
                  * (_packState.UserConfiguration.PackFadePathablesDuringCombat.Value
-                        ? (GameService.Gw2Mumble.PlayerCharacter.IsInCombat
+                        ? (_packState.CachedMumbleStates.IsInCombat
                             ? 0.5f
                             : 1f)
                         : 1f);
@@ -94,8 +95,11 @@ namespace BhModule.Community.Pathing.Entity {
                     _screenVerts[i] /= _screenVerts[i].W;
                 }
             
-                // Very alloc heavy
-                var bounds = BoundingRectangle.CreateFrom(_screenVerts.Select(s => new Point2(s.X, s.Y)).ToArray());
+                for (int i = 0; i < _screenVerts.Length; i++) {
+                    _screenPoints[i] = new Point2(_screenVerts[i].X, _screenVerts[i].Y);
+                }
+
+                var bounds = BoundingRectangle.CreateFrom(_screenPoints);
 
                 float pixelSizeY = bounds.HalfExtents.Y * 2 * _packState.SharedMarkerEffect.GraphicsDevice.Viewport.Height;
                 float limitY     = MathHelper.Clamp(pixelSizeY, this.MinSize * _packState.UserConfiguration.PackMarkerScale.Value * 4, this.MaxSize * 4);

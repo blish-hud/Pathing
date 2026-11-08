@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +41,29 @@ namespace BhModule.Community.Pathing {
 
         private List<T> _innerList;
 
+        private volatile T[] _snapshot;
+
+        public T[] Snapshot {
+            get {
+                var snapshot = _snapshot;
+                if (snapshot != null) return snapshot;
+
+                bool tookLock = !_listLock.IsReadLockHeld && !_listLock.IsWriteLockHeld;
+                if (tookLock) {
+                    _listLock.EnterReadLock();
+                }
+
+                try {
+                    // Assigned while holding the lock so that a writer can't clear it between the copy and the assignment.
+                    return _snapshot ??= _innerList.ToArray();
+                } finally {
+                    if (tookLock) {
+                        _listLock.ExitReadLock();
+                    }
+                }
+            }
+        }
+
         public bool IsReadOnly => false;
 
         public bool IsEmpty { get; private set; } = true;
@@ -74,6 +97,9 @@ namespace BhModule.Community.Pathing {
                 _listLock.EnterWriteLock();
             }
 
+
+            _snapshot = null;
+
             _innerList.Add(item);
             this.IsEmpty = false;
             _listLock.ExitWriteLock();
@@ -83,6 +109,8 @@ namespace BhModule.Community.Pathing {
             if (!_listLock.IsWriteLockHeld) {
                 _listLock.EnterWriteLock();
             }
+
+            _snapshot = null;
 
             _innerList.AddRange(items);
             this.IsEmpty = !_innerList.Any();
@@ -94,6 +122,8 @@ namespace BhModule.Community.Pathing {
                 _listLock.EnterWriteLock();
             }
 
+            _snapshot = null;
+
             _innerList   = items.ToList();
             this.IsEmpty = !_innerList.Any();
             _listLock.ExitWriteLock();
@@ -103,6 +133,8 @@ namespace BhModule.Community.Pathing {
             if (!_listLock.IsWriteLockHeld) {
                 _listLock.EnterWriteLock();
             }
+
+            _snapshot = null;
 
             _innerList.Clear();
             this.IsEmpty = true;
@@ -134,6 +166,8 @@ namespace BhModule.Community.Pathing {
             if (!_listLock.IsWriteLockHeld) {
                 _listLock.EnterWriteLock();
             }
+
+            _snapshot = null;
 
             try {
                 return _innerList.Remove(item);
@@ -200,6 +234,8 @@ namespace BhModule.Community.Pathing {
                 _listLock.EnterWriteLock();
             }
 
+            _snapshot = null;
+
             _innerList.Insert(index, item);
             _listLock.ExitWriteLock();
         }
@@ -208,6 +244,8 @@ namespace BhModule.Community.Pathing {
             if (!_listLock.IsWriteLockHeld) {
                 _listLock.EnterWriteLock();
             }
+
+            _snapshot = null;
 
             _innerList.RemoveAt(index);
             _listLock.ExitWriteLock();
@@ -229,6 +267,8 @@ namespace BhModule.Community.Pathing {
                 if (!_listLock.IsWriteLockHeld) {
                     _listLock.EnterWriteLock();
                 }
+
+                _snapshot = null;
 
                 _innerList[index] = value;
                 _listLock.ExitWriteLock();

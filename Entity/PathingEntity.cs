@@ -114,7 +114,11 @@ namespace BhModule.Community.Pathing.Entity {
         private void UpdateBehaviors(GameTime gameTime) {
             bool filtered = false;
 
-            foreach (var behavior in this.Behaviors) {
+            var behaviors = this.Behaviors.Snapshot;
+
+            for (int i = 0; i < behaviors.Length; i++) {
+                var behavior = behaviors[i];
+
                 behavior.Update(gameTime);
 
                 if (behavior is ICanFilter filter) {

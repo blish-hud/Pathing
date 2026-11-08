@@ -35,6 +35,9 @@ namespace BhModule.Community.Pathing.Entity {
 
         private ContextMenuStrip _activeContextMenu;
 
+        // Reused sort-key buffer for drawing entities in order each frame.
+        private ulong[] _drawOrder = Array.Empty<ulong>();
+
         private ContextMenuStrip BuildPathableMenu(IPathingEntity pathingEntry) {
             var newMenu = new ContextMenuStrip();
 
@@ -229,8 +232,18 @@ namespace BhModule.Community.Pathing.Entity {
             float opacity = MathHelper.Clamp((float)(GameService.Overlay.CurrentGameTime.TotalGameTime.TotalSeconds - _lastMapViewChanged) / 0.65f, 0f, 1f);
 
             // TODO: Make this more based on relative vertical axis difference.
-            // TODO: Revise how we do this - tons of memory allocations.
-            var entities = _packState.Entities.ToList().OrderBy(poi => -poi.DrawOrder);
+            var entities = _packState.Entities.Snapshot;
+            int count    = entities.Length;
+
+            if (_drawOrder.Length < count) {
+                _drawOrder = new ulong[count + count / 4 + 16];
+            }
+
+            for (int i = 0; i < count; i++) {
+                _drawOrder[i] = StableSortKey.Ascending(-entities[i].DrawOrder, i);
+            }
+
+            Array.Sort(_drawOrder, 0, count);
 
             bool showModTooltip = (GameService.Input.Keyboard.ActiveModifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
 
@@ -241,7 +254,8 @@ namespace BhModule.Community.Pathing.Entity {
                                         ? _packState.UserConfiguration.MapDrawOpacity.Value 
                                         : _packState.UserConfiguration.MiniMapDrawOpacity.Value;
 
-            foreach (var pathable in entities) {
+            for (int i = 0; i < count; i++) {
+                var pathable = entities[StableSortKey.GetIndex(_drawOrder[i])];
                 var hint = pathable.RenderToMiniMap(spriteBatch, bounds, offsetX, offsetY, scale, overrideOpacity * opacity);
 
                 if (this.MouseOver && hint.HasValue && hint.Value.Contains(GameService.Input.Mouse.Position)) {

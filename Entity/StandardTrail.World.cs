@@ -122,7 +122,7 @@ namespace BhModule.Community.Pathing.Entity {
                  * _packState.UserConfiguration.PackMaxOpacityOverride.Value
                  * this.AnimatedFadeOpacity
                  * (_packState.UserConfiguration.PackFadePathablesDuringCombat.Value
-                        ? (GameService.Gw2Mumble.PlayerCharacter.IsInCombat
+                        ? (_packState.CachedMumbleStates.IsInCombat
                                ? 0.5f
                                : 1f)
                         : 1f);

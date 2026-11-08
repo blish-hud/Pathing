@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
@@ -23,11 +23,11 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             if (_pathingEntity.InvertBehavior) {
                 return _behaviorMode != StandardPathableBehavior.OnceDailyPerCharacter
                            ? !_packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid)
-                           : !_packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid.Xor(GameService.Gw2Mumble.PlayerCharacter.Name.ToGuid()));
+                           : !_packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid.Xor(GameService.Gw2Mumble.PlayerCharacter.Name.ToCachedCharacterGuid()));
             } else {
                 return _behaviorMode != StandardPathableBehavior.OnceDailyPerCharacter
                            ? _packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid)
-                           : _packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid.Xor(GameService.Gw2Mumble.PlayerCharacter.Name.ToGuid()));
+                           : _packState.BehaviorStates.IsBehaviorHidden(_behaviorMode, _pathingEntity.Guid.Xor(GameService.Gw2Mumble.PlayerCharacter.Name.ToCachedCharacterGuid()));
             }
         }
 

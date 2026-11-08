@@ -24,6 +24,9 @@ namespace BhModule.Community.Pathing.State {
         private double _compassRotation;
         public  double CompassRotation => GetTickCachedValue(ref _compassRotation);
 
+        private bool _isInCombat;
+        public  bool IsInCombat => GetTickCachedValue(ref _isInCombat);
+
         private static bool UpdateIsMapOpen() => GameService.Gw2Mumble.UI.IsMapOpen;
 
         private T GetTickCachedValue<T>(ref T value) {
@@ -42,6 +45,7 @@ namespace BhModule.Community.Pathing.State {
             _isMapOpen                = GameService.Gw2Mumble.UI.IsMapOpen;
             _isCompassRotationEnabled = GameService.Gw2Mumble.UI.IsCompassRotationEnabled;
             _compassRotation          = GameService.Gw2Mumble.UI.CompassRotation;
+            _isInCombat               = GameService.Gw2Mumble.PlayerCharacter.IsInCombat;
 
             _needsUpdate = false;
         }
