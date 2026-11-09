@@ -101,10 +101,22 @@ namespace BhModule.Community.Pathing.State {
 
         private MapDetails? _currentMapDetails = null;
 
+        public bool TryGetCurrentMapDetails(out MapDetails mapDetails) {
+            var currentMapDetails = _currentMapDetails;
+
+            mapDetails = currentMapDetails.GetValueOrDefault();
+
+            return currentMapDetails.HasValue;
+        }
+
+        public static void EventCoordsToMapCoords(in MapDetails mapDetails, double eventCoordsX, double eventCoordsY, out double outX, out double outY) {
+            outX = mapDetails.ContinentRectTopLeftX + (eventCoordsX * METERCONVERSION - mapDetails.MapRectTopLeftX) / mapDetails.MapRectWidth * mapDetails.ContinentRectWidth;
+            outY = mapDetails.ContinentRectTopLeftY + -(eventCoordsY * METERCONVERSION - mapDetails.MapRectTopLeftY) / mapDetails.MapRectHeight * mapDetails.ContinentRectHeight;
+        }
+
         public void EventCoordsToMapCoords(double eventCoordsX, double eventCoordsY, out double outX, out double outY) {
-            if (_currentMapDetails.HasValue) {
-                outX = _currentMapDetails.Value.ContinentRectTopLeftX + (eventCoordsX * METERCONVERSION - _currentMapDetails.Value.MapRectTopLeftX) / _currentMapDetails.Value.MapRectWidth * _currentMapDetails.Value.ContinentRectWidth;
-                outY = _currentMapDetails.Value.ContinentRectTopLeftY + -(eventCoordsY * METERCONVERSION - _currentMapDetails.Value.MapRectTopLeftY) / _currentMapDetails.Value.MapRectHeight * _currentMapDetails.Value.ContinentRectHeight;
+            if (TryGetCurrentMapDetails(out var mapDetails)) {
+                EventCoordsToMapCoords(in mapDetails, eventCoordsX, eventCoordsY, out outX, out outY);
 
                 return;
             }

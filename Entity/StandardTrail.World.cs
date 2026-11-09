@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BhModule.Community.Pathing.Entity.Effects;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Entities;
@@ -13,9 +14,28 @@ namespace BhModule.Community.Pathing.Entity {
 
         private const float TRAIL_WIDTH = 20 * 0.0254f;
 
-        private VertexBuffer[] _sectionBuffers;
+        // Must be even to keep the triangle strip winding consistent between chunks
+        private const int CHUNK_PRIMITIVES = 256;
 
-        private VertexBuffer PostProcessTrailSection(GraphicsDevice graphicsDevice, IEnumerable<Vector3> points) {
+        private readonly struct SectionBuffer {
+
+            public VertexBuffer     Buffer         { get; }
+            public int              PrimitiveCount { get; }
+            public BoundingSphere   Bounds         { get; }
+            public BoundingSphere[] ChunkBounds    { get; }
+
+            public SectionBuffer(VertexBuffer buffer, int primitiveCount, BoundingSphere bounds, BoundingSphere[] chunkBounds) {
+                this.Buffer         = buffer;
+                this.PrimitiveCount = primitiveCount;
+                this.Bounds         = bounds;
+                this.ChunkBounds    = chunkBounds;
+            }
+
+        }
+
+        private SectionBuffer[] _sectionBuffers;
+
+        private SectionBuffer? PostProcessTrailSection(GraphicsDevice graphicsDevice, IEnumerable<Vector3> points) {
             // Optional trail post-processing
 
             // TODO: Implement additional post processing options
@@ -35,10 +55,10 @@ namespace BhModule.Community.Pathing.Entity {
 
             return distance > 0
                        ? BuildTrailSection(graphicsDevice, pointsArr, distance)
-                       : null;
+                       : (SectionBuffer?)null;
         }
 
-        private VertexBuffer BuildTrailSection(GraphicsDevice graphicsDevice, IEnumerable<Vector3> points, float distance) {
+        private SectionBuffer BuildTrailSection(GraphicsDevice graphicsDevice, IEnumerable<Vector3> points, float distance) {
             Vector3[] pointsArr = points as Vector3[] ?? points.ToArray();
             var verts = new VertexPositionColorTexture[pointsArr.Length * 2];
             float pastDistance = distance;
@@ -82,19 +102,48 @@ namespace BhModule.Community.Pathing.Entity {
             var sectionBuffer = new VertexBuffer(graphicsDevice, VertexPositionColorTexture.VertexDeclaration, verts.Length, BufferUsage.WriteOnly);
             sectionBuffer.SetData(verts);
 
-            return sectionBuffer;
+            int primitiveCount = verts.Length - 2;
+            var chunkBounds    = new BoundingSphere[(primitiveCount + CHUNK_PRIMITIVES - 1) / CHUNK_PRIMITIVES];
+
+            for (int c = 0; c < chunkBounds.Length; c++) {
+                int start = c * CHUNK_PRIMITIVES;
+                int end   = Math.Min(start + CHUNK_PRIMITIVES, primitiveCount) + 2;
+
+                chunkBounds[c] = GetBounds(verts, start, end);
+            }
+
+            return new SectionBuffer(sectionBuffer, primitiveCount, GetBounds(verts, 0, verts.Length), chunkBounds);
+        }
+
+        private static BoundingSphere GetBounds(VertexPositionColorTexture[] verts, int start, int end) {
+            var min = new Vector3(float.MaxValue);
+            var max = new Vector3(float.MinValue);
+
+            for (int i = start; i < end; i++) {
+                min = Vector3.Min(min, verts[i].Position);
+                max = Vector3.Max(max, verts[i].Position);
+            }
+
+            var   center = (min + max) / 2f;
+            float radius = 0f;
+
+            for (int i = start; i < end; i++) {
+                radius = Math.Max(radius, Vector3.Distance(center, verts[i].Position));
+            }
+
+            return new BoundingSphere(center, radius);
         }
 
         private void BuildBuffers(ITrail trail) {
-            var buffers = new List<VertexBuffer>();
+            var buffers = new List<SectionBuffer>();
 
             using (var gdctx = GameService.Graphics.LendGraphicsDeviceContext()) {
                 foreach (var section in trail.TrailSections) {
                     // TODO: Fix cursed Vector3 type conversion
                     var processedBuffer = PostProcessTrailSection(gdctx.GraphicsDevice, section.TrailPoints.Select(v => new Vector3(v.X, v.Y, v.Z)));
 
-                    if (processedBuffer != null) {
-                        buffers.Add(processedBuffer);
+                    if (processedBuffer.HasValue) {
+                        buffers.Add(processedBuffer.Value);
                     }
                 }
             }
@@ -103,14 +152,14 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         internal void BuildBuffers(Vector3[] trail) {
-            var buffers = new List<VertexBuffer>();
+            var buffers = new List<SectionBuffer>();
 
             using (var gdctx = GameService.Graphics.LendGraphicsDeviceContext()) {
                 // TODO: Fix cursed Vector3 type conversion
                 var processedBuffer = PostProcessTrailSection(gdctx.GraphicsDevice, trail.Select(v => new Vector3(v.X, v.Y, v.Z)));
 
-                if (processedBuffer != null) {
-                    buffers.Add(processedBuffer);
+                if (processedBuffer.HasValue) {
+                    buffers.Add(processedBuffer.Value);
                 }
             }
 
@@ -151,25 +200,60 @@ namespace BhModule.Community.Pathing.Entity {
 
             graphicsDevice.RasterizerState = this.CullDirection;
 
-            _packState.SharedTrailEffect.SetEntityState(this.Texture,
-                                                        Math.Min(this.AnimationSpeed, _packState.UserConfiguration.PackMaxTrailAnimationSpeed.Value),
-                                                        Math.Min(this.FadeNear,       _packState.UserConfiguration.PackMaxViewDistance.Value - (this.FadeFar - this.FadeNear)),
-                                                        Math.Min(this.FadeFar,        _packState.UserConfiguration.PackMaxViewDistance.Value),
-                                                        GetOpacity(),
-                                                        _packState.UserResourceStates.Advanced.CharacterTrailFadeMultiplier,
-                                                        this.CanFade && _packState.UserConfiguration.PackFadeTrailsAroundCharacter.Value,
-                                                        this.Tint);
+            float fadeFar = Math.Min(this.FadeFar, _packState.UserConfiguration.PackMaxViewDistance.Value);
 
-            for (int i = 0; i < _sectionBuffers.Length; i++) {
-                ref var vertexBuffer = ref _sectionBuffers[i];
+            var trailEffect = _packState.SharedTrailEffect;
 
-                graphicsDevice.SetVertexBuffer(vertexBuffer);
+            trailEffect.SetEntityState(this.Texture,
+                                       Math.Min(this.AnimationSpeed, _packState.UserConfiguration.PackMaxTrailAnimationSpeed.Value),
+                                       Math.Min(this.FadeNear,       _packState.UserConfiguration.PackMaxViewDistance.Value - (this.FadeFar - this.FadeNear)),
+                                       fadeFar,
+                                       GetOpacity(),
+                                       _packState.UserResourceStates.Advanced.CharacterTrailFadeMultiplier,
+                                       this.CanFade && _packState.UserConfiguration.PackFadeTrailsAroundCharacter.Value,
+                                       this.Tint);
 
-                foreach (var pass in _packState.SharedTrailEffect.CurrentTechnique.Passes) {
-                    pass.Apply();
+            var sectionBuffers = _sectionBuffers;
 
-                    graphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, vertexBuffer.VertexCount - 2);
+            for (int i = 0; i < sectionBuffers.Length; i++) {
+                ref var section = ref sectionBuffers[i];
+
+                if (!IsVisible(trailEffect, section.Bounds, fadeFar)) continue;
+
+                var chunkBounds = section.ChunkBounds;
+
+                // Only the ends are trimmed so that each section remains a single draw
+                int first = 0;
+                int last  = chunkBounds.Length - 1;
+
+                if (last > 0) {
+                    while (first <= last && !IsVisible(trailEffect, in chunkBounds[first], fadeFar)) first++;
+                    while (last > first && !IsVisible(trailEffect, in chunkBounds[last], fadeFar)) last--;
+
+                    if (first > last) continue;
                 }
+
+                int startPrimitive = first * CHUNK_PRIMITIVES;
+                int endPrimitive   = Math.Min((last + 1) * CHUNK_PRIMITIVES, section.PrimitiveCount);
+
+                DrawRange(graphicsDevice, trailEffect, section.Buffer, startPrimitive, endPrimitive - startPrimitive);
+            }
+        }
+
+        // False only if the shader would clip everything within the bounds
+        private static bool IsVisible(TrailEffect trailEffect, in BoundingSphere bounds, float fadeFar) {
+            float nearestDistance = (Vector3.Distance(trailEffect.PlayerPosition, bounds.Center) - bounds.Radius) / 0.0254f;
+
+            return !(nearestDistance > fadeFar) && trailEffect.Frustum.Intersects(bounds);
+        }
+
+        private static void DrawRange(GraphicsDevice graphicsDevice, TrailEffect trailEffect, VertexBuffer vertexBuffer, int startVertex, int primitiveCount) {
+            graphicsDevice.SetVertexBuffer(vertexBuffer);
+
+            foreach (var pass in trailEffect.CurrentTechnique.Passes) {
+                pass.Apply();
+
+                graphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, startVertex, primitiveCount);
             }
         }
 

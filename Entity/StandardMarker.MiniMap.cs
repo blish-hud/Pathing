@@ -13,21 +13,27 @@ namespace BhModule.Community.Pathing.Entity {
         private static readonly Texture2D _aboveTexture = PathingModule.Instance.ContentsManager.GetTexture(@"png\1130638.png");
         private static readonly Texture2D _belowTexture = PathingModule.Instance.ContentsManager.GetTexture(@"png\1130639.png");
         
-        public override RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, float opacity) {
-            if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return null;
+        public override bool IsVisibleOnMap() {
+            if (IsFiltered(EntityRenderTarget.Map) || this.Texture == null) return false;
 
             bool isMapOpen = _packState.CachedMumbleStates.IsMapOpen;
-            
+
             // TODO: Simplify these two map visibility filters
             var  mapMarkerVisibilityLevel = _packState.UserConfiguration.MapMarkerVisibilityLevel.Value;
             bool allowedOnMap             = this.MapVisibility && mapMarkerVisibilityLevel != MapVisibilityLevel.Never;
-            if (isMapOpen && !allowedOnMap && mapMarkerVisibilityLevel != MapVisibilityLevel.Always) return null;
+            if (isMapOpen && !allowedOnMap && mapMarkerVisibilityLevel != MapVisibilityLevel.Always) return false;
 
             var  miniMapMarkerVisibilityLevel = _packState.UserConfiguration.MiniMapMarkerVisibilityLevel.Value;
             bool allowedOnMiniMap             = this.MiniMapVisibility && miniMapMarkerVisibilityLevel != MapVisibilityLevel.Never;
-            if (!isMapOpen && !allowedOnMiniMap && miniMapMarkerVisibilityLevel != MapVisibilityLevel.Always) return null;
+            if (!isMapOpen && !allowedOnMiniMap && miniMapMarkerVisibilityLevel != MapVisibilityLevel.Always) return false;
 
-            var location = GetScaledLocation(this.Position.X, this.Position.Y, scale, offsetX, offsetY);
+            return true;
+        }
+
+        public override RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, float opacity) {
+            if (this.Texture == null) return null;
+
+            var location = GetMapProjection(scale, offsetX, offsetY).Project(this.Position.X, this.Position.Y);
 
             if (!bounds.Contains(location)) return null;
 

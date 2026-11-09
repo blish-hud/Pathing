@@ -239,11 +239,15 @@ namespace BhModule.Community.Pathing.Entity {
                 _drawOrder = new ulong[count + count / 4 + 16];
             }
 
+            int visibleCount = 0;
+
             for (int i = 0; i < count; i++) {
-                _drawOrder[i] = StableSortKey.Ascending(-entities[i].DrawOrder, i);
+                if (entities[i].IsVisibleOnMap()) {
+                    _drawOrder[visibleCount++] = StableSortKey.Ascending(-entities[i].DrawOrder, i);
+                }
             }
 
-            Array.Sort(_drawOrder, 0, count);
+            Array.Sort(_drawOrder, 0, visibleCount);
 
             bool showModTooltip = (GameService.Input.Keyboard.ActiveModifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
 
@@ -254,7 +258,7 @@ namespace BhModule.Community.Pathing.Entity {
                                         ? _packState.UserConfiguration.MapDrawOpacity.Value 
                                         : _packState.UserConfiguration.MiniMapDrawOpacity.Value;
 
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < visibleCount; i++) {
                 var pathable = entities[StableSortKey.GetIndex(_drawOrder[i])];
                 var hint = pathable.RenderToMiniMap(spriteBatch, bounds, offsetX, offsetY, scale, overrideOpacity * opacity);
 

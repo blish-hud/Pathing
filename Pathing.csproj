@@ -365,6 +365,7 @@
     <Compile Include="Behavior\Filter\ProfessionFilter.cs" />
     <Compile Include="Behavior\IBehavior.cs" />
     <Compile Include="Entity\IPathingEntity.cs" />
+    <Compile Include="Entity\MapProjection.cs" />
     <Compile Include="Entity\PathingEntity.cs" />
     <Compile Include="Entity\StandardMarker.cs" />
     <Compile Include="Entity\StandardRoute.cs" />

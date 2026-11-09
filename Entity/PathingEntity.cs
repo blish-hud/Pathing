@@ -55,6 +55,8 @@ namespace BhModule.Community.Pathing.Entity {
             this.Category = pointOfInterest.ParentPathingCategory ?? _packState.RootCategory;
         }
 
+        public abstract bool IsVisibleOnMap();
+
         public abstract RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, float opacity);
 
         public abstract void Render(GraphicsDevice graphicsDevice, IWorld world, ICamera camera);
@@ -85,7 +87,7 @@ namespace BhModule.Community.Pathing.Entity {
             }
 
             // Only update behaviors found within enabled category namespaces.
-            if (!_packState.CategoryStates.GetNamespaceInactive(this.Category.Namespace)) {
+            if (!GetCategoryInactive()) {
                 if (_wasInactive) {
                     OnCategoryActivated();
                 }
@@ -149,25 +151,38 @@ namespace BhModule.Community.Pathing.Entity {
 
             // If category is disabled.
             if (this.Category != null) {
-                if (_packState.CategoryStates.GetNamespaceInactive(this.Category.Namespace)) return true;
+                if (GetCategoryInactive()) return true;
             }
 
             return this.BehaviorFiltered && !_packState.UserConfiguration.PackShowHiddenMarkersReducedOpacity.Value;
         }
 
-        protected Vector2 GetScaledLocation(double x, double y, double scale, double offsetX, double offsetY) {
-            _packState.MapStates.EventCoordsToMapCoords(x, y, out double mapX, out double mapY);
+        private CategoryStates _cachedCategoryStates;
+        private string         _cachedCategoryNamespace;
+        private int            _cachedInactiveVersion;
+        private bool           _cachedCategoryInactive;
 
-            var scaledLocation = new Vector2((float)((mapX - _packState.CachedMumbleStates.MapCenterX) / scale),
-                                             (float)((mapY - _packState.CachedMumbleStates.MapCenterY) / scale));
+        private bool GetCategoryInactive() {
+            var    categoryStates    = _packState.CategoryStates;
+            string categoryNamespace = this.Category.Namespace;
 
-            if (!_packState.CachedMumbleStates.IsMapOpen && _packState.CachedMumbleStates.IsCompassRotationEnabled) {
-                scaledLocation = Vector2.Transform(scaledLocation, Matrix.CreateRotationZ((float)_packState.CachedMumbleStates.CompassRotation));
+            // Read before the lookup so that a change made during the lookup invalidates the cached result
+            int inactiveVersion = categoryStates.InactiveVersion;
+
+            if (!ReferenceEquals(categoryStates,    _cachedCategoryStates)
+             || !ReferenceEquals(categoryNamespace, _cachedCategoryNamespace)
+             || inactiveVersion != _cachedInactiveVersion) {
+                _cachedCategoryInactive  = categoryStates.GetNamespaceInactive(categoryNamespace);
+                _cachedCategoryStates    = categoryStates;
+                _cachedCategoryNamespace = categoryNamespace;
+                _cachedInactiveVersion   = inactiveVersion;
             }
 
-            scaledLocation += new Vector2((float)offsetX, (float)offsetY);
+            return _cachedCategoryInactive;
+        }
 
-            return scaledLocation;
+        protected MapProjection GetMapProjection(double scale, double offsetX, double offsetY) {
+            return new MapProjection(_packState, scale, offsetX, offsetY);
         }
 
         public virtual void Unload() {

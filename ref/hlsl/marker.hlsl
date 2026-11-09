@@ -86,9 +86,7 @@ VSOutput VertexShaderFunction(VSInput input) {
     matrix modelView = mul(World, View);
 
     float4 worldPosition = mul(input.Position, World);
-    float4 viewPosition = mul(worldPosition, View);
-
-    viewPosition = mul(input.Position, modelView);
+    float4 viewPosition = mul(input.Position, modelView);
 
     output.Position = mul(viewPosition, Projection);
 

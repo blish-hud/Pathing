@@ -5,14 +5,12 @@ using Blish_HUD;
 using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker : ICanPick {
         
         private static          DynamicVertexBuffer _sharedVertexBuffer;
-        private static readonly Vector4[]           _screenVerts = new Vector4[4];
-        private static readonly Point2[]            _screenPoints = new Point2[4];
+        private static readonly Vector4[]           _clipVerts = new Vector4[4];
 
         private static readonly Vector3[] _faceVerts = {
             new(-0.5f, -0.5f, 0), new(0.5f, -0.5f, 0), new(-0.5f, 0.5f, 0), new(0.5f, 0.5f, 0),
@@ -58,13 +56,49 @@ namespace BhModule.Community.Pathing.Entity {
 
         private Matrix _modelMatrix = Matrix.Identity;
 
+        // Set when the min/max size scale has not been applied to _modelMatrix
+        private float?  _pendingSizeScale;
+        private Vector3 _pendingSizePosition;
+
+        private static Matrix GetSizeScaleMatrix(Vector3 position, float sizeScale) {
+            return Matrix.CreateTranslation(-position)
+                 * Matrix.CreateScale(sizeScale)
+                 * Matrix.CreateTranslation(position);
+        }
+
+        // True if every vertex is outside the same clip plane
+        private static bool IsOutsideClipVolume(Vector4[] clipVerts) {
+            int outside = ~0;
+
+            for (int i = 0; i < clipVerts.Length; i++) {
+                ref var v = ref clipVerts[i];
+
+                int planes = 0;
+
+                if (v.W < 0)    planes |= 1;
+                if (v.X < -v.W) planes |= 2;
+                if (v.X > v.W)  planes |= 4;
+                if (v.Y < -v.W) planes |= 8;
+                if (v.Y > v.W)  planes |= 16;
+
+                outside &= planes;
+            }
+
+            return outside != 0;
+        }
+
         public bool RayIntersects(Ray ray) {
-            return PickingUtil.IntersectDistance(BoundingBox.CreateFromPoints(_faceVerts.Select(vert => Vector3.Transform(vert, _modelMatrix))), ray) != null;
+            var modelMatrix = _modelMatrix;
+
+            if (_pendingSizeScale.HasValue) {
+                modelMatrix *= GetSizeScaleMatrix(_pendingSizePosition, _pendingSizeScale.Value);
+            }
+
+            return PickingUtil.IntersectDistance(BoundingBox.CreateFromPoints(_faceVerts.Select(vert => Vector3.Transform(vert, modelMatrix))), ray) != null;
         }
         
         public override void Render(GraphicsDevice graphicsDevice, IWorld world, ICamera camera) {
             if (IsFiltered(EntityRenderTarget.World) || _texture is not { HasTexture: true } || _texture.Texture.IsDisposed) return;
-            
             if (!this.InGameVisibility) return;
 
             // Skip rendering stuff beyond the max view distance
@@ -77,6 +111,9 @@ namespace BhModule.Community.Pathing.Entity {
             var modelMatrix = Matrix.CreateScale(this.Size * 2f * _packState.UserConfiguration.PackMarkerScale.Value, this.Size * 2f * _packState.UserConfiguration.PackMarkerScale.Value, 1f);
 
             var position = this.Position + new Vector3(0, 0, this.HeightOffset);
+
+            // Only applied to the model matrix if the marker isn't culled
+            float? sizeScaleToApply = null;
 
             if (!this.RotationXyz.HasValue) {
                 modelMatrix *= Matrix.CreateBillboard(position,
@@ -91,29 +128,56 @@ namespace BhModule.Community.Pathing.Entity {
                                                       _packState.SharedMarkerEffect.Projection);
 
                 for (int i = 0; i < _faceVerts.Length; i++) {
-                    _screenVerts[i] =  Vector4.Transform(_faceVerts[i], transformMatrix);
-                    _screenVerts[i] /= _screenVerts[i].W;
-                }
-            
-                for (int i = 0; i < _screenVerts.Length; i++) {
-                    _screenPoints[i] = new Point2(_screenVerts[i].X, _screenVerts[i].Y);
+                    _clipVerts[i] = Vector4.Transform(_faceVerts[i], transformMatrix);
                 }
 
-                var bounds = BoundingRectangle.CreateFrom(_screenPoints);
+                float minY = _clipVerts[0].Y * (1f / _clipVerts[0].W);
+                float maxY = minY;
 
-                float pixelSizeY = bounds.HalfExtents.Y * 2 * _packState.SharedMarkerEffect.GraphicsDevice.Viewport.Height;
+                for (int i = 1; i < _clipVerts.Length; i++) {
+                    float y = _clipVerts[i].Y * (1f / _clipVerts[i].W);
+
+                    minY = y < minY ? y : minY;
+                    maxY = y > maxY ? y : maxY;
+                }
+
+                float pixelSizeY = (maxY - minY) * _packState.SharedMarkerEffect.GraphicsDevice.Viewport.Height;
                 float limitY     = MathHelper.Clamp(pixelSizeY, this.MinSize * _packState.UserConfiguration.PackMarkerScale.Value * 4, this.MaxSize * 4);
+                float sizeScale  = limitY / pixelSizeY;
 
-                // Eww
-                modelMatrix *= Matrix.CreateTranslation(-position)
-                             * Matrix.CreateScale(limitY / pixelSizeY)
-                             * Matrix.CreateTranslation(position);
+                sizeScaleToApply = sizeScale;
+
+                var center = (_clipVerts[0] + _clipVerts[1] + _clipVerts[2] + _clipVerts[3]) / 4f;
+
+                for (int i = 0; i < _clipVerts.Length; i++) {
+                    _clipVerts[i] = center + (_clipVerts[i] - center) * sizeScale;
+                }
             } else {
                 modelMatrix *= Matrix.CreateRotationX(this.RotationXyz.Value.X)
                              * Matrix.CreateRotationY(this.RotationXyz.Value.Y)
                              * Matrix.CreateRotationZ(this.RotationXyz.Value.Z)
                              * Matrix.CreateTranslation(position);
+
+                var transformMatrix = Matrix.Multiply(Matrix.Multiply(modelMatrix, _packState.SharedMarkerEffect.View),
+                                                      _packState.SharedMarkerEffect.Projection);
+
+                for (int i = 0; i < _faceVerts.Length; i++) {
+                    _clipVerts[i] = Vector4.Transform(_faceVerts[i], transformMatrix);
+                }
             }
+
+            bool outside = IsOutsideClipVolume(_clipVerts);
+
+            if (sizeScaleToApply.HasValue && !outside) {
+                modelMatrix      *= GetSizeScaleMatrix(position, sizeScaleToApply.Value);
+                sizeScaleToApply =  null;
+            }
+
+            _modelMatrix         = modelMatrix;
+            _pendingSizeScale    = sizeScaleToApply;
+            _pendingSizePosition = position;
+
+            if (outside) return;
 
             _packState.SharedMarkerEffect.SetEntityState(modelMatrix,
                                                          this.Texture,
@@ -123,8 +187,6 @@ namespace BhModule.Community.Pathing.Entity {
                                                          this.CanFade && _packState.UserConfiguration.PackFadeMarkersBetweenCharacterAndCamera.Value && !this.BehaviorFiltered,
                                                          this.Tint,
                                                          this.DebugRender);
-
-            _modelMatrix = modelMatrix;
 
             var prevBlendState = graphicsDevice.BlendState;
 

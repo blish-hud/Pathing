@@ -60,7 +60,7 @@ namespace BhModule.Community.Pathing.Entity {
 
                 BuildBuffers(trail);
             } else {
-                _sectionBuffers = Array.Empty<VertexBuffer>();
+                _sectionBuffers = Array.Empty<SectionBuffer>();
             }
 
             this.FadeIn();

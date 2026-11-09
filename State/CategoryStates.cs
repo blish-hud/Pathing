@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using BhModule.Community.Pathing.UI.Events;
 using BhModule.Community.Pathing.Utility;
@@ -27,6 +28,13 @@ namespace BhModule.Community.Pathing.State {
 
         private HashSet<string> _evaluatedInactiveCategories = new(StringComparer.OrdinalIgnoreCase);
 
+        private int _inactiveVersion;
+
+        /// <summary>
+        /// Incremented after any change to the evaluated inactive categories.
+        /// </summary>
+        public int InactiveVersion => Volatile.Read(ref _inactiveVersion);
+
         private double _lastSaveState                     = 0;
         private double _lastInactiveCategoriesCalculation = 0;
 
@@ -47,6 +55,7 @@ namespace BhModule.Community.Pathing.State {
             await SaveStates(null);
             _explicitStates.Clear();
             _evaluatedInactiveCategories.Clear();
+            Interlocked.Increment(ref _inactiveVersion);
             await LoadStates();
         }
 
@@ -152,6 +161,7 @@ namespace BhModule.Community.Pathing.State {
             }
 
             _evaluatedInactiveCategories = preCalcInactive;
+            Interlocked.Increment(ref _inactiveVersion);
             this.CategoryStatesOptimized?.Invoke(this, EventArgs.Empty);
             _calculationDirty = false;
         }

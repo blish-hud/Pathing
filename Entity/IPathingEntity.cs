@@ -32,6 +32,8 @@ namespace BhModule.Community.Pathing.Entity {
 
         bool IsFiltered(EntityRenderTarget renderTarget);
 
+        bool IsVisibleOnMap();
+
         RectangleF? RenderToMiniMap(SpriteBatch spriteBatch, Rectangle bounds, double offsetX, double offsetY, double scale, float opacity);
 
         void Focus();

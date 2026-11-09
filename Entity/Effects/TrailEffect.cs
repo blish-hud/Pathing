@@ -37,8 +37,14 @@ namespace BhModule.Community.Pathing.Entity.Effects {
 
         public Matrix WorldViewProjection {
             get => _worldViewProjection;
-            set => SetParam(ref _worldViewProjection, value, _pWorldViewProjection);
+            set {
+                if (SetParam(ref _worldViewProjection, value, _pWorldViewProjection)) {
+                    this.Frustum.Matrix = value;
+                }
+            }
         }
+
+        public BoundingFrustum Frustum { get; } = new BoundingFrustum(Matrix.Identity);
 
         public Matrix PlayerView {
             get => _playerView;
