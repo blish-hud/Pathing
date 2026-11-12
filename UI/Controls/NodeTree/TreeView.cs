@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Controls.TreeNodes;
 using BhModule.Community.Pathing.Utility;
@@ -24,11 +25,25 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
 
         public PackInitiator          PackInitiator  { get; private set; }
         public  IList<TreeNodeBase>    AllBaseNodes   { get; }      = new List<TreeNodeBase>();
-        public  IList<TreeNodeBase>    ChildBaseNodes { get; }      = new List<TreeNodeBase>();
-        private IList<PathingCategory> AllCategories  { get; set; } = new List<PathingCategory>();
+        private IList<TreeNodeBase>         ChildBaseNodes { get; }      = new List<TreeNodeBase>();
+        private List<CategorySearchRecord> _searchRecords { get; set; } = new List<CategorySearchRecord>();
+
+        private class CategorySearchRecord {
+            public PathingCategory Category              { get; }
+            public string          NormalizedDisplayName { get; }
+            public string          NormalizedName        { get; }
+
+            public CategorySearchRecord(PathingCategory category) {
+                this.Category              = category;
+                this.NormalizedDisplayName = category.DisplayName?.Replace(" ", "") ?? "";
+                this.NormalizedName        = category.Name?.Replace(" ", "") ?? "";
+            }
+        }
 
         public event EventHandler<EventArgs> NodeLoadingStarted;
         public event EventHandler<EventArgs> NodesLoadedFinished;
+
+        public ILookup<PathingCategory, IPathingEntity> EntityLookup { get; private set; }
 
         public TreeView(PackInitiator packInitiator) {
             PackInitiator                                                                   =  packInitiator;
@@ -123,6 +138,8 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
             ClearChildNodes();
             AllBaseNodes.Clear();
 
+            this.EntityLookup = PackInitiator.PackState.Entities.ToArray().ToLookup(e => e.Category);
+
             var rootCategory = PackInitiator.GetAllMarkersCategories();
 
             if (rootCategory == null) return;
@@ -147,7 +164,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
 
             _rootNode.Expand();
 
-            AllCategories = CategoryUtil.FlattenCategories(rootCategory).ToList();
+            _searchRecords = CategoryUtil.FlattenCategories(rootCategory).Select(c => new CategorySearchRecord(c)).ToList();
 
             this.NodesLoadedFinished?.Invoke(this, EventArgs.Empty);
         }
@@ -173,23 +190,16 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
 
             string normalizedInput = input.Replace(" ", "");
 
-            var results = AllCategories
-                         .AsParallel()
-                         .WithCancellation(cancellationToken)
+            var results = _searchRecords
                          .Where(c =>
             {
-                if (string.IsNullOrWhiteSpace(c.DisplayName) || string.IsNullOrWhiteSpace(c.Name)) return false;
+                if (string.IsNullOrWhiteSpace(c.Category.DisplayName) || string.IsNullOrWhiteSpace(c.Category.Name)) return false;
 
-                string normalizedDisplayName = c.DisplayName?.Replace(" ", "");
-                string normalizedName        = c.Name.Replace(" ", "");
+                return (c.NormalizedDisplayName.IndexOf(normalizedInput, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                       c.NormalizedName.IndexOf(normalizedInput, StringComparison.OrdinalIgnoreCase) >= 0;
+            }).Select(c => c.Category).ToList();
 
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return (normalizedDisplayName != null && normalizedDisplayName.IndexOf(normalizedInput, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                       normalizedName.IndexOf(normalizedInput, StringComparison.OrdinalIgnoreCase) >= 0;
-            }).ToList();
-
-            (filteredResults, skipped) = results.FilterCategories(PackInitiator.PackState, forceShowAll);
+            (filteredResults, skipped) = results.FilterCategories(PackInitiator.PackState, forceShowAll, this.EntityLookup);
 
             return (filteredResults.ToList(), skipped);
         }
