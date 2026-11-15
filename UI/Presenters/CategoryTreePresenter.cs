@@ -69,11 +69,11 @@ namespace BhModule.Community.Pathing.UI.Presenter {
             InitalizePackEvents();
 
             if (!_module.PackInitiator.IsLoading) {
-                this.View.SetLoading(true);
-
-                ThreadUtil.RunOnMainThread(UpdateView);
-
-                this.View.SetLoading(false);
+                ThreadUtil.RunOnMainThread(() => {
+                    this.View.SetLoading(true);
+                    UpdateView();
+                    this.View.SetLoading(false);
+                });
             }
         }
 
@@ -93,14 +93,21 @@ namespace BhModule.Community.Pathing.UI.Presenter {
             this.View.TreeView?.UpdateCheckedState(e.Category, e.Active);
         }
 
+        // Both pack events are raised from the background pack-loading task.  The tree must only
+        // be modified on the main thread, otherwise disposing nodes here can race with
+        // TreeNodeBase.ShowChildren() enumerating them during UpdateView.
         private void PackInitiatorOnLoadMapFromEachPackStarted(object sender, EventArgs e) {
-            this.View.SetLoading(true);
-            this.View.TreeView.ClearChildNodes();
+            ThreadUtil.RunOnMainThread(() => {
+                this.View.SetLoading(true);
+                this.View.TreeView?.ClearChildNodes();
+            });
         }
 
         private void PackInitiatorOnLoadMapFromEachPackFinished(object sender, EventArgs e) {
-            ThreadUtil.RunOnMainThread(UpdateView);
-            this.View.SetLoading(false);
+            ThreadUtil.RunOnMainThread(() => {
+                UpdateView();
+                this.View.SetLoading(false);
+            });
         }
 
         protected override void Unload() {

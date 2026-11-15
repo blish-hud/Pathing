@@ -181,9 +181,13 @@ namespace BhModule.Community.Pathing.UI.Views {
                 TreeView.ClearChildNodes();
                 SetLoading(true);
 
+                // Capture on the main thread.  Both can change before the task runs
+                string searchText  = _searchBox.Text;
+                var    searchToken = _cancellationTokenSource.Token;
+
                 Task.Run(async () => {
-                    await ExecuteSearch(_searchBox.Text, _cancellationTokenSource.Token);
-                }, _cancellationTokenSource.Token);
+                    await ExecuteSearch(searchText, searchToken);
+                }, searchToken);
             }
         }
 
@@ -211,21 +215,22 @@ namespace BhModule.Community.Pathing.UI.Views {
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var showAllSkippedNode = TreeView.SetSearchResults(searchResult.categories, _module.PackInitiator.PackState, searchResult.skipped);
+                ThreadUtil.RunOnMainThread(() => {
+                    if (cancellationToken.IsCancellationRequested || this.TreeView == null) return;
 
-                cancellationToken.ThrowIfCancellationRequested();
+                    var showAllSkippedNode = TreeView.SetSearchResults(searchResult.categories, _module.PackInitiator.PackState, searchResult.skipped);
 
-                if (showAllSkippedNode != null)
-                {
-                    showAllSkippedNode.LeftMouseButtonReleased += async (_, _) => {
-                        cancellationToken.ThrowIfCancellationRequested();
+                    if (showAllSkippedNode != null) {
+                        showAllSkippedNode.LeftMouseButtonReleased += async (_, _) => {
+                            if (cancellationToken.IsCancellationRequested) return;
 
-                        await ExecuteSearch(input, cancellationToken, true);
-                    };
-                }
+                            await ExecuteSearch(input, cancellationToken, true);
+                        };
+                    }
 
-                _searchStatusLabel.Visible = searchResult.categories.Count <= 0;
-                SetLoading(false);
+                    _searchStatusLabel.Visible = searchResult.categories.Count <= 0;
+                    SetLoading(false);
+                });
             }
             catch (OperationCanceledException _)
             {
