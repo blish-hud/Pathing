@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Graphics.UI;
 using Gw2Sharp.WebApi.V2.Models;
@@ -42,22 +43,23 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
         }
 
         protected override async Task<bool> Load(IProgress<string> progress) {
+            // Loaded in the background so the tooltip can build (and show its loading state) immediately.
             Task.Run(async () => {
-                if (!await AttemptLoadAchievement(progress) && _achievement != null) {
-                    progress.Report("Failed to load achievement details.");
+                if (!await AttemptLoadAchievement(progress) || _achievement == null) {
+                    ThreadUtil.RunOnMainThread(() => this.View.ShowLoadFailed());
                     return;
                 }
 
                 await AttemptLoadAchievementCategory(progress);
-                UpdateView();
+                ThreadUtil.RunOnMainThread(UpdateView);
             });
 
             return true;
         }
 
         protected override void UpdateView() {
-            this.View.Achievement         = _achievement;
             this.View.AchievementCategory = _achievementCategories;
+            this.View.Achievement         = _achievement;
         }
 
     }

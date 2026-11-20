@@ -4,7 +4,9 @@ using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Tooltips;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
+using Blish_HUD.Common.UI.Views;
 using Blish_HUD.Controls;
+using Blish_HUD.Graphics.UI;
 using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -82,7 +84,23 @@ namespace BhModule.Community.Pathing.UI.Controls {
             this.Checked  = !_packState.CategoryStates.GetCategoryInactive(_pathingCategory);
         }
 
+        // Tooltips are built on first hover: constructing a Tooltip immediately loads its view, and the achievement
+        // view's presenter fires a GW2 API request, so building them eagerly meant one request per achievement item
+        // every time a menu was opened.
+        private Func<ITooltipView> _tooltipViewFactory;
+
+        private void EnsureTooltip() {
+            if (_tooltipViewFactory == null) return;
+
+            var factory = _tooltipViewFactory;
+            _tooltipViewFactory = null;
+
+            this.Tooltip = new Tooltip(factory());
+        }
+
         protected override void OnMouseEntered(MouseEventArgs e) {
+            EnsureTooltip();
+
             base.OnMouseEntered(e);
 
             // We still show these despite the control being disabled.
@@ -119,7 +137,7 @@ namespace BhModule.Community.Pathing.UI.Controls {
                 if (achievementId < 0) return;
 
                 if (_packState.UserConfiguration.PackShowTooltipsOnAchievements.Value) {
-                    this.Tooltip = new Tooltip(new AchievementTooltipView(achievementId, achievementBit));
+                    _tooltipViewFactory = () => new AchievementTooltipView(achievementId, achievementBit);
                 }
 
                 if (_packState.UserConfiguration.PackAllowMarkersToAutomaticallyHide.Value) {
@@ -130,7 +148,8 @@ namespace BhModule.Community.Pathing.UI.Controls {
                     }
                 }
             } else if (_pathingCategory.ExplicitAttributes.TryGetAttribute("tip-description", out var descriptionAttr)) {
-                this.Tooltip = new Tooltip(new DescriptionTooltipView(null, descriptionAttr.Value));
+                string description = descriptionAttr.Value;
+                _tooltipViewFactory = () => new DescriptionTooltipView(null, description);
             }
         }
 

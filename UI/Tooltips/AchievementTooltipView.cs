@@ -20,6 +20,11 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
                 if (_achievement == value) return;
 
                 _achievement = value;
+
+                if (_achievement != null) {
+                    ShowContent();
+                }
+
                 UpdateAchievementView();
             }
         }
@@ -35,10 +40,21 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
             }
         }
 
+        private const int EDGE_PADDING = 8;
+
+        private Container _buildPanel;
+
         private Image _categoryIconImage;
         private Label _achievementNameLabel;
         private Label _achievementDescriptionLabel;
         private Label _achievementRequirementLabel;
+
+        private LoadingSpinner _loadingSpinner;
+        private Label          _loadingLabel;
+
+        // The tooltip sizes itself to the bottom of its lowest visible child, so this keeps a consistent gap below the content.
+        private Control _bottomPaddingSpacer;
+        private Control _bottomControl;
 
         public AchievementTooltipView() { /* NOOP */ }
 
@@ -49,9 +65,99 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
         }
 
         protected override void Build(Container buildPanel) {
+            _buildPanel = buildPanel;
+
             buildPanel.HeightSizingMode = SizingMode.AutoSize;
             buildPanel.WidthSizingMode  = SizingMode.AutoSize;
 
+            _bottomPaddingSpacer = new Panel() {
+                Size   = new Point(1, EDGE_PADDING),
+                Parent = buildPanel
+            };
+
+            if (_achievement != null) {
+                // The details finished loading before the tooltip was built.
+                ShowContent();
+                UpdateCategoryView();
+                UpdateAchievementView();
+            } else {
+                BuildLoading(buildPanel);
+            }
+        }
+
+        private void BuildLoading(Container buildPanel) {
+            _loadingSpinner = new LoadingSpinner() {
+                Size     = new Point(32, 32),
+                Location = new Point(EDGE_PADDING, EDGE_PADDING),
+                Parent   = buildPanel
+            };
+
+            _loadingLabel = new Label() {
+                Text              = "Loading achievement details...",
+                AutoSizeWidth     = true,
+                Height            = _loadingSpinner.Height,
+                Location          = new Point(_loadingSpinner.Right + EDGE_PADDING, _loadingSpinner.Top),
+                VerticalAlignment = VerticalAlignment.Middle,
+                TextColor         = Color.FromNonPremultiplied(204, 204, 204, 255),
+                ShowShadow        = true,
+                Parent            = buildPanel
+            };
+
+            TrackBottomControl(_loadingSpinner);
+        }
+
+        /// <summary>
+        /// Called by the presenter if the achievement details could not be loaded.
+        /// </summary>
+        public void ShowLoadFailed() {
+            if (_loadingLabel == null) return;
+
+            _loadingSpinner?.Dispose();
+            _loadingSpinner = null;
+
+            _loadingLabel.Left = EDGE_PADDING;
+            _loadingLabel.Text = "Failed to load achievement details.";
+
+            TrackBottomControl(_loadingLabel);
+        }
+
+        private void ShowContent() {
+            if (_buildPanel == null || _categoryIconImage != null) return;
+
+            _loadingSpinner?.Dispose();
+            _loadingSpinner = null;
+            _loadingLabel?.Dispose();
+            _loadingLabel = null;
+
+            BuildContent(_buildPanel);
+
+            // The category may have been assigned before the content existed.
+            UpdateCategoryView();
+        }
+
+        private void TrackBottomControl(Control control) {
+            if (_bottomControl != null) {
+                _bottomControl.Resized -= BottomControlOnChanged;
+                _bottomControl.Moved   -= BottomControlOnChanged;
+            }
+
+            _bottomControl = control;
+
+            _bottomControl.Resized += BottomControlOnChanged;
+            _bottomControl.Moved   += BottomControlOnChanged;
+
+            UpdateBottomPadding();
+        }
+
+        private void BottomControlOnChanged(object sender, EventArgs e) => UpdateBottomPadding();
+
+        private void UpdateBottomPadding() {
+            if (_bottomPaddingSpacer == null || _bottomControl == null) return;
+
+            _bottomPaddingSpacer.Top = _bottomControl.Bottom;
+        }
+
+        private void BuildContent(Container buildPanel) {
             _categoryIconImage = new Image() {
                 Size            = new Point(48, 48),
                 Location        = new Point(8, 8),
@@ -93,6 +199,8 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
                 WrapText       = true,
                 Parent         = buildPanel
             };
+
+            TrackBottomControl(_achievementRequirementLabel);
         }
 
         private void UpdateCategoryView() {
@@ -124,6 +232,18 @@ namespace BhModule.Community.Pathing.UI.Tooltips {
 
                 _achievementRequirementLabel.Top = Math.Max(_achievementDescriptionLabel.Bottom + 8, _categoryIconImage.Bottom + 8);
             } catch (Exception) { /* NOOP */ }
+
+            // Pad below whichever control is actually lowest (the requirement label is empty for some achievements).
+            bool hasRequirement = !string.IsNullOrWhiteSpace(_achievementRequirementLabel.Text);
+            _achievementRequirementLabel.Visible = hasRequirement;
+
+            if (hasRequirement) {
+                TrackBottomControl(_achievementRequirementLabel);
+            } else {
+                TrackBottomControl(_achievementDescriptionLabel.Bottom > _categoryIconImage.Bottom
+                                       ? _achievementDescriptionLabel
+                                       : _categoryIconImage);
+            }
         }
 
         static string CleanMessage(string message) {
