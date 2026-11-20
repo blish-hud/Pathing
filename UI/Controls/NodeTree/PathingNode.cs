@@ -80,10 +80,26 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         {
             this.Name  = name;
 
-            this.EffectBehind = new ScrollingHighlightEffect(this);
-
             this.ShowBackground = true;
             this.PanelHeight    = 40;
+        }
+
+        private bool _highlightEffectAttempted = false;
+        
+        private void EnsureHighlightEffect() {
+            if (_highlightEffectAttempted || this.EffectBehind != null) return;
+
+            _highlightEffectAttempted = true;
+
+            try {
+                this.EffectBehind = new ScrollingHighlightEffect(this);
+            } catch (Exception ex) { /* NOOP - no highlight effect */ }
+        }
+
+        protected override void OnMouseEntered(MouseEventArgs e) {
+            EnsureHighlightEffect();
+
+            base.OnMouseEntered(e);
         }
 
         public virtual void Build() {
