@@ -39,7 +39,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         public  PathingCategory PathingCategory { get; }
         private PathingCategory PackCategory { get; }
 
-        private readonly IList<IPathingEntity> _entities;
+        private readonly IReadOnlyList<IPathingEntity> _entities;
 
         private readonly bool _forceShowAll = false;
 
@@ -53,7 +53,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
         public PathingCategoryNode(IPackState packState, PathingCategory pathingCategory, bool showForceAll) : base(pathingCategory.DisplayName) {
             _packState           = packState;
             this.PathingCategory = pathingCategory;
-            _entities            = CategoryUtil.GetAssociatedPathingEntities(pathingCategory, packState.Entities).ToList();
+            _entities            = CategoryUtil.GetAssociatedPathingEntities(pathingCategory, packState);
             _forceShowAll        = showForceAll;
 
             if (pathingCategory.IsSeparator) {
@@ -390,7 +390,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 
                 _ = new PathingCategoryNode(_packState, subCategory, forceShowAll)
                 {
-                    Width          = this.Parent.Width - 14,
+                    Width          = this.Width - this.PaddingLeft,
                     Parent         = this,
                     Visible        = this.Expanded,
                     IsSearchResult = this.IsSearchResult

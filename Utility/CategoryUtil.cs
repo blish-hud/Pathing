@@ -86,31 +86,83 @@ namespace BhModule.Community.Pathing.Utility {
             return (Enumerable.Reverse(filteredSubCategories), skipped);
         }
 
+        private static bool IsVisibleCandidate(PathingCategory category) {
+            return !string.IsNullOrWhiteSpace(category.DisplayName) && category.LoadedFromPack;
+        }
+
         public static bool HasVisibleChildren(this PathingCategory category, IPackState packState, bool recursively = false) {
+            if (packState == null || !IsVisibleCandidate(category)) return false;
 
-            if (packState == null || 
-                string.IsNullOrWhiteSpace(category.DisplayName) || 
-                !category.LoadedFromPack) return false;
+            var index = EntityCategoryIndex.Get(packState);
 
-            var mapId = GameService.Gw2Mumble.CurrentMap.Id;
+            return recursively
+                       ? index.VisibleRecursively.Contains(category)
+                       : index.HasEntitiesOnMap.Contains(category);
+        }
 
-            var hasVisibleEntities = packState.Entities
-                                              .ToArray()
-                                              .Any(e => e.MapId == mapId && e.Category == category);
+        private sealed class EntityCategoryIndex {
 
-            if (hasVisibleEntities) return true;
+            private static volatile EntityCategoryIndex _current;
 
-            if (recursively) {
-                foreach (var childCategory in category)
-                {
-                    if (childCategory.HasVisibleChildren(packState, true))
-                    {
-                        return true;
+            private readonly IPathingEntity[] _source;
+            private readonly int              _mapId;
+
+            public Dictionary<PathingCategory, List<IPathingEntity>> ByCategory         { get; } = new();
+            public HashSet<PathingCategory>                          HasEntitiesOnMap   { get; } = new();
+            public HashSet<PathingCategory>                          VisibleRecursively { get; } = new();
+
+            private EntityCategoryIndex(IPathingEntity[] source, int mapId) {
+                _source = source;
+                _mapId  = mapId;
+
+                foreach (var entity in source) {
+                    var category = entity.Category;
+                    if (category == null) continue;
+
+                    if (!this.ByCategory.TryGetValue(category, out var entities)) {
+                        entities = new List<IPathingEntity>();
+                        this.ByCategory[category] = entities;
+                    }
+
+                    entities.Add(entity);
+
+                    if (entity.MapId != mapId) continue;
+
+                    this.HasEntitiesOnMap.Add(category);
+
+                    // A category is visible recursively if it is a visible candidate and it, or any visible-candidate
+                    // descendant chain, has an entity on this map.  Walk up until the chain is broken or already marked.
+                    for (var current = category; current != null && IsVisibleCandidate(current); current = current.Parent) {
+                        if (!this.VisibleRecursively.Add(current)) break;
                     }
                 }
             }
 
-            return false;
+            public static EntityCategoryIndex Get(IPackState packState) {
+                // SafeList.Snapshot is cached until the list is modified, so its reference identifies the list's version.
+                var snapshot = packState.Entities.Snapshot;
+                int mapId    = GameService.Gw2Mumble.CurrentMap.Id;
+
+                var current = _current;
+                if (current != null && ReferenceEquals(current._source, snapshot) && current._mapId == mapId) {
+                    return current;
+                }
+
+                current  = new EntityCategoryIndex(snapshot, mapId);
+                _current = current;
+
+                return current;
+            }
+
+            public static IReadOnlyList<IPathingEntity> GetEntities(IPackState packState, PathingCategory category) {
+                return Get(packState).ByCategory.TryGetValue(category, out var entities)
+                           ? entities
+                           : Array.Empty<IPathingEntity>();
+            }
+        }
+
+        public static IReadOnlyList<IPathingEntity> GetAssociatedPathingEntities(PathingCategory category, IPackState packState) {
+            return EntityCategoryIndex.GetEntities(packState, category);
         }
 
         /* TODO: Expand this sort of filtering functionality out so that it's:

@@ -326,6 +326,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeNodes
 
             this.SlideAnimation = null;
 
+            this.TreeView?.RemoveNode(this);
             this.TreeView     = null;
             this.OnPanelClick = null;
             

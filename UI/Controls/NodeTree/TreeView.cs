@@ -23,7 +23,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         private                 PathingCategoryNode _skipStateCheckNode;
 
         public PackInitiator          PackInitiator  { get; private set; }
-        public  IList<TreeNodeBase>    AllBaseNodes   { get; }      = new List<TreeNodeBase>();
+        public  ICollection<TreeNodeBase> AllBaseNodes { get; }      = new HashSet<TreeNodeBase>();
         public  IList<TreeNodeBase>    ChildBaseNodes { get; }      = new List<TreeNodeBase>();
         private IList<PathingCategory> AllCategories  { get; set; } = new List<PathingCategory>();
 
@@ -35,13 +35,11 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         }
 
         public void AddNode(TreeNodeBase node) {
-            if(!AllBaseNodes.Contains(node))
-                AllBaseNodes.Add(node);
+            AllBaseNodes.Add(node);
         }
 
         public void RemoveNode(TreeNodeBase node) {
-            if(AllBaseNodes.Contains(node))
-                AllBaseNodes.Remove(node);
+            AllBaseNodes.Remove(node);
         }
 
         public void SetPackInitiator(PackInitiator packInitiator) {
