@@ -9,7 +9,6 @@ using BhModule.Community.Pathing.UI.Events;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
-using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.State {
     public class CategoryStates : ManagedState {
@@ -26,7 +25,9 @@ namespace BhModule.Community.Pathing.State {
         // Key: Namespace, Value: True (Explicitly Enabled) | False (Explicitly Disabled)
         private readonly ConcurrentDictionary<string, bool> _explicitStates = new(StringComparer.OrdinalIgnoreCase);
 
-        private HashSet<string> _evaluatedInactiveCategories = new(StringComparer.OrdinalIgnoreCase);
+        // Indexed by category id within _evaluatedRoot's index.
+        private bool[]          _evaluatedInactiveCategories = Array.Empty<bool>();
+        private PathingCategory _evaluatedRoot;
 
         private int _inactiveVersion;
 
@@ -54,7 +55,7 @@ namespace BhModule.Community.Pathing.State {
         public override async Task Reload() {
             await SaveStates(null);
             _explicitStates.Clear();
-            _evaluatedInactiveCategories.Clear();
+            _evaluatedInactiveCategories = Array.Empty<bool>();
             Interlocked.Increment(ref _inactiveVersion);
             await LoadStates();
         }
@@ -132,12 +133,24 @@ namespace BhModule.Community.Pathing.State {
             }
         }
 
-        private void CalculateOptimizedCategoryStates(GameTime gameTime) {
-            if (!_calculationDirty || _rootPackState.RootCategory == null) return;
+        /// <summary>
+        /// Flags the evaluated states to be recalculated (e.g. after the categories were reloaded).
+        /// </summary>
+        public void Invalidate() {
+            _calculationDirty = true;
+        }
 
-            var preCalcInactive = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private void CalculateOptimizedCategoryStates(GameTime gameTime) {
+            var root = _rootPackState.RootCategory;
+
+            // Categories can be added by reference (e.g. from scripts) after the last calculation.
+            if (root != null && root.Index.Count > _evaluatedInactiveCategories.Length) _calculationDirty = true;
+
+            if (!_calculationDirty || root == null) return;
+
+            var preCalcInactive = new bool[root.Index.Count];
             var remainingCategories = new Queue<PathingCategory>();
-            remainingCategories.Enqueue(_rootPackState.RootCategory);
+            remainingCategories.Enqueue(root);
 
             while (remainingCategories.Count > 0) {
                 var category = remainingCategories.Dequeue();
@@ -150,7 +163,7 @@ namespace BhModule.Community.Pathing.State {
 
                 if (!isCategoryActive) {
                     // This node is disabled; instantly flag it and all subcategories as inactive without diving deeper
-                    preCalcInactive.Add(category.Namespace);
+                    if (category.Id < preCalcInactive.Length) preCalcInactive[category.Id] = true;
                     AddAllSubCategories(preCalcInactive, category);
                     continue;
                 }
@@ -161,17 +174,18 @@ namespace BhModule.Community.Pathing.State {
             }
 
             _evaluatedInactiveCategories = preCalcInactive;
+            _evaluatedRoot               = root;
             Interlocked.Increment(ref _inactiveVersion);
             this.CategoryStatesOptimized?.Invoke(this, EventArgs.Empty);
             _calculationDirty = false;
         }
 
-        private void AddAllSubCategories(HashSet<string> categories, PathingCategory topCategory) {
+        private void AddAllSubCategories(bool[] categories, PathingCategory topCategory) {
             var remainingCategories = new Queue<PathingCategory>(topCategory);
 
             while (remainingCategories.Count > 0) {
                 var category = remainingCategories.Dequeue();
-                categories.Add(category.Namespace);
+                if (category.Id < categories.Length) categories[category.Id] = true;
 
                 foreach (var subCategory in category) {
                     remainingCategories.Enqueue(subCategory);
@@ -192,7 +206,26 @@ namespace BhModule.Community.Pathing.State {
         }
 
         public bool GetNamespaceInactive(string categoryNamespace) {
-            return _evaluatedInactiveCategories.Contains(categoryNamespace);
+            var category = _evaluatedRoot?.Find(categoryNamespace);
+            return category != null && IsInactive(category);
+        }
+
+        /// <summary>
+        /// Indicates the category or one of its parents is disabled.
+        /// </summary>
+        public bool IsInactive(PathingCategory category) {
+            var evaluated = _evaluatedInactiveCategories;
+
+            if (category.Index == _evaluatedRoot?.Index && category.Id < evaluated.Length) {
+                return evaluated[category.Id];
+            }
+
+            // Not yet evaluated (e.g. added since the last calculation).
+            for (var parent = category; parent != null && !parent.Root; parent = parent.Parent) {
+                if (GetCategoryInactive(parent)) return true;
+            }
+
+            return false;
         }
 
         public bool GetRawNamespaceInactive(string categoryNamespace) {
@@ -224,7 +257,9 @@ namespace BhModule.Community.Pathing.State {
         }
 
         public void SetInactive(string categoryNamespace, bool isInactive) {
-            if (_rootPackState?.RootCategory != null && _rootPackState.RootCategory.TryGetCategoryFromNamespace(categoryNamespace, out var liveCategory)) {
+            var liveCategory = _rootPackState?.RootCategory?.Find(categoryNamespace);
+
+            if (liveCategory != null) {
                 SetInactive(liveCategory, isInactive);
             } else {
                 // Make sure we store the state even if set through a Lua script while the pack isn't active on the map.

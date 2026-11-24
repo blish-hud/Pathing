@@ -1,5 +1,4 @@
 ﻿using System;
-using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.UI.Events
 {

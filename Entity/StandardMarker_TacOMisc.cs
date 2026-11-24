@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using AttributeCollection = TmfLib.Prototype.AttributeCollection;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -28,7 +28,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// resetlength
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_TacOMisc(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_TacOMisc(AttributeReader collection, IPackResourceManager resourceManager) {
             { if (collection.TryPopAttribute(ATTR_RESETLENGTH, out var attribute)) this.ResetLength = attribute.GetValueAsFloat(); }
             { if (collection.TryPopAttribute(ATTR_AUTOTRIGGER, out var attribute)) this.AutoTrigger = attribute.GetValueAsBool(); }
         }

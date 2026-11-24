@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
@@ -15,7 +15,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// triggerrange
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Triggers(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_Triggers(AttributeReader collection, IPackResourceManager resourceManager) {
             this.TriggerRange = _packState.UserResourceStates.Population.MarkerPopulationDefaults.TriggerRange;
 
             { if (collection.TryPopAttribute(ATTR_TRIGGERRANGE, out var attribute)) this.TriggerRange = attribute.GetValueAsFloat(_packState.UserResourceStates.Population.MarkerPopulationDefaults.TriggerRange); }

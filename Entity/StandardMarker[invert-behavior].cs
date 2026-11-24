@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using AttributeCollection = TmfLib.Prototype.AttributeCollection;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -14,7 +14,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// invertbehavior
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_InvertBehavior(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_InvertBehavior(AttributeReader collection, IPackResourceManager resourceManager) {
             { if (collection.TryPopAttribute(ATTR_INVERTBEHAVIOR, out var attribute)) this.InvertBehavior = attribute.GetValueAsBool(); }
         }
 

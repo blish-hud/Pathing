@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using BhModule.Community.Pathing.MarkerPackRepo;
 using Blish_HUD;
 using TmfLib;
-using TmfLib.Writer;
+using TmfLib.Writing;
 
 namespace BhModule.Community.Pathing.Utility {
     public static class PackHandlingUtil {
@@ -59,23 +59,18 @@ namespace BhModule.Community.Pathing.Utility {
             string file = $"optimized-{Path.GetFileName(downloadedPack)}";
 
             try {
-                var pack = Pack.FromArchivedMarkerPack(downloadedPack);
+                var pack = Pack.FromArchive(downloadedPack);
 
-                if (pack.ManifestedPack) {
-                    // Pack is already optimized.  We can skip doing it again.
-                    pack.ReleaseLocks();
-                    return downloadedPack;
+                try {
+                    if (pack.Format == PackFormat.Optimized) {
+                        // Pack is already optimized.  We can skip doing it again.
+                        return downloadedPack;
+                    }
+
+                    await Task.Run(() => new PackWriter().WriteArchive(pack, Path.Combine(dir, file)));
+                } finally {
+                    pack.Source.Dispose();
                 }
-
-                var packCollection = await pack.LoadAllAsync();
-
-                var packWriter = new PackWriter(new PackWriterSettings() {
-                                                    PackOutputMethod = PackWriterSettings.OutputMethod.Archive
-                                                });
-
-                await packWriter.WriteAsync(pack, packCollection, dir, file);
-
-                pack.ReleaseLocks();
             } catch (Exception e) {
                 // Optimization failed - lets not interrupt the process.
                 Logger.Error(e, "Failed to optimize marker pack.");
@@ -168,14 +163,14 @@ namespace BhModule.Community.Pathing.Utility {
                     File.Copy(tempPackDownloadDestination, finalPath);
                 }
 
-                var newPack = Pack.FromArchivedMarkerPack(finalPath);
+                var newPack = Pack.FromArchive(finalPath);
 
                 if (!needsInit) {
                     module.PackInitiator.UnloadPackByName(newPack.Name);
                 }
 
                 await module.PackInitiator.LoadPack(newPack);
-                newPack.ReleaseLocks();
+                newPack.Source.ReleaseLocks();
 
                 if (!skipReload) {
                     // We skip refreshing when mass-updating packs.

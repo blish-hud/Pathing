@@ -13,7 +13,6 @@ using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using TmfLib.Pathable;
 using Label = Blish_HUD.Controls.Label;
 using MouseEventArgs = Blish_HUD.Input.MouseEventArgs;
 using Panel = Blish_HUD.Controls.Panel;

@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using AttributeCollection = TmfLib.Prototype.AttributeCollection;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -17,7 +17,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// heightoffset
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_HeightOffset(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_HeightOffset(AttributeReader collection, IPackResourceManager resourceManager) {
             this.HeightOffset = _packState.UserResourceStates.Population.MarkerPopulationDefaults.HeightOffset;
 
             { if (collection.TryPopAttribute(ATTR_HEIGHTOFFSET, out var attribute)) this.HeightOffset = attribute.GetValueAsFloat(this.HeightOffset); }

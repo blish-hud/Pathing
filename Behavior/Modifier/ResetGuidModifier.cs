@@ -5,7 +5,7 @@ using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
 using Humanizer;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Modifier {
     public class ResetGuidModifier : Behavior<StandardMarker>, ICanInteract, ICanFocus {
@@ -22,7 +22,7 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
             this.TargetGuids = targetGuids.ToList();
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes, StandardMarker marker, IPackState packState) {
             return new ResetGuidModifier(attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var valueAttr) ? valueAttr.GetValueAsGuids() : Enumerable.Empty<Guid>(),
                                          marker,
                                          packState);

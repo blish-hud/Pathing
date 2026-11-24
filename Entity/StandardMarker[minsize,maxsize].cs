@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -16,7 +16,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// minsize, maxsize
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_MinMaxSize(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_MinMaxSize(AttributeReader collection, IPackResourceManager resourceManager) {
             this.MinSize = _packState.UserResourceStates.Population.MarkerPopulationDefaults.MinSize;
             this.MaxSize = _packState.UserResourceStates.Population.MarkerPopulationDefaults.MaxSize;
 

@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using AttributeCollection = TmfLib.Prototype.AttributeCollection;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker : IHasMapInfo {
@@ -23,7 +23,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// tip-name, tip-description
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Tip(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_Tip(AttributeReader collection, IPackResourceManager resourceManager) {
             if (this.Category != null) {
                 this.TipName = this.Category.DisplayName;
             }

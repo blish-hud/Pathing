@@ -28,6 +28,8 @@ namespace BhModule.Community.Pathing {
 
         public long LoadTime { get; set; }
 
+        public long MapLoadTime { get; set; }
+
         public PackWrapper(PathingModule module, Pack pack, SettingEntry<bool> alwaysLoad) {
             _module = module;
 

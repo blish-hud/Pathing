@@ -3,8 +3,7 @@ using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using System;
-using TmfLib.Pathable;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Modifier {
     public class ShowHideModifier : Behavior<StandardMarker>, ICanInteract, ICanFocus {
@@ -26,7 +25,7 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
             this.ShowOnInteract = showOnInteract;
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes, StandardMarker marker, IPackState packState) {
             // Create show modifier.
             if (attributes.TryGetAttribute(SHOW_PRIMARY_ATTR_NAME, out var showAttr)) {
                 string attrValue = showAttr.GetValueAsString();
@@ -35,7 +34,7 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
                     PathingCategory category = null;
 
                     try {
-                        category = packState.RootCategory.GetOrAddCategoryFromNamespace(attrValue);
+                        category = packState.RootCategory.GetOrAdd(attrValue);
                     } catch (Exception e) {
                         Logger.Warn(e, $"Failed to load {showAttr.Name}=\"{attrValue}\".");
                     }
@@ -54,7 +53,7 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
                     PathingCategory category = null;
 
                     try {
-                        category = packState.RootCategory.GetOrAddCategoryFromNamespace(attrValue);
+                        category = packState.RootCategory.GetOrAdd(attrValue);
                     } catch (Exception e) {
                         Logger.Warn(e, $"Failed to load {hideAttr.Name}=\"{attrValue}\".");
                     }

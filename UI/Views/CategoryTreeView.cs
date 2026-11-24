@@ -8,7 +8,6 @@ using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Microsoft.Xna.Framework;
 using Blish_HUD;
-using TmfLib.Pathable;
 using System.Linq;
 
 namespace BhModule.Community.Pathing.UI.Views {

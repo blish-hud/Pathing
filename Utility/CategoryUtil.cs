@@ -4,7 +4,6 @@ using System.Linq;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using Blish_HUD;
-using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.Utility {
     public static class CategoryUtil {

@@ -5,7 +5,7 @@ using System.Linq;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Filter {
     public class SpecializationFilter : IBehavior, ICanFilter {
@@ -45,7 +45,7 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             UpdateFiltered();
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes) {
             return attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)
                        ? new SpecializationFilter(attribute.GetValueAsInts())
                        : null;

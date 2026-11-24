@@ -7,8 +7,7 @@ using Blish_HUD;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Neo.IronLua;
-using TmfLib.Pathable;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail : PathingEntity {
@@ -21,13 +20,13 @@ namespace BhModule.Community.Pathing.Entity {
 
         internal Vector3[][] _sectionPoints;
 
-        public StandardTrail(IPackState packState, ITrail trail) : base(packState, trail) {
-            this.TextureResourceManager = TextureResourceManager.GetTextureResourceManager(trail.ResourceManager);
+        public StandardTrail(IPackState packState, PathableSource source) : base(packState, source) {
+            this.TextureResourceManager = TextureResourceManager.GetTextureResourceManager(source.ResourceManager);
 
-            Initialize(trail);
+            Initialize(source);
         }
 
-        private void Populate(AttributeCollection collection, TextureResourceManager resourceManager) {
+        private void Populate(AttributeReader collection, TextureResourceManager resourceManager) {
             Populate_Guid(collection, resourceManager);
 
             Populate_Alpha(collection, resourceManager);
@@ -47,18 +46,30 @@ namespace BhModule.Community.Pathing.Entity {
             // Populate_EditTag(collection, resourceManager);
         }
 
-        private void Initialize(ITrail trail) {
-            Populate(trail.GetAggregatedAttributes(), TextureResourceManager.GetTextureResourceManager(trail.ResourceManager));
+        private void Initialize(PathableSource source) {
+            Populate(source.Attributes, this.TextureResourceManager);
 
-            if (trail.TrailSections != null) { 
-                var trailSections = new List<Vector3[]>(trail.TrailSections.Count());
-                foreach (var trailSection in trail.TrailSections) {
-                    trailSections.Add(PostProcessing_DouglasPeucker(trailSection.TrailPoints.Select(v => new Vector3(v.X, v.Y, v.Z)), _packState.UserResourceStates.Advanced.MapTrailDouglasPeuckerError).ToArray());
+            var trailData = source.TrailData;
+
+            if (trailData != null) {
+                var rawSections   = new Vector3[trailData.SectionCount][];
+                var trailSections = new Vector3[trailData.SectionCount][];
+
+                for (int s = 0; s < rawSections.Length; s++) {
+                    var points  = trailData.GetSection(s);
+                    var section = new Vector3[points.Length];
+
+                    for (int i = 0; i < points.Length; i++) {
+                        section[i] = new Vector3(points[i].X, points[i].Y, points[i].Z);
+                    }
+
+                    rawSections[s]   = section;
+                    trailSections[s] = PostProcessing_DouglasPeucker(section, _packState.UserResourceStates.Advanced.MapTrailDouglasPeuckerError).ToArray();
                 }
 
-                _sectionPoints = trailSections.ToArray();
+                _sectionPoints = trailSections;
 
-                BuildBuffers(trail);
+                BuildBuffers(rawSections);
             } else {
                 _sectionBuffers = Array.Empty<SectionBuffer>();
             }

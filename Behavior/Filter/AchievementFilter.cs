@@ -2,7 +2,7 @@
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.UI.Tooltips;
 using BhModule.Community.Pathing.Utility;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Filter {
     public class AchievementFilter : Behavior<IPathingEntity>, ICanFilter, ICanInteract, ICanFocus {
@@ -25,7 +25,7 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             _packState = packState;
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, IPathingEntity pathingEntity, IPackState packState) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes, IPathingEntity pathingEntity, IPackState packState) {
             return new AchievementFilter(attributes.TryGetAttribute(ATTR_ID,  out var idAttr) ? idAttr.GetValueAsInt() : 0,
                                          attributes.TryGetAttribute(ATTR_BIT, out var bitAttr) ? bitAttr.GetValueAsInt() : -1,
                                          pathingEntity,

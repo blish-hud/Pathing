@@ -9,9 +9,8 @@ using BhModule.Community.Pathing.Entity.Effects;
 using BhModule.Community.Pathing.State;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
-using TmfLib;
-using TmfLib.Pathable;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
+using TmfLib.Model;
 
 namespace BhModule.Community.Pathing {
     public class SharedPackState : IRootPackState {
@@ -85,42 +84,34 @@ namespace BhModule.Community.Pathing {
             _initialized = true;
         }
 
-        private IPathingEntity BuildEntity(IPointOfInterest pointOfInterest) {
-            return pointOfInterest.Type switch {
-                PointOfInterestType.Marker => new StandardMarker(this, pointOfInterest),
-                PointOfInterestType.Trail => new StandardTrail(this, pointOfInterest as ITrail),
-                PointOfInterestType.Route => throw new NotImplementedException("Routes have not been implemented."),
+        private IPathingEntity BuildEntity(PathableSource source) {
+            return source.Kind switch {
+                PathableKind.Marker => new StandardMarker(this, source),
+                PathableKind.Trail  => new StandardTrail(this, source),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
 
-        public async Task LoadPackCollection(IPackCollection collection) {
+        public async Task LoadMapSlices(PathingCategory rootCategory, IReadOnlyList<MapSlice> slices) {
             await _loadingPackSemaphore.WaitAsync();
 
             try {
-                this.RootCategory = collection.Categories;
+                this.RootCategory = rootCategory;
 
                 await ReloadStates();
 
-                await InitPointsOfInterest(collection.PointsOfInterest);
+                TextureResourceManager.BeginGeneration();
+
+                await InitPathables(slices);
+
+                TextureResourceManager.EvictUnused();
             } finally {
                 _loadingPackSemaphore.Release();
             }
         }
 
-        private static async Task PreloadTextures(IPointOfInterest pointOfInterest) {
-            (string texture, bool shouldSample) = pointOfInterest.Type switch {
-                PointOfInterestType.Marker => (pointOfInterest.GetAggregatedAttributeValue("iconfile"), false),
-                PointOfInterestType.Trail => (pointOfInterest.GetAggregatedAttributeValue("texture"), true)
-            };
-
-            if (texture != null) {
-                await TextureResourceManager.GetTextureResourceManager(pointOfInterest.ResourceManager).PreloadTexture(texture, shouldSample);
-            }
-        }
-
-        public IPathingEntity InitPointOfInterest(PointOfInterest pointOfInterest) {
-            var entity = BuildEntity(pointOfInterest);
+        public IPathingEntity InitPathable(PathableSource source) {
+            var entity = BuildEntity(source);
 
             this.Entities.Add(entity);
             GameService.Graphics.World.AddEntity(entity);
@@ -133,14 +124,37 @@ namespace BhModule.Community.Pathing {
             GameService.Graphics.World.RemoveEntity(entity);
         }
 
-        private async Task InitPointsOfInterest(IEnumerable<PointOfInterest> pointsOfInterest) {
-            var pois = pointsOfInterest as PointOfInterest[] ?? pointsOfInterest.ToArray();
+        private async Task InitPathables(IReadOnlyList<MapSlice> slices) {
+            var attributes = new AttributeReader();
 
-            // Avoid locking things up too much on lower-spec systems.
-            foreach (var poi in pois) {
-                await PreloadTextures(poi);
-                InitPointOfInterest(poi);
+            foreach (var slice in slices) {
+                var resourceManager = PackResourceManager.For(slice.Pack);
+                var textureManager  = TextureResourceManager.GetTextureResourceManager(resourceManager);
+
+                for (int i = 0; i < slice.Count; i++) {
+                    var record = slice[i];
+
+                    var textureKey = record.Kind == PathableKind.Marker ? AttrKeys.IconFile : AttrKeys.Texture;
+                    if (slice.TryGetValue(i, textureKey, out string texture)) {
+                        await textureManager.PreloadTexture(texture, record.Kind == PathableKind.Trail);
+                    }
+
+                    attributes.Reset(slice, i);
+
+                    InitPathable(new PathableSource(record.Kind, record.Category, record.MapId, resourceManager, attributes, record.TrailData));
+                }
             }
+        }
+
+        public async Task UnloadEntities() {
+            var entities = this.Entities;
+            this.Entities = new SafeList<IPathingEntity>();
+
+            foreach (var pathingEntity in entities) {
+                pathingEntity.Unload();
+            }
+
+            GameService.Graphics.World.RemoveEntities(entities);
 
             await Task.CompletedTask;
         }
@@ -170,13 +184,7 @@ namespace BhModule.Community.Pathing {
         }
 
         public async Task Unload() {
-            foreach (var pathingEntity in this.Entities) {
-                pathingEntity.Unload();
-            }
-
-            GameService.Graphics.World.RemoveEntities(this.Entities);
-
-            this.Entities = new SafeList<IPathingEntity>();
+            await UnloadEntities();
 
             this.RootCategory = null;
 

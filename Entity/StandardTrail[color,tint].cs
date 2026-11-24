@@ -2,7 +2,7 @@
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
@@ -16,7 +16,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// color, tint
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Tint(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_Tint(AttributeReader collection, IPackResourceManager resourceManager) {
             this.Tint = _packState.UserResourceStates.Population.TrailPopulationDefaults.Tint;
 
             { if (collection.TryPopAttribute(ATTR_COLOR, out var attribute)) this.Tint = attribute.GetValueAsColor(this.Tint); }

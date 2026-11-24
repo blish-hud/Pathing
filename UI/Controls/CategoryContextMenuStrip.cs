@@ -7,7 +7,6 @@ using Blish_HUD.Controls;
 using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.UI.Controls {
     public class CategoryContextMenuStrip : ContextMenuStrip {

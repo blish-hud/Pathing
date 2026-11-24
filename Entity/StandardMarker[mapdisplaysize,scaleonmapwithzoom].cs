@@ -1,7 +1,7 @@
 ﻿using BhModule.Community.Pathing.Utility;
 using System.Runtime.CompilerServices;
 using TmfLib;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -16,7 +16,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// mapdisplaysize, scaleonmapwithzoom
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_MapScaling(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_MapScaling(AttributeReader collection, IPackResourceManager resourceManager) {
             this.MapDisplaySize     = _packState.UserResourceStates.Population.MarkerPopulationDefaults.MapDisplaySize;
             this.ScaleOnMapWithZoom = _packState.UserResourceStates.Population.MarkerPopulationDefaults.ScaleOnMapWithZoom;
 

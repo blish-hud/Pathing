@@ -3,7 +3,7 @@ using System.Linq;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Filter {
     public class RaidFilter : Behavior<IPathingEntity>, ICanFilter {
@@ -20,7 +20,7 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             _packState = packState;
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, IPathingEntity pathingEntity, IPackState packState) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes, IPathingEntity pathingEntity, IPackState packState) {
             return new RaidFilter(attributes.TryGetAttribute(PRIMARY_ATTR_NAME,  out var idAttr) ? idAttr.GetValueAsStrings() : Enumerable.Empty<string>(),
                                   pathingEntity,
                                   packState);

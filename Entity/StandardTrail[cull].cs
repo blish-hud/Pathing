@@ -2,7 +2,7 @@
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework.Graphics;
 using TmfLib;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
@@ -15,7 +15,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// cull
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Cull(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_Cull(AttributeReader collection, IPackResourceManager resourceManager) {
             {
                 var cullDirection = _packState.UserResourceStates.Population.TrailPopulationDefaults.Cull;
 

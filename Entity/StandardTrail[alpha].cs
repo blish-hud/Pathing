@@ -2,7 +2,7 @@
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
@@ -15,7 +15,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// alpha
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Alpha(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_Alpha(AttributeReader collection, IPackResourceManager resourceManager) {
             this.Alpha = _packState.UserResourceStates.Population.TrailPopulationDefaults.Alpha;
 
             { if (collection.TryPopAttribute(ATTR_ALPHA, out var attribute)) this.Alpha = MathHelper.Clamp(attribute.GetValueAsFloat(this.Alpha), 0f, 1f); }

@@ -3,8 +3,7 @@ using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using System;
-using TmfLib.Pathable;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Modifier {
     public class ToggleModifier : Behavior<StandardMarker>, ICanInteract, ICanFocus {
@@ -24,8 +23,8 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
             this.Category = category;
         }
         
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
-            IAttribute toggleAttr = null;
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes, StandardMarker marker, IPackState packState) {
+            PackAttribute? toggleAttr = null;
 
             if (attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)) {
                 toggleAttr = attribute;
@@ -37,15 +36,15 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
             }
 
             if (toggleAttr != null) {
-                string attrValue = toggleAttr.GetValueAsString();
+                string attrValue = toggleAttr.Value.GetValueAsString();
 
                 if (!string.IsNullOrWhiteSpace(attrValue)) {
                     PathingCategory category = null;
 
                     try {
-                        category = packState.RootCategory.GetOrAddCategoryFromNamespace(attrValue);
+                        category = packState.RootCategory.GetOrAdd(attrValue);
                     } catch (Exception e) {
-                        Logger.Warn(e, $"Failed to load {toggleAttr.Name}=\"{attrValue}\".");
+                        Logger.Warn(e, $"Failed to load {toggleAttr.Value.Name}=\"{attrValue}\".");
                     }
 
                     if (category != null) {

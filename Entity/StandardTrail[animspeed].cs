@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
@@ -15,7 +15,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// animspeed
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_AnimationSpeed(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_AnimationSpeed(AttributeReader collection, IPackResourceManager resourceManager) {
             this.AnimationSpeed = _packState.UserResourceStates.Population.TrailPopulationDefaults.AnimSpeed;
 
             { if (collection.TryPopAttribute(ATTR_ANIMATIONSPEED, out var attribute)) this.AnimationSpeed = attribute.GetValueAsFloat(this.AnimationSpeed); }

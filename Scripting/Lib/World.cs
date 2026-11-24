@@ -4,8 +4,6 @@ using System.Linq;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.Utility;
 using Neo.IronLua;
-using TmfLib.Pathable;
-using Attribute = TmfLib.Prototype.Attribute;
 
 namespace BhModule.Community.Pathing.Scripting.Lib; 
 
@@ -24,9 +22,7 @@ public class World {
     public PathingCategory RootCategory => _global.ScriptEngine.Module.PackInitiator.PackState.RootCategory;
 
     public PathingCategory CategoryByType(string id) {
-        return _global.ScriptEngine.Module.PackInitiator.PackState.RootCategory.TryGetCategoryFromNamespace(id, out var category)
-                   ? category 
-                   : null;
+        return _global.ScriptEngine.Module.PackInitiator.PackState.RootCategory?.Find(id);
     }
 
     // Pathables

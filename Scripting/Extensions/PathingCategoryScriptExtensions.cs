@@ -1,6 +1,5 @@
 ﻿using BhModule.Community.Pathing.Entity;
 using Neo.IronLua;
-using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.Scripting.Extensions {
     internal static class PathingCategoryScriptExtensions {
@@ -9,6 +8,15 @@ namespace BhModule.Community.Pathing.Scripting.Extensions {
 
         internal static void SetPackInitiator(PackInitiator packInitiator) {
             _packInitiator = packInitiator;
+        }
+
+        // COMPAT: Category lookups as they were exposed to scripts by TmfLib 2.
+        public static PathingCategory GetOrAddCategoryFromNamespace(this PathingCategory category, string @namespace) {
+            return category.GetOrAdd(@namespace);
+        }
+
+        public static bool TryGetCategoryFromNamespace(this PathingCategory category, string @namespace, out PathingCategory found) {
+            return (found = category.Find(@namespace)) != null;
         }
 
         public static bool IsVisible(this PathingCategory category) {

@@ -77,7 +77,6 @@
     <Compile Include="Behavior\Script.cs" />
     <Compile Include="Behavior\StandardPathableBehavior.cs" />
     <Compile Include="Content\TextureResourceManager.cs" />
-    <Compile Include="Content\WebReader.cs" />
     <Compile Include="Entity\BillboardVerticalConstraint.cs" />
     <Compile Include="Entity\EntityRenderTarget.cs" />
     <Compile Include="Entity\ICanPick.cs" />
@@ -295,7 +294,6 @@
     <Compile Include="UI\Tooltips\DescriptionTooltipView.cs" />
     <Compile Include="UI\Controls\BlueButton.cs" />
     <Compile Include="UI\Controls\FlatMap.cs" />
-    <Compile Include="SharedPackCollection.cs" />
     <Compile Include="State\CategoryStates.cs" />
     <Compile Include="Entity\CullDirection.cs" />
     <Compile Include="State\IRootPackState.cs" />
@@ -305,7 +303,6 @@
     <Compile Include="UI\Controls\CategoryContextMenuStripItem.cs" />
     <Compile Include="UI\Controls\InfoWindow.cs" />
     <Compile Include="UI\Controls\MarkerPackHero.cs" />
-    <Compile Include="State\UserResources\Converters\ValueOnlyAttribute.cs" />
     <Compile Include="State\UserResources\PopulationDefaults.cs" />
     <Compile Include="State\UserResources\Population\TrailPopulationDefaults.cs" />
     <Compile Include="UI\Effects\AlphaMaskEffect.cs" />
@@ -372,6 +369,10 @@
     <Compile Include="Entity\StandardTrail.cs" />
     <Compile Include="PathingModule.cs" />
     <Compile Include="PackInitiator.cs" />
+    <Compile Include="GlobalUsings.cs" />
+    <Compile Include="IPackResourceManager.cs" />
+    <Compile Include="Content\PackResourceManager.cs" />
+    <Compile Include="Entity\PathableSource.cs" />
     <Compile Include="Utility\AttributeCollectionExtensions.cs" />
     <Compile Include="Utility\AttributeParsingUtil.cs" />
   </ItemGroup>
@@ -658,8 +659,8 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.ReaderWriter" />
-    <Reference Include="TmfLib, Version=2.2.5.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\TmfLib.2.2.5\lib\netstandard2.0\TmfLib.dll</HintPath>
+    <Reference Include="TmfLib, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\TmfLib.3.0.0-preview.1\lib\netstandard2.0\TmfLib.dll</HintPath>
     </Reference>
     <Reference Include="YamlDotNet, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
       <HintPath>packages\YamlDotNet.11.2.1\lib\net45\YamlDotNet.dll</HintPath>

@@ -1,8 +1,7 @@
 ﻿using BhModule.Community.Pathing.Behavior.Filter;
 using Blish_HUD;
 using BhModule.Community.Pathing.Behavior.Modifier;
-using TmfLib.Pathable;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Utility
 {
@@ -13,7 +12,7 @@ namespace BhModule.Community.Pathing.Utility
             achievementId = -1;
 
             if (pathingCategory.ExplicitAttributes.TryGetAttribute(AchievementFilter.ATTR_ID, out var achievementAttr) &&
-                InvariantUtil.TryParseInt(achievementAttr?.Value, out achievementId)) {
+                InvariantUtil.TryParseInt(achievementAttr.Value, out achievementId)) {
                 return true;
             }
 
@@ -23,7 +22,7 @@ namespace BhModule.Community.Pathing.Utility
         internal static bool TryGetAchievementBit(this PathingCategory pathingCategory, out int achievementBit) {
             achievementBit = -1;
             
-            if (pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_BIT, out var achievementBitAttr) &&
+            if (pathingCategory.ResolvedAttributes.TryGetValue(AchievementFilter.ATTR_BIT, out string achievementBitAttr) &&
                     InvariantUtil.TryParseInt(achievementBitAttr, out achievementBit)) {
                 return true;
             }

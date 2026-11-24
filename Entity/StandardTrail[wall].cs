@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail {
@@ -14,7 +14,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// iswall
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_IsWall(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_IsWall(AttributeReader collection, IPackResourceManager resourceManager) {
             { if (collection.TryPopAttribute(ATTR_ISWALL, out var attribute)) this.IsWall = attribute.GetValueAsBool(); }
         }
 

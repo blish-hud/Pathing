@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -18,7 +18,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// minimapvisibility, mapvisibility, ingamevisibility
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_MapVisibility(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_MapVisibility(AttributeReader collection, IPackResourceManager resourceManager) {
             this.MiniMapVisibility = _packState.UserResourceStates.Population.MarkerPopulationDefaults.MiniMapVisibility;
             this.MapVisibility     = _packState.UserResourceStates.Population.MarkerPopulationDefaults.MapVisibility;
             this.InGameVisibility  = _packState.UserResourceStates.Population.MarkerPopulationDefaults.InGameVisibility;

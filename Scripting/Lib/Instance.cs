@@ -9,10 +9,9 @@ using Blish_HUD;
 using Blish_HUD.Content;
 using Microsoft.Xna.Framework;
 using Neo.IronLua;
-using TmfLib;
-using TmfLib.Pathable;
-using TmfLib.Prototype;
-using Attribute = TmfLib.Prototype.Attribute;
+using TmfLib.Attributes;
+using TmfLib.Model;
+using TmfLib.Parsing;
 
 namespace BhModule.Community.Pathing.Scripting.Lib {
     public class Instance {
@@ -37,21 +36,32 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
 
         // Pathables
 
-        private AttributeCollection AttributeCollectionFromLuaTable(LuaTable luaTable) {
-            return new AttributeCollection(luaTable.Members.Select(member => new Attribute(member.Key, string.Format(CultureInfo.InvariantCulture, "{0}", member.Value))));
+        private PathableSource PathableSourceFromLuaTable(PathableKind kind, IPackResourceManager resourceManager, LuaTable luaTable) {
+            var attributes = luaTable != null
+                                 ? AttributeSet.From(luaTable.Members.Select(member => new PackAttribute(AttrKeys.Get(member.Key), string.Format(CultureInfo.InvariantCulture, "{0}", member.Value))).ToList())
+                                 : AttributeSet.Empty;
+
+            var rootCategory = _global.ScriptEngine.Module.PackInitiator.PackState.RootCategory;
+
+            PathingCategory category = null;
+            if (rootCategory != null && attributes.TryGetValue(AttrKeys.Type, out string type)) {
+                category = rootCategory.GetOrAdd(type);
+            }
+
+            int mapId = -1;
+            string mapIdValue = attributes.GetValueOrDefault(AttrKeys.MapId) ?? category?.ResolvedAttributes.GetValueOrDefault(AttrKeys.MapId);
+            if (mapIdValue != null) ValueParser.TryParseInt(mapIdValue, out mapId);
+
+            var reader = new AttributeReader();
+            reader.Reset(attributes.Without(AttrKeys.Type), category);
+
+            return new PathableSource(kind, category, mapId, resourceManager, reader);
         }
 
         // Marker
 
         public StandardMarker Marker(IPackResourceManager resourceManager, LuaTable attributes = null) {
-            var poi = new PointOfInterest(resourceManager, 
-                                          PointOfInterestType.Marker, 
-                                          attributes != null 
-                                              ? AttributeCollectionFromLuaTable(attributes) 
-                                              : new AttributeCollection(),
-                                          _global.ScriptEngine.Module.PackInitiator.PackState.RootCategory);
-
-            var marker = _global.ScriptEngine.Module.PackInitiator.PackState.InitPointOfInterest(poi) as StandardMarker;
+            var marker = _global.ScriptEngine.Module.PackInitiator.PackState.InitPathable(PathableSourceFromLuaTable(PathableKind.Marker, resourceManager, attributes)) as StandardMarker;
 
             if (marker.MapId < 0) {
                 // Map ID can be assumed since we only show current map icons anyways, but UI filtering doesn't know that.
@@ -63,23 +73,8 @@ namespace BhModule.Community.Pathing.Scripting.Lib {
 
         // Trail
 
-        internal class TrailProxy : PointOfInterest, ITrail {
-            public TrailProxy(IPackResourceManager resourceManager, AttributeCollection explicitAttributes, PathingCategory rootPathingCategory) : base(resourceManager, PointOfInterestType.Trail, explicitAttributes, rootPathingCategory) {
-            }
-
-            public IEnumerable<ITrailSection> TrailSections => null;
-
-            public IEnumerable<System.Numerics.Vector3> TrailPoints => null;
-        }
-
         public StandardTrail Trail(IPackResourceManager resourceManager, LuaTable attributes = null) {
-            var poi = new TrailProxy(resourceManager,
-                                          attributes != null 
-                                            ? AttributeCollectionFromLuaTable(attributes) 
-                                            : new AttributeCollection(),
-                                          _global.ScriptEngine.Module.PackInitiator.PackState.RootCategory);
-
-            var trail = _global.ScriptEngine.Module.PackInitiator.PackState.InitPointOfInterest(poi) as StandardTrail;
+            var trail = _global.ScriptEngine.Module.PackInitiator.PackState.InitPathable(PathableSourceFromLuaTable(PathableKind.Trail, resourceManager, attributes)) as StandardTrail;
 
             if (trail.MapId < 0) {
                 // Map ID can be assumed since we only show current map icons anyways, but UI filtering doesn't know that.

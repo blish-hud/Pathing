@@ -3,7 +3,7 @@ using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Controls;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Modifier {
     public class CopyModifier : Behavior<StandardMarker>, ICanInteract, ICanFocus {
@@ -27,7 +27,7 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
             this.CopyMessage = message;
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes, StandardMarker marker, IPackState packState) {
             return new CopyModifier(attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var valueAttr) ? valueAttr.GetValueAsString() : "",
                                     attributes.TryGetAttribute(ATTR_MESSAGE,      out var messageAttr) ? messageAttr.GetValueAsString() : DEFAULT_COPYMESSAGE,
                                     marker,

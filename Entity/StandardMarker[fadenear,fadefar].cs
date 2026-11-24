@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -16,7 +16,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// fadenear, fadefar
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_FadeNearAndFar(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_FadeNearAndFar(AttributeReader collection, IPackResourceManager resourceManager) {
             this.FadeNear = _packState.UserResourceStates.Population.MarkerPopulationDefaults.FadeNear;
             this.FadeFar  = _packState.UserResourceStates.Population.MarkerPopulationDefaults.FadeFar;
 

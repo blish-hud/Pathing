@@ -4,7 +4,6 @@ using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.Entity {
     public interface IPathingEntity : IEntity {

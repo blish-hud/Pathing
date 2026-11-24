@@ -8,7 +8,6 @@ using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Microsoft.Xna.Framework;
-using TmfLib.Pathable;
 using Panel = Blish_HUD.Controls.Panel;
 using View = Blish_HUD.Graphics.UI.View;
 

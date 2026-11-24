@@ -6,7 +6,7 @@ using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
 using Neo.IronLua;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior {
     internal class Script : Behavior<IPathingEntity>, ICanFocus, ICanInteract, ICanFilter {
@@ -42,7 +42,7 @@ namespace BhModule.Community.Pathing.Behavior {
             _packState = packState;
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, IPathingEntity entity, IPackState packState) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes, IPathingEntity entity, IPackState packState) {
             return new Script(attributes.TryGetAttribute(ATTR_TICK,    out var tickAttr) ? tickAttr.GetValueAsString() : null,
                               attributes.TryGetAttribute(ATTR_FOCUS,   out var focusAttr) ? focusAttr.GetValueAsString() : null,
                               attributes.TryGetAttribute(ATTR_TRIGGER, out var triggerAttr) ? triggerAttr.GetValueAsString() : null,

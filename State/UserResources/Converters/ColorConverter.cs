@@ -1,5 +1,6 @@
 ﻿using System; 
 using BhModule.Community.Pathing.Utility;
+using TmfLib.Attributes;
 using Microsoft.Xna.Framework;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
@@ -15,7 +16,7 @@ namespace BhModule.Community.Pathing.State.UserResources.Population.Converters {
         public object? ReadYaml(IParser parser, Type type) {
             string rawIn = parser.Consume<Scalar>().Value;
 
-            return new ValueOnlyAttribute(rawIn).GetValueAsColor();
+            return new PackAttribute(default, rawIn).GetValueAsColor();
         }
 
         public void WriteYaml(IEmitter emitter, object? value, Type type) {

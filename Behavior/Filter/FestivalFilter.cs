@@ -5,7 +5,7 @@ using System.Linq;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD.Contexts;
 using Microsoft.Xna.Framework;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Filter {
     public class FestivalFilter : IBehavior, ICanFilter {
@@ -40,7 +40,7 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             UpdateFiltered();
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes) {
             return attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)
                        ? new FestivalFilter(attribute.GetValueAsStrings().Select(FestivalContext.Festival.FromName))
                        : null;

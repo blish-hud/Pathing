@@ -4,7 +4,7 @@ using BhModule.Community.Pathing.Behavior;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
-using AttributeCollection = TmfLib.Prototype.AttributeCollection;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -42,7 +42,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// triggerrange, inforange
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Triggers(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_Triggers(AttributeReader collection, IPackResourceManager resourceManager) {
             this.TriggerRange = _packState.UserResourceStates.Population.MarkerPopulationDefaults.TriggerRange;
 
             { if (collection.TryPopAttribute(ATTR_TRIGGERRANGE, out var attribute)) this.TriggerRange = attribute.GetValueAsFloat(_packState.UserResourceStates.Population.MarkerPopulationDefaults.TriggerRange); }

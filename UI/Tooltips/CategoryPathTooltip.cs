@@ -7,7 +7,6 @@ using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Microsoft.Xna.Framework;
-using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.UI.Tooltips
 {

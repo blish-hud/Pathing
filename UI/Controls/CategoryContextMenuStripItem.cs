@@ -15,8 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TmfLib.Pathable;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.UI.Controls {
     public class CategoryContextMenuStripItem : ContextMenuStripItem {
@@ -122,9 +121,9 @@ namespace BhModule.Community.Pathing.UI.Controls {
         }
 
         private void DetectAndBuildContexts() {
-            if (_pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_ID, out var achievementAttr)) {
+            if (_pathingCategory.ResolvedAttributes.TryGetValue(AchievementFilter.ATTR_ID, out string achievementAttr)) {
                 var achievementBit = -1;
-                if (_pathingCategory.TryGetAggregatedAttributeValue(AchievementFilter.ATTR_BIT, out var achievementBitAttr)) {
+                if (_pathingCategory.ResolvedAttributes.TryGetValue(AchievementFilter.ATTR_BIT, out string achievementBitAttr)) {
                     if (InvariantUtil.TryParseInt(achievementBitAttr, out int achievementBitParsed)) {
                         achievementBit = achievementBitParsed;
                     }

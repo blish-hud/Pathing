@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 using Humanizer;
 
 namespace BhModule.Community.Pathing.Behavior.Filter {
@@ -31,10 +31,8 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             }
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
-            attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute);
-            
-            if(attribute == null) return null;
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes, StandardMarker marker, IPackState packState) {
+            if (!attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)) return null;
 
             var behaviorId = (StandardPathableBehavior)attribute.GetValueAsInt(0);
 

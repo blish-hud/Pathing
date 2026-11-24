@@ -1,7 +1,7 @@
 ﻿using BhModule.Community.Pathing.Entity;
 using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Modifier {
     public class InfoModifier : Behavior<StandardMarker>, ICanFocus {
@@ -33,7 +33,7 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
             this.InfoValue = value;
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes, StandardMarker marker, IPackState packState) {
             var hasInfoAttr = attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var valueAttr);
 
             return hasInfoAttr ? new InfoModifier(marker, valueAttr.GetValueAsString(), packState)

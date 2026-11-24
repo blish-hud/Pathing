@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
-using AttributeCollection = TmfLib.Prototype.AttributeCollection;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -19,14 +19,14 @@ namespace BhModule.Community.Pathing.Entity {
         /// xpos, ypos, zpos
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Position(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_Position(AttributeReader collection, IPackResourceManager resourceManager) {
             float positionX = 0f,
                   positionY = 0f,
                   positionZ = 0f;
 
-            { if (collection.TryPopAttribute(ATTR_XPOS, out var attribute)) positionX = attribute.GetValueAsFloat(); }
-            { if (collection.TryPopAttribute(ATTR_YPOS, out var attribute)) positionY = attribute.GetValueAsFloat(); }
-            { if (collection.TryPopAttribute(ATTR_ZPOS, out var attribute)) positionZ = attribute.GetValueAsFloat(); }
+            collection.TryConsumeFloat(AttrKeys.XPos, out positionX);
+            collection.TryConsumeFloat(AttrKeys.YPos, out positionY);
+            collection.TryConsumeFloat(AttrKeys.ZPos, out positionZ);
 
             // z and y are transposed due to the different coordinate systems
             this.Position = new Vector3(positionX, positionZ, positionY);

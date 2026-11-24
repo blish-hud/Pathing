@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using TmfLib;
-using AttributeCollection = TmfLib.Prototype.AttributeCollection;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -13,10 +13,10 @@ namespace BhModule.Community.Pathing.Entity {
         /// guid
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Guid(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_Guid(AttributeReader collection, IPackResourceManager resourceManager) {
             this.Guid = _packState.UserResourceStates.Population.MarkerPopulationDefaults.Guid;
 
-            { if (collection.TryPopAttribute(ATTR_GUID, out var attribute)) this.Guid = attribute.GetValueAsGuid(); }
+            { if (collection.TryConsumeGuid(out var guid)) this.Guid = guid; }
 
             if (this.Guid == Guid.Empty) {
                 this.Guid = Guid.NewGuid();

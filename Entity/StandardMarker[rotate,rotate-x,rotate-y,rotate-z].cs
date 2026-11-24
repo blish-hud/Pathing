@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
-using AttributeCollection = TmfLib.Prototype.AttributeCollection;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -23,7 +23,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// rotate, rotate-x, rotate-y, rotate-z
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Rotation(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_Rotation(AttributeReader collection, IPackResourceManager resourceManager) {
             float? rotationX = null, rotationY = null, rotationZ = null;
 
             { if (collection.TryPopAttribute(ATTR_ROTATEX, out var attribute)) rotationX = MathHelper.ToRadians(attribute.GetValueAsFloat()); }

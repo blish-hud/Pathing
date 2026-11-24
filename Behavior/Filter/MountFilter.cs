@@ -6,7 +6,7 @@ using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Gw2Sharp.Models;
 using Microsoft.Xna.Framework;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Filter {
     public class MountFilter : IBehavior, ICanFilter {
@@ -46,7 +46,7 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
             return $"Hidden because you're not on the mount: {string.Join(", ", AllowedMounts.Select(mount => mount.ToString()))}.";
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes) {
             return attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var attribute)
                        ? new MountFilter(attribute.GetValueAsEnums<MountType>())
                        : null;

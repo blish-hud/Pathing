@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pathing", "Pathing.csproj", "{B5DE694A-0648-4A39-8349-8C0BB0DD538C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TmfLib", "..\TmfLib\TmfLib.csproj", "{D66AACB7-A2B7-4F13-9667-B1D7F1CF8848}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TmfLib", "..\TmfLib\src\TmfLib\TmfLib.csproj", "{D66AACB7-A2B7-4F13-9667-B1D7F1CF8848}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pathing.Harness", "..\Pathing.Harness\Pathing.Harness.csproj", "{C4BB59ED-D4FA-4A58-9694-C131E0BBB337}"
 EndProject

@@ -8,7 +8,6 @@ using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.Entity {
     public abstract class PathingEntity : IPathingEntity {
@@ -48,11 +47,11 @@ namespace BhModule.Community.Pathing.Entity {
 
         protected readonly IPackState _packState;
 
-        protected PathingEntity(IPackState packState, IPointOfInterest pointOfInterest) {
+        protected PathingEntity(IPackState packState, PathableSource source) {
             _packState    = packState;
 
-            this.MapId    = pointOfInterest.MapId;
-            this.Category = pointOfInterest.ParentPathingCategory ?? _packState.RootCategory;
+            this.MapId    = source.MapId;
+            this.Category = source.Category ?? _packState.RootCategory;
         }
 
         public abstract bool IsVisibleOnMap();
@@ -158,24 +157,20 @@ namespace BhModule.Community.Pathing.Entity {
         }
 
         private CategoryStates _cachedCategoryStates;
-        private string         _cachedCategoryNamespace;
         private int            _cachedInactiveVersion;
         private bool           _cachedCategoryInactive;
 
         private bool GetCategoryInactive() {
-            var    categoryStates    = _packState.CategoryStates;
-            string categoryNamespace = this.Category.Namespace;
+            var categoryStates = _packState.CategoryStates;
 
             // Read before the lookup so that a change made during the lookup invalidates the cached result
             int inactiveVersion = categoryStates.InactiveVersion;
 
-            if (!ReferenceEquals(categoryStates,    _cachedCategoryStates)
-             || !ReferenceEquals(categoryNamespace, _cachedCategoryNamespace)
+            if (!ReferenceEquals(categoryStates, _cachedCategoryStates)
              || inactiveVersion != _cachedInactiveVersion) {
-                _cachedCategoryInactive  = categoryStates.GetNamespaceInactive(categoryNamespace);
-                _cachedCategoryStates    = categoryStates;
-                _cachedCategoryNamespace = categoryNamespace;
-                _cachedInactiveVersion   = inactiveVersion;
+                _cachedCategoryInactive = categoryStates.IsInactive(this.Category);
+                _cachedCategoryStates   = categoryStates;
+                _cachedInactiveVersion  = inactiveVersion;
             }
 
             return _cachedCategoryInactive;

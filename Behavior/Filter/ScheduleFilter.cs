@@ -2,7 +2,7 @@
 using BhModule.Community.Pathing.Utility;
 using Cronos;
 using Microsoft.Xna.Framework;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Filter {
     class ScheduleFilter : IBehavior, ICanFilter {
@@ -64,7 +64,7 @@ namespace BhModule.Community.Pathing.Behavior.Filter {
 
         public bool IsFiltered() => _isFiltered;
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes) {
             if (attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var expressionAttr) && attributes.TryGetAttribute(ATTR_DURATION, out var durationAttr)) {
                 var   expression = expressionAttr.GetValueAsCronExpression();
                 float duration   = durationAttr.GetValueAsFloat();

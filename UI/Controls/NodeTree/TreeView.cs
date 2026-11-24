@@ -10,7 +10,6 @@ using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Microsoft.Xna.Framework;
-using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.UI.Controls.TreeView
 {

@@ -11,7 +11,7 @@ using Cronos;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TmfLib;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Utility {
     public static class AttributeParsingUtil {
@@ -22,7 +22,7 @@ namespace BhModule.Community.Pathing.Utility {
 
         private static readonly CultureInfo _invariantCulture = CultureInfo.InvariantCulture;
 
-        private static IEnumerable<string> SplitAttributeValue(this IAttribute attribute) => attribute.Value.Split(ATTRIBUTEVALUE_DELIMITER);
+        private static IEnumerable<string> SplitAttributeValue(this PackAttribute attribute) => attribute.Value.Split(ATTRIBUTEVALUE_DELIMITER);
 
         private static T InternalGetValueAsEnum<T>(string attributeValue) where T : Enum {
             return EnumUtil.TryParseCacheEnum(attributeValue, out T value) ? value : default;
@@ -62,56 +62,56 @@ namespace BhModule.Community.Pathing.Utility {
             return InternalGetValueAsInt(attributeValue) > 0 || string.Equals(attributeValue, "true", StringComparison.OrdinalIgnoreCase);
         }
 
-        public static string GetValueAsString(this IAttribute attribute) {
+        public static string GetValueAsString(this PackAttribute attribute) {
             return attribute.Value;
         }
 
-        public static IEnumerable<string> GetValueAsStrings(this IAttribute attribute) {
+        public static IEnumerable<string> GetValueAsStrings(this PackAttribute attribute) {
             return SplitAttributeValue(attribute).Select(val => val.Trim());
         }
 
-        public static int GetValueAsInt(this IAttribute attribute, int @default = default) {
+        public static int GetValueAsInt(this PackAttribute attribute, int @default = default) {
             return InternalGetValueAsInt(attribute.Value, @default);
         }
 
-        public static float GetValueAsFloat(this IAttribute attribute, float @default = default) {
+        public static float GetValueAsFloat(this PackAttribute attribute, float @default = default) {
             return InternalGetValueAsFloat(attribute.Value, @default);
         }
 
-        public static bool GetValueAsBool(this IAttribute attribute) {
+        public static bool GetValueAsBool(this PackAttribute attribute) {
             return InternalGetValueAsBool(attribute.Value);
         }
 
-        public static Guid GetValueAsGuid(this IAttribute attribute) {
+        public static Guid GetValueAsGuid(this PackAttribute attribute) {
             return InternalGetValueAsGuid(attribute.Value);
         }
 
-        public static IEnumerable<int> GetValueAsInts(this IAttribute attribute) {
+        public static IEnumerable<int> GetValueAsInts(this PackAttribute attribute) {
             return SplitAttributeValue(attribute).Select(attr => InternalGetValueAsInt(attr));
         }
 
-        public static IEnumerable<float> GetValueAsFloats(this IAttribute attribute) {
+        public static IEnumerable<float> GetValueAsFloats(this PackAttribute attribute) {
             return SplitAttributeValue(attribute).Select(attr => InternalGetValueAsFloat(attr));
         }
 
-        public static IEnumerable<Guid> GetValueAsGuids(this IAttribute attribute) {
+        public static IEnumerable<Guid> GetValueAsGuids(this PackAttribute attribute) {
             return SplitAttributeValue(attribute).Select(InternalGetValueAsGuid);
         }
 
-        public static IEnumerable<bool> GetValueAsBools(this IAttribute attribute) {
+        public static IEnumerable<bool> GetValueAsBools(this PackAttribute attribute) {
             return SplitAttributeValue(attribute).Select(InternalGetValueAsBool);
         }
 
-        public static async Task<(Texture2D Texture, Color Sample)> GetValueAsTextureAsync(this IAttribute attribute, TextureResourceManager resourceManager) {
+        public static async Task<(Texture2D Texture, Color Sample)> GetValueAsTextureAsync(this PackAttribute attribute, TextureResourceManager resourceManager) {
             return await resourceManager.LoadTextureAsync(attribute.GetValueAsString());
         }
 
-        public static Color GetValueAsColor(this IAttribute attribute, Color @default = default) {
+        public static Color GetValueAsColor(this PackAttribute attribute, Color @default = default) {
             string attrValue = attribute.GetValueAsString().ToLowerInvariant();
             return ColorUtil.TryParseHex(attrValue, out var color) ? color : @default;
         }
 
-        public static CronExpression GetValueAsCronExpression(this IAttribute attribute) {
+        public static CronExpression GetValueAsCronExpression(this PackAttribute attribute) {
             try {
                 string strAttribute = attribute.GetValueAsString();
                 int    segmentCount = strAttribute.Split(new [] {' '}, StringSplitOptions.RemoveEmptyEntries).Length;
@@ -126,11 +126,11 @@ namespace BhModule.Community.Pathing.Utility {
             return null;
         }
 
-        public static T GetValueAsEnum<T>(this IAttribute attribute) where T : Enum {
+        public static T GetValueAsEnum<T>(this PackAttribute attribute) where T : Enum {
             return InternalGetValueAsEnum<T>(attribute.Value);
         }
 
-        public static IEnumerable<T> GetValueAsEnums<T>(this IAttribute attribute) where T : Enum {
+        public static IEnumerable<T> GetValueAsEnums<T>(this PackAttribute attribute) where T : Enum {
             return SplitAttributeValue(attribute).Select(InternalGetValueAsEnum<T>);
         }
 

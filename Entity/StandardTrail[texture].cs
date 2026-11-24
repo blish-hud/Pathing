@@ -2,7 +2,7 @@
 using BhModule.Community.Pathing.Content;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD.Content;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace BhModule.Community.Pathing.Entity {
@@ -28,9 +28,9 @@ namespace BhModule.Community.Pathing.Entity {
         /// texture
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Texture(AttributeCollection collection, TextureResourceManager resourceManager) {
+        private void Populate_Texture(AttributeReader collection, TextureResourceManager resourceManager) {
             {
-                if (collection.TryGetAttribute(ATTR_TEXTURE, out var attribute)) {
+                if (collection.TryGet(ATTR_TEXTURE, out var attribute)) {
                     attribute.GetValueAsTextureAsync(resourceManager).ContinueWith((textureTaskResult) => {
                         if (!textureTaskResult.IsFaulted && textureTaskResult.Result.Texture != null) {
                             this.Texture = textureTaskResult.Result.Texture;

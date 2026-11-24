@@ -4,7 +4,7 @@ using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Newtonsoft.Json;
-using AttributeCollection = TmfLib.Prototype.AttributeCollection;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -27,7 +27,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// iconfile
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_IconFile(AttributeCollection collection, TextureResourceManager resourceManager) {
+        private void Populate_IconFile(AttributeReader collection, TextureResourceManager resourceManager) {
             {
                 if (collection.TryPopAttribute(ATTR_ICONFILE, out var attribute)) {
                     attribute.GetValueAsTextureAsync(resourceManager).ContinueWith(textureTaskResult => {

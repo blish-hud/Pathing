@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using BhModule.Community.Pathing.Utility;
 using Microsoft.Xna.Framework;
 using TmfLib;
-using AttributeCollection = TmfLib.Prototype.AttributeCollection;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker {
@@ -21,7 +21,7 @@ namespace BhModule.Community.Pathing.Entity {
         /// text, title, title-color
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Populate_Title(AttributeCollection collection, IPackResourceManager resourceManager) {
+        private void Populate_Title(AttributeReader collection, IPackResourceManager resourceManager) {
             this.BillboardTextColor = _packState.UserResourceStates.Population.MarkerPopulationDefaults.TitleColor;
 
             { if (collection.TryPopAttribute(ATTR_TEXT,       out var attribute)) this.BillboardText      = attribute.GetValueAsString(); }

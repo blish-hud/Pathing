@@ -1,7 +1,6 @@
 ﻿using BhModule.Community.Pathing.Entity;
 using Neo.IronLua;
 using TmfLib;
-using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.Scripting {
     public class PackContext {

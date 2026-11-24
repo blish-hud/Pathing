@@ -2,8 +2,7 @@
 using BhModule.Community.Pathing.State;
 using Blish_HUD;
 using Microsoft.Xna.Framework;
-using TmfLib.Pathable;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardMarker : PathingEntity {
@@ -14,13 +13,13 @@ namespace BhModule.Community.Pathing.Entity {
 
         public TextureResourceManager TextureResourceManager { get; }
 
-        public StandardMarker(IPackState packState, IPointOfInterest pointOfInterest) : base(packState, pointOfInterest) {
-            this.TextureResourceManager = TextureResourceManager.GetTextureResourceManager(pointOfInterest.ResourceManager);
+        public StandardMarker(IPackState packState, PathableSource source) : base(packState, source) {
+            this.TextureResourceManager = TextureResourceManager.GetTextureResourceManager(source.ResourceManager);
 
-            Populate(pointOfInterest.GetAggregatedAttributes(), this.TextureResourceManager);
+            Populate(source.Attributes, this.TextureResourceManager);
         }
 
-        private void Populate(AttributeCollection collection, TextureResourceManager resourceManager) {
+        private void Populate(AttributeReader collection, TextureResourceManager resourceManager) {
             Populate_Guid(collection, resourceManager);
             
             Populate_Position(collection, resourceManager);

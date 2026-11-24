@@ -4,7 +4,7 @@ using BhModule.Community.Pathing.State;
 using BhModule.Community.Pathing.Utility;
 using Blish_HUD;
 using Glide;
-using TmfLib.Prototype;
+using TmfLib.Attributes;
 
 namespace BhModule.Community.Pathing.Behavior.Modifier {
     public class BounceModifier : Behavior<StandardMarker>, ICanFocus {
@@ -41,7 +41,7 @@ namespace BhModule.Community.Pathing.Behavior.Modifier {
             _originalVerticalOffset = _pathingEntity.HeightOffset;
         }
 
-        public static IBehavior BuildFromAttributes(AttributeCollection attributes, StandardMarker marker, IPackState packState) {
+        public static IBehavior BuildFromAttributes(AttributeSubset attributes, StandardMarker marker, IPackState packState) {
             return new BounceModifier(attributes.TryGetAttribute(PRIMARY_ATTR_NAME, out var behaviorAttr) ? behaviorAttr.GetValueAsEnum<BounceBehavior>() : DEFAULT_BOUNCEBEHAVIOR, 
                                       attributes.TryGetAttribute(ATTR_DELAY,        out var delayAttr) ? delayAttr.GetValueAsFloat(DEFAULT_BOUNCEDELAY) : DEFAULT_BOUNCEDELAY,
                                       attributes.TryGetAttribute(ATTR_HEIGHT,       out var heightAttr) ? heightAttr.GetValueAsFloat(DEFAULT_BOUNCEHEIGHT) : DEFAULT_BOUNCEHEIGHT,

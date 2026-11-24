@@ -7,7 +7,6 @@ using Blish_HUD;
 using Blish_HUD.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using TmfLib.Pathable;
 
 namespace BhModule.Community.Pathing.Entity {
     public partial class StandardTrail :ICanPick {
@@ -134,13 +133,12 @@ namespace BhModule.Community.Pathing.Entity {
             return new BoundingSphere(center, radius);
         }
 
-        private void BuildBuffers(ITrail trail) {
+        private void BuildBuffers(Vector3[][] trailSections) {
             var buffers = new List<SectionBuffer>();
 
             using (var gdctx = GameService.Graphics.LendGraphicsDeviceContext()) {
-                foreach (var section in trail.TrailSections) {
-                    // TODO: Fix cursed Vector3 type conversion
-                    var processedBuffer = PostProcessTrailSection(gdctx.GraphicsDevice, section.TrailPoints.Select(v => new Vector3(v.X, v.Y, v.Z)));
+                foreach (var section in trailSections) {
+                    var processedBuffer = PostProcessTrailSection(gdctx.GraphicsDevice, section);
 
                     if (processedBuffer.HasValue) {
                         buffers.Add(processedBuffer.Value);
