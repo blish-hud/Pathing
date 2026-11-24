@@ -21,6 +21,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
         private                 PathingCategoryNode _rootNode;
         private static readonly Logger              _logger = Logger.GetLogger<TreeView>();
         private                 PathingCategoryNode _skipStateCheckNode;
+        private                 bool                _suspendReflow;
 
         public PackInitiator          PackInitiator  { get; private set; }
         public  ICollection<TreeNodeBase> AllBaseNodes { get; }      = new HashSet<TreeNodeBase>();
@@ -60,7 +61,7 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
             AddNode(newChild);
             this.ChildBaseNodes.Add(newChild);
 
-            ReflowChildLayout(this.ChildBaseNodes);
+            if (!_suspendReflow) ReflowChildLayout(this.ChildBaseNodes);
 
             base.OnChildAdded(e);
         }
@@ -215,17 +216,25 @@ namespace BhModule.Community.Pathing.UI.Controls.TreeView
                 };
             }
             
-            foreach (var category in categories)
-            {
-                var node = new PathingCategoryNode(packState, category, false)
-                {
-                    Width       = this.Width - 30,
-                    IsSearchResult = true,
-                    Parent      = this
-                };
+            _suspendReflow = true;
 
-                node.Active = !packState.CategoryStates.GetNamespaceInactive(category.Namespace);
+            try {
+                foreach (var category in categories)
+                {
+                    var node = new PathingCategoryNode(packState, category, false)
+                    {
+                        Width       = this.Width - 30,
+                        IsSearchResult = true,
+                        Parent      = this
+                    };
+
+                    node.Active = !packState.CategoryStates.GetNamespaceInactive(category.Namespace);
+                }
+            } finally {
+                _suspendReflow = false;
             }
+
+            ReflowChildLayout(this.ChildBaseNodes);
 
             return showAllSkippedCategories;
         }

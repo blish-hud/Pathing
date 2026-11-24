@@ -160,6 +160,11 @@ namespace BhModule.Community.Pathing.UI.Views {
         }
 
         private void SearchBoxTextChanged(object sender, EventArgs e) {
+            // TextChanged is raised from the input hook thread, but the tree must only be touched on the main thread.
+            ThreadUtil.RunOnMainThread(UpdateSearch);
+        }
+
+        private void UpdateSearch() {
             if (Presenter is CategoryTreePresenter presenter) {
                 _cancellationTokenSource?.Cancel();
                 _cancellationTokenSource = new CancellationTokenSource();
